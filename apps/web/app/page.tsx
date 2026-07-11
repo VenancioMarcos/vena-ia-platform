@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Bot,
   Boxes,
@@ -61,16 +62,27 @@ export default function Home() {
       <section className="mx-auto grid max-w-7xl gap-6 px-6 py-6 lg:grid-cols-[260px_1fr]">
         <aside className="border-r border-line pr-6">
           <nav className="grid gap-1">
-            {navigationItems.map(([label, Icon]) => (
-              <button
-                key={label}
-                className="flex h-10 items-center gap-3 rounded border border-transparent px-3 text-left text-sm text-machine hover:border-line hover:bg-white"
-                type="button"
-              >
-                <Icon size={17} aria-hidden="true" />
-                {label}
-              </button>
-            ))}
+            {navigationItems.map(([label, Icon]) =>
+              label === "Dashboard" ? (
+                <Link
+                  key={label}
+                  href="/dashboard"
+                  className="flex h-10 items-center gap-3 rounded border border-transparent px-3 text-left text-sm text-machine hover:border-line hover:bg-white"
+                >
+                  <Icon size={17} aria-hidden="true" />
+                  {label}
+                </Link>
+              ) : (
+                <button
+                  key={label}
+                  className="flex h-10 items-center gap-3 rounded border border-transparent px-3 text-left text-sm text-machine hover:border-line hover:bg-white"
+                  type="button"
+                >
+                  <Icon size={17} aria-hidden="true" />
+                  {label}
+                </button>
+              )
+            )}
           </nav>
         </aside>
 

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.core import models_registry  # noqa: F401  (ensures all ORM models are registered)
 from app.modules.chats.api.routes import router as chats_router
 from app.modules.files.api.routes import router as files_router
 from app.modules.projects.api.routes import router as projects_router

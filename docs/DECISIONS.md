@@ -350,6 +350,73 @@ Todos os módulos devem considerar segurança na fase de desenho, mesmo quando a
 
 ---
 
+## DEC-010 — Correção do carregamento de configuração da API (Settings)
+
+**Data:** 2026-07-10  
+**Status:** Aprovada  
+**Tipo:** Backend / Qualidade  
+**Documentos relacionados:** `apps/api/app/core/config.py`, `.env.example`
+
+### Contexto
+
+Durante a validação do ambiente local (Fase 1), identificou-se que `apps/api` falhava ao iniciar: o `Settings` (Pydantic Settings) só reconhecia 5 variáveis, enquanto o `.env.example` define 14. Por padrão, `pydantic-settings` rejeita variáveis de ambiente não declaradas no schema, o que gerava `ValidationError` e impedia o boot da API.
+
+Além disso, `DATABASE_URL`/`REDIS_URL` e os hosts (`POSTGRES_HOST`, `REDIS_HOST`, `MINIO_ENDPOINT`) no `.env.example` apontavam para nomes de serviço do Docker Compose (`postgres`, `redis`, `minio`), que não resolvem quando `apps/api` roda no host via `venv` — fluxo documentado como padrão em `README.md`.
+
+### Decisão
+
+1. `Settings` foi reescrito para declarar todas as variáveis presentes em `.env.example`, com `extra="ignore"` como proteção adicional contra variáveis futuras não mapeadas.
+2. `database_url` e `redis_url` passam a ser opcionais; quando não informados, são compostos a partir dos campos individuais (`postgres_*`, `redis_host`, `redis_port`) via propriedades `sqlalchemy_database_url` e `redis_connection_url`.
+3. `.env.example` foi atualizado para usar `localhost` como host padrão de Postgres/Redis/MinIO, compatível com o fluxo documentado (`docker compose up postgres redis minio` + `apps/api` rodando no host).
+
+### Justificativa
+
+A API precisa iniciar corretamente no fluxo de desenvolvimento local documentado, que é o caminho crítico de qualquer IA ou pessoa validando o projeto pela primeira vez. Corrigir na raiz evita que o mesmo erro se repita a cada nova sessão de validação.
+
+### Impacto
+
+* `apps/api` agora inicia com sucesso usando `.env.example` copiado para `.env`, sem depender do Docker Compose para o processo da API em si.
+* Validado localmente: `GET /health` retorna `200`, `GET /docs` (Swagger) retorna `200`, suíte `pytest` com 2 testes passando.
+* Se `apps/api` vier a rodar dentro do próprio Docker Compose (serviço `api`) no futuro, os hosts precisarão ser sobrescritos para os nomes de serviço do Docker (`postgres`, `redis`, `minio`) — comentário deixado no `.env.example` para isso.
+
+---
+
+---
+
+## DEC-011 — Implementação da v0.2 Core: modelos, migrations e persistência
+
+**Data:** 2026-07-11  
+**Status:** Aprovada  
+**Tipo:** Backend / Frontend / Arquitetura  
+**Documentos relacionados:** `docs/ROADMAP.md` (v0.2 — Core), `docs/adr/ADR-001.md`
+
+### Contexto
+
+A v0.2 — Core exige usuários, projetos, estrutura de arquivos, chats, mensagens, modelos de banco, primeira migration e testes de API principais (`docs/ROADMAP.md`).
+
+### Decisão
+
+1. **Modelos ORM dentro de `apps/api/app/modules/<domínio>/models.py`**, não em `packages/database` (que segue como placeholder). Cada módulo (`users`, `projects`, `files`, `chats`) ganhou `models.py` (SQLAlchemy) e `schemas.py` (Pydantic), compartilhando um único `Base` declarativo (`app/core/database.py`).
+2. **Alembic configurado** em `apps/api/migrations/`, com a primeira migration (`2aea3ea35160_initial_core_schema`) criando as tabelas `users`, `projects`, `files`, `chats`, `messages`.
+3. **Rotas de `users`, `projects`, `files`, `chat`** passam a persistir de verdade (antes retornavam listas vazias fixas), com validação de relação (ex.: projeto exige `owner_id` de um usuário existente; arquivo e chat exigem projeto existente).
+4. **Testes automatizados usam SQLite em memória** (`apps/api/tests/conftest.py`), não PostgreSQL. É uma substituição só para testes — PostgreSQL continua sendo o banco oficial (`DEC-005`). SQLite foi escolhido por não exigir serviço externo rodando durante `pytest`, mantendo a suíte rápida e portátil entre agentes de IA.
+5. **Dashboard mínimo em `apps/web/app/dashboard/page.tsx`**, consumindo a API real (`NEXT_PUBLIC_API_URL`) para listar e criar projetos. Como autenticação real ainda não existe (planejada para a Fase 6), o formulário cria/reaproveita um usuário simples a partir de nome e e-mail — solução temporária, não é o modelo de autenticação final.
+
+### Justificativa
+
+Manter os modelos dentro de `apps/api` evita a complexidade prematura de empacotar `packages/database` como uma dependência local instalável antes de existir um segundo consumidor real (ex.: um worker em `services/`). Isso é consistente com o princípio de Modular Monolith incremental (`DEC-003`) — extrair para `packages/database` quando houver justificativa técnica clara, não antes.
+
+### Impacto
+
+* `packages/database` permanece como placeholder documentado; qualquer IA que for extrair os modelos para lá deve atualizar este registro.
+* Critério de conclusão da v0.2 (`docs/ROADMAP.md`) foi validado localmente: criação de usuário, projeto, arquivo e mensagem funcionando ponta a ponta via API, com dashboard mínimo consumindo os mesmos endpoints.
+* A ausência de autenticação real no formulário do dashboard é uma limitação conhecida e temporária — não deve ser interpretada como padrão de segurança aceitável para produção (`SECURITY.md`).
+* Validado com Python 3.12 (ambiente de IA não possuía 3.13 disponível); `pyproject.toml` continua exigindo `>=3.13` (`DEC-005`), sem alteração — validação final em 3.13 real ainda pendente do lado do responsável humano.
+
+---
+
+---
+
 # 5. Decisões Pendentes
 
 ## PEN-001 — Nome Final do Repositório GitHub
