@@ -36,5 +36,6 @@ jobs:
 
       - name: Test
         working-directory: apps/api
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: pytest
-
