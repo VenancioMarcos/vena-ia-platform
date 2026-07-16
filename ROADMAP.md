@@ -10,9 +10,9 @@
 | Versão | Nome | Status |
 |---|---|---|
 | v0.1 | Foundation | ✅ Concluída |
-| v0.2 | Core | ⏳ Próxima |
-| v0.3 | IA Base | Planejada |
-| v0.4 | Upload e Base de Conhecimento | Planejada |
+| v0.2 | Core | ✅ Concluída |
+| v0.3 | IA Base | ✅ Concluída |
+| v0.4 | Upload e Base de Conhecimento | ⏳ Próxima |
 | v0.5 | RAG | Planejada |
 | v0.6 | CAD Inicial | Planejada |
 | v0.7 | Engenharia e CAM Inicial | Planejada |

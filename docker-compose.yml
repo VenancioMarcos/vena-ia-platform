@@ -50,7 +50,8 @@ services:
 
   api:
     build:
-      context: ./apps/api
+      context: .
+      dockerfile: apps/api/Dockerfile
     container_name: vena_ia_api
     env_file:
       - .env
@@ -77,4 +78,3 @@ volumes:
   postgres_data:
   redis_data:
   minio_data:
-
