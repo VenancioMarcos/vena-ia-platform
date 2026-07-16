@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core import models_registry  # noqa: F401  (ensures all ORM models are registered)
+from app.modules.ai.api.routes import router as ai_router
 from app.modules.chats.api.routes import router as chats_router
 from app.modules.files.api.routes import router as files_router
 from app.modules.projects.api.routes import router as projects_router
@@ -32,9 +33,9 @@ def create_app() -> FastAPI:
     app.include_router(projects_router)
     app.include_router(files_router)
     app.include_router(chats_router)
+    app.include_router(ai_router)
 
     return app
 
 
 app = create_app()
-
