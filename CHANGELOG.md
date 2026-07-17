@@ -13,6 +13,23 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ---
 
+## [0.4.0] — 2026-07-17 — Upload & Base de Conhecimento
+
+### Adicionado
+* Infraestrutura base do módulo Documents, com modelo SQLAlchemy, schemas Pydantic, repository, service e Dependency Injection request-scoped.
+* CRUD lógico de Documents e migration Alembic `4c3d8f1a2b7e`.
+* Armazenamento físico de Documents no MinIO, com upload multipart, download, remoção e verificação de existência na camada Storage, sem processamento ou IA.
+* Gerenciamento de Documents por projeto, com relacionamento ORM `Project (1) — (N) Documents`, contagem, validação de pertencimento e exclusão coordenada entre banco e MinIO.
+* Proteções de upload para sanitização de nomes, limite real de tamanho, Content-Type, isolamento por proprietário e respostas HTTP seguras para falhas de storage.
+* Infraestrutura do pipeline de Documents com estados `UPLOADED`, `PROCESSING`, `READY` e `FAILED`, sem leitura ou processamento de conteúdo.
+* Catálogo administrativo de Documents com filtros por estado e estatísticas agregadas de quantidade e armazenamento, sem busca ou processamento de conteúdo.
+
+### Alterado
+* Metadados da API atualizados para `0.4.0`.
+* Engine SQLAlchemy e Alembic alinhados à variável oficial `DATABASE_URL`, permitindo conexão correta da API no Docker Compose.
+
+---
+
 ## [0.3.0] — 2026-07-16 — IA Base
 
 ### Adicionado
