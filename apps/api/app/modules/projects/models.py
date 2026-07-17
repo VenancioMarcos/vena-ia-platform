@@ -26,4 +26,5 @@ class Project(Base):
 
     owner: Mapped["User"] = relationship(back_populates="projects")  # noqa: F821
     files: Mapped[list["FileAsset"]] = relationship(back_populates="project")  # noqa: F821
+    documents: Mapped[list["Document"]] = relationship(back_populates="project")  # noqa: F821
     chats: Mapped[list["Chat"]] = relationship(back_populates="project")  # noqa: F821
