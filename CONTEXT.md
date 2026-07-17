@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 1.0
-**Última atualização:** 2026-07-10
+**Versão:** 1.1
+**Última atualização:** 2026-07-16
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`
 
 ---
@@ -27,13 +27,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1 — Foundation ✅ concluída → v0.2 — Core ✅ implementada e validada localmente (Docker/Postgres real ainda pendente de confirmação humana).
+* **Fase:** v0.1 — Foundation ✅ concluída → v0.2 — Core ✅ concluída → v0.3 — IA Base ✅ implementada, validada e integrada à `main`. A v0.4 não foi iniciada.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` com persistência real via SQLAlchemy — modelos `User`, `Project`, `FileAsset`, `Chat`, `Message` (um por módulo, `DEC-011`). Alembic configurado com a migration inicial (`2aea3ea35160`). Rotas de `users`, `projects`, `files` e `chat/{project_id}/messages` fazem CRUD real, com validação de relação (ex.: projeto exige usuário existente).
+* **AI Layer:** `packages/ai` fornece contratos tipados, factory e service sem registry global e provider OpenAI para chat, embeddings e completion. `apps/api` expõe `GET /ai/providers` e `POST /ai/{provider}/{chat|embeddings|completion}`, com Dependency Injection e mapeamento explícito de erros HTTP.
 * **Frontend:** `apps/web` com dashboard mínimo em `/dashboard`, consumindo a API real para listar e criar projetos. Autenticação real ainda não existe — o formulário cria/reaproveita um usuário simples (limitação conhecida, ver `DEC-011` e `SECURITY.md`).
-* **Testes:** suíte `pytest` com 12 testes cobrindo users/projects/files/chats/health, usando SQLite em memória (`DEC-011`) — PostgreSQL continua sendo o banco oficial (`DEC-005`).
-* **Infraestrutura:** `docker-compose.yml` validado (postgres+pgvector, redis, minio). Validação de ponta a ponta feita com SQLite como proxy (sem Docker disponível no ambiente de IA); validação final com PostgreSQL real via Docker ainda pendente do lado do responsável humano.
+* **Testes:** suíte `pytest` com 21 testes cobrindo users/projects/files/chats/health e a AI Layer, incluindo providers, operações, erros 400/404/502/503 e limpeza de overrides. Testes de persistência usam SQLite em memória (`DEC-011`) — PostgreSQL continua sendo o banco oficial (`DEC-005`).
+* **Infraestrutura e CI:** a AI Layer é um pacote Python instalável (`vena-ia-ai==0.3.0`) consumido pela API e incluído no build Docker. O Backend CI em Python 3.13 executa lint do repositório, `mypy packages/ai` e a suíte `pytest`, inclusive quando apenas `packages/ai` é alterado.
 * **Governança documental:** Foundation Pack v1.0 formaliza como múltiplas IAs colaboram no repositório.
 
 ---
@@ -42,10 +43,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 * Autenticação e autorização reais (o dashboard usa um substituto temporário — criação de usuário por formulário, sem login/senha/token).
 * Upload de arquivos para MinIO (a tabela `files` guarda metadados; o binário ainda não é armazenado — planejado para v0.4).
-* Chat com IA / integração OpenAI (mensagens são persistidas, mas não há resposta gerada por IA — planejado para v0.3).
+* Acoplamento automático entre respostas da AI Layer e o histórico persistido por projeto; a v0.3.0 entrega a camada técnica e os endpoints, sem ampliar o fluxo funcional existente.
 * RAG e busca semântica.
 * Qualquer módulo de CAD, CAM, CNC ou simulação.
-* CI/CD funcional além dos workflows placeholder.
+* Deploy/CD automatizado; os workflows atuais cobrem CI de backend e frontend, sem publicação automática.
 * `packages/database` como pacote real (os modelos vivem em `apps/api` por decisão deliberada — `DEC-011`).
 * Validação com PostgreSQL real (via Docker) e Python 3.13 exato — feita até agora com SQLite e Python 3.12 no ambiente de IA.
 

@@ -14,7 +14,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Vena_IA API",
         description="API for intelligent engineering and CNC manufacturing workflows.",
-        version="0.1.0",
+        version="0.3.0",
     )
 
     app.add_middleware(

@@ -13,6 +13,22 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ---
 
+## [0.3.0] — 2026-07-16 — IA Base
+
+### Adicionado
+* AI abstraction layer em `packages/ai`, com contratos tipados para providers, factory e service sem registry global.
+* Provider OpenAI com suporte a chat, embeddings e completion.
+* Rotas FastAPI `GET /ai/providers` e `POST /ai/{provider}/{chat|embeddings|completion}` com Dependency Injection.
+* Mapeamento de erros de provider para HTTP 400, 404, 502 e 503.
+* Testes automatizados da AI Layer, totalizando 21 testes aprovados na API.
+
+### Alterado
+* AI Layer formalizada como pacote Python instalável na versão `0.3.0` e incluída no runtime Docker da API.
+* Backend CI ampliado para mudanças em `packages/ai`, com `ruff`, `mypy` e `pytest` em Python 3.13.
+* Metadados da API atualizados para `0.3.0`.
+
+---
+
 ## [0.1.0] — 2026-07-10 — Foundation
 
 ### Adicionado
