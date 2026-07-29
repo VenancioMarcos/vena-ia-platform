@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.core import models_registry  # noqa: F401
+from app.core.config import settings
 from app.core.database import Base, get_db
 from app.main import app
 
@@ -27,7 +28,13 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 
 @pytest.fixture(autouse=True)
-def _reset_database() -> Generator[None, None, None]:
+def _reset_database(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, None]:
+    monkeypatch.setattr(
+        settings,
+        "auth_secret_key",
+        "test-only-auth-secret-key-with-at-least-32-bytes",
+    )
+    monkeypatch.setattr(settings, "auth_cookie_secure", False)
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
