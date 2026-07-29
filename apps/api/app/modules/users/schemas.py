@@ -3,12 +3,6 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
-class UserCreate(BaseModel):
-    name: str
-    email: EmailStr
-    role: str = "member"
-
-
 class UserRegister(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

@@ -11,6 +11,7 @@ from app.modules.documents.dependencies import (
     get_document_storage,
 )
 from app.modules.documents.storage import StorageError
+from conftest import TEST_PASSWORD
 
 
 @pytest.fixture()
@@ -22,18 +23,27 @@ def storage() -> Generator[MagicMock, None, None]:
 
 
 def _create_project(client, email: str = "documents@vena-ia.dev") -> tuple[str, str]:
-    user = client.post(
-        "/users",
-        json={"name": "Document Owner", "email": email, "role": "member"},
+    registered = client.post(
+        "/auth/register",
+        json={"name": "Document Owner", "email": email, "password": TEST_PASSWORD},
+    )
+    assert registered.status_code == 201
+    login = client.post(
+        "/auth/login",
+        json={"email": email, "password": TEST_PASSWORD},
     ).json()
+    token = login["access_token"]
+    client.cookies.clear()
     project = client.post(
-        "/projects", json={"name": "Knowledge Base", "owner_id": user["id"]}
+        "/projects",
+        headers=_headers(token),
+        json={"name": "Knowledge Base"},
     ).json()
-    return project["id"], user["id"]
+    return project["id"], token
 
 
-def _headers(user_id: str) -> dict[str, str]:
-    return {"X-User-ID": user_id}
+def _headers(token: str) -> dict[str, str]:
+    return {"Authorization": f"Bearer {token}"}
 
 
 def _upload_document(client, project_id: str, user_id: str, filename: str = "machine-manual.pdf"):
@@ -220,7 +230,9 @@ def test_remove_document_returns_not_found_for_missing_document(client, storage)
 def test_remove_document_rejects_document_from_another_project(client, storage) -> None:
     project_id, user_id = _create_project(client)
     other_project = client.post(
-        "/projects", json={"name": "Other Project", "owner_id": user_id}
+        "/projects",
+        headers=_headers(user_id),
+        json={"name": "Other Project"},
     ).json()
     created = _upload_document(client, project_id, user_id).json()
 
@@ -289,14 +301,15 @@ def test_process_document_rejects_repeated_transition(client, storage) -> None:
     assert second.status_code == 409
 
 
-def test_unexpected_internal_error_returns_500_without_details() -> None:
+def test_unexpected_internal_error_returns_500_without_details(make_account) -> None:
+    admin = make_account("internal-error-admin@vena-ia.dev", role="admin")
     service = MagicMock()
     service.list_all_documents.side_effect = RuntimeError("internal-sensitive-detail")
     app.dependency_overrides[get_document_service] = lambda: service
     internal_client = TestClient(app, raise_server_exceptions=False)
 
     try:
-        response = internal_client.get("/documents")
+        response = internal_client.get("/documents", headers=admin.headers)
     finally:
         internal_client.close()
         app.dependency_overrides.pop(get_document_service, None)

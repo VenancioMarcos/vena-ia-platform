@@ -2,12 +2,13 @@
 
 from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException
+from fastapi import Depends
 from minio import Minio
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import get_db
+from app.modules.auth.dependencies import CurrentUserDependency
 from app.modules.documents.repository import DocumentRepository
 from app.modules.documents.pipeline import DocumentPipeline
 from app.modules.documents.service import DocumentService
@@ -51,22 +52,11 @@ def initialize_document_storage() -> None:
     get_document_storage().initialize()
 
 
-def get_current_user_id(
-    x_user_id: Annotated[str | None, Header(alias="X-User-ID")] = None,
-) -> str:
-    if x_user_id is None or not x_user_id.strip():
-        raise HTTPException(status_code=401, detail="Authentication required")
-    return x_user_id.strip()
-
-
-CurrentUserDependency = Annotated[str, Depends(get_current_user_id)]
-
-
 def get_document_service(
     repository: DocumentRepositoryDependency,
     storage: DocumentStorageDependency,
     db: DatabaseDependency,
-    current_user_id: CurrentUserDependency,
+    current_user: CurrentUserDependency,
     pipeline: DocumentPipelineDependency,
 ) -> DocumentService:
     return DocumentService(
@@ -74,7 +64,7 @@ def get_document_service(
         storage,
         db,
         settings.document_max_file_size,
-        current_user_id,
+        current_user,
         pipeline,
     )
 

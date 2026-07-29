@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import get_db
+from app.modules.auth.authorization import AuthorizationService
 from app.modules.auth.service import AuthService
 from app.modules.auth.tokens import (
     InvalidTokenError,
@@ -70,3 +71,16 @@ def require_admin(current_user: CurrentUserDependency) -> User:
 
 
 AdminUserDependency = Annotated[User, Depends(require_admin)]
+
+
+def get_authorization_service(
+    db: Annotated[Session, Depends(get_db)],
+    current_user: CurrentUserDependency,
+) -> AuthorizationService:
+    return AuthorizationService(db, current_user)
+
+
+AuthorizationDependency = Annotated[
+    AuthorizationService,
+    Depends(get_authorization_service),
+]

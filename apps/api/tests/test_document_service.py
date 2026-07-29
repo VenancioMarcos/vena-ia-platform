@@ -14,6 +14,7 @@ from app.modules.documents.service import (
 )
 from app.modules.documents.storage import StorageError
 from app.modules.projects.models import Project
+from app.modules.users.models import User
 
 
 def _upload_file() -> UploadFile:
@@ -26,7 +27,8 @@ def _upload_file() -> UploadFile:
 
 def _service(repository: MagicMock, storage: MagicMock, db: MagicMock) -> DocumentService:
     db.get.return_value = Project(id="project", name="Project", owner_id="owner")
-    return DocumentService(repository, storage, db, 1024, "owner", MagicMock())
+    current_user = User(id="owner", name="Owner", email="owner@vena-ia.dev", role="member")
+    return DocumentService(repository, storage, db, 1024, current_user, MagicMock())
 
 
 def test_removes_uploaded_object_when_database_create_fails() -> None:

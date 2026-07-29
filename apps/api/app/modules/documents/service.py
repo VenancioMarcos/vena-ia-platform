@@ -57,14 +57,14 @@ class DocumentService:
         storage: DocumentStorage,
         db: Session,
         max_file_size: int,
-        current_user_id: str,
+        current_user: User,
         pipeline: DocumentPipeline,
     ) -> None:
         self._repository = repository
         self._storage = storage
         self._db = db
         self._max_file_size = max_file_size
-        self._current_user_id = current_user_id
+        self._current_user = current_user
         self._pipeline = pipeline
 
     def create(self, project_id: str, file: UploadFile) -> Document:
@@ -194,15 +194,14 @@ class DocumentService:
         project = self._db.get(Project, project_id)
         if project is None:
             raise ProjectNotFoundError("Project not found")
-        if project.owner_id != self._current_user_id:
+        if project.owner_id != self._current_user.id and self._current_user.role != "admin":
             raise DocumentAccessDeniedError("Document access denied")
         return project
 
     def _require_admin(self) -> User:
-        user = self._db.get(User, self._current_user_id)
-        if user is None or user.role.lower() != "admin":
+        if self._current_user.role.lower() != "admin":
             raise DocumentAdministrationDeniedError("Administrative access required")
-        return user
+        return self._current_user
 
     def _validate_file(self, file: UploadFile) -> tuple[str, str, int]:
         filename = self._sanitize_filename(file.filename or "")

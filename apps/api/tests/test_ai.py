@@ -66,14 +66,19 @@ class FakeProvider(AIProvider):
 
 
 @pytest.fixture()
-def override_provider() -> Generator[Callable[[AIProvider], TestClient], None, None]:
+def override_provider(
+    make_account,
+) -> Generator[Callable[[AIProvider], TestClient], None, None]:
     original_overrides = app.dependency_overrides.copy()
+    account = make_account("ai-user@vena-ia.dev")
 
     def apply(provider: AIProvider) -> TestClient:
         app.dependency_overrides[get_provider_factory] = lambda: ProviderFactory(
             builders=(lambda: provider,)
         )
-        return TestClient(app)
+        client = TestClient(app)
+        client.headers.update(account.headers)
+        return client
 
     yield apply
     app.dependency_overrides.clear()
