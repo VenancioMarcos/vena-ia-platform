@@ -17,6 +17,10 @@ from app.modules.documents.storage import DocumentStorage, StorageError
 from app.modules.projects.models import Project
 from app.modules.users.models import User
 
+_ALLOWED_DOCUMENT_TYPES: dict[str, tuple[str, tuple[bytes, ...]]] = {
+    ".pdf": ("application/pdf", (b"%PDF-",)),
+}
+
 
 class DocumentNotFoundError(Exception):
     pass
@@ -208,13 +212,21 @@ class DocumentService:
         if filename is None:
             raise InvalidDocumentError("Filename is required")
 
+        extension = self._extension(filename)
+        allowed = _ALLOWED_DOCUMENT_TYPES.get(extension)
+        if allowed is None:
+            raise InvalidDocumentError("Document type is not allowed")
+
+        expected_content_type, signatures = allowed
         content_type = (file.content_type or "").split(";", 1)[0].strip().lower()
-        if not re.fullmatch(r"[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+", content_type):
-            raise InvalidDocumentError("Valid content type is required")
+        if content_type != expected_content_type:
+            raise InvalidDocumentError("Document content type does not match its extension")
 
         try:
             file.file.seek(0, 2)
             file_size = file.file.tell()
+            file.file.seek(0)
+            signature = file.file.read(max(len(item) for item in signatures))
             file.file.seek(0)
         except (OSError, ValueError) as exc:
             raise InvalidDocumentError("Unable to read file") from exc
@@ -223,8 +235,16 @@ class DocumentService:
             raise InvalidDocumentError("File must not be empty")
         if file_size > self._max_file_size:
             raise DocumentTooLargeError("File exceeds the configured size limit")
+        if not any(signature.startswith(item) for item in signatures):
+            raise InvalidDocumentError("Document signature is invalid")
 
         return filename, content_type, file_size
+
+    @staticmethod
+    def _extension(filename: str) -> str:
+        if "." not in filename:
+            return ""
+        return f".{filename.rsplit('.', 1)[-1].lower()}"
 
     @staticmethod
     def _sanitize_filename(original: str) -> str | None:

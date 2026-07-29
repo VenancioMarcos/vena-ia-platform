@@ -8,6 +8,8 @@ from app.modules.documents.dependencies import get_document_storage
 from app.modules.documents.repository import DocumentRepository
 from app.modules.documents.schemas import DocumentStatus
 
+PDF_BYTES = b"%PDF-1.7\ncontent\n%%EOF"
+
 
 @pytest.fixture()
 def storage() -> Generator[MagicMock, None, None]:
@@ -26,7 +28,7 @@ def _create_document(client, owner, filename: str = "manual.pdf") -> dict:
     return client.post(
         f"/projects/{project_id}/documents",
         headers=owner.headers,
-        files={"file": (filename, b"content", "application/pdf")},
+        files={"file": (filename, PDF_BYTES, "application/pdf")},
     ).json()
 
 
@@ -109,7 +111,7 @@ def test_document_statistics(client, storage, db_session, make_account) -> None:
         "processing": 1,
         "ready": 1,
         "failed": 1,
-        "total_storage_bytes": 4 * len(b"content"),
+        "total_storage_bytes": 4 * len(PDF_BYTES),
     }
 
 

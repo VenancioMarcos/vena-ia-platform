@@ -13,6 +13,8 @@ from app.modules.documents.dependencies import (
 from app.modules.documents.storage import StorageError
 from conftest import TEST_PASSWORD
 
+PDF_BYTES = b"%PDF-1.7\nmanual contents\n%%EOF"
+
 
 @pytest.fixture()
 def storage() -> Generator[MagicMock, None, None]:
@@ -50,7 +52,7 @@ def _upload_document(client, project_id: str, user_id: str, filename: str = "mac
     return client.post(
         f"/projects/{project_id}/documents",
         headers=_headers(user_id),
-        files={"file": (filename, b"manual contents", "application/pdf")},
+        files={"file": (filename, PDF_BYTES, "application/pdf")},
     )
 
 
@@ -63,7 +65,7 @@ def test_create_document(client, storage) -> None:
     assert response.json()["project_id"] == project_id
     assert response.json()["filename"] == "machine-manual.pdf"
     assert response.json()["content_type"] == "application/pdf"
-    assert response.json()["file_size"] == len(b"manual contents")
+    assert response.json()["file_size"] == len(PDF_BYTES)
     assert response.json()["storage_path"].startswith(f"projects/{project_id}/documents/")
     assert response.json()["status"] == "UPLOADED"
     storage.upload_file.assert_called_once()
@@ -135,6 +137,48 @@ def test_rejects_invalid_content_type(client, storage) -> None:
     )
 
     assert response.status_code == 400
+    storage.upload_file.assert_not_called()
+
+
+def test_rejects_false_extension(client, storage) -> None:
+    project_id, user_id = _create_project(client)
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(user_id),
+        files={"file": ("manual.exe", PDF_BYTES, "application/pdf")},
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Document type is not allowed"}
+    storage.upload_file.assert_not_called()
+
+
+def test_rejects_false_mime(client, storage) -> None:
+    project_id, user_id = _create_project(client)
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(user_id),
+        files={"file": ("manual.pdf", PDF_BYTES, "application/octet-stream")},
+    )
+
+    assert response.status_code == 400
+    assert "content type" in response.json()["detail"].lower()
+    storage.upload_file.assert_not_called()
+
+
+def test_rejects_invalid_signature_and_executable(client, storage) -> None:
+    project_id, user_id = _create_project(client)
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(user_id),
+        files={"file": ("manual.pdf", b"MZ\x90\x00executable", "application/pdf")},
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Document signature is invalid"}
     storage.upload_file.assert_not_called()
 
 
