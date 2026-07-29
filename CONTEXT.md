@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 1.3
-**Última atualização:** 2026-07-17
+**Versão:** 1.4
+**Última atualização:** 2026-07-29
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`
 
 ---
@@ -37,6 +37,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 * **Testes:** suíte `pytest` com 76 testes cobrindo users/projects/files/chats/documents/health e a AI Layer, incluindo segurança de upload, rollbacks, autorização por proprietário, catálogo administrativo, estatísticas, storage MinIO mockado e todas as transições do pipeline. Testes de persistência usam SQLite em memória (`DEC-011`) — PostgreSQL continua sendo o banco oficial (`DEC-005`).
 * **Infraestrutura e CI:** a AI Layer é um pacote Python instalável (`vena-ia-ai==0.3.0`) consumido pela API e incluído no build Docker. O Docker Compose completo foi construído e validado com PostgreSQL, Redis, MinIO, API e Web; health, catálogo de documentos, documentos por projeto, estatísticas e início do pipeline responderam HTTP 200. O Backend CI em Python 3.13 executa lint do repositório, `mypy packages/ai` e a suíte `pytest`, inclusive quando apenas `packages/ai` é alterado.
 * **Governança documental:** Foundation Pack v1.0 formaliza como múltiplas IAs colaboram no repositório.
+* **Auditoria técnica 2026-07-29:** auditoria local não destrutiva concluída. Backend com 76 testes aprovados, Ruff e mypy aprovados, Alembic com head único e Docker Compose válido. Nenhum segredo conhecido foi localizado. O MVP permanece parcial e a exposição externa está bloqueada até existir autenticação/autorização real. Relatórios em `docs/AUDIT_REPORT.md`, `docs/RISK_REGISTER.md`, `docs/REPOSITORY_MAP.md` e `docs/CODEX_STATUS.md`.
 
 ---
 
