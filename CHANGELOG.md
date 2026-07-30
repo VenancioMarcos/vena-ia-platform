@@ -8,6 +8,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado
+* v0.6 CAD Inicial com upload seguro de STEP Part 21 (`.step`/`.stp`).
+* Parser conservador de metadados STEP, schema, entidades, pontos cartesianos,
+  unidade e envelope dimensional preliminar.
+* Endpoint autenticado `POST /cad/documents/{document_id}/analysis` com relatório
+  técnico rastreável e limitações explícitas.
+
+### Alterado
+* API avança para `0.6.0`.
+
 ## [0.5.0] — 2026-07-30 — RAG
 
 ### Adicionado

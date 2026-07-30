@@ -180,13 +180,18 @@ Objetivo: iniciar interpretação técnica de arquivos CAD.
 
 Entregas:
 
-* serviço `parser-step`;
-* leitura inicial de STEP;
-* extração de metadados geométricos;
-* dimensões básicas;
-* volume quando tecnicamente viável;
-* relatório técnico preliminar;
-* avaliação de OpenCascade ou pythonOCC.
+* [x] serviço `parser-step`;
+* [x] leitura inicial de STEP;
+* [x] extração de metadados geométricos;
+* [x] dimensões básicas;
+* [x] volume quando tecnicamente viável;
+* [x] relatório técnico preliminar;
+* [x] avaliação de OpenCascade ou pythonOCC.
+
+Limite desta entrega:
+
+* volume permanece explicitamente indisponível sem kernel geométrico;
+* OpenCascade/pythonOCC foi avaliado e adiado conforme ADR-0011.
 
 Critério de conclusão:
 
