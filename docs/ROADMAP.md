@@ -142,7 +142,7 @@ Critério de conclusão:
 
 Gate:
 
-* a v0.5 RAG só começa após revisão e integração da v0.4.1.
+* concluído em 2026-07-30 com squash merge da PR #4 e release `v0.4.1`.
 
 ---
 
@@ -152,12 +152,21 @@ Objetivo: criar a base de conhecimento semântica.
 
 Entregas:
 
-* chunking de documentos;
-* geração de embeddings;
-* armazenamento em pgvector;
-* busca semântica;
-* respostas com contexto recuperado;
-* documentação do pipeline RAG.
+* [x] modelo persistente de chunks;
+* [x] extração de texto de PDFs por página;
+* [x] chunking configurável e rastreável;
+* [x] estados, contratos e endpoints mínimos de ingestão/consulta;
+* [x] geração de embeddings;
+* [x] armazenamento em pgvector;
+* [x] busca semântica;
+* [x] respostas com contexto recuperado;
+* [x] documentação da fundação do pipeline RAG.
+
+Estado:
+
+* pipeline RAG completo implementado no branch `feature/v0.5-rag-foundation`;
+* respostas usam somente contexto recuperado e mantêm citações estruturadas para
+  documento, página e chunk.
 
 Critério de conclusão:
 

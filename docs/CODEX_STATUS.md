@@ -3,13 +3,14 @@
 ```text
 PROJECT=VENA_IA_PLATFORM
 ROLE=AUTONOMOUS_EXECUTOR
-STATE=VENA_IA_V0_4_1_PR_READY_FOR_CTO_REVIEW
-LAST_MISSION=V0_4_1_SECURITY_GATE_CTO_REVIEW_PREPARATION
-LAST_RESULT=DRAFT_PR_4_OPEN_ALL_GITHUB_CHECKS_PASSED
-ACTIVE_BRANCH=security/v0.4.1-authentication-authorization
-PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/4
+STATE=VENA_IA_V0_4_1_RELEASED_AND_V0_5_RAG_FOUNDATION_READY_FOR_CTO_REVIEW
+LAST_MISSION=V0_4_1_RELEASE_AND_V0_5_RAG_FOUNDATION
+LAST_RESULT=V0_4_1_RELEASED_DRAFT_PR_5_OPEN_ALL_GITHUB_CHECKS_PASSED
+ACTIVE_BRANCH=feature/v0.5-rag-foundation
+V0_4_1_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v0.4.1
+PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/5
 BLOCKERS=NONE
-NEXT_AUTHORIZED_ACTION=CTO_REVIEW
+NEXT_AUTHORIZED_ACTION=CTO_REVIEW_V0_5_DRAFT_PR
 PERMANENT_OPERATIONAL_LIMITS_SOURCE=docs/PERMANENT_OPERATIONAL_LIMITS.md
 PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 ```
@@ -17,9 +18,9 @@ PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 ## Checkpoint
 
 ```text
-STATE=Security Gate consolidado, validado e disponível na Draft PR #4 para revisão do CTO.
-DONE=Autenticação, autorização, upload, migrations, frontend, 95 testes, Ruff, mypy, compile/import, Docker e GitHub Checks validados; branch publicada.
-NEXT=Revisão do CTO; merge, tag, release, deploy e início da v0.5 dependem de nova autorização.
+STATE=v0.4.1 publicada; RAG Foundation v0.5 disponível na Draft PR #5 para revisão do CTO.
+DONE=Squash merge, tag e release v0.4.1; extração PDF, chunks rastreáveis, migration, contratos, endpoints, 112 testes, Ruff, mypy, Docker e GitHub Checks validados.
+NEXT=Revisão do CTO da Draft PR #5; não realizar merge da v0.5 sem nova autorização.
 ERROR=NONE.
 ```
 

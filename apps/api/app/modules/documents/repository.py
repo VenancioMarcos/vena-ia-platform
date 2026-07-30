@@ -1,7 +1,10 @@
-from sqlalchemy import case, func, select
+from typing import Any, cast
+
+from sqlalchemy import case, delete, func, select
 from sqlalchemy.orm import Session
 
-from app.modules.documents.models import Document
+from app.modules.documents.contracts import KnowledgeMatch
+from app.modules.documents.models import Document, DocumentChunk
 from app.modules.documents.schemas import DocumentStatus
 
 
@@ -118,3 +121,81 @@ class DocumentRepository:
         except Exception:
             self._db.rollback()
             raise
+
+
+class DocumentChunkRepository:
+    def __init__(self, db: Session) -> None:
+        self._db = db
+
+    def replace_for_document(
+        self,
+        document_id: str,
+        chunks: list[DocumentChunk],
+    ) -> list[DocumentChunk]:
+        try:
+            self._db.execute(
+                delete(DocumentChunk).where(DocumentChunk.document_id == document_id)
+            )
+            self._db.add_all(chunks)
+            self._db.commit()
+            for chunk in chunks:
+                self._db.refresh(chunk)
+            return chunks
+        except Exception:
+            self._db.rollback()
+            raise
+
+    def list_for_document(
+        self,
+        document_id: str,
+        page_number: int | None = None,
+    ) -> list[DocumentChunk]:
+        stmt = select(DocumentChunk).where(DocumentChunk.document_id == document_id)
+        if page_number is not None:
+            stmt = stmt.where(DocumentChunk.page_number == page_number)
+        stmt = stmt.order_by(DocumentChunk.chunk_index)
+        return list(self._db.scalars(stmt))
+
+    def update_embeddings(
+        self,
+        chunks: list[DocumentChunk],
+        embeddings: list[list[float]],
+        model: str,
+    ) -> int:
+        if len(chunks) != len(embeddings):
+            raise ValueError("Embedding count does not match chunk count")
+        try:
+            for chunk, embedding in zip(chunks, embeddings, strict=True):
+                chunk.embedding = embedding
+                chunk.embedding_model = model
+            self._db.commit()
+            return len(chunks)
+        except Exception:
+            self._db.rollback()
+            raise
+
+    def semantic_search(
+        self,
+        project_id: str,
+        query_embedding: list[float],
+        limit: int,
+    ) -> list[KnowledgeMatch]:
+        embedding_column = cast(Any, DocumentChunk.embedding)
+        distance = embedding_column.cosine_distance(query_embedding)
+        stmt = (
+            select(DocumentChunk, distance.label("distance"))
+            .join(Document, Document.id == DocumentChunk.document_id)
+            .where(
+                Document.project_id == project_id,
+                DocumentChunk.embedding.is_not(None),
+            )
+            .order_by(distance)
+            .limit(limit)
+        )
+        return [
+            KnowledgeMatch(
+                chunk=chunk,
+                score=max(0.0, min(1.0, 1.0 - float(raw_distance))),
+            )
+            for chunk, raw_distance in self._db.execute(stmt)
+        ]

@@ -8,6 +8,30 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado
+* Fundação RAG v0.5 com extração segura de texto de PDFs por página.
+* Fragmentação configurável com rastreabilidade por documento, página, índice e
+  offsets no texto extraído.
+* Modelo `DocumentChunk`, contratos de extractor/chunker/repository/service e
+  migration `b7f3c9d2e614`.
+* Endpoints autenticados `POST /documents/{document_id}/processing` e
+  `GET /documents/{document_id}/chunks`, incluindo filtro por página.
+* Geração de embeddings por documento e armazenamento vetorial em PostgreSQL
+  com pgvector e índice HNSW para similaridade por cosseno.
+* Busca semântica rastreável por projeto e respostas fundamentadas exclusivamente
+  nos trechos recuperados, com proteção explícita contra instruções nos documentos.
+* Endpoints `POST /documents/{document_id}/embeddings`,
+  `POST /projects/{project_id}/knowledge/search` e
+  `POST /projects/{project_id}/knowledge/ask`.
+* Migration `c91e5a4f2d08` para extensão pgvector, embeddings e índice vetorial.
+* Testes unitários e de integração para extração, chunking, persistência, estados,
+  indexação, recuperação, grounding, rastreabilidade, autorização e respostas de erro.
+
+### Alterado
+* Metadados e pacote da API avançam para `0.5.0`.
+* Processamento documental passa por `UPLOADED → PROCESSING → READY`; falhas de
+  storage ou extração terminam em `FAILED` sem reduzir os controles da v0.4.1.
+
 ## [0.4.1] — 2026-07-30 — Security Gate
 
 ### Adicionado
