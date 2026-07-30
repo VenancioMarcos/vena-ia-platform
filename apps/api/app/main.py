@@ -9,6 +9,7 @@ from app.core import models_registry  # noqa: F401  (ensures all ORM models are 
 from app.modules.ai.api.routes import router as ai_router
 from app.modules.auth.api.routes import router as auth_router
 from app.modules.chats.api.routes import router as chats_router
+from app.modules.cnc.api.routes import router as cnc_router
 from app.modules.cad.api.routes import router as cad_router
 from app.modules.documents.api.routes import router as documents_router
 from app.modules.documents.dependencies import initialize_document_storage
@@ -28,7 +29,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Vena_IA API",
         description="API for intelligent engineering and CNC manufacturing workflows.",
-        version="0.7.0",
+        version="0.8.0",
         lifespan=lifespan,
     )
 
@@ -53,6 +54,7 @@ def create_app() -> FastAPI:
     app.include_router(documents_router)
     app.include_router(cad_router)
     app.include_router(manufacturing_router)
+    app.include_router(cnc_router)
 
     return app
 
