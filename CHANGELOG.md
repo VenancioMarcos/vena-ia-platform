@@ -8,6 +8,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado
+* Fundação v0.7 para recomendação preliminar de fresamento baseada em família de
+  material, ferramenta e limites da máquina.
+* Cálculos determinísticos de rotação, avanço e tempo de corte, sempre marcados
+  `PRELIMINARY_REQUIRES_HUMAN_REVIEW`.
+* Endpoint autenticado `POST /manufacturing/milling/recommendation`.
+
+### Alterado
+* API avança para `0.7.0`.
+
 ## [0.6.0] — 2026-07-30 — CAD Initial
 
 ### Adicionado

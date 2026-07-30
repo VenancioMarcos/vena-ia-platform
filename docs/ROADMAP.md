@@ -203,6 +203,14 @@ Critério de conclusão:
 
 Objetivo: criar a primeira camada de planejamento de manufatura.
 
+Estado da primeira entrega:
+
+* fundação de regras determinísticas para fresamento implementada;
+* rotação, avanço e tempo de corte respeitam limites informados da máquina;
+* resultados são preliminares e exigem revisão humana;
+* cadastros persistentes e sugestões de processo completas permanecem pendentes
+  dentro da própria v0.7.
+
 Entregas:
 
 * cadastro de materiais;
