@@ -8,7 +8,7 @@
 | R-002 | CRÍTICO | Cadastro permitia autoatribuição de `admin`. | Cadastro rejeita `role`, força `member` e não expõe promoção pública. | MITIGADO v0.4.1 |
 | R-003 | ALTO | Rotas não aplicavam autorização uniforme por proprietário. | Autorização centralizada protege usuários, projetos, arquivos, documentos, chats e IA. | MITIGADO v0.4.1 |
 | R-004 | ALTO | Upload confiava em extensão/MIME controlados pelo cliente. | Allowlist exclusiva de PDF, MIME exato, `%PDF-`, tamanho e caminho interno seguro. | MITIGADO v0.4.1 |
-| R-005 | ALTO | O MVP não possui processamento documental, RAG ou vínculo automático entre respostas de IA e histórico do projeto. | Implementar pipeline seguro de extração, indexação e recuperação antes de declarar base de conhecimento pronta. | ABERTO |
+| R-005 | ALTO | A fundação v0.5 extrai e fragmenta PDFs, mas ainda não possui embeddings, busca semântica ou vínculo automático entre respostas de IA e histórico do projeto. | Implementar indexação e recuperação em incrementos posteriores antes de declarar RAG completo. | PARCIALMENTE MITIGADO v0.5 |
 | R-006 | MÉDIO | O frontend apresenta versões e estados antigos (`v0.1`/`v0.2`) enquanto backend e contexto estão em `v0.4.0`. | Atualizar textos e estados a partir de uma fonte única de versão. | ABERTO |
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
 | R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o projeto e o CI exigem Python 3.13. | Validar também em Python 3.13 e manter matriz explícita de versões suportadas. | ABERTO |
@@ -19,6 +19,8 @@
 | R-013 | MÉDIO | JWT stateless não possui revogação imediata antes da expiração. | Adicionar rotação/revogação de sessão antes de produção multiusuário. | ABERTO |
 | R-014 | MÉDIO | Usuários legados preservados pela migration não possuem hash de senha. | Criar fluxo administrativo auditável de definição ou recuperação de credencial. | ABERTO |
 | R-015 | BAIXO | O contexto Docker do Web incluía artefatos locais (`node_modules` e `.next`), ampliando o build para centenas de MB. | `.dockerignore` dedicado reduz o contexto a arquivos-fonte e exclui ambientes, dependências, builds e logs locais. | MITIGADO v0.4.1 |
+| R-016 | MÉDIO | A ingestão de PDF da fundação v0.5 ocorre de forma síncrona na requisição HTTP. | Introduzir fila, worker, timeout e retomada antes de processar documentos extensos em produção. | ABERTO |
+| R-017 | MÉDIO | PDFs criptografados ou sem camada textual não geram chunks. | Manter falha explícita e adicionar OCR somente após avaliação de segurança, recursos e qualidade. | ABERTO |
 
 ## Segurança de segredos
 

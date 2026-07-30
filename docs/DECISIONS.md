@@ -447,6 +447,36 @@ rotas sensíveis exigem sessão válida e a v0.5 depende da aprovação deste br
 
 ---
 
+## DEC-013 — Fundação RAG no domínio Documents
+
+**Data:** 2026-07-30
+**Status:** Aprovada
+**Tipo:** Arquitetura / Backend / IA
+**Documentos relacionados:** `docs/adr/ADR-0010-rag-foundation.md`, `docs/ROADMAP.md`
+
+### Contexto
+
+Com a v0.4.1 publicada, a v0.5 precisa iniciar por uma base testável de ingestão,
+sem antecipar embeddings, recuperação semântica ou geração com LLM.
+
+### Decisão
+
+Implementar no domínio `documents` a extração de texto por página, chunking
+configurável, persistência rastreável em `document_chunks` e contratos substituíveis
+para extractor, chunker, repository e service.
+
+### Justificativa
+
+A abordagem preserva o monólito modular, reutiliza armazenamento e autorização
+existentes e mantém a primeira entrega limitada a ingestão documental verificável.
+
+### Impacto
+
+O backend avança para v0.5.0 e adiciona `pypdf` e uma migration. OCR, embeddings,
+pgvector, busca vetorial e respostas com LLM continuam explicitamente fora do escopo.
+
+---
+
 # 5. Decisões Pendentes
 
 ## PEN-001 — Nome Final do Repositório GitHub

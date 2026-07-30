@@ -13,8 +13,8 @@
 | v0.2 | Core | ✅ Concluída |
 | v0.3 | IA Base | ✅ Concluída |
 | v0.4 | Upload e Base de Conhecimento | ✅ Concluída |
-| v0.4.1 | Security Gate | Implementada — revisão do CTO |
-| v0.5 | RAG | Bloqueada até integração da v0.4.1 |
+| v0.4.1 | Security Gate | ✅ Publicada |
+| v0.5 | RAG | Fundação em revisão |
 | v0.6 | CAD Inicial | Planejada |
 | v0.7 | Engenharia e CAM Inicial | Planejada |
 | v0.8 | CNC Inicial | Planejada |

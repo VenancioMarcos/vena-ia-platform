@@ -130,3 +130,23 @@ Detalhes formais: `docs/adr/ADR-0009-security-gate-authentication.md`.
 ## 8. Evolução Planejada
 
 A evolução por fases (v0.2 Core → v1.0 MVP) está detalhada em `docs/ROADMAP.md`. Mudanças estruturais relevantes nesta arquitetura devem gerar um novo ADR em `docs/adr/`.
+
+---
+
+## 9. Fundação RAG v0.5
+
+```text
+PDF validado no MinIO
+  → TextExtractor (pypdf)
+  → páginas com texto normalizado
+  → ChunkingStrategy configurável
+  → DocumentChunkRepository
+  → PostgreSQL: document_chunks
+  → consulta autenticada por documento/página
+```
+
+O processamento permanece no domínio `documents` do monólito modular e reutiliza
+a autorização por proprietário/papel da v0.4.1. Contratos `Protocol` isolam
+extractor, chunker, repository e service. Esta fundação não contém embeddings,
+pgvector, busca semântica nem geração de respostas. Decisão formal:
+`docs/adr/ADR-0010-rag-foundation.md`.
