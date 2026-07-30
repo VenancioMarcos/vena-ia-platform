@@ -18,8 +18,16 @@ from app.modules.auth.authorization import user_can_access_project, user_is_admi
 from app.modules.projects.models import Project
 from app.modules.users.models import User
 
-_ALLOWED_DOCUMENT_TYPES: dict[str, tuple[str, tuple[bytes, ...]]] = {
-    ".pdf": ("application/pdf", (b"%PDF-",)),
+_ALLOWED_DOCUMENT_TYPES: dict[str, tuple[tuple[str, ...], tuple[bytes, ...]]] = {
+    ".pdf": (("application/pdf",), (b"%PDF-",)),
+    ".step": (
+        ("application/step", "model/step"),
+        (b"ISO-10303-21;",),
+    ),
+    ".stp": (
+        ("application/step", "model/step"),
+        (b"ISO-10303-21;",),
+    ),
 }
 
 
@@ -218,9 +226,9 @@ class DocumentService:
         if allowed is None:
             raise InvalidDocumentError("Document type is not allowed")
 
-        expected_content_type, signatures = allowed
+        expected_content_types, signatures = allowed
         content_type = (file.content_type or "").split(";", 1)[0].strip().lower()
-        if content_type != expected_content_type:
+        if content_type not in expected_content_types:
             raise InvalidDocumentError("Document content type does not match its extension")
 
         try:

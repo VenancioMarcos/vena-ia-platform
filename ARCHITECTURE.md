@@ -155,3 +155,19 @@ desacoplados por `AIService`; pgvector fornece similaridade por cosseno. O promp
 trata documentos como dados não confiáveis e exige resposta restrita ao contexto
 recuperado. Decisão formal:
 `docs/adr/ADR-0010-rag-foundation.md`.
+
+---
+
+## 10. CAD Inicial v0.6
+
+```text
+STEP Part 21 validado no MinIO
+  → CADAnalysisService (autorização do documento)
+  → StepTextParser (leitura textual conservadora)
+  → metadados + entidades + pontos + envelope preliminar
+  → relatório técnico com limitações explícitas
+```
+
+O parser não executa conteúdo do arquivo e não afirma propriedades topológicas.
+Volume e propriedades de massa exigem futuro kernel OpenCascade validado. Decisão:
+`docs/adr/ADR-0011-step-parser-foundation.md`.
