@@ -17,6 +17,7 @@ from app.modules.documents.storage import StorageError
 from conftest import TEST_PASSWORD
 
 PDF_BYTES = b"%PDF-1.7\nmanual contents\n%%EOF"
+STEP_BYTES = b"ISO-10303-21;\nHEADER;\nENDSEC;\nDATA;\nENDSEC;\nEND-ISO-10303-21;"
 
 
 @pytest.fixture()
@@ -90,6 +91,34 @@ def test_create_document(client, storage) -> None:
     assert response.json()["storage_path"].startswith(f"projects/{project_id}/documents/")
     assert response.json()["status"] == "UPLOADED"
     storage.upload_file.assert_called_once()
+
+
+def test_create_step_document(client, storage) -> None:
+    project_id, token = _create_project(client, "cad-owner@vena-ia.dev")
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(token),
+        files={"file": ("part.step", STEP_BYTES, "application/step")},
+    )
+
+    assert response.status_code == 201
+    assert response.json()["content_type"] == "application/step"
+    storage.upload_file.assert_called_once()
+
+
+def test_rejects_step_with_invalid_signature(client, storage) -> None:
+    project_id, token = _create_project(client, "invalid-cad@vena-ia.dev")
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(token),
+        files={"file": ("part.step", b"not a step file", "application/step")},
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Document signature is invalid"}
+    storage.upload_file.assert_not_called()
 
 
 def test_list_documents_by_project(client, storage) -> None:
