@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.0
+**Versão:** 2.1
 **Última atualização:** 2026-07-30
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -27,18 +27,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate publicada ✅ → v0.5 — RAG Foundation implementada e em preparação para revisão.
+* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate publicada ✅ → v0.5 — RAG Foundation pronta para revisão do CTO.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v0.5.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração e autorização centralizada. `X-User-ID` não autentica. Cadastro força `member`; identidade e propriedade vêm do token validado. Alembic possui as migrations `2aea3ea35160`, `4c3d8f1a2b7e`, `8a1c4e2f9b30` e `b7f3c9d2e614`.
 * **AI Layer:** `packages/ai` fornece contratos tipados, factory, service e provider OpenAI. Os endpoints de chat, embeddings e completion exigem usuário autenticado.
 * **Documents/RAG Foundation:** upload e catálogo no MinIO continuam protegidos por proprietário/papel e restritos a PDFs validados. A v0.5 extrai texto por página com `pypdf`, cria chunks configuráveis e persiste rastreabilidade por documento, página, índice e offsets. Os estados `UPLOADED`, `PROCESSING`, `READY` e `FAILED` refletem o resultado da ingestão.
 * **Frontend:** `apps/web` possui cadastro/login, sessão por cookie HttpOnly, logout, tratamento de 401/403 e dashboard que cria projetos usando exclusivamente a identidade autenticada. Typecheck e build de produção foram aprovados.
-* **Testes:** suíte `pytest` ampliada para autenticação, autorização, upload por magic bytes, extração PDF, chunking, persistência, rastreabilidade, estados e endpoints da fundação RAG. Ruff e mypy integral em 64 arquivos estão aprovados nesta entrega; a validação final inclui migration e regressões completas. Persistência de testes usa SQLite em memória (`DEC-011`); PostgreSQL continua oficial (`DEC-005`).
+* **Testes:** 112 testes `pytest` aprovados para autenticação, autorização, upload por magic bytes, extração PDF, chunking, persistência, rastreabilidade, estados e endpoints da fundação RAG. Ruff, mypy integral em 64 arquivos, migration em PostgreSQL, imagem Docker da API e GitHub Actions estão aprovados. Persistência de testes usa SQLite em memória (`DEC-011`); PostgreSQL continua oficial (`DEC-005`).
 * **Infraestrutura e CI:** Docker Compose mantém PostgreSQL/pgvector, Redis, MinIO, API e Web. As imagens locais de API e Web foram construídas na revisão final; o frontend possui contexto Docker isolado de artefatos locais. CI backend executa Ruff, mypy e Pytest. CI frontend usa pnpm com lockfile congelado, typecheck e build.
 * **Governança documental:** Foundation Pack v1.0 formaliza como múltiplas IAs colaboram no repositório.
 * **Security Gate 2026-07-30:** riscos críticos R-001 a R-004 mitigados. A PR [#4](https://github.com/VenancioMarcos/vena-ia-platform/pull/4) foi integrada por squash e a release [v0.4.1](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v0.4.1) foi publicada. A matriz oficial está em `docs/AUTHORIZATION_MATRIX.md`; decisão em `docs/adr/ADR-0009-security-gate-authentication.md`.
-* **RAG Foundation 2026-07-30:** modelo `DocumentChunk`, extração textual de PDF, chunking configurável, contratos e endpoints mínimos implementados no branch `feature/v0.5-rag-foundation`, conforme `docs/adr/ADR-0010-rag-foundation.md`.
+* **RAG Foundation 2026-07-30:** modelo `DocumentChunk`, extração textual de PDF, chunking configurável, contratos e endpoints mínimos implementados no branch `feature/v0.5-rag-foundation`, conforme `docs/adr/ADR-0010-rag-foundation.md`. A Draft PR [#5](https://github.com/VenancioMarcos/vena-ia-platform/pull/5) está aberta com o Backend CI aprovado, aguardando revisão do CTO.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
