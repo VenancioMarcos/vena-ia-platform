@@ -9,7 +9,7 @@ V0_6_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v0.
 PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/7
 HEAD_REF=feature/v0.7-engineering-cam-initial
 BLOCKERS=NONE
-TESTS=137_PASSED
+TESTS=141_PASSED
 QUALITY=RUFF_MYPY_GITHUB_CI_PASSED
 NEXT=CTO_REVIEW_V0_7_FOUNDATION
 ```

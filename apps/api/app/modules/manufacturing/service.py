@@ -51,4 +51,10 @@ class MillingRecommendationService:
                 "feed = rpm × tool_teeth × feed_per_tooth",
                 "cutting_time = cutting_length / feed",
             ],
+            warnings=[
+                "Internal preliminary defaults; not universal cutting data.",
+                "Validate exact material grade, hardness, tool geometry/coating and manufacturer data.",
+                "Validate axial/radial depth, coolant, workholding, machine rigidity and tool overhang.",
+                "Human engineering review is mandatory before any real process.",
+            ],
         )

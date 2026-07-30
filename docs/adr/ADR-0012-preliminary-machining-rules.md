@@ -22,3 +22,7 @@ tempo_de_corte = comprimento_de_corte / avanço
 ```
 
 Os limites de RPM e avanço da máquina são aplicados antes da estimativa de tempo.
+Os valores são hipóteses internas conservadoras para estruturar o cálculo, não
+dados universais. A resposta lista dependências de classe/dureza do material,
+geometria/revestimento/fabricante da ferramenta, profundidades, refrigeração,
+fixação, rigidez, balanço, estratégia, tolerância e acabamento.

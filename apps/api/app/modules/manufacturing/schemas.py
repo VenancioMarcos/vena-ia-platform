@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class MaterialFamily(StrEnum):
@@ -10,6 +10,7 @@ class MaterialFamily(StrEnum):
 
 
 class MillingInput(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
     material: MaterialFamily
     tool_diameter_mm: float = Field(gt=0, le=200)
     tool_teeth: int = Field(ge=1, le=20)
@@ -29,3 +30,4 @@ class MillingRecommendation(BaseModel):
     limiting_factors: list[str]
     status: str
     calculation_basis: list[str]
+    warnings: list[str]
