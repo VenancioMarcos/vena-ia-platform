@@ -8,6 +8,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado
+* Fundação v0.8 com estrutura neutra e não executável de operações CNC.
+* Preview autenticado para estratégia futura Fanuc Oi e compatibilidade planejada
+  Romi D1250, sempre `SIMULATION_ONLY_REQUIRES_HUMAN_REVIEW`.
+
+### Alterado
+* API avança para `0.8.0`.
+
 ## [0.7.0] — 2026-07-30 — Engineering / CAM Initial
 
 ### Adicionado

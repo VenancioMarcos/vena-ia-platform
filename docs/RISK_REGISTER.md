@@ -12,6 +12,7 @@
 | R-018 | MÉDIO | Embeddings dependem de provedor externo e dimensão fixa compatível com a coluna vetorial. | Configuração explícita, validação de contagem/dimensão e falha segura antes da persistência. | MONITORAR |
 | R-019 | ALTO | Envelope calculado por pontos STEP pode divergir da bounding box topológica e volume não é confiável sem kernel geométrico. | Rotular análise como preliminar, não inferir volume e adotar OpenCascade somente após validação dedicada. | MONITORAR v0.6 |
 | R-020 | ALTO | Parâmetros de corte genéricos podem ser inadequados para ferramenta, material, fixação ou máquina reais. | Rotular como preliminar, aplicar limites informados e exigir revisão humana; nunca enviar para máquina. | MONITORAR v0.7 |
+| R-021 | CRÍTICO | Estruturas CNC preliminares poderiam ser confundidas com saída liberada para máquina. | Não gerar G-code; marcar simulação/revisão humana e `executable_output=false`; proibir transmissão e produção. | MONITORAR v0.8 |
 | R-006 | MÉDIO | O frontend apresenta versões e estados antigos (`v0.1`/`v0.2`) enquanto backend e contexto estão em `v0.4.0`. | Atualizar textos e estados a partir de uma fonte única de versão. | ABERTO |
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
 | R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o projeto e o CI exigem Python 3.13. | Validar também em Python 3.13 e manter matriz explícita de versões suportadas. | ABERTO |
