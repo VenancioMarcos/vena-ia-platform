@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [0.4.1] — 2026-07-30 — Security Gate
+
 ### Adicionado
 * Foundation Pack v1.0 — governança, protocolo de colaboração entre IAs (`.ai/`), 7 novos ADRs (`ADR-0002` a `ADR-0008`) e documentação institucional completa (`GOVERNANCE.md`, `AGENTS.md`, `CONTEXT.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`).
 * v0.4.1 Security Gate com cadastro seguro, login, JWT HS256 assinado, expiração,
