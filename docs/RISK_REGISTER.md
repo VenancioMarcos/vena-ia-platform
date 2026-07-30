@@ -8,7 +8,8 @@
 | R-002 | CRÍTICO | Cadastro permitia autoatribuição de `admin`. | Cadastro rejeita `role`, força `member` e não expõe promoção pública. | MITIGADO v0.4.1 |
 | R-003 | ALTO | Rotas não aplicavam autorização uniforme por proprietário. | Autorização centralizada protege usuários, projetos, arquivos, documentos, chats e IA. | MITIGADO v0.4.1 |
 | R-004 | ALTO | Upload confiava em extensão/MIME controlados pelo cliente. | Allowlist exclusiva de PDF, MIME exato, `%PDF-`, tamanho e caminho interno seguro. | MITIGADO v0.4.1 |
-| R-005 | ALTO | A fundação v0.5 extrai e fragmenta PDFs, mas ainda não possui embeddings, busca semântica ou vínculo automático entre respostas de IA e histórico do projeto. | Implementar indexação e recuperação em incrementos posteriores antes de declarar RAG completo. | PARCIALMENTE MITIGADO v0.5 |
+| R-005 | ALTO | Respostas RAG poderiam não ter vínculo verificável com a origem documental. | Busca retorna documento, página, chunk e score; geração recebe apenas trechos recuperados e os trata como dados não confiáveis. | MITIGADO v0.5 |
+| R-018 | MÉDIO | Embeddings dependem de provedor externo e dimensão fixa compatível com a coluna vetorial. | Configuração explícita, validação de contagem/dimensão e falha segura antes da persistência. | MONITORAR |
 | R-006 | MÉDIO | O frontend apresenta versões e estados antigos (`v0.1`/`v0.2`) enquanto backend e contexto estão em `v0.4.0`. | Atualizar textos e estados a partir de uma fonte única de versão. | ABERTO |
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
 | R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o projeto e o CI exigem Python 3.13. | Validar também em Python 3.13 e manter matriz explícita de versões suportadas. | ABERTO |

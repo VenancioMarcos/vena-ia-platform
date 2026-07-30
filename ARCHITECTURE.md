@@ -142,11 +142,16 @@ PDF validado no MinIO
   → ChunkingStrategy configurável
   → DocumentChunkRepository
   → PostgreSQL: document_chunks
-  → consulta autenticada por documento/página
+  → AIService: embeddings
+  → PostgreSQL/pgvector: vetores + índice HNSW
+  → busca semântica autenticada por projeto
+  → AIService: resposta fundamentada nos trechos recuperados
 ```
 
 O processamento permanece no domínio `documents` do monólito modular e reutiliza
 a autorização por proprietário/papel da v0.4.1. Contratos `Protocol` isolam
-extractor, chunker, repository e service. Esta fundação não contém embeddings,
-pgvector, busca semântica nem geração de respostas. Decisão formal:
+extractor, chunker, repository e service. Embeddings e geração permanecem
+desacoplados por `AIService`; pgvector fornece similaridade por cosseno. O prompt
+trata documentos como dados não confiáveis e exige resposta restrita ao contexto
+recuperado. Decisão formal:
 `docs/adr/ADR-0010-rag-foundation.md`.

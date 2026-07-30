@@ -16,8 +16,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   migration `b7f3c9d2e614`.
 * Endpoints autenticados `POST /documents/{document_id}/processing` e
   `GET /documents/{document_id}/chunks`, incluindo filtro por página.
-* Testes unitários e de integração para extração, chunking, persistência, estados
-  de processamento, autorização e respostas de erro.
+* Geração de embeddings por documento e armazenamento vetorial em PostgreSQL
+  com pgvector e índice HNSW para similaridade por cosseno.
+* Busca semântica rastreável por projeto e respostas fundamentadas exclusivamente
+  nos trechos recuperados, com proteção explícita contra instruções nos documentos.
+* Endpoints `POST /documents/{document_id}/embeddings`,
+  `POST /projects/{project_id}/knowledge/search` e
+  `POST /projects/{project_id}/knowledge/ask`.
+* Migration `c91e5a4f2d08` para extensão pgvector, embeddings e índice vetorial.
+* Testes unitários e de integração para extração, chunking, persistência, estados,
+  indexação, recuperação, grounding, rastreabilidade, autorização e respostas de erro.
 
 ### Alterado
 * Metadados e pacote da API avançam para `0.5.0`.

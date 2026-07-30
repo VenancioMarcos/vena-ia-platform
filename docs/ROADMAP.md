@@ -156,16 +156,17 @@ Entregas:
 * [x] extração de texto de PDFs por página;
 * [x] chunking configurável e rastreável;
 * [x] estados, contratos e endpoints mínimos de ingestão/consulta;
-* [ ] geração de embeddings;
-* [ ] armazenamento em pgvector;
-* [ ] busca semântica;
-* [ ] respostas com contexto recuperado;
+* [x] geração de embeddings;
+* [x] armazenamento em pgvector;
+* [x] busca semântica;
+* [x] respostas com contexto recuperado;
 * [x] documentação da fundação do pipeline RAG.
 
-Estado da primeira entrega:
+Estado:
 
-* fundação implementada no branch `feature/v0.5-rag-foundation`;
-* embeddings, busca vetorial e geração com LLM permanecem fora deste incremento.
+* pipeline RAG completo implementado no branch `feature/v0.5-rag-foundation`;
+* respostas usam somente contexto recuperado e mantêm citações estruturadas para
+  documento, página e chunk.
 
 Critério de conclusão:
 
