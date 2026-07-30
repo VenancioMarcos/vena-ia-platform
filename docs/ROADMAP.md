@@ -231,6 +231,12 @@ Critério de conclusão:
 
 Objetivo: preparar geração assistida de processo CNC.
 
+Estado da primeira entrega:
+
+* estrutura neutra de operações e parâmetros implementada;
+* perfis Fanuc Oi/Romi D1250 são somente placeholders planejados;
+* nenhuma saída executável ou G-code é gerada.
+
 Entregas:
 
 * estrutura para operações CNC;

@@ -1,9 +1,9 @@
 # Estado de execução CTO
 
 ```text
-MISSION=V0_7_RELEASE_AND_V0_8_START
-STATE=V0_7_MERGED_RELEASE_PREPARATION
-BRANCH=main
+MISSION=V0_8_CNC_FOUNDATION
+STATE=IMPLEMENTATION_IN_PROGRESS
+BRANCH=feature/v0.8-cnc-initial
 PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/6
 V0_6_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v0.6.0
 PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/7
