@@ -73,3 +73,42 @@ class DocumentChunkListResponse(BaseModel):
 class DocumentProcessingResponse(BaseModel):
     document: DocumentResponse
     chunk_count: int
+
+
+class DocumentEmbeddingResponse(BaseModel):
+    document_id: str
+    embedded_chunks: int
+    model: str
+
+
+class KnowledgeSearchRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=4_000)
+    limit: int = Field(default=5, ge=1, le=20)
+
+
+class KnowledgeMatchResponse(BaseModel):
+    document_id: str
+    page_number: int
+    chunk_index: int
+    content: str
+    score: float
+
+
+class KnowledgeSearchResponse(BaseModel):
+    project_id: str
+    query: str
+    matches: list[KnowledgeMatchResponse]
+
+
+class KnowledgeAskRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=4_000)
+    limit: int = Field(default=5, ge=1, le=20)
+
+
+class KnowledgeAnswerResponse(BaseModel):
+    project_id: str
+    question: str
+    answer: str
+    provider: str
+    model: str
+    matches: list[KnowledgeMatchResponse]

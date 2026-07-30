@@ -25,6 +25,27 @@ class ProcessingResult:
     chunk_count: int
 
 
+@dataclass(frozen=True)
+class KnowledgeMatch:
+    chunk: DocumentChunk
+    score: float
+
+
+@dataclass(frozen=True)
+class EmbeddingUpdateResult:
+    document_id: str
+    embedded_chunks: int
+    model: str
+
+
+@dataclass(frozen=True)
+class KnowledgeAnswer:
+    answer: str
+    provider: str
+    model: str
+    matches: list[KnowledgeMatch]
+
+
 class TextExtractor(Protocol):
     def extract_pages(self, content: bytes) -> list[ExtractedPage]: ...
 
@@ -39,6 +60,20 @@ class ChunkRepositoryContract(Protocol):
         document_id: str,
         chunks: list[DocumentChunk],
     ) -> list[DocumentChunk]: ...
+
+    def update_embeddings(
+        self,
+        chunks: list[DocumentChunk],
+        embeddings: list[list[float]],
+        model: str,
+    ) -> int: ...
+
+    def semantic_search(
+        self,
+        project_id: str,
+        query_embedding: list[float],
+        limit: int,
+    ) -> list[KnowledgeMatch]: ...
 
     def list_for_document(
         self,

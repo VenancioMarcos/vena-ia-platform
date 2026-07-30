@@ -12,6 +12,7 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from pgvector.sqlalchemy import Vector  # type: ignore[import-untyped]
 
 from app.core.database import Base
 from app.modules.documents.schemas import DocumentStatus
@@ -92,6 +93,8 @@ class DocumentChunk(Base):
     end_offset: Mapped[int] = mapped_column(Integer, nullable=False)
     character_count: Mapped[int] = mapped_column(Integer, nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
+    embedding: Mapped[list[float] | None] = mapped_column(Vector(1536), nullable=True)
+    embedding_model: Mapped[str | None] = mapped_column(String(100), nullable=True)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=_utcnow)
 
     document: Mapped["Document"] = relationship(back_populates="chunks")
