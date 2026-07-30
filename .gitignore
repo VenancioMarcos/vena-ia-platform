@@ -18,6 +18,7 @@ build/
 
 # Node
 node_modules/
+.pnpm-store/
 .next/
 out/
 coverage/
@@ -39,4 +40,3 @@ Thumbs.db
 .minio/
 .postgres/
 .redis/
-

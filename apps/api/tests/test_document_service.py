@@ -14,11 +14,14 @@ from app.modules.documents.service import (
 )
 from app.modules.documents.storage import StorageError
 from app.modules.projects.models import Project
+from app.modules.users.models import User
+
+PDF_BYTES = b"%PDF-1.7\ncontent\n%%EOF"
 
 
 def _upload_file() -> UploadFile:
     return UploadFile(
-        file=BytesIO(b"content"),
+        file=BytesIO(PDF_BYTES),
         filename="manual.pdf",
         headers=Headers({"content-type": "application/pdf"}),
     )
@@ -26,7 +29,8 @@ def _upload_file() -> UploadFile:
 
 def _service(repository: MagicMock, storage: MagicMock, db: MagicMock) -> DocumentService:
     db.get.return_value = Project(id="project", name="Project", owner_id="owner")
-    return DocumentService(repository, storage, db, 1024, "owner", MagicMock())
+    current_user = User(id="owner", name="Owner", email="owner@vena-ia.dev", role="member")
+    return DocumentService(repository, storage, db, 1024, current_user, MagicMock())
 
 
 def test_removes_uploaded_object_when_database_create_fails() -> None:
@@ -91,9 +95,9 @@ def test_rejects_missing_content_type() -> None:
     repository = MagicMock()
     storage = MagicMock()
     service = _service(repository, storage, MagicMock())
-    file = UploadFile(file=BytesIO(b"content"), filename="manual.pdf")
+    file = UploadFile(file=BytesIO(PDF_BYTES), filename="manual.pdf")
 
-    with pytest.raises(InvalidDocumentError, match="Valid content type is required"):
+    with pytest.raises(InvalidDocumentError, match="content type"):
         service.create("project", file)
 
     storage.upload_file.assert_not_called()

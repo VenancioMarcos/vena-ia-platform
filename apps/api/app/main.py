@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core import models_registry  # noqa: F401  (ensures all ORM models are registered)
 from app.modules.ai.api.routes import router as ai_router
+from app.modules.auth.api.routes import router as auth_router
 from app.modules.chats.api.routes import router as chats_router
 from app.modules.documents.api.routes import router as documents_router
 from app.modules.documents.dependencies import initialize_document_storage
@@ -25,7 +26,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Vena_IA API",
         description="API for intelligent engineering and CNC manufacturing workflows.",
-        version="0.4.0",
+        version="0.4.1",
         lifespan=lifespan,
     )
 
@@ -42,6 +43,7 @@ def create_app() -> FastAPI:
         return {"status": "ok", "service": "vena-ia-api"}
 
     app.include_router(users_router)
+    app.include_router(auth_router)
     app.include_router(projects_router)
     app.include_router(files_router)
     app.include_router(chats_router)

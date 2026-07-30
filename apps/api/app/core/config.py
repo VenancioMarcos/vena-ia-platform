@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     document_max_file_size: int = 104_857_600
     openai_api_key: str = ""
     cors_origins: list[str] = ["http://localhost:3000"]
+    auth_secret_key: str = ""
+    auth_token_expiration_minutes: int = 30
+    auth_cookie_name: str = "vena_ia_session"
+    auth_cookie_secure: bool = False
+    password_hash_iterations: int = 600_000
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"

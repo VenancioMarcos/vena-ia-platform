@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.modules.auth.dependencies import AuthorizationDependency
 from app.modules.chats.models import Chat, Message
 from app.modules.chats.schemas import MessageCreate, MessageRead
 from app.modules.projects.models import Project
@@ -18,7 +19,7 @@ class ChatStatus(BaseModel):
 
 
 @router.get("", response_model=ChatStatus)
-def chat_status() -> ChatStatus:
+def chat_status(_authorization: AuthorizationDependency) -> ChatStatus:
     """Static capability descriptor for the chat module.
 
     Real AI-backed responses are planned for v0.3 - IA Base (docs/ROADMAP.md).
@@ -32,14 +33,10 @@ def chat_status() -> ChatStatus:
     )
 
 
-def _get_or_create_chat(project_id: str, db: Session) -> Chat:
-    project = db.get(Project, project_id)
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-
-    chat = db.scalar(select(Chat).where(Chat.project_id == project_id))
+def _get_or_create_chat(project: Project, db: Session) -> Chat:
+    chat = db.scalar(select(Chat).where(Chat.project_id == project.id))
     if not chat:
-        chat = Chat(project_id=project_id, title=f"Chat - {project.name}")
+        chat = Chat(project_id=project.id, title=f"Chat - {project.name}")
         db.add(chat)
         db.commit()
         db.refresh(chat)
@@ -47,11 +44,12 @@ def _get_or_create_chat(project_id: str, db: Session) -> Chat:
 
 
 @router.get("/{project_id}/messages", response_model=list[MessageRead])
-def list_messages(project_id: str, db: Session = Depends(get_db)) -> list[Message]:
-    project = db.get(Project, project_id)
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-
+def list_messages(
+    project_id: str,
+    authorization: AuthorizationDependency,
+    db: Session = Depends(get_db),
+) -> list[Message]:
+    authorization.require_project_access(project_id)
     chat = db.scalar(select(Chat).where(Chat.project_id == project_id))
     if not chat:
         return []
@@ -60,12 +58,16 @@ def list_messages(project_id: str, db: Session = Depends(get_db)) -> list[Messag
 
 @router.post("/{project_id}/messages", response_model=MessageRead, status_code=201)
 def create_message(
-    project_id: str, payload: MessageCreate, db: Session = Depends(get_db)
+    project_id: str,
+    payload: MessageCreate,
+    authorization: AuthorizationDependency,
+    db: Session = Depends(get_db),
 ) -> Message:
     if payload.role not in {"user", "assistant"}:
         raise HTTPException(status_code=422, detail="role must be 'user' or 'assistant'")
 
-    chat = _get_or_create_chat(project_id, db)
+    project = authorization.require_project_access(project_id)
+    chat = _get_or_create_chat(project, db)
     message = Message(chat_id=chat.id, role=payload.role, content=payload.content)
     db.add(message)
     db.commit()

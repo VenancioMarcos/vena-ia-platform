@@ -14,8 +14,13 @@ from app.modules.documents.pipeline import (
 from app.modules.documents.repository import DocumentRepository
 from app.modules.documents.schemas import DocumentStatus
 from app.modules.documents.storage import DocumentStorage, StorageError
+from app.modules.auth.authorization import user_can_access_project, user_is_admin
 from app.modules.projects.models import Project
 from app.modules.users.models import User
+
+_ALLOWED_DOCUMENT_TYPES: dict[str, tuple[str, tuple[bytes, ...]]] = {
+    ".pdf": ("application/pdf", (b"%PDF-",)),
+}
 
 
 class DocumentNotFoundError(Exception):
@@ -57,14 +62,14 @@ class DocumentService:
         storage: DocumentStorage,
         db: Session,
         max_file_size: int,
-        current_user_id: str,
+        current_user: User,
         pipeline: DocumentPipeline,
     ) -> None:
         self._repository = repository
         self._storage = storage
         self._db = db
         self._max_file_size = max_file_size
-        self._current_user_id = current_user_id
+        self._current_user = current_user
         self._pipeline = pipeline
 
     def create(self, project_id: str, file: UploadFile) -> Document:
@@ -194,28 +199,35 @@ class DocumentService:
         project = self._db.get(Project, project_id)
         if project is None:
             raise ProjectNotFoundError("Project not found")
-        if project.owner_id != self._current_user_id:
+        if not user_can_access_project(self._current_user, project):
             raise DocumentAccessDeniedError("Document access denied")
         return project
 
     def _require_admin(self) -> User:
-        user = self._db.get(User, self._current_user_id)
-        if user is None or user.role.lower() != "admin":
+        if not user_is_admin(self._current_user):
             raise DocumentAdministrationDeniedError("Administrative access required")
-        return user
+        return self._current_user
 
     def _validate_file(self, file: UploadFile) -> tuple[str, str, int]:
         filename = self._sanitize_filename(file.filename or "")
         if filename is None:
             raise InvalidDocumentError("Filename is required")
 
+        extension = self._extension(filename)
+        allowed = _ALLOWED_DOCUMENT_TYPES.get(extension)
+        if allowed is None:
+            raise InvalidDocumentError("Document type is not allowed")
+
+        expected_content_type, signatures = allowed
         content_type = (file.content_type or "").split(";", 1)[0].strip().lower()
-        if not re.fullmatch(r"[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+", content_type):
-            raise InvalidDocumentError("Valid content type is required")
+        if content_type != expected_content_type:
+            raise InvalidDocumentError("Document content type does not match its extension")
 
         try:
             file.file.seek(0, 2)
             file_size = file.file.tell()
+            file.file.seek(0)
+            signature = file.file.read(max(len(item) for item in signatures))
             file.file.seek(0)
         except (OSError, ValueError) as exc:
             raise InvalidDocumentError("Unable to read file") from exc
@@ -224,8 +236,16 @@ class DocumentService:
             raise InvalidDocumentError("File must not be empty")
         if file_size > self._max_file_size:
             raise DocumentTooLargeError("File exceeds the configured size limit")
+        if not any(signature.startswith(item) for item in signatures):
+            raise InvalidDocumentError("Document signature is invalid")
 
         return filename, content_type, file_size
+
+    @staticmethod
+    def _extension(filename: str) -> str:
+        if "." not in filename:
+            return ""
+        return f".{filename.rsplit('.', 1)[-1].lower()}"
 
     @staticmethod
     def _sanitize_filename(original: str) -> str | None:

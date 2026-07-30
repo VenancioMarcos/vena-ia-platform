@@ -10,6 +10,30 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ### Adicionado
 * Foundation Pack v1.0 — governança, protocolo de colaboração entre IAs (`.ai/`), 7 novos ADRs (`ADR-0002` a `ADR-0008`) e documentação institucional completa (`GOVERNANCE.md`, `AGENTS.md`, `CONTEXT.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`).
+* v0.4.1 Security Gate com cadastro seguro, login, JWT HS256 assinado, expiração,
+  cookie HttpOnly, autorização centralizada e matriz de acesso.
+* Migration `8a1c4e2f9b30` para armazenar hash de senha preservando usuários existentes.
+* Login frontend e lockfile pnpm reproduzível.
+* Validação de upload PDF por extensão, MIME e assinatura `%PDF-`.
+
+### Segurança
+* `X-User-ID` não autentica mais usuários.
+* Cadastro público força o papel `member` e rejeita `role`.
+* Criação de projeto deriva `owner_id` exclusivamente do token validado.
+* Rotas de usuários, projetos, arquivos, documentos, chats e IA exigem autenticação
+  e aplicam regras de papel/propriedade.
+
+### Alterado
+* **Breaking:** `POST /users` exige `password` e não aceita `role`.
+* **Breaking:** `POST /projects` não aceita `owner_id`.
+* **Breaking:** rotas protegidas exigem cookie de sessão ou
+  `Authorization: Bearer <token>`.
+* CI frontend passa a usar pnpm com `--frozen-lockfile`.
+* Recursos documentais de projetos inacessíveis retornam `404`, em alinhamento
+  com a matriz de autorização e sem confirmar a existência do recurso.
+* Relacionamentos ORM usam imports protegidos por `TYPE_CHECKING`, permitindo
+  validação mypy integral da aplicação.
+* O contexto Docker do frontend exclui `node_modules`, `.next`, ambientes e logs.
 
 ---
 

@@ -1,12 +1,14 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
-class UserCreate(BaseModel):
-    name: str
+class UserRegister(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=1, max_length=255)
     email: EmailStr
-    role: str = "member"
+    password: str = Field(min_length=12, max_length=128)
 
 
 class UserRead(BaseModel):

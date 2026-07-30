@@ -11,6 +11,9 @@ from app.modules.documents.dependencies import (
     get_document_storage,
 )
 from app.modules.documents.storage import StorageError
+from conftest import TEST_PASSWORD
+
+PDF_BYTES = b"%PDF-1.7\nmanual contents\n%%EOF"
 
 
 @pytest.fixture()
@@ -22,25 +25,34 @@ def storage() -> Generator[MagicMock, None, None]:
 
 
 def _create_project(client, email: str = "documents@vena-ia.dev") -> tuple[str, str]:
-    user = client.post(
-        "/users",
-        json={"name": "Document Owner", "email": email, "role": "member"},
+    registered = client.post(
+        "/auth/register",
+        json={"name": "Document Owner", "email": email, "password": TEST_PASSWORD},
+    )
+    assert registered.status_code == 201
+    login = client.post(
+        "/auth/login",
+        json={"email": email, "password": TEST_PASSWORD},
     ).json()
+    token = login["access_token"]
+    client.cookies.clear()
     project = client.post(
-        "/projects", json={"name": "Knowledge Base", "owner_id": user["id"]}
+        "/projects",
+        headers=_headers(token),
+        json={"name": "Knowledge Base"},
     ).json()
-    return project["id"], user["id"]
+    return project["id"], token
 
 
-def _headers(user_id: str) -> dict[str, str]:
-    return {"X-User-ID": user_id}
+def _headers(token: str) -> dict[str, str]:
+    return {"Authorization": f"Bearer {token}"}
 
 
 def _upload_document(client, project_id: str, user_id: str, filename: str = "machine-manual.pdf"):
     return client.post(
         f"/projects/{project_id}/documents",
         headers=_headers(user_id),
-        files={"file": (filename, b"manual contents", "application/pdf")},
+        files={"file": (filename, PDF_BYTES, "application/pdf")},
     )
 
 
@@ -53,7 +65,7 @@ def test_create_document(client, storage) -> None:
     assert response.json()["project_id"] == project_id
     assert response.json()["filename"] == "machine-manual.pdf"
     assert response.json()["content_type"] == "application/pdf"
-    assert response.json()["file_size"] == len(b"manual contents")
+    assert response.json()["file_size"] == len(PDF_BYTES)
     assert response.json()["storage_path"].startswith(f"projects/{project_id}/documents/")
     assert response.json()["status"] == "UPLOADED"
     storage.upload_file.assert_called_once()
@@ -128,6 +140,48 @@ def test_rejects_invalid_content_type(client, storage) -> None:
     storage.upload_file.assert_not_called()
 
 
+def test_rejects_false_extension(client, storage) -> None:
+    project_id, user_id = _create_project(client)
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(user_id),
+        files={"file": ("manual.exe", PDF_BYTES, "application/pdf")},
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Document type is not allowed"}
+    storage.upload_file.assert_not_called()
+
+
+def test_rejects_false_mime(client, storage) -> None:
+    project_id, user_id = _create_project(client)
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(user_id),
+        files={"file": ("manual.pdf", PDF_BYTES, "application/octet-stream")},
+    )
+
+    assert response.status_code == 400
+    assert "content type" in response.json()["detail"].lower()
+    storage.upload_file.assert_not_called()
+
+
+def test_rejects_invalid_signature_and_executable(client, storage) -> None:
+    project_id, user_id = _create_project(client)
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(user_id),
+        files={"file": ("manual.pdf", b"MZ\x90\x00executable", "application/pdf")},
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Document signature is invalid"}
+    storage.upload_file.assert_not_called()
+
+
 def test_requires_authentication(client, storage) -> None:
     project_id, _ = _create_project(client)
 
@@ -145,7 +199,8 @@ def test_denies_access_to_another_owner_documents(client, storage) -> None:
         f"/projects/{project_id}/documents", headers=_headers(other_user_id)
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Project not found"}
 
 
 def test_returns_not_found_for_missing_document(client, storage) -> None:
@@ -220,7 +275,9 @@ def test_remove_document_returns_not_found_for_missing_document(client, storage)
 def test_remove_document_rejects_document_from_another_project(client, storage) -> None:
     project_id, user_id = _create_project(client)
     other_project = client.post(
-        "/projects", json={"name": "Other Project", "owner_id": user_id}
+        "/projects",
+        headers=_headers(user_id),
+        json={"name": "Other Project"},
     ).json()
     created = _upload_document(client, project_id, user_id).json()
 
@@ -289,14 +346,15 @@ def test_process_document_rejects_repeated_transition(client, storage) -> None:
     assert second.status_code == 409
 
 
-def test_unexpected_internal_error_returns_500_without_details() -> None:
+def test_unexpected_internal_error_returns_500_without_details(make_account) -> None:
+    admin = make_account("internal-error-admin@vena-ia.dev", role="admin")
     service = MagicMock()
     service.list_all_documents.side_effect = RuntimeError("internal-sensitive-detail")
     app.dependency_overrides[get_document_service] = lambda: service
     internal_client = TestClient(app, raise_server_exceptions=False)
 
     try:
-        response = internal_client.get("/documents")
+        response = internal_client.get("/documents", headers=admin.headers)
     finally:
         internal_client.close()
         app.dependency_overrides.pop(get_document_service, None)

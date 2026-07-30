@@ -417,6 +417,36 @@ Manter os modelos dentro de `apps/api` evita a complexidade prematura de empacot
 
 ---
 
+## DEC-012 — v0.4.1 Security Gate antes do RAG
+
+**Data:** 2026-07-29
+**Status:** Aprovada
+**Tipo:** Segurança / Backend / Frontend
+**Documentos relacionados:** `docs/adr/ADR-0009-security-gate-authentication.md`, `docs/AUTHORIZATION_MATRIX.md`
+
+### Contexto
+
+A auditoria da v0.4.0 encontrou vulnerabilidades críticas de identidade, papel,
+propriedade e validação de upload.
+
+### Decisão
+
+Interromper a progressão para v0.5 RAG e entregar primeiro a v0.4.1 com senha
+PBKDF2, token JWT assinado, sessão HttpOnly, autorização centralizada e upload
+restrito a PDF validado por magic bytes.
+
+### Justificativa
+
+Construir RAG antes de isolar usuários e projetos ampliaria o impacto de acesso
+indevido a documentos e respostas.
+
+### Impacto
+
+`X-User-ID` deixa de autenticar, o cliente deixa de definir `role` e `owner_id`,
+rotas sensíveis exigem sessão válida e a v0.5 depende da aprovação deste branch.
+
+---
+
 # 5. Decisões Pendentes
 
 ## PEN-001 — Nome Final do Repositório GitHub
@@ -471,7 +501,7 @@ Deploy não faz parte da Fase 1. Deverá ser decidido após ambiente local e MVP
 
 ## PEN-004 — Provedor de Autenticação
 
-**Status:** Pendente  
+**Status:** Resolvida por `DEC-012` e `ADR-0009`
 **Tipo:** Segurança / Backend  
 **Opções:**
 
@@ -479,9 +509,10 @@ Deploy não faz parte da Fase 1. Deverá ser decidido após ambiente local e MVP
 * provedor externo;
 * abordagem híbrida.
 
-Recomendação inicial:
+Decisão:
 
-* autenticação própria com JWT para o MVP, mantendo abstração para troca futura.
+* autenticação própria com JWT assinado para o MVP, mantendo fronteiras que
+  permitam substituição futura.
 
 ---
 

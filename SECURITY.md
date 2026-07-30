@@ -42,16 +42,58 @@ Segurança é tratada desde a fundação do projeto (`DEC-009`), não como etapa
 
 ---
 
-## 5. Controle de Acesso e Upload (Aplicação)
+## 5. Autenticação e Sessão
 
-Quando os módulos de upload e autenticação forem implementados (`docs/ROADMAP.md`, v0.3–v0.4):
+A v0.4.1 adota:
 
-* Validação obrigatória de tipo e tamanho de arquivo em todo upload.
-* Autenticação e autorização antes de qualquer acesso a arquivos ou dados de projeto.
-* Logs de acesso a dados sensíveis, sem registrar o conteúdo sensível em si.
+* senha com PBKDF2-HMAC-SHA256, salt aleatório e 600.000 iterações;
+* JWT HS256 assinado com `AUTH_SECRET_KEY` de pelo menos 32 bytes;
+* expiração configurável, limitada entre 1 e 1.440 minutos;
+* identidade extraída somente do token validado;
+* cookie HttpOnly, `SameSite=Strict` e `Secure` configurável para o frontend;
+* Bearer token para clientes de API;
+* respostas e logs sem senha, hash ou token completo.
+
+`AUTH_SECRET_KEY` nunca possui valor padrão utilizável e deve ser fornecido por
+ambiente seguro. `X-User-ID` não é fonte de identidade.
+
+## 6. Autorização
+
+* cadastro público cria somente papel `member`;
+* não existe endpoint público de promoção para `admin`;
+* o papel efetivo é lido do banco após a validação do token;
+* usuários comuns acessam apenas recursos próprios;
+* administradores seguem regras explícitas em `docs/AUTHORIZATION_MATRIX.md`;
+* recursos de projeto inacessíveis retornam resposta segura sem vazar conteúdo.
+
+## 7. Upload
+
+Na v0.4.1, somente PDF é aceito. A API valida:
+
+* tamanho máximo;
+* nome normalizado e caminho interno com UUID;
+* extensão `.pdf`;
+* MIME `application/pdf`;
+* assinatura `%PDF-`;
+* prevenção de path traversal.
+
+Formatos CAD/CAM/CNC permanecem bloqueados até existirem parsers e validações
+específicos.
 
 ---
 
-## 6. Reportar uma Vulnerabilidade
+## 8. Reportar uma Vulnerabilidade
 
 Como o projeto está em fase de fundação e ainda não possui usuários externos em produção, vulnerabilidades identificadas devem ser reportadas diretamente ao mantenedor do repositório via issue privada ou contato direto, evitando detalhar a vulnerabilidade em uma issue pública antes de uma correção estar disponível.
+
+---
+
+## 9. Limites operacionais permanentes
+
+`SECURITY.md` é a política de segurança oficial e substitui a criação de uma
+política duplicada em `docs/SECURITY_POLICY.md`.
+
+```text
+PERMANENT_OPERATIONAL_LIMITS_SOURCE=docs/PERMANENT_OPERATIONAL_LIMITS.md
+PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
+```

@@ -6,6 +6,7 @@ from typing import TypeVar
 from fastapi import APIRouter, HTTPException
 
 from app.modules.ai.dependencies import AIServiceDependency
+from app.modules.auth.dependencies import CurrentUserDependency
 from packages.ai.core import (
     AIExecutionError,
     ChatRequest,
@@ -38,24 +39,38 @@ def _execute(operation: Callable[[], ResultT]) -> ResultT:
 
 
 @router.get("/providers", response_model=list[ProviderInfo])
-def list_providers(service: AIServiceDependency) -> list[ProviderInfo]:
+def list_providers(
+    _current_user: CurrentUserDependency,
+    service: AIServiceDependency,
+) -> list[ProviderInfo]:
     return service.providers()
 
 
 @router.post("/{provider}/chat", response_model=ChatResult)
-def chat(provider: str, payload: ChatRequest, service: AIServiceDependency) -> ChatResult:
+def chat(
+    provider: str,
+    payload: ChatRequest,
+    _current_user: CurrentUserDependency,
+    service: AIServiceDependency,
+) -> ChatResult:
     return _execute(lambda: service.chat(provider, payload))
 
 
 @router.post("/{provider}/embeddings", response_model=EmbeddingsResult)
 def embeddings(
-    provider: str, payload: EmbeddingsRequest, service: AIServiceDependency
+    provider: str,
+    payload: EmbeddingsRequest,
+    _current_user: CurrentUserDependency,
+    service: AIServiceDependency,
 ) -> EmbeddingsResult:
     return _execute(lambda: service.embeddings(provider, payload))
 
 
 @router.post("/{provider}/completion", response_model=CompletionResult)
 def completion(
-    provider: str, payload: CompletionRequest, service: AIServiceDependency
+    provider: str,
+    payload: CompletionRequest,
+    _current_user: CurrentUserDependency,
+    service: AIServiceDependency,
 ) -> CompletionResult:
     return _execute(lambda: service.completion(provider, payload))

@@ -1,10 +1,14 @@
 import uuid
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.modules.projects.models import Project
 
 
 def _uuid() -> str:
@@ -31,4 +35,4 @@ class FileAsset(Base):
     storage_key: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=_utcnow)
 
-    project: Mapped["Project"] = relationship(back_populates="files")  # noqa: F821
+    project: Mapped["Project"] = relationship(back_populates="files")
