@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-07-30 — Engineering / CAM Initial
+
 ### Adicionado
 * Fundação v0.7 para recomendação preliminar de fresamento baseada em família de
   material, ferramenta e limites da máquina.
