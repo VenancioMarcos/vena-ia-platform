@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-07-30 — CAD Initial
+
 ### Adicionado
 * v0.6 CAD Inicial com upload seguro de STEP Part 21 (`.step`/`.stp`).
 * Parser conservador de metadados STEP, schema, entidades, pontos cartesianos,
