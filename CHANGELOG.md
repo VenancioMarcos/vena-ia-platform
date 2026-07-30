@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-07-30 — RAG
+
 ### Adicionado
 * Fundação RAG v0.5 com extração segura de texto de PDFs por página.
 * Fragmentação configurável com rastreabilidade por documento, página, índice e
