@@ -9,7 +9,10 @@ from app.main import app
 from app.modules.documents.dependencies import (
     get_document_service,
     get_document_storage,
+    get_pdf_text_extractor,
 )
+from app.modules.documents.contracts import ExtractedPage
+from app.modules.documents.extraction import PdfExtractionError
 from app.modules.documents.storage import StorageError
 from conftest import TEST_PASSWORD
 
@@ -22,6 +25,24 @@ def storage() -> Generator[MagicMock, None, None]:
     app.dependency_overrides[get_document_storage] = lambda: storage_mock
     yield storage_mock
     app.dependency_overrides.pop(get_document_storage, None)
+
+
+@pytest.fixture()
+def text_extractor() -> Generator[MagicMock, None, None]:
+    extractor = MagicMock()
+    extractor.extract_pages.return_value = [
+        ExtractedPage(
+            page_number=1,
+            text="Machine safety procedures and maintenance schedule.",
+        ),
+        ExtractedPage(
+            page_number=2,
+            text="Spindle inspection and lubrication requirements.",
+        ),
+    ]
+    app.dependency_overrides[get_pdf_text_extractor] = lambda: extractor
+    yield extractor
+    app.dependency_overrides.pop(get_pdf_text_extractor, None)
 
 
 def _create_project(client, email: str = "documents@vena-ia.dev") -> tuple[str, str]:
@@ -344,6 +365,88 @@ def test_process_document_rejects_repeated_transition(client, storage) -> None:
 
     assert first.status_code == 200
     assert second.status_code == 409
+
+
+def test_processes_document_content_and_lists_traceable_chunks(
+    client,
+    storage,
+    text_extractor,
+) -> None:
+    project_id, user_id = _create_project(client)
+    created = _upload_document(client, project_id, user_id).json()
+    storage.download_file.return_value = PDF_BYTES
+
+    processed = client.post(
+        f"/documents/{created['id']}/processing",
+        headers=_headers(user_id),
+    )
+    chunks = client.get(
+        f"/documents/{created['id']}/chunks",
+        headers=_headers(user_id),
+    )
+    page_two = client.get(
+        f"/documents/{created['id']}/chunks?page=2",
+        headers=_headers(user_id),
+    )
+
+    assert processed.status_code == 200
+    assert processed.json()["document"]["status"] == "READY"
+    assert processed.json()["chunk_count"] == 2
+    assert chunks.status_code == 200
+    assert chunks.json()["total"] == 2
+    assert [
+        (chunk["document_id"], chunk["page_number"], chunk["chunk_index"])
+        for chunk in chunks.json()["chunks"]
+    ] == [
+        (created["id"], 1, 0),
+        (created["id"], 2, 1),
+    ]
+    assert page_two.status_code == 200
+    assert page_two.json()["total"] == 1
+    assert page_two.json()["chunks"][0]["page_number"] == 2
+    text_extractor.extract_pages.assert_called_once_with(PDF_BYTES)
+
+
+def test_processing_failure_sets_failed_state(
+    client,
+    storage,
+    text_extractor,
+) -> None:
+    project_id, user_id = _create_project(client)
+    created = _upload_document(client, project_id, user_id).json()
+    storage.download_file.return_value = PDF_BYTES
+    text_extractor.extract_pages.side_effect = PdfExtractionError("No extractable text")
+
+    processed = client.post(
+        f"/documents/{created['id']}/processing",
+        headers=_headers(user_id),
+    )
+    fetched = client.get(
+        f"/documents/{created['id']}",
+        headers=_headers(user_id),
+    )
+
+    assert processed.status_code == 422
+    assert processed.json() == {"detail": "No extractable text"}
+    assert fetched.json()["status"] == "FAILED"
+
+
+def test_denies_chunk_query_for_another_project_owner(
+    client,
+    storage,
+    text_extractor,
+) -> None:
+    project_id, owner_id = _create_project(client)
+    _, other_user_id = _create_project(client, "chunk-reader@vena-ia.dev")
+    created = _upload_document(client, project_id, owner_id).json()
+
+    response = client.get(
+        f"/documents/{created['id']}/chunks",
+        headers=_headers(other_user_id),
+    )
+
+    assert response.status_code == 404
+    storage.download_file.assert_not_called()
 
 
 def test_unexpected_internal_error_returns_500_without_details(make_account) -> None:

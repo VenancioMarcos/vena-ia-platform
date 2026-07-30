@@ -1,7 +1,7 @@
-from sqlalchemy import case, func, select
+from sqlalchemy import case, delete, func, select
 from sqlalchemy.orm import Session
 
-from app.modules.documents.models import Document
+from app.modules.documents.models import Document, DocumentChunk
 from app.modules.documents.schemas import DocumentStatus
 
 
@@ -118,3 +118,37 @@ class DocumentRepository:
         except Exception:
             self._db.rollback()
             raise
+
+
+class DocumentChunkRepository:
+    def __init__(self, db: Session) -> None:
+        self._db = db
+
+    def replace_for_document(
+        self,
+        document_id: str,
+        chunks: list[DocumentChunk],
+    ) -> list[DocumentChunk]:
+        try:
+            self._db.execute(
+                delete(DocumentChunk).where(DocumentChunk.document_id == document_id)
+            )
+            self._db.add_all(chunks)
+            self._db.commit()
+            for chunk in chunks:
+                self._db.refresh(chunk)
+            return chunks
+        except Exception:
+            self._db.rollback()
+            raise
+
+    def list_for_document(
+        self,
+        document_id: str,
+        page_number: int | None = None,
+    ) -> list[DocumentChunk]:
+        stmt = select(DocumentChunk).where(DocumentChunk.document_id == document_id)
+        if page_number is not None:
+            stmt = stmt.where(DocumentChunk.page_number == page_number)
+        stmt = stmt.order_by(DocumentChunk.chunk_index)
+        return list(self._db.scalars(stmt))

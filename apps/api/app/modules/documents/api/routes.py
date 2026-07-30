@@ -1,13 +1,24 @@
 from collections.abc import Callable, Sequence
 from typing import Annotated
 
-from fastapi import APIRouter, File, HTTPException, Response, UploadFile, status
+from fastapi import APIRouter, File, HTTPException, Query, Response, UploadFile, status
 
-from app.modules.documents.dependencies import DocumentServiceDependency
-from app.modules.documents.models import Document
+from app.modules.documents.dependencies import (
+    DocumentProcessingServiceDependency,
+    DocumentServiceDependency,
+)
+from app.modules.documents.extraction import PdfExtractionError
+from app.modules.documents.models import Document, DocumentChunk
+from app.modules.documents.processing import (
+    DocumentContentUnavailableError,
+    DocumentProcessingError,
+)
 from app.modules.documents.schemas import (
+    DocumentChunkListResponse,
+    DocumentChunkResponse,
     DocumentCountResponse,
     DocumentListResponse,
+    DocumentProcessingResponse,
     DocumentResponse,
     DocumentStatisticsResponse,
 )
@@ -37,6 +48,13 @@ def _document_list(documents: Sequence[Document]) -> DocumentListResponse:
     return DocumentListResponse(
         documents=[DocumentResponse.model_validate(document) for document in documents],
         total=len(documents),
+    )
+
+
+def _chunk_list(chunks: Sequence[DocumentChunk]) -> DocumentChunkListResponse:
+    return DocumentChunkListResponse(
+        chunks=[DocumentChunkResponse.model_validate(chunk) for chunk in chunks],
+        total=len(chunks),
     )
 
 
@@ -193,3 +211,48 @@ def process_document(
         raise _not_found(exc) from exc
     except InvalidDocumentTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@router.post(
+    "/documents/{document_id}/processing",
+    response_model=DocumentProcessingResponse,
+)
+def process_document_content(
+    document_id: str,
+    service: DocumentProcessingServiceDependency,
+) -> DocumentProcessingResponse:
+    try:
+        result = service.process(document_id)
+        return DocumentProcessingResponse(
+            document=DocumentResponse.model_validate(result.document),
+            chunk_count=result.chunk_count,
+        )
+    except (DocumentNotFoundError, ProjectNotFoundError) as exc:
+        raise _not_found(exc) from exc
+    except DocumentAccessDeniedError as exc:
+        raise _not_found(exc) from exc
+    except InvalidDocumentTransitionError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except PdfExtractionError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except DocumentContentUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except DocumentProcessingError as exc:
+        raise HTTPException(status_code=500, detail="Document processing failed") from exc
+
+
+@router.get(
+    "/documents/{document_id}/chunks",
+    response_model=DocumentChunkListResponse,
+)
+def list_document_chunks(
+    document_id: str,
+    service: DocumentProcessingServiceDependency,
+    page: Annotated[int | None, Query(ge=1)] = None,
+) -> DocumentChunkListResponse:
+    try:
+        return _chunk_list(service.list_chunks(document_id, page))
+    except (DocumentNotFoundError, ProjectNotFoundError) as exc:
+        raise _not_found(exc) from exc
+    except DocumentAccessDeniedError as exc:
+        raise _not_found(exc) from exc

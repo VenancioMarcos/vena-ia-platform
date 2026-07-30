@@ -1,6 +1,6 @@
 [project]
 name = "vena-ia-api"
-version = "0.4.1"
+version = "0.5.0"
 description = "Backend API for Vena_IA Platform"
 requires-python = ">=3.13"
 dependencies = [
@@ -15,6 +15,7 @@ dependencies = [
   "python-multipart>=0.0.20",
   "email-validator>=2.2.0",
   "minio>=7.2.0",
+  "pypdf>=6.1.0,<7.0.0",
 ]
 
 [project.optional-dependencies]

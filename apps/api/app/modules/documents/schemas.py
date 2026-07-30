@@ -49,3 +49,27 @@ class DocumentStatisticsResponse(BaseModel):
     ready: int
     failed: int
     total_storage_bytes: int
+
+
+class DocumentChunkResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    document_id: str
+    page_number: int
+    chunk_index: int
+    start_offset: int
+    end_offset: int
+    character_count: int
+    content: str
+    created_at: datetime
+
+
+class DocumentChunkListResponse(BaseModel):
+    chunks: list[DocumentChunkResponse]
+    total: int
+
+
+class DocumentProcessingResponse(BaseModel):
+    document: DocumentResponse
+    chunk_count: int

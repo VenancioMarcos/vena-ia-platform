@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,6 +13,8 @@ class Settings(BaseSettings):
     minio_bucket: str = "vena-ia-files"
     minio_secure: bool = False
     document_max_file_size: int = 104_857_600
+    rag_chunk_size: int = Field(default=1_000, ge=100, le=10_000)
+    rag_chunk_overlap: int = Field(default=150, ge=0, le=2_000)
     openai_api_key: str = ""
     cors_origins: list[str] = ["http://localhost:3000"]
     auth_secret_key: str = ""
