@@ -14,6 +14,7 @@ from app.modules.documents.pipeline import (
 from app.modules.documents.repository import DocumentRepository
 from app.modules.documents.schemas import DocumentStatus
 from app.modules.documents.storage import DocumentStorage, StorageError
+from app.modules.auth.authorization import user_can_access_project, user_is_admin
 from app.modules.projects.models import Project
 from app.modules.users.models import User
 
@@ -198,12 +199,12 @@ class DocumentService:
         project = self._db.get(Project, project_id)
         if project is None:
             raise ProjectNotFoundError("Project not found")
-        if project.owner_id != self._current_user.id and self._current_user.role != "admin":
+        if not user_can_access_project(self._current_user, project):
             raise DocumentAccessDeniedError("Document access denied")
         return project
 
     def _require_admin(self) -> User:
-        if self._current_user.role.lower() != "admin":
+        if not user_is_admin(self._current_user):
             raise DocumentAdministrationDeniedError("Administrative access required")
         return self._current_user
 

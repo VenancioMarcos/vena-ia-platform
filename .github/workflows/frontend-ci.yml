@@ -24,14 +24,17 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Enable pnpm
+        run: corepack enable
+
       - name: Install dependencies
         working-directory: apps/web
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
       - name: Typecheck
         working-directory: apps/web
-        run: npm run typecheck
+        run: pnpm run typecheck
 
       - name: Build
         working-directory: apps/web
-        run: npm run build
+        run: pnpm run build

@@ -121,6 +121,31 @@ Critério de conclusão:
 
 ---
 
+## v0.4.1 — Security Gate
+
+Objetivo: eliminar vulnerabilidades críticas antes da ingestão semântica.
+
+Entregas:
+
+* cadastro com senha protegida por hash;
+* login e token assinado com expiração;
+* sessão frontend em cookie HttpOnly;
+* autorização por usuário, papel e propriedade;
+* remoção de `X-User-ID` como identidade;
+* upload PDF com allowlist, MIME e magic bytes;
+* matriz de autorização e testes de segurança.
+
+Critério de conclusão:
+
+* usuários não conseguem assumir outra identidade, promover o próprio papel ou
+  acessar projetos e documentos de terceiros.
+
+Gate:
+
+* a v0.5 RAG só começa após revisão e integração da v0.4.1.
+
+---
+
 ## v0.5 — RAG
 
 Objetivo: criar a base de conhecimento semântica.

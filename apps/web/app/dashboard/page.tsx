@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { Boxes, Gauge, Loader2, Plus } from "lucide-react";
+import { Boxes, Gauge, Loader2, LogOut, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -13,35 +14,50 @@ type Project = {
   created_at: string;
 };
 
+class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number
+  ) {
+    super(message);
+  }
+}
+
 async function fetchJson<T>(input: string, init?: RequestInit): Promise<T> {
   const response = await fetch(input, {
     ...init,
+    credentials: "include",
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) }
   });
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-    throw new Error(body.detail ?? `Request failed with status ${response.status}`);
+    throw new ApiError(
+      body.detail ?? `Request failed with status ${response.status}`,
+      response.status
+    );
   }
   return response.json() as Promise<T>;
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-
   const [projectName, setProjectName] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
 
   async function loadProjects() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchJson<Project[]>(`${API_URL}/projects`);
-      setProjects(data);
+      await fetchJson(`${API_URL}/auth/me`);
+      setProjects(await fetchJson<Project[]>(`${API_URL}/projects`));
     } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        router.replace("/login");
+        return;
+      }
       setError(
         err instanceof Error
           ? `Não foi possível conectar à API (${API_URL}): ${err.message}`
@@ -53,7 +69,9 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    loadProjects();
+    void loadProjects();
+    // loadProjects intentionally runs once for the current authenticated session.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleCreateProject(event: FormEvent<HTMLFormElement>) {
@@ -61,36 +79,35 @@ export default function Dashboard() {
     setSubmitting(true);
     setError(null);
     try {
-      // v0.2 ainda não tem autenticação (planejada para a Fase 6 / v0.3+).
-      // Por ora, cria (ou reaproveita) um usuário simples a partir do formulário.
-      let ownerId: string;
-      try {
-        const user = await fetchJson<{ id: string }>(`${API_URL}/users`, {
-          method: "POST",
-          body: JSON.stringify({ name: userName, email: userEmail })
-        });
-        ownerId = user.id;
-      } catch {
-        const users = await fetchJson<Array<{ id: string; email: string }>>(
-          `${API_URL}/users`
-        );
-        const existing = users.find((u) => u.email === userEmail);
-        if (!existing) throw new Error("Não foi possível criar nem localizar o usuário.");
-        ownerId = existing.id;
-      }
-
       await fetchJson<Project>(`${API_URL}/projects`, {
         method: "POST",
-        body: JSON.stringify({ name: projectName, owner_id: ownerId })
+        body: JSON.stringify({ name: projectName })
       });
-
       setProjectName("");
       await loadProjects();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar projeto.");
+      if (err instanceof ApiError && err.status === 401) {
+        router.replace("/login");
+        return;
+      }
+      setError(
+        err instanceof ApiError && err.status === 403
+          ? "Você não possui permissão para criar este recurso."
+          : err instanceof Error
+            ? err.message
+            : "Erro ao criar projeto."
+      );
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function handleLogout() {
+    await fetch(`${API_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include"
+    });
+    router.replace("/login");
   }
 
   return (
@@ -103,9 +120,17 @@ export default function Dashboard() {
             </div>
             <div>
               <p className="text-sm font-semibold leading-5">Vena_IA Platform</p>
-              <p className="text-xs text-steel">Dashboard — v0.2 Core</p>
+              <p className="text-xs text-steel">Dashboard — v0.4.1 Security Gate</p>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => void handleLogout()}
+            className="flex items-center gap-2 rounded border border-line px-3 py-2 text-sm"
+          >
+            <LogOut size={16} aria-hidden="true" />
+            Sair
+          </button>
         </div>
       </section>
 
@@ -113,39 +138,20 @@ export default function Dashboard() {
         <div className="border border-line bg-white p-5">
           <h2 className="text-base font-semibold">Novo Projeto</h2>
           <p className="mt-1 text-xs text-steel">
-            Autenticação real ainda não implementada (planejada para a Fase 6). Por ora,
-            informe seu nome e e-mail para criar/reaproveitar seu usuário.
+            O proprietário é definido exclusivamente pela sessão autenticada.
           </p>
-          <form
-            onSubmit={handleCreateProject}
-            className="mt-4 grid gap-3 sm:grid-cols-3"
-          >
+          <form onSubmit={handleCreateProject} className="mt-4 grid gap-3">
             <input
               required
               placeholder="Nome do projeto"
               value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              className="rounded border border-line px-3 py-2 text-sm"
-            />
-            <input
-              required
-              placeholder="Seu nome"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              className="rounded border border-line px-3 py-2 text-sm"
-            />
-            <input
-              required
-              type="email"
-              placeholder="Seu e-mail"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
+              onChange={(event) => setProjectName(event.target.value)}
               className="rounded border border-line px-3 py-2 text-sm"
             />
             <button
               type="submit"
               disabled={submitting}
-              className="flex items-center justify-center gap-2 rounded bg-ink px-4 py-2 text-sm font-medium text-white disabled:opacity-60 sm:col-span-3"
+              className="flex items-center justify-center gap-2 rounded bg-ink px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
             >
               {submitting ? (
                 <Loader2 size={16} className="animate-spin" aria-hidden="true" />

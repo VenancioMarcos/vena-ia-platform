@@ -3,21 +3,21 @@
 ```text
 PROJECT=VENA_IA_PLATFORM
 ROLE=AUTONOMOUS_EXECUTOR
-STATE=OPERATIONAL_READY_WITH_SECURITY_GATE
-LAST_MISSION=NON_DESTRUCTIVE_REPOSITORY_AUDIT
-LAST_RESULT=COMPLETED_76_TESTS_PASSED_0_FAILED
-ACTIVE_BRANCH=main
-BLOCKERS=PRODUCTION_BLOCKED_UNTIL_REAL_AUTHENTICATION_AND_AUTHORIZATION
-NEXT_AUTHORIZED_ACTION=IMPLEMENT_AUTHENTICATION_AND_AUTHORIZATION_FOUNDATION
+STATE=V0_4_1_SECURITY_GATE_READY_FOR_CTO_REVIEW
+LAST_MISSION=AUTHENTICATION_AUTHORIZATION_AND_SECURE_UPLOAD
+LAST_RESULT=COMPLETED_95_TESTS_PASSED_0_FAILED
+ACTIVE_BRANCH=security/v0.4.1-authentication-authorization
+BLOCKERS=NONE_FOR_CTO_REVIEW;PRODUCTION_REQUIRES_SECRET_PROVISIONING_AND_CTO_APPROVAL
+NEXT_AUTHORIZED_ACTION=CTO_REVIEW_AND_MERGE
 ```
 
 ## Checkpoint
 
 ```text
-STATE=Auditoria concluída; desenvolvimento local pode continuar.
-DONE=Arquitetura, Git, segurança, testes, MVP, CNC e documentação verificados.
-NEXT=Remover autoatribuição de admin e implementar identidade verificada.
-ERROR=Frontend não validado por ausência de dependências locais e lockfile.
+STATE=Security Gate concluído em branch dedicada.
+DONE=JWT, PBKDF2, cookie HttpOnly, autorização, PDF magic bytes, frontend e documentação.
+NEXT=Revisão do CTO e merge; não iniciar v0.5 RAG antes da integração.
+ERROR=NONE; TestClient mantém um aviso de depreciação conhecido.
 ```
 
 **Atualizado em:** 2026-07-29

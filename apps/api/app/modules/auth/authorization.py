@@ -7,6 +7,14 @@ from app.modules.projects.models import Project
 from app.modules.users.models import User
 
 
+def user_is_admin(user: User) -> bool:
+    return user.role == "admin"
+
+
+def user_can_access_project(user: User, project: Project) -> bool:
+    return project.owner_id == user.id or user_is_admin(user)
+
+
 class AuthorizationService:
     def __init__(self, db: Session, current_user: User) -> None:
         self._db = db
@@ -14,7 +22,7 @@ class AuthorizationService:
 
     @property
     def is_admin(self) -> bool:
-        return self.current_user.role == "admin"
+        return user_is_admin(self.current_user)
 
     def require_admin(self) -> User:
         if not self.is_admin:
@@ -36,7 +44,7 @@ class AuthorizationService:
         project = self._db.get(Project, project_id)
         if project is None:
             raise HTTPException(status_code=404, detail="Project not found")
-        if project.owner_id != self.current_user.id and not self.is_admin:
+        if not user_can_access_project(self.current_user, project):
             raise HTTPException(status_code=404, detail="Project not found")
         return project
 

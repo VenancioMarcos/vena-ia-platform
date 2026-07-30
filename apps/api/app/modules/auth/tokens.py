@@ -56,6 +56,10 @@ def create_access_token(
     *,
     now: datetime | None = None,
 ) -> tuple[str, datetime]:
+    if not 1 <= expiration_minutes <= 1_440:
+        raise TokenConfigurationError(
+            "AUTH_TOKEN_EXPIRATION_MINUTES must be between 1 and 1440"
+        )
     issued_at = now or datetime.now(timezone.utc)
     expires_at = issued_at + timedelta(minutes=expiration_minutes)
     header = {"alg": _ALGORITHM, "typ": "JWT"}

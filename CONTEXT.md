@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 1.4
+**Versão:** 1.5
 **Última atualização:** 2026-07-29
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`
 
@@ -27,23 +27,23 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1 — Foundation ✅ concluída → v0.2 — Core ✅ concluída → v0.3 — IA Base ✅ publicada → v0.4.0 — Upload & Base de Conhecimento ✅ concluída e preparada para revisão da release.
+* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate implementada e preparada para revisão do CTO. A v0.5 RAG permanece bloqueada até integração.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
-* **Backend:** `apps/api` v0.4.0 com persistência real via SQLAlchemy — modelos `User`, `Project`, `FileAsset`, `Chat`, `Message` e `Document` organizados por módulo. Alembic configurado com as migrations `2aea3ea35160` e `4c3d8f1a2b7e`. Rotas de `users`, `projects`, `files`, `chat/{project_id}/messages` e `documents` fazem operações persistentes com validação de relações.
-* **AI Layer:** `packages/ai` fornece contratos tipados, factory e service sem registry global e provider OpenAI para chat, embeddings e completion. `apps/api` expõe `GET /ai/providers` e `POST /ai/{provider}/{chat|embeddings|completion}`, com Dependency Injection e mapeamento explícito de erros HTTP.
-* **Documents:** módulo em `apps/api` com relacionamento `Project (1) — (N) Documents`, repository, service, Dependency Injection e armazenamento físico no MinIO. O pipeline controla somente os estados `UPLOADED`, `PROCESSING`, `READY` e `FAILED`. O catálogo administrativo lista documentos por estado e agrega contagens e bytes armazenados, sem ler ou processar conteúdo. Não há parser, chunking, indexação, embeddings, RAG, OCR, busca ou IA.
-* **Frontend:** `apps/web` com dashboard mínimo em `/dashboard`, consumindo a API real para listar e criar projetos. Autenticação real ainda não existe — o formulário cria/reaproveita um usuário simples (limitação conhecida, ver `DEC-011` e `SECURITY.md`).
-* **Testes:** suíte `pytest` com 76 testes cobrindo users/projects/files/chats/documents/health e a AI Layer, incluindo segurança de upload, rollbacks, autorização por proprietário, catálogo administrativo, estatísticas, storage MinIO mockado e todas as transições do pipeline. Testes de persistência usam SQLite em memória (`DEC-011`) — PostgreSQL continua sendo o banco oficial (`DEC-005`).
-* **Infraestrutura e CI:** a AI Layer é um pacote Python instalável (`vena-ia-ai==0.3.0`) consumido pela API e incluído no build Docker. O Docker Compose completo foi construído e validado com PostgreSQL, Redis, MinIO, API e Web; health, catálogo de documentos, documentos por projeto, estatísticas e início do pipeline responderam HTTP 200. O Backend CI em Python 3.13 executa lint do repositório, `mypy packages/ai` e a suíte `pytest`, inclusive quando apenas `packages/ai` é alterado.
+* **Backend:** `apps/api` v0.4.1 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração e autorização centralizada. `X-User-ID` não autentica. Cadastro força `member`; identidade e propriedade vêm do token validado. Alembic possui as migrations `2aea3ea35160`, `4c3d8f1a2b7e` e `8a1c4e2f9b30`.
+* **AI Layer:** `packages/ai` fornece contratos tipados, factory, service e provider OpenAI. Os endpoints de chat, embeddings e completion exigem usuário autenticado.
+* **Documents:** upload e catálogo no MinIO protegidos por proprietário/papel. A v0.4.1 aceita somente PDF e valida tamanho, nome, extensão, MIME e assinatura `%PDF-`. O pipeline controla apenas estados; não há parser, chunking, indexação, embeddings, RAG, OCR ou busca.
+* **Frontend:** `apps/web` possui cadastro/login, sessão por cookie HttpOnly, logout, tratamento de 401/403 e dashboard que cria projetos usando exclusivamente a identidade autenticada. Typecheck e build de produção foram aprovados.
+* **Testes:** suíte `pytest` com 95 testes aprovados cobrindo autenticação, token ausente/inválido/expirado, rejeição de `X-User-ID`, papéis, propriedade, rotas protegidas, upload por magic bytes e regressões existentes. Persistência de testes usa SQLite em memória (`DEC-011`); PostgreSQL continua oficial (`DEC-005`).
+* **Infraestrutura e CI:** Docker Compose mantém PostgreSQL/pgvector, Redis, MinIO, API e Web. CI backend executa Ruff, mypy e Pytest. CI frontend usa pnpm com lockfile congelado, typecheck e build.
 * **Governança documental:** Foundation Pack v1.0 formaliza como múltiplas IAs colaboram no repositório.
-* **Auditoria técnica 2026-07-29:** auditoria local não destrutiva concluída. Backend com 76 testes aprovados, Ruff e mypy aprovados, Alembic com head único e Docker Compose válido. Nenhum segredo conhecido foi localizado. O MVP permanece parcial e a exposição externa está bloqueada até existir autenticação/autorização real. Relatórios em `docs/AUDIT_REPORT.md`, `docs/RISK_REGISTER.md`, `docs/REPOSITORY_MAP.md` e `docs/CODEX_STATUS.md`.
+* **Security Gate 2026-07-29:** riscos críticos R-001 a R-004 mitigados no branch `security/v0.4.1-authentication-authorization`. A matriz oficial está em `docs/AUTHORIZATION_MATRIX.md`; decisão em `docs/adr/ADR-0009-security-gate-authentication.md`.
 
 ---
 
 ## 4. O que NÃO está implementado ainda
 
-* Autenticação e autorização reais (o dashboard usa um substituto temporário — criação de usuário por formulário, sem login/senha/token).
+* Revogação imediata de JWT e fluxo administrativo de recuperação/definição de senha para usuários legados.
 * Processamento de documentos após o upload, incluindo extração de texto, OCR, parsing, chunking e indexação.
 * Acoplamento automático entre respostas da AI Layer e o histórico persistido por projeto; a v0.3.0 entrega a camada técnica e os endpoints, sem ampliar o fluxo funcional existente.
 * RAG e busca semântica.

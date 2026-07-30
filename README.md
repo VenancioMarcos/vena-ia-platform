@@ -61,6 +61,7 @@ Detalhes em [`ARCHITECTURE.md`](ARCHITECTURE.md).
 ```bash
 # 1. Configurar ambiente
 cp .env.example .env
+# Preencher AUTH_SECRET_KEY com segredo aleatório de pelo menos 32 bytes
 
 # 2. Subir infraestrutura
 docker compose up postgres redis minio
@@ -74,17 +75,23 @@ uvicorn app.main:app --reload
 
 # 4. Frontend
 cd apps/web
-npm install
-npm run dev
+corepack enable
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
 ## Rotas Iniciais da API
 
 * `GET /health`
-* `GET /users`
-* `GET /projects`
-* `GET /files`
-* `GET /chat`
+* `POST /auth/register`
+* `POST /auth/login`
+* `GET /auth/me`
+* `POST /auth/logout`
+* `GET|POST /users`, `/projects`, `/files`, `/chat` — sessão obrigatória
+* `GET|POST|DELETE /documents` — sessão e autorização por projeto
+
+Identidade é aceita somente por cookie HttpOnly ou Bearer token validado.
+`X-User-ID` não autentica.
 
 ---
 

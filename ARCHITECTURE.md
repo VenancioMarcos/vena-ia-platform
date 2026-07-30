@@ -104,6 +104,29 @@ Qualquer substituição de tecnologia central exige novo ADR (`GOVERNANCE.md`, S
 
 ---
 
-## 7. Evolução Planejada
+## 7. Security Gate v0.4.1
+
+```text
+Frontend
+  → POST /auth/login
+  → cookie HttpOnly / Bearer JWT assinado
+  → get_current_user
+  → identidade e papel confirmados no banco
+  → AuthorizationService
+  → recurso próprio, regra administrativa ou resposta segura
+```
+
+Senhas são protegidas por PBKDF2-HMAC-SHA256. A autenticação reside em
+`apps/api/app/modules/auth`; regras reutilizáveis de papel e propriedade ficam em
+`authorization.py`. O frontend nunca define `owner_id` ou `role`.
+
+Uploads passam por tamanho, normalização, extensão, MIME e magic bytes antes de
+serem enviados ao MinIO. Na v0.4.1, apenas PDF é permitido.
+
+Detalhes formais: `docs/adr/ADR-0009-security-gate-authentication.md`.
+
+---
+
+## 8. Evolução Planejada
 
 A evolução por fases (v0.2 Core → v1.0 MVP) está detalhada em `docs/ROADMAP.md`. Mudanças estruturais relevantes nesta arquitetura devem gerar um novo ADR em `docs/adr/`.
