@@ -62,3 +62,10 @@ ERROR=
 ```
 
 O estado operacional vigente é mantido em `docs/CODEX_STATUS.md`.
+
+## Limites operacionais permanentes
+
+```text
+PERMANENT_OPERATIONAL_LIMITS_SOURCE=docs/PERMANENT_OPERATIONAL_LIMITS.md
+PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
+```

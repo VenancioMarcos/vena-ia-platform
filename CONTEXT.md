@@ -1,9 +1,9 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 1.5
+**Versão:** 1.6
 **Última atualização:** 2026-07-29
-**Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`
+**Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
 
@@ -38,6 +38,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 * **Infraestrutura e CI:** Docker Compose mantém PostgreSQL/pgvector, Redis, MinIO, API e Web. CI backend executa Ruff, mypy e Pytest. CI frontend usa pnpm com lockfile congelado, typecheck e build.
 * **Governança documental:** Foundation Pack v1.0 formaliza como múltiplas IAs colaboram no repositório.
 * **Security Gate 2026-07-29:** riscos críticos R-001 a R-004 mitigados no branch `security/v0.4.1-authentication-authorization`. A matriz oficial está em `docs/AUTHORIZATION_MATRIX.md`; decisão em `docs/adr/ADR-0009-security-gate-authentication.md`.
+* **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
+
+```text
+PERMANENT_OPERATIONAL_LIMITS_SOURCE=docs/PERMANENT_OPERATIONAL_LIMITS.md
+PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
+```
 
 ---
 

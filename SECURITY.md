@@ -85,3 +85,15 @@ específicos.
 ## 8. Reportar uma Vulnerabilidade
 
 Como o projeto está em fase de fundação e ainda não possui usuários externos em produção, vulnerabilidades identificadas devem ser reportadas diretamente ao mantenedor do repositório via issue privada ou contato direto, evitando detalhar a vulnerabilidade em uma issue pública antes de uma correção estar disponível.
+
+---
+
+## 9. Limites operacionais permanentes
+
+`SECURITY.md` é a política de segurança oficial e substitui a criação de uma
+política duplicada em `docs/SECURITY_POLICY.md`.
+
+```text
+PERMANENT_OPERATIONAL_LIMITS_SOURCE=docs/PERMANENT_OPERATIONAL_LIMITS.md
+PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
+```
