@@ -29,13 +29,18 @@ usar login fora dos testes.
 * `POST /auth/login`
 * `GET /auth/me`
 * `POST /auth/logout`
-* Rotas protegidas: `/users`, `/projects`, `/files`, `/documents`, `/chat` e `/ai`
+* Rotas protegidas: `/users`, `/projects`, `/files`, `/documents`, `/chat`, `/ai` e `/cad`
 * `POST /documents/{document_id}/processing` — extrai texto de PDF e persiste chunks
 * `GET /documents/{document_id}/chunks` — consulta chunks rastreáveis por documento/página
+* `POST /documents/{document_id}/embeddings` — indexa chunks no pgvector
+* `POST /projects/{project_id}/knowledge/search` — busca semântica rastreável
+* `POST /projects/{project_id}/knowledge/ask` — resposta fundamentada em documentos
+* `POST /cad/documents/{document_id}/analysis` — análise STEP preliminar autenticada
 
 Rotas protegidas aceitam cookie HttpOnly ou `Authorization: Bearer <token>`.
 Consulte `docs/AUTHORIZATION_MATRIX.md`.
 
-O processamento documental da v0.5 é síncrono e limitado a PDFs com texto
-extraível. `RAG_CHUNK_SIZE` e `RAG_CHUNK_OVERLAP` configuram a fragmentação.
-OCR, embeddings, busca vetorial e respostas com LLM permanecem fora desta entrega.
+O processamento documental e a indexação da v0.5 são síncronos.
+`RAG_CHUNK_SIZE` e `RAG_CHUNK_OVERLAP` configuram a fragmentação.
+A análise CAD v0.6 aceita STEP Part 21 validado e retorna metadados e envelope
+preliminar; não afirma volume, topologia ou propriedades de kernel geométrico.
