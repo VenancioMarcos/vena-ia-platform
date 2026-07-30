@@ -1,10 +1,14 @@
 import uuid
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.modules.projects.models import Project
 
 
 def _uuid() -> str:
@@ -23,7 +27,7 @@ class Chat(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False, default="Chat")
     created_at: Mapped[datetime] = mapped_column(default=_utcnow)
 
-    project: Mapped["Project"] = relationship(back_populates="chats")  # noqa: F821
+    project: Mapped["Project"] = relationship(back_populates="chats")
     messages: Mapped[list["Message"]] = relationship(
         back_populates="chat", order_by="Message.created_at"
     )

@@ -26,8 +26,11 @@ from app.modules.documents.service import (
 router = APIRouter(tags=["documents"])
 
 
-def _not_found(exc: DocumentNotFoundError | ProjectNotFoundError) -> HTTPException:
-    return HTTPException(status_code=404, detail=str(exc))
+def _not_found(
+    exc: DocumentNotFoundError | ProjectNotFoundError | DocumentAccessDeniedError,
+) -> HTTPException:
+    detail = "Project not found" if isinstance(exc, DocumentAccessDeniedError) else str(exc)
+    return HTTPException(status_code=404, detail=detail)
 
 
 def _document_list(documents: Sequence[Document]) -> DocumentListResponse:
@@ -61,7 +64,7 @@ def create_document(
     except ProjectNotFoundError as exc:
         raise _not_found(exc) from exc
     except DocumentAccessDeniedError as exc:
-        raise HTTPException(status_code=403, detail=str(exc)) from exc
+        raise _not_found(exc) from exc
     except DocumentTooLargeError as exc:
         raise HTTPException(status_code=413, detail=str(exc)) from exc
     except InvalidDocumentError as exc:
@@ -79,7 +82,7 @@ def list_documents(
     except ProjectNotFoundError as exc:
         raise _not_found(exc) from exc
     except DocumentAccessDeniedError as exc:
-        raise HTTPException(status_code=403, detail=str(exc)) from exc
+        raise _not_found(exc) from exc
     return _document_list(documents)
 
 
@@ -95,7 +98,7 @@ def count_documents(
     except ProjectNotFoundError as exc:
         raise _not_found(exc) from exc
     except DocumentAccessDeniedError as exc:
-        raise HTTPException(status_code=403, detail=str(exc)) from exc
+        raise _not_found(exc) from exc
     return DocumentCountResponse(project_id=project_id, count=count)
 
 
@@ -140,7 +143,7 @@ def get_document(
     except ProjectNotFoundError as exc:
         raise _not_found(exc) from exc
     except DocumentAccessDeniedError as exc:
-        raise HTTPException(status_code=403, detail=str(exc)) from exc
+        raise _not_found(exc) from exc
 
 
 @router.delete("/documents/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -150,7 +153,7 @@ def delete_document(document_id: str, service: DocumentServiceDependency) -> Res
     except ProjectNotFoundError as exc:
         raise _not_found(exc) from exc
     except DocumentAccessDeniedError as exc:
-        raise HTTPException(status_code=403, detail=str(exc)) from exc
+        raise _not_found(exc) from exc
     except DocumentStorageError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -170,7 +173,7 @@ def remove_project_document(
     except (ProjectNotFoundError, DocumentNotFoundError) as exc:
         raise _not_found(exc) from exc
     except DocumentAccessDeniedError as exc:
-        raise HTTPException(status_code=403, detail=str(exc)) from exc
+        raise _not_found(exc) from exc
     except DocumentProjectMismatchError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except DocumentStorageError as exc:
@@ -187,6 +190,6 @@ def process_document(
     except (DocumentNotFoundError, ProjectNotFoundError) as exc:
         raise _not_found(exc) from exc
     except DocumentAccessDeniedError as exc:
-        raise HTTPException(status_code=403, detail=str(exc)) from exc
+        raise _not_found(exc) from exc
     except InvalidDocumentTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc

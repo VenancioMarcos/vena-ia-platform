@@ -199,7 +199,8 @@ def test_denies_access_to_another_owner_documents(client, storage) -> None:
         f"/projects/{project_id}/documents", headers=_headers(other_user_id)
     )
 
-    assert response.status_code == 403
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Project not found"}
 
 
 def test_returns_not_found_for_missing_document(client, storage) -> None:

@@ -29,6 +29,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * **Breaking:** rotas protegidas exigem cookie de sessão ou
   `Authorization: Bearer <token>`.
 * CI frontend passa a usar pnpm com `--frozen-lockfile`.
+* Recursos documentais de projetos inacessíveis retornam `404`, em alinhamento
+  com a matriz de autorização e sem confirmar a existência do recurso.
+* Relacionamentos ORM usam imports protegidos por `TYPE_CHECKING`, permitindo
+  validação mypy integral da aplicação.
+* O contexto Docker do frontend exclui `node_modules`, `.next`, ambientes e logs.
 
 ---
 

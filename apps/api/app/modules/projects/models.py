@@ -1,10 +1,17 @@
 import uuid
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.modules.chats.models import Chat
+    from app.modules.documents.models import Document
+    from app.modules.files.models import FileAsset
+    from app.modules.users.models import User
 
 
 def _uuid() -> str:
@@ -24,7 +31,7 @@ class Project(Base):
     owner_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(default=_utcnow)
 
-    owner: Mapped["User"] = relationship(back_populates="projects")  # noqa: F821
-    files: Mapped[list["FileAsset"]] = relationship(back_populates="project")  # noqa: F821
-    documents: Mapped[list["Document"]] = relationship(back_populates="project")  # noqa: F821
-    chats: Mapped[list["Chat"]] = relationship(back_populates="project")  # noqa: F821
+    owner: Mapped["User"] = relationship(back_populates="projects")
+    files: Mapped[list["FileAsset"]] = relationship(back_populates="project")
+    documents: Mapped[list["Document"]] = relationship(back_populates="project")
+    chats: Mapped[list["Chat"]] = relationship(back_populates="project")

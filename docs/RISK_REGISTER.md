@@ -18,6 +18,7 @@
 | R-012 | BAIXO | A suíte gera aviso de depreciação de `TestClient`/HTTPX. | Planejar atualização compatível antes que a dependência remova o comportamento. | ABERTO |
 | R-013 | MÉDIO | JWT stateless não possui revogação imediata antes da expiração. | Adicionar rotação/revogação de sessão antes de produção multiusuário. | ABERTO |
 | R-014 | MÉDIO | Usuários legados preservados pela migration não possuem hash de senha. | Criar fluxo administrativo auditável de definição ou recuperação de credencial. | ABERTO |
+| R-015 | BAIXO | O contexto Docker do Web incluía artefatos locais (`node_modules` e `.next`), ampliando o build para centenas de MB. | `.dockerignore` dedicado reduz o contexto a arquivos-fonte e exclui ambientes, dependências, builds e logs locais. | MITIGADO v0.4.1 |
 
 ## Segurança de segredos
 
