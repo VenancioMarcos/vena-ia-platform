@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 1.7
+**Versão:** 1.8
 **Última atualização:** 2026-07-29
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -37,7 +37,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 * **Testes:** suíte `pytest` com 95 testes aprovados cobrindo autenticação, token ausente/inválido/expirado, rejeição de `X-User-ID`, papéis, propriedade, rotas protegidas, upload por magic bytes e regressões existentes. Ruff, mypy integral em 60 arquivos, compile/import, ciclo Alembic e frontend typecheck/build também foram aprovados. Persistência de testes usa SQLite em memória (`DEC-011`); PostgreSQL continua oficial (`DEC-005`).
 * **Infraestrutura e CI:** Docker Compose mantém PostgreSQL/pgvector, Redis, MinIO, API e Web. As imagens locais de API e Web foram construídas na revisão final; o frontend possui contexto Docker isolado de artefatos locais. CI backend executa Ruff, mypy e Pytest. CI frontend usa pnpm com lockfile congelado, typecheck e build.
 * **Governança documental:** Foundation Pack v1.0 formaliza como múltiplas IAs colaboram no repositório.
-* **Security Gate 2026-07-29:** riscos críticos R-001 a R-004 mitigados e revisão final validada no branch `security/v0.4.1-authentication-authorization`. A matriz oficial está em `docs/AUTHORIZATION_MATRIX.md`; decisão em `docs/adr/ADR-0009-security-gate-authentication.md`. A publicação autorizada em Draft PR é o próximo passo.
+* **Security Gate 2026-07-29:** riscos críticos R-001 a R-004 mitigados e revisão final validada no branch `security/v0.4.1-authentication-authorization`, já enviado ao `origin`. A matriz oficial está em `docs/AUTHORIZATION_MATRIX.md`; decisão em `docs/adr/ADR-0009-security-gate-authentication.md`. A criação da Draft PR está em `BLOCKED_REAL`: integração GitHub sem permissão (`403`), autenticação `gh` inválida e navegador GitHub sem sessão.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
