@@ -40,7 +40,9 @@ class StepTextParser:
     _entity = re.compile(r"#[0-9]+\s*=\s*([A-Z0-9_]+)\s*\(", re.IGNORECASE)
     _point = re.compile(
         r"CARTESIAN_POINT\s*\([^,]*,\s*\(\s*"
-        r"([-+0-9.E]+)\s*,\s*([-+0-9.E]+)\s*,\s*([-+0-9.E]+)\s*\)\s*\)",
+        r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[ED][-+]?\d+)?)\s*,\s*"
+        r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[ED][-+]?\d+)?)\s*,\s*"
+        r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[ED][-+]?\d+)?)\s*\)\s*\)",
         re.IGNORECASE,
     )
     _file_name = re.compile(r"FILE_NAME\s*\(\s*'([^']*)'", re.IGNORECASE)
@@ -51,7 +53,7 @@ class StepTextParser:
             raise StepParseError("Invalid STEP Part 21 signature")
         if b"\x00" in content:
             raise StepParseError("STEP file contains invalid binary content")
-        text = content.decode("utf-8", errors="replace")
+        text = content.decode("latin-1")
         if "END-ISO-10303-21;" not in text.upper():
             raise StepParseError("STEP Part 21 terminator is missing")
 
@@ -63,7 +65,10 @@ class StepTextParser:
         points: list[tuple[float, float, float]] = []
         for coordinates in self._point.findall(text):
             try:
-                points.append(tuple(float(value) for value in coordinates))  # type: ignore[arg-type]
+                x, y, z = (
+                    float(value.replace("D", "E")) for value in coordinates
+                )
+                points.append((x, y, z))
             except ValueError as exc:
                 raise StepParseError("STEP contains invalid Cartesian coordinates") from exc
 
