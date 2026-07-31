@@ -508,6 +508,32 @@ DOI, ANOVA inferencial, revisão sistemática e publicação continuam fora do e
 
 ---
 
+## DEC-015 — Integração do MVP v1.0 pelo fluxo existente
+
+**Data:** 2026-07-30
+**Status:** Aprovada
+**Tipo:** Produto / Arquitetura / Backend / Frontend
+**Documentos relacionados:** `docs/adr/ADR-0015-mvp-integration-v1.md`
+
+### Contexto
+
+As capacidades do roadmap existiam em módulos, mas chat/IA e histórico estavam
+desacoplados e o frontend não oferecia o fluxo completo.
+
+### Decisão
+
+Integrar os módulos existentes por `ChatService`, persistir evidências/estado nas
+mensagens, reutilizar `ResearchReport` e entregar uma página de projeto que conduz
+PDF → processamento/indexação → pergunta/histórico → relatório.
+
+### Impacto
+
+A migration `e15a7c9d4f20` é a única mudança de schema. O envio público de mensagem
+não aceita `assistant`. O E2E determinístico comprova o fluxo e o isolamento entre
+usuários sem consumir API paga.
+
+---
+
 # 5. Decisões Pendentes
 
 ## PEN-001 — Nome Final do Repositório GitHub

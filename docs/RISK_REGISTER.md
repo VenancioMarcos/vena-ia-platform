@@ -1,6 +1,6 @@
 # Registro de Riscos
 
-**Data da revisão:** 2026-07-29
+**Data da revisão:** 2026-07-30
 
 | ID | Severidade | Risco e evidência | Mitigação recomendada | Estado |
 |---|---|---|---|---|
@@ -21,7 +21,12 @@
 | R-027 | ALTO | Preparação ANOVA pode ser confundida com inferência validada. | Não calcular F, valor-p ou significância; expor somente resumo descritivo e checklist. | MONITORAR v0.9 |
 | R-028 | CRÍTICO | Recursos científicos poderiam vazar entre projetos. | AuthorizationService em todos os recursos; identidade somente do JWT; acesso negado como 404. | MONITORAR v0.9 |
 | R-029 | ALTO | Biblioteca preliminar pode ser apresentada como revisão sistemática. | Documentar exclusão de PRISMA, bases externas, meta-análise e publicação. | MONITORAR v0.9 |
-| R-006 | MÉDIO | O frontend apresenta textos históricos enquanto backend e roadmap avançam por versões independentes. | Tratar versão da API como fonte técnica e revisar textos do frontend na integração v1.0. | MONITORAR |
+| R-030 | ALTO | A API não possui rate limiting. | Aceito para código MVP local; exigir proxy/gateway e limites antes de exposição pública. | ACEITO v1.0 / BLOQUEIA PRODUÇÃO |
+| R-031 | ALTO | Não há backup/restore automatizado para PostgreSQL e MinIO. | Aceito para ambiente local; definir e testar política antes de piloto com dados reais. | ACEITO v1.0 / BLOQUEIA PRODUÇÃO |
+| R-032 | MÉDIO | Observabilidade limita-se a health, erros controlados e CI. | Adotar métricas/tracing antes de operação externa. | MONITORAR v1.0 |
+| R-033 | ALTO | Chat/RAG depende de PostgreSQL, MinIO, pgvector e provedor de IA. | Falhar sem resposta falsa; permitir retry; documentar dependências. | MONITORAR v1.0 |
+| R-034 | MÉDIO | Não há deploy, capacidade ou escalabilidade validados. | Release limita-se ao código e ambiente local; medir antes de piloto/deploy. | ACEITO v1.0 |
+| R-006 | MÉDIO | O frontend apresentava textos históricos enquanto backend e roadmap avançavam. | Textos operacionais foram atualizados e as versões de API/frontend unificadas em 1.0.0. | MITIGADO v1.0 |
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
 | R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o projeto e o CI exigem Python 3.13. | Validar também em Python 3.13 e manter matriz explícita de versões suportadas. | ABERTO |
 | R-009 | MÉDIO | `minio/minio:latest` não está fixado por versão ou digest. | Fixar imagem validada e estabelecer rotina de atualização. | ABERTO |

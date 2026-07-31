@@ -8,6 +8,20 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado
+* Fluxo frontend integrado para projeto, PDF, processamento/indexação, pergunta
+  fundamentada, fontes, histórico e relatório técnico inicial.
+* `ChatService` conecta RAG e histórico persistente, incluindo estado, autoria,
+  erro controlado e evidências por documento, página, chunk, score e trecho.
+* Listagem de relatórios por projeto e migration `e15a7c9d4f20`.
+* Teste E2E determinístico do MVP e isolamento entre dois usuários, sem API paga.
+* Guias de instalação, uso, smoke test e matriz de auditoria do MVP.
+
+### Alterado
+* API e frontend avançam para `1.0.0`.
+* Envio público de mensagens não permite mais falsificar o papel `assistant`;
+  respostas do assistente são persistidas somente pela orquestração interna.
+
 ## [0.9.0] — 2026-07-30 — Scientific Research Foundation
 
 ### Adicionado

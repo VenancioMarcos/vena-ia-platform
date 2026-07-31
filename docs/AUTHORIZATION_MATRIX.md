@@ -34,6 +34,8 @@
 | Referências científicas | extrair/consultar | Próprio | Próprio | Permitido | Negado (`401`) |
 | Síntese científica RAG | solicitar com fontes autorizadas | Próprio | Próprio | Permitido | Negado (`401`) |
 | DOE/ANOVA/relatórios | criar/consultar rascunhos | Próprio | Próprio | Permitido | Negado (`401`) |
+| Chat RAG/histórico | perguntar e consultar mensagens/fontes | Próprio | Próprio | Permitido | Negado (`401`) |
+| Relatórios MVP | listar/reabrir por projeto | Próprio | Próprio | Permitido | Negado (`401`) |
 
 ## Quebras de contrato necessárias
 
@@ -43,6 +45,8 @@
 - `POST /users` e `POST /auth/register` exigem `password` e rejeitam `role`.
 - `POST /projects` não aceita mais `owner_id`; o proprietário é extraído do token.
 - Listagens de projetos e arquivos são limitadas ao proprietário, salvo admin.
+- `POST /chat/{project_id}/messages` aceita somente papel `user`; o cliente não
+  pode persistir uma mensagem falsa como `assistant`.
 
 Essas quebras removem vulnerabilidades críticas e são registradas também em
 `CHANGELOG.md` e `CONTEXT.md`.
