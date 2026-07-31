@@ -1,17 +1,17 @@
 # Estado de execução CTO
 
 ```text
-MISSION=V0_8_CNC_FOUNDATION
-STATE=IMPLEMENTATION_IN_PROGRESS
-BRANCH=feature/v0.8-cnc-initial
-PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/6
+MISSION=V0_8_CNC_INITIAL_RELEASE
+STATE=MERGED_RELEASE_PREPARATION
+BRANCH=main
+PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/8
 V0_6_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v0.6.0
-PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/7
-HEAD_REF=feature/v0.7-engineering-cam-initial
+V0_7_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v0.7.0
+MERGE_COMMIT=302201bd3d1c136dd917db8c7de409a5cd341829
 BLOCKERS=NONE
-TESTS=141_PASSED
+TESTS=144_PASSED
 QUALITY=RUFF_MYPY_GITHUB_CI_PASSED
-NEXT=CTO_REVIEW_V0_7_FOUNDATION
+NEXT=PUBLISH_V0_8_0_AND_START_V0_9
 ```
 
 Este arquivo deve ser atualizado apenas com evidências verificadas.

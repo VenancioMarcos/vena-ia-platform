@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-07-30 — CNC Initial
+
 ### Adicionado
 * Fundação v0.8 com estrutura neutra e não executável de operações CNC.
 * Preview autenticado para estratégia futura Fanuc Oi e compatibilidade planejada
