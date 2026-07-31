@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.0.0] — 2026-07-30 — Vena_IA Platform MVP
+
 ### Adicionado
 * Fluxo frontend integrado para projeto, PDF, processamento/indexação, pergunta
   fundamentada, fontes, histórico e relatório técnico inicial.
