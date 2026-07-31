@@ -1,3 +1,9 @@
+from unittest.mock import MagicMock
+
+from app.main import app
+from app.modules.documents.dependencies import get_knowledge_service
+
+
 def _create_project(client, make_account, email: str):
     owner = make_account(email)
     project = client.post(
@@ -62,3 +68,30 @@ def test_chat_is_hidden_from_another_owner(client, make_account) -> None:
     response = client.get(f"/chat/{project_id}/messages", headers=other.headers)
 
     assert response.status_code == 404
+
+
+def test_failed_provider_persists_failed_question_without_fake_answer(
+    client, make_account
+) -> None:
+    project_id, owner = _create_project(
+        client,
+        make_account,
+        "chat-provider-failure@vena-ia.dev",
+    )
+    knowledge = MagicMock()
+    knowledge.answer.side_effect = RuntimeError("provider offline")
+    app.dependency_overrides[get_knowledge_service] = lambda: knowledge
+    try:
+        response = client.post(
+            f"/chat/{project_id}/ask",
+            headers=owner.headers,
+            json={"question": "What does the document say?"},
+        )
+    finally:
+        app.dependency_overrides.pop(get_knowledge_service, None)
+
+    assert response.status_code == 502
+    history = client.get(f"/chat/{project_id}/messages", headers=owner.headers)
+    assert len(history.json()) == 1
+    assert history.json()[0]["status"] == "FAILED"
+    assert history.json()[0]["role"] == "user"

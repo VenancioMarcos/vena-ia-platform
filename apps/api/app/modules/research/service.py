@@ -234,6 +234,10 @@ class ResearchService:
         self._authorization.require_project_access(report.project_id)
         return report
 
+    def list_reports(self, project_id: str) -> list[ResearchReport]:
+        self._authorization.require_project_access(project_id)
+        return self._repository.list_reports(project_id)
+
 
 class ResearchSynthesisService:
     def __init__(self, knowledge: KnowledgeService) -> None:

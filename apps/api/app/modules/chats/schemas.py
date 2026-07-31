@@ -1,11 +1,12 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ChatCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     project_id: str
-    title: str = "Chat"
+    title: str = Field(default="Chat", min_length=1, max_length=255)
 
 
 class ChatRead(BaseModel):
@@ -18,8 +19,9 @@ class ChatRead(BaseModel):
 
 
 class MessageCreate(BaseModel):
-    role: str
-    content: str
+    model_config = ConfigDict(extra="forbid")
+    role: str = "user"
+    content: str = Field(min_length=1, max_length=20_000)
 
 
 class MessageRead(BaseModel):
@@ -27,6 +29,21 @@ class MessageRead(BaseModel):
 
     id: str
     chat_id: str
+    user_id: str | None
     role: str
     content: str
+    status: str
+    evidence: list[dict[str, object]]
+    error: str | None
     created_at: datetime
+
+
+class ChatAskRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    question: str = Field(min_length=1, max_length=4_000)
+    limit: int = Field(default=5, ge=1, le=20)
+
+
+class ChatAskResponse(BaseModel):
+    user_message: MessageRead
+    assistant_message: MessageRead

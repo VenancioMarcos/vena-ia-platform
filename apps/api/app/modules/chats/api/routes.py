@@ -1,13 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import select
-from sqlalchemy.orm import Session
 
-from app.core.database import get_db
 from app.modules.auth.dependencies import AuthorizationDependency
-from app.modules.chats.models import Chat, Message
-from app.modules.chats.schemas import MessageCreate, MessageRead
-from app.modules.projects.models import Project
+from app.modules.chats.dependencies import ChatServiceDependency
+from app.modules.chats.schemas import (
+    ChatAskRequest,
+    ChatAskResponse,
+    MessageCreate,
+    MessageRead,
+)
+from app.modules.chats.service import ChatGenerationError
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -20,56 +22,57 @@ class ChatStatus(BaseModel):
 
 @router.get("", response_model=ChatStatus)
 def chat_status(_authorization: AuthorizationDependency) -> ChatStatus:
-    """Static capability descriptor for the chat module.
-
-    Real AI-backed responses are planned for v0.3 - IA Base (docs/ROADMAP.md).
-    In v0.2 this module only persists messages; it does not yet generate
-    assistant replies.
-    """
     return ChatStatus(
         status="ready",
         assistant="Vena_IA",
-        capabilities=["engineering-assistance", "project-context", "rag-planned"],
+        capabilities=[
+            "grounded-project-knowledge",
+            "persistent-history",
+            "traceable-evidence",
+        ],
     )
-
-
-def _get_or_create_chat(project: Project, db: Session) -> Chat:
-    chat = db.scalar(select(Chat).where(Chat.project_id == project.id))
-    if not chat:
-        chat = Chat(project_id=project.id, title=f"Chat - {project.name}")
-        db.add(chat)
-        db.commit()
-        db.refresh(chat)
-    return chat
 
 
 @router.get("/{project_id}/messages", response_model=list[MessageRead])
 def list_messages(
     project_id: str,
-    authorization: AuthorizationDependency,
-    db: Session = Depends(get_db),
-) -> list[Message]:
-    authorization.require_project_access(project_id)
-    chat = db.scalar(select(Chat).where(Chat.project_id == project_id))
-    if not chat:
-        return []
-    return list(chat.messages)
+    service: ChatServiceDependency,
+) -> list[MessageRead]:
+    return [
+        MessageRead.model_validate(message)
+        for message in service.list_messages(project_id)
+    ]
 
 
 @router.post("/{project_id}/messages", response_model=MessageRead, status_code=201)
 def create_message(
     project_id: str,
     payload: MessageCreate,
-    authorization: AuthorizationDependency,
-    db: Session = Depends(get_db),
-) -> Message:
-    if payload.role not in {"user", "assistant"}:
-        raise HTTPException(status_code=422, detail="role must be 'user' or 'assistant'")
+    service: ChatServiceDependency,
+) -> MessageRead:
+    if payload.role != "user":
+        raise HTTPException(status_code=422, detail="Only user messages may be submitted")
+    return MessageRead.model_validate(
+        service.create_user_message(project_id, payload.content)
+    )
 
-    project = authorization.require_project_access(project_id)
-    chat = _get_or_create_chat(project, db)
-    message = Message(chat_id=chat.id, role=payload.role, content=payload.content)
-    db.add(message)
-    db.commit()
-    db.refresh(message)
-    return message
+
+@router.post("/{project_id}/ask", response_model=ChatAskResponse)
+def ask_project_chat(
+    project_id: str,
+    payload: ChatAskRequest,
+    service: ChatServiceDependency,
+) -> ChatAskResponse:
+    try:
+        user_message, assistant_message = service.ask(
+            project_id, payload.question, payload.limit
+        )
+    except ChatGenerationError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="Unable to generate grounded response",
+        ) from exc
+    return ChatAskResponse(
+        user_message=MessageRead.model_validate(user_message),
+        assistant_message=MessageRead.model_validate(assistant_message),
+    )

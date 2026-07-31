@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, String, Text
+from sqlalchemy import ForeignKey, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -38,8 +38,14 @@ class Message(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     chat_id: Mapped[str] = mapped_column(ForeignKey("chats.id"), nullable=False)
+    user_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     role: Mapped[str] = mapped_column(String(20), nullable=False)  # "user" | "assistant"
     content: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="COMPLETED")
+    evidence: Mapped[list[dict[str, object]]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
+    error: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=_utcnow)
 
     chat: Mapped["Chat"] = relationship(back_populates="messages")

@@ -14,12 +14,12 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 const modules = [
-  { name: "Projetos", status: "Planejado", icon: Boxes },
-  { name: "Upload", status: "Planejado", icon: FileUp },
-  { name: "Chat IA", status: "Base criada", icon: MessageSquareText },
-  { name: "RAG", status: "Planejado", icon: BrainCircuit },
-  { name: "CAD/CAM/CNC", status: "Roadmap", icon: Factory },
-  { name: "Segurança", status: "Fundação", icon: ShieldCheck }
+  { name: "Projetos", status: "Operacional", icon: Boxes },
+  { name: "Upload PDF", status: "Operacional", icon: FileUp },
+  { name: "Chat IA", status: "Fundamentado", icon: MessageSquareText },
+  { name: "RAG", status: "Rastreável", icon: BrainCircuit },
+  { name: "CAD/CAM/CNC", status: "Preliminar", icon: Factory },
+  { name: "Segurança", status: "Security Gate", icon: ShieldCheck }
 ];
 
 const milestones = [
@@ -54,7 +54,7 @@ export default function Home() {
           </div>
           <div className="hidden items-center gap-2 text-sm text-steel sm:flex">
             <CircleCheck size={17} className="text-signal" aria-hidden="true" />
-            v0.1 Foundation
+            v1.0 MVP
           </div>
         </div>
       </section>
@@ -92,11 +92,11 @@ export default function Home() {
             <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <h1 className="text-3xl font-semibold tracking-normal text-ink">
-                  Fundação operacional da Vena_IA
+                  Vena_IA Platform MVP
                 </h1>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-steel">
-                  Base inicial para projetos de engenharia, upload técnico, chat com IA, RAG e
-                  evolução para CAD/CAM/CNC.
+                  Fluxo integrado para projetos, documentos, conhecimento técnico
+                  rastreável, histórico e relatórios iniciais.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm">
@@ -106,7 +106,7 @@ export default function Home() {
                 </div>
                 <div className="border border-line bg-white px-4 py-3">
                   <p className="text-xs text-steel">Roadmap</p>
-                  <p className="font-semibold">v0.1</p>
+                  <p className="font-semibold">v1.0</p>
                 </div>
               </div>
             </div>
@@ -141,10 +141,10 @@ export default function Home() {
             </div>
 
             <div className="border border-line bg-white p-5">
-              <h2 className="text-base font-semibold">Próximo bloco</h2>
+              <h2 className="text-base font-semibold">Limites de operação</h2>
               <div className="mt-4 grid gap-3 text-sm leading-6 text-steel">
-                <p>Banco inicial, migrations, autenticação e persistência dos projetos.</p>
-                <p className="font-medium text-ink">Fase 3-7</p>
+                <p>IA e relatórios exigem revisão humana. CAD/CAM são preliminares.</p>
+                <p className="font-medium text-ink">CNC não gera saída executável.</p>
               </div>
             </div>
           </section>

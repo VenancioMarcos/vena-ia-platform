@@ -30,7 +30,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Vena_IA API",
         description="API for intelligent engineering and CNC manufacturing workflows.",
-        version="0.9.0",
+        version="1.0.0",
         lifespan=lifespan,
     )
 
@@ -44,7 +44,7 @@ def create_app() -> FastAPI:
 
     @app.get("/health", tags=["health"])
     def health() -> dict[str, str]:
-        return {"status": "ok", "service": "vena-ia-api"}
+        return {"status": "ok", "service": "vena-ia-api", "version": "1.0.0"}
 
     app.include_router(users_router)
     app.include_router(auth_router)
