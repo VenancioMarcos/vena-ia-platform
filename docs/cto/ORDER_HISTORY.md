@@ -36,3 +36,9 @@ da v0.9. A v1.0 permanece proibida até nova ordem oficial posterior.
 Nova ordem oficial posterior revogou a proibição temporária de iniciar v1.0 e
 autorizou implementação, PR, Squash Merge, tag e release `v1.0.0`, sem deploy e
 sem iniciar v1.1.
+
+## 2026-07-30 — v1.0.0 publicada
+
+A PR #10 foi aprovada pelos checks de backend e frontend, integrada por Squash
+Merge e publicada como `v1.0.0`. A validação pós-merge e a validação direta da
+tag foram aprovadas; a entrega aguarda apenas o aceite formal do CTO.

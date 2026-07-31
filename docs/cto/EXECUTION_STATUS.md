@@ -2,10 +2,13 @@
 
 ```text
 MISSION=V1_0_MVP_INTEGRATION_STABILIZATION_RELEASE
-STATE=POST_MERGE_VALIDATION_APPROVED
+STATE=V1_0_RELEASED_AWAITING_CTO_APPROVAL
 BRANCH=main
 PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/10
 MERGE_COMMIT=7a597d813f972c630c61cda83b2e6c3298010ce6
+RELEASE_COMMIT=210ba8b9389c8ce83ecb37dec971df67e9755fc3
+TAG=v1.0.0
+RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.0.0
 V0_9_PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/9
 V0_9_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v0.9.0
 V0_8_PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/8
@@ -18,7 +21,8 @@ TESTS=163_PASSED
 QUALITY=RUFF_MYPY_FRONTEND_BUILD_POSTGRES_MIGRATIONS_DOCKER_APPROVED
 GITHUB_CHECKS=BACKEND_FRONTEND_APPROVED
 POST_MERGE=RUFF_MYPY_163_TESTS_FRONTEND_POSTGRES_DOCKER_APPROVED
-NEXT=PUBLISH_TAG_AND_RELEASE_V1_0_0
+TAG_VALIDATION=RUNTIME_OPENAPI_163_TESTS_DOCKER_CONFIG_APPROVED
+NEXT=CTO_FORMAL_APPROVAL
 ```
 
 Este arquivo deve ser atualizado apenas com evidências verificadas.
