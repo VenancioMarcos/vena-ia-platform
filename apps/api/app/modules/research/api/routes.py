@@ -176,6 +176,17 @@ def create_report(
     return ReportRead.model_validate(service.create_report(payload))
 
 
+@router.get("/reports", response_model=list[ReportRead])
+def list_reports(
+    project_id: str,
+    service: ResearchServiceDependency,
+) -> list[ReportRead]:
+    return [
+        ReportRead.model_validate(report)
+        for report in service.list_reports(project_id)
+    ]
+
+
 @router.get("/reports/{report_id}", response_model=ReportRead)
 def get_report(
     report_id: str,

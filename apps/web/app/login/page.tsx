@@ -54,7 +54,7 @@ export default function LoginPage() {
           </div>
           <div>
             <h1 className="font-semibold">Vena_IA Platform</h1>
-            <p className="text-xs text-steel">Sessão segura v0.4.1</p>
+            <p className="text-xs text-steel">MVP v1.0 · sessão segura</p>
           </div>
         </div>
 

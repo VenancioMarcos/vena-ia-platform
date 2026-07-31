@@ -287,6 +287,9 @@ Critério de conclusão:
 
 Objetivo: entregar a primeira versão funcional da plataforma.
 
+Status: fluxo integrado implementado em `release/v1.0.0-mvp`, em validação de
+release. Evidências estão em `docs/MVP_AUDIT_MATRIX.md`.
+
 Entregas:
 
 * login;

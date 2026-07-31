@@ -80,3 +80,11 @@ class ResearchRepository:
 
     def get_report(self, report_id: str) -> ResearchReport | None:
         return self._db.get(ResearchReport, report_id)
+
+    def list_reports(self, project_id: str) -> list[ResearchReport]:
+        stmt = (
+            select(ResearchReport)
+            .where(ResearchReport.project_id == project_id)
+            .order_by(ResearchReport.created_at)
+        )
+        return list(self._db.scalars(stmt))

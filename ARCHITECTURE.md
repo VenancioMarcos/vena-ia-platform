@@ -194,3 +194,19 @@ O módulo `research` mantém entidades, schemas, contrato de repository,
 implementação SQLAlchemy, serviços e rotas separados. Ele reutiliza autorização,
 documentos e RAG; não cria upload, storage, chunks, embeddings ou provedores
 paralelos. Decisão formal: `docs/adr/ADR-0014-scientific-research-foundation.md`.
+
+---
+
+## 12. Integração MVP v1.0
+
+```text
+Login → Dashboard → Projeto → PDF → Processing → Embeddings
+  → ChatService → KnowledgeService/RAG
+  → Message(user + status) + Message(assistant + evidence)
+  → ResearchReport DRAFT_REQUIRES_HUMAN_REVIEW
+```
+
+`ChatService` é a fronteira transacional: falha do provider marca a pergunta como
+`FAILED` e não persiste resposta falsa. O frontend apenas envia perguntas de
+usuário; mensagens `assistant` vêm da orquestração interna. Decisão formal:
+`docs/adr/ADR-0015-mvp-integration-v1.md`.

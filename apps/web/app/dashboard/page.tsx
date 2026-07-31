@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { Boxes, Gauge, Loader2, LogOut, Plus } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -13,6 +14,7 @@ type Project = {
   owner_id: string;
   created_at: string;
 };
+type CurrentUser = { id: string; name: string; email: string; role: string };
 
 class ApiError extends Error {
   constructor(
@@ -42,6 +44,7 @@ async function fetchJson<T>(input: string, init?: RequestInit): Promise<T> {
 export default function Dashboard() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -51,7 +54,7 @@ export default function Dashboard() {
     setLoading(true);
     setError(null);
     try {
-      await fetchJson(`${API_URL}/auth/me`);
+      setCurrentUser(await fetchJson<CurrentUser>(`${API_URL}/auth/me`));
       setProjects(await fetchJson<Project[]>(`${API_URL}/projects`));
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
@@ -120,7 +123,9 @@ export default function Dashboard() {
             </div>
             <div>
               <p className="text-sm font-semibold leading-5">Vena_IA Platform</p>
-              <p className="text-xs text-steel">Dashboard — v0.4.1 Security Gate</p>
+              <p className="text-xs text-steel">
+                MVP v1.0 · {currentUser?.name ?? "sessão autenticada"}
+              </p>
             </div>
           </div>
           <button
@@ -188,7 +193,12 @@ export default function Dashboard() {
                   key={project.id}
                   className="flex items-center justify-between border border-line px-4 py-3 text-sm"
                 >
-                  <span className="font-medium">{project.name}</span>
+                  <Link
+                    href={`/projects/${project.id}`}
+                    className="font-medium text-machine underline"
+                  >
+                    {project.name}
+                  </Link>
                   <span className="text-xs text-steel">{project.status}</span>
                 </li>
               ))}

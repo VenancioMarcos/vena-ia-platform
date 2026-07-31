@@ -21,6 +21,22 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_DB: vena_ia_test
+          POSTGRES_USER: vena_ia
+          POSTGRES_PASSWORD: test-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vena_ia -d vena_ia_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://vena_ia:test-only-password@localhost:5432/vena_ia_test
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,8 +55,15 @@ jobs:
       - name: Lint
         run: ruff check .
 
-      - name: Type check AI Layer
-        run: mypy packages/ai
+      - name: Type check API and AI Layer
+        run: mypy apps/api/app packages/ai
+
+      - name: Validate PostgreSQL migrations
+        working-directory: apps/api
+        run: |
+          alembic upgrade head
+          alembic downgrade -1
+          alembic upgrade head
 
       - name: Test
         working-directory: apps/api

@@ -10,7 +10,7 @@ Este repositório é desenvolvido com apoio intensivo de múltiplos agentes de I
 
 ## Status Atual
 
-**Fase:** v0.1 — Foundation ✅ concluída → v0.2 — Core em preparação.
+**Fase:** v1.0 — MVP integrado em validação de release.
 
 Para o estado técnico exato (o que está implementado vs. apenas planejado), ver [`CONTEXT.md`](CONTEXT.md) — leitura obrigatória antes de qualquer contribuição.
 
@@ -30,7 +30,7 @@ Objetivos completos em [`PROJECT.md`](PROJECT.md).
 
 **Modular Monolith**, organizado em monorepo. Decisão formal em [`docs/adr/ADR-001.md`](docs/adr/ADR-001.md); visão técnica completa em [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
-## Stack Prevista
+## Stack
 
 * **Frontend:** Next.js, React, TypeScript, Tailwind CSS, shadcn/ui
 * **Backend:** Python 3.13, FastAPI, SQLAlchemy, Alembic, Pydantic v2
@@ -56,29 +56,22 @@ Detalhes em [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ---
 
-## Desenvolvimento Local
+## Instalação rápida
 
 ```bash
 # 1. Configurar ambiente
 cp .env.example .env
 # Preencher AUTH_SECRET_KEY com segredo aleatório de pelo menos 32 bytes
 
-# 2. Subir infraestrutura
-docker compose up postgres redis minio
-
-# 3. Backend
-cd apps/api
-python -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-uvicorn app.main:app --reload
-
-# 4. Frontend
-cd apps/web
-corepack enable
-pnpm install --frozen-lockfile
-pnpm run dev
+# 2. Validar, construir e iniciar
+docker compose config
+docker compose build api web
+docker compose up -d
+docker compose exec api alembic upgrade head
 ```
+
+Instruções completas e testadas: [`docs/INSTALLATION.md`](docs/INSTALLATION.md).
+Fluxo do usuário: [`docs/QUICKSTART.md`](docs/QUICKSTART.md).
 
 ## Rotas Iniciais da API
 
@@ -89,6 +82,8 @@ pnpm run dev
 * `POST /auth/logout`
 * `GET|POST /users`, `/projects`, `/files`, `/chat` — sessão obrigatória
 * `GET|POST|DELETE /documents` — sessão e autorização por projeto
+* `POST /chat/{project_id}/ask` — resposta RAG com histórico e evidências
+* `GET|POST /research/reports` — relatórios técnicos iniciais em rascunho
 
 Identidade é aceita somente por cookie HttpOnly ou Bearer token validado.
 `X-User-ID` não autentica.
@@ -112,6 +107,9 @@ Identidade é aceita somente por cookie HttpOnly ou Bearer token validado.
 | [`docs/DECISIONS.md`](docs/DECISIONS.md) | Registro vivo de decisões |
 | [`docs/adr/`](docs/adr/) | Architecture Decision Records |
 | [`CHANGELOG.md`](CHANGELOG.md) | Histórico de versões |
+| [`docs/INSTALLATION.md`](docs/INSTALLATION.md) | Instalação local validada |
+| [`docs/QUICKSTART.md`](docs/QUICKSTART.md) | Guia rápido do usuário |
+| [`docs/MVP_AUDIT_MATRIX.md`](docs/MVP_AUDIT_MATRIX.md) | Evidência requisito → implementação |
 
 ---
 
@@ -123,7 +121,7 @@ Ver [`CONTRIBUTING.md`](CONTRIBUTING.md) para branches, Conventional Commits, ch
 
 ## Roadmap Resumido
 
-v0.1 Foundation ✅ → v0.2 Core → v0.3 IA Base → v0.4 Upload e Base de Conhecimento → v0.5 RAG → v0.6 CAD → v0.7 CAM → v0.8 CNC → v0.9 Pesquisa Científica → v1.0 MVP.
+v0.1 Foundation ✅ → v0.2 Core ✅ → v0.3 IA Base ✅ → v0.4 Upload ✅ → v0.4.1 Security Gate ✅ → v0.5 RAG ✅ → v0.6 CAD ✅ → v0.7 CAM ✅ → v0.8 CNC ✅ → v0.9 Pesquisa ✅ → v1.0 MVP em validação.
 
 Detalhes completos em [`docs/ROADMAP.md`](docs/ROADMAP.md).
 

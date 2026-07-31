@@ -42,6 +42,10 @@ usar login fora dos testes.
 * `/research/doe/studies` — planos DOE preliminares
 * `/research/anova/datasets` — preparação descritiva, sem inferência estatística
 * `/research/reports` — relatórios em rascunho que exigem revisão do autor
+* `POST /chat/{project_id}/ask` — RAG fundamentado com histórico persistente
+* `GET /chat/{project_id}/messages` — histórico cronológico com fontes e estados
+
+`GET /health` identifica a versão `1.0.0`.
 
 Rotas protegidas aceitam cookie HttpOnly ou `Authorization: Bearer <token>`.
 Consulte `docs/AUTHORIZATION_MATRIX.md`.

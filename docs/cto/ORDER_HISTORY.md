@@ -30,3 +30,9 @@ máquina.
 
 Missão oficial autorizou implementação, validação, PR, Squash Merge, tag e release
 da v0.9. A v1.0 permanece proibida até nova ordem oficial posterior.
+
+## 2026-07-30 — v1.0 MVP Integration
+
+Nova ordem oficial posterior revogou a proibição temporária de iniciar v1.0 e
+autorizou implementação, PR, Squash Merge, tag e release `v1.0.0`, sem deploy e
+sem iniciar v1.1.
