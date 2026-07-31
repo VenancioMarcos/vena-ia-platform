@@ -41,4 +41,9 @@ sem iniciar v1.1.
 
 A PR #10 foi aprovada pelos checks de backend e frontend, integrada por Squash
 Merge e publicada como `v1.0.0`. A validação pós-merge e a validação direta da
-tag foram aprovadas; a entrega aguarda apenas o aceite formal do CTO.
+tag foram aprovadas; o aceite formal foi registrado na etapa seguinte.
+
+## 2026-07-30 — aceite formal da v1.0.0
+
+O CTO declarou `VENA_IA_V1_0_RELEASED_AND_FULLY_VERIFIED`, aprovou a release e
+encerrou a missão técnica. A próxima versão não está autorizada.

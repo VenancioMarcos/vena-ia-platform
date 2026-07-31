@@ -2,7 +2,7 @@
 
 **Versão:** v1.0.0 — MVP Integration, Stabilization and Release
 **Data:** 2026-07-30
-**Estado:** Entrega concluída; aguardando aceite formal do CTO
+**Estado:** Aprovada e encerrada pelo CTO
 
 Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
 
