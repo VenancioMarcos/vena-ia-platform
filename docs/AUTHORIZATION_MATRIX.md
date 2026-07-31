@@ -30,6 +30,10 @@
 | Chat | consultar capacidade | Permitido | Permitido | Permitido | Negado (`401`) |
 | Mensagens | criar/listar | Próprio | Próprio | Permitido | Negado (`401`) |
 | IA | listar providers e executar operações | Permitido | Permitido | Permitido | Negado (`401`) |
+| Biblioteca científica | criar/listar/consultar/alterar/excluir | Próprio | Próprio | Permitido | Negado (`401`) |
+| Referências científicas | extrair/consultar | Próprio | Próprio | Permitido | Negado (`401`) |
+| Síntese científica RAG | solicitar com fontes autorizadas | Próprio | Próprio | Permitido | Negado (`401`) |
+| DOE/ANOVA/relatórios | criar/consultar rascunhos | Próprio | Próprio | Permitido | Negado (`401`) |
 
 ## Quebras de contrato necessárias
 

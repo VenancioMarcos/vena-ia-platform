@@ -256,6 +256,10 @@ Critério de conclusão:
 
 Objetivo: estruturar o módulo de pesquisa e suporte acadêmico.
 
+Status da primeira fundação: implementada em `feature/v0.9-research-foundation`,
+aguardando integração. A entrega reutiliza upload/processamento/RAG existentes e
+não duplica armazenamento de PDF, texto, chunks ou embeddings.
+
 Entregas:
 
 * biblioteca de artigos;
@@ -265,6 +269,14 @@ Entregas:
 * estrutura para DOE;
 * estrutura para ANOVA;
 * relatórios técnicos e acadêmicos.
+
+Limites desta versão:
+
+* referências e metadados extraídos por heurística são preliminares;
+* sínteses exigem grounding e revisão humana;
+* DOE não afirma validade, potência ou tamanho amostral;
+* ANOVA prepara e resume dados, sem teste inferencial, estatística F ou valor-p;
+* relatórios são rascunhos e não equivalem a publicação, laudo ou revisão sistemática.
 
 Critério de conclusão:
 

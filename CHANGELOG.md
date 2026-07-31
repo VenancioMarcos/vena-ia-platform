@@ -8,6 +8,22 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado
+* Fundação científica v0.9 com biblioteca de artigos vinculada a projetos e
+  documentos PDF existentes, metadados bibliográficos conservadores e autorização
+  por proprietário.
+* Extração preliminar e rastreável de referências, preservando texto bruto, página,
+  método, DOI/ano quando encontrados e estado explícito de ausência.
+* Sínteses assistidas por IA restritas ao RAG autorizado, com evidências por
+  documento/página/chunk e proteção contra instruções contidas nos PDFs.
+* Planos DOE preliminares, preparação descritiva de datasets para futura ANOVA e
+  relatórios em rascunho, todos com revisão humana obrigatória.
+* Migration `d04f6b8a3c19` para artigos, referências, estudos DOE, datasets ANOVA e
+  relatórios científicos.
+
+### Alterado
+* API avança para `0.9.0`.
+
 ## [0.8.0] — 2026-07-30 — CNC Initial
 
 ### Adicionado

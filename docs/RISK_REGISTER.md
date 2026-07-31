@@ -13,6 +13,14 @@
 | R-019 | ALTO | Envelope calculado por pontos STEP pode divergir da bounding box topológica e volume não é confiável sem kernel geométrico. | Rotular análise como preliminar, não inferir volume e adotar OpenCascade somente após validação dedicada. | MONITORAR v0.6 |
 | R-020 | ALTO | Parâmetros de corte genéricos podem ser inadequados para ferramenta, material, fixação ou máquina reais. | Rotular como preliminar, aplicar limites informados e exigir revisão humana; nunca enviar para máquina. | MONITORAR v0.7 |
 | R-021 | CRÍTICO | Estruturas CNC preliminares poderiam ser confundidas com saída liberada para máquina. | Não gerar G-code; marcar simulação/revisão humana e `executable_output=false`; proibir transmissão e produção. | MONITORAR v0.8 |
+| R-022 | ALTO | Referências heurísticas podem ser separadas ou interpretadas incorretamente. | Preservar texto bruto, página, método e estado preliminar; exigir revisão humana. | MONITORAR v0.9 |
+| R-023 | MÉDIO | Metadados bibliográficos podem estar incompletos ou incorretos. | Registrar origem; manter ausentes como nulos; não consultar ou inventar DOI/autores/título. | MONITORAR v0.9 |
+| R-024 | ALTO | Sínteses podem alucinar ou extrapolar evidências recuperadas. | Grounding obrigatório no RAG, evidências por documento/página/chunk e revisão humana. | MONITORAR v0.9 |
+| R-025 | ALTO | Artigos podem conter prompt injection. | Tratar chunks como dados não confiáveis, reforçar prompt do sistema e testar instruções maliciosas. | MONITORAR v0.9 |
+| R-026 | ALTO | Saídas preliminares podem ser usadas como conclusão científica. | Estados explícitos de revisão e limitações em sínteses, DOE, ANOVA e relatórios. | MONITORAR v0.9 |
+| R-027 | ALTO | Preparação ANOVA pode ser confundida com inferência validada. | Não calcular F, valor-p ou significância; expor somente resumo descritivo e checklist. | MONITORAR v0.9 |
+| R-028 | CRÍTICO | Recursos científicos poderiam vazar entre projetos. | AuthorizationService em todos os recursos; identidade somente do JWT; acesso negado como 404. | MONITORAR v0.9 |
+| R-029 | ALTO | Biblioteca preliminar pode ser apresentada como revisão sistemática. | Documentar exclusão de PRISMA, bases externas, meta-análise e publicação. | MONITORAR v0.9 |
 | R-006 | MÉDIO | O frontend apresenta textos históricos enquanto backend e roadmap avançam por versões independentes. | Tratar versão da API como fonte técnica e revisar textos do frontend na integração v1.0. | MONITORAR |
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
 | R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o projeto e o CI exigem Python 3.13. | Validar também em Python 3.13 e manter matriz explícita de versões suportadas. | ABERTO |

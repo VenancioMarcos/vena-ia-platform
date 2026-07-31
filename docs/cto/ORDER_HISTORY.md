@@ -19,3 +19,14 @@ entrega até v1.0, respeitando o ROADMAP e os limites permanentes.
 
 Primeira fundação entregue na Draft PR #7 com CI aprovado, sem toolpaths, G-code
 ou envio para máquina.
+
+## 2026-07-30 — v0.8 CNC Inicial
+
+PR #8 integrada e release `v0.8.0` publicada. A saída permanece neutra,
+`executable_output=false`, sem G-code, toolpath, transmissão ou liberação para
+máquina.
+
+## 2026-07-30 — v0.9 Scientific Research Foundation
+
+Missão oficial autorizou implementação, validação, PR, Squash Merge, tag e release
+da v0.9. A v1.0 permanece proibida até nova ordem oficial posterior.

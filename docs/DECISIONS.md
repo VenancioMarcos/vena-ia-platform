@@ -477,6 +477,37 @@ pgvector, busca vetorial e respostas com LLM continuam explicitamente fora do es
 
 ---
 
+## DEC-014 — Fundação científica reutiliza Documents e RAG
+
+**Data:** 2026-07-30
+**Status:** Aprovada
+**Tipo:** Pesquisa / Arquitetura / IA
+**Documentos relacionados:** `docs/adr/ADR-0014-scientific-research-foundation.md`
+
+### Contexto
+
+A v0.9 precisa organizar artigos, referências, sínteses, DOE, ANOVA e relatórios
+sem criar outra infraestrutura de documentos e sem alegações científicas ou
+estatísticas indevidas.
+
+### Decisão
+
+Criar o domínio `research` referenciando projetos/documentos existentes,
+reutilizando chunks e `KnowledgeService`, e manter estados explícitos de revisão
+humana para extração, síntese, DOE, ANOVA e relatórios.
+
+### Justificativa
+
+A abordagem preserva autorização e rastreabilidade, reduz duplicação e separa
+dados científicos estruturados de arquivos, vetores e conteúdo já persistidos.
+
+### Impacto
+
+A migration `d04f6b8a3c19` cria cinco tabelas de pesquisa. OCR, consulta externa de
+DOI, ANOVA inferencial, revisão sistemática e publicação continuam fora do escopo.
+
+---
+
 # 5. Decisões Pendentes
 
 ## PEN-001 — Nome Final do Repositório GitHub
