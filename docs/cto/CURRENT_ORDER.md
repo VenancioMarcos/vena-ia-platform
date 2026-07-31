@@ -2,7 +2,7 @@
 
 **Versão:** v0.9 — Scientific Research Foundation
 **Data:** 2026-07-30
-**Estado:** Em execução
+**Estado:** Release em preparação
 
 Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
 

@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-07-30 — Scientific Research Foundation
+
 ### Adicionado
 * Fundação científica v0.9 com biblioteca de artigos vinculada a projetos e
   documentos PDF existentes, metadados bibliográficos conservadores e autorização

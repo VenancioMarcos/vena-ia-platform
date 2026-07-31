@@ -18,7 +18,7 @@
 | v0.6 | CAD Inicial | ✅ Publicada |
 | v0.7 | Engenharia e CAM Inicial | ✅ Publicada |
 | v0.8 | CNC Inicial | ✅ Publicada |
-| v0.9 | Pesquisa Científica | Em implementação |
+| v0.9 | Pesquisa Científica | ✅ Publicada |
 | v1.0 | MVP Vena_IA | Planejada |
 
 Critérios de conclusão, entregas detalhadas por versão, fases operacionais (0 a 22), marcos e riscos estão documentados em [`docs/ROADMAP.md`](docs/ROADMAP.md).

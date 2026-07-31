@@ -256,9 +256,8 @@ Critério de conclusão:
 
 Objetivo: estruturar o módulo de pesquisa e suporte acadêmico.
 
-Status da primeira fundação: implementada em `feature/v0.9-research-foundation`,
-aguardando integração. A entrega reutiliza upload/processamento/RAG existentes e
-não duplica armazenamento de PDF, texto, chunks ou embeddings.
+Status: publicada em `v0.9.0`. A entrega reutiliza upload/processamento/RAG
+existentes e não duplica armazenamento de PDF, texto, chunks ou embeddings.
 
 Entregas:
 
