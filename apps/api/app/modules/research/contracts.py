@@ -1,0 +1,32 @@
+from typing import Protocol, TypeVar
+
+from app.modules.research.models import (
+    ANOVADataset,
+    DOEStudy,
+    ResearchArticle,
+    ResearchReference,
+    ResearchReport,
+)
+
+ResearchEntity = TypeVar(
+    "ResearchEntity",
+    ResearchArticle,
+    ResearchReference,
+    DOEStudy,
+    ANOVADataset,
+    ResearchReport,
+)
+
+
+class ResearchRepositoryContract(Protocol):
+    def save(self, entity: ResearchEntity) -> ResearchEntity: ...
+    def delete(self, entity: ResearchEntity) -> None: ...
+    def get_article(self, article_id: str) -> ResearchArticle | None: ...
+    def list_articles(self, project_id: str) -> list[ResearchArticle]: ...
+    def replace_references(
+        self, article_id: str, references: list[ResearchReference]
+    ) -> list[ResearchReference]: ...
+    def list_references(self, article_id: str) -> list[ResearchReference]: ...
+    def get_doe_study(self, study_id: str) -> DOEStudy | None: ...
+    def get_anova_dataset(self, dataset_id: str) -> ANOVADataset | None: ...
+    def get_report(self, report_id: str) -> ResearchReport | None: ...

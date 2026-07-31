@@ -171,3 +171,26 @@ STEP Part 21 validado no MinIO
 O parser não executa conteúdo do arquivo e não afirma propriedades topológicas.
 Volume e propriedades de massa exigem futuro kernel OpenCascade validado. Decisão:
 `docs/adr/ADR-0011-step-parser-foundation.md`.
+
+---
+
+## 11. Pesquisa Científica v0.9
+
+```text
+Projeto autorizado + PDF existente
+  → ResearchArticle (metadados, sem duplicar o arquivo)
+  → DocumentChunk existente
+  → referências heurísticas com texto bruto e página
+  → KnowledgeService/RAG com conteúdo tratado como não confiável
+  → síntese rastreável e revisão humana
+
+Projeto autorizado
+  → plano DOE preliminar
+  → dataset ANOVA descritivo e não inferencial
+  → relatório DRAFT_REQUIRES_AUTHOR_REVIEW
+```
+
+O módulo `research` mantém entidades, schemas, contrato de repository,
+implementação SQLAlchemy, serviços e rotas separados. Ele reutiliza autorização,
+documentos e RAG; não cria upload, storage, chunks, embeddings ou provedores
+paralelos. Decisão formal: `docs/adr/ADR-0014-scientific-research-foundation.md`.

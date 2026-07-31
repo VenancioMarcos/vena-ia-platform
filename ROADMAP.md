@@ -14,11 +14,11 @@
 | v0.3 | IA Base | ✅ Concluída |
 | v0.4 | Upload e Base de Conhecimento | ✅ Concluída |
 | v0.4.1 | Security Gate | ✅ Publicada |
-| v0.5 | RAG | Fundação em revisão |
-| v0.6 | CAD Inicial | Planejada |
-| v0.7 | Engenharia e CAM Inicial | Planejada |
-| v0.8 | CNC Inicial | Planejada |
-| v0.9 | Pesquisa Científica | Planejada |
+| v0.5 | RAG | ✅ Publicada |
+| v0.6 | CAD Inicial | ✅ Publicada |
+| v0.7 | Engenharia e CAM Inicial | ✅ Publicada |
+| v0.8 | CNC Inicial | ✅ Publicada |
+| v0.9 | Pesquisa Científica | Em implementação |
 | v1.0 | MVP Vena_IA | Planejada |
 
 Critérios de conclusão, entregas detalhadas por versão, fases operacionais (0 a 22), marcos e riscos estão documentados em [`docs/ROADMAP.md`](docs/ROADMAP.md).

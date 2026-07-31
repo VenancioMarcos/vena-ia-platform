@@ -29,13 +29,19 @@ usar login fora dos testes.
 * `POST /auth/login`
 * `GET /auth/me`
 * `POST /auth/logout`
-* Rotas protegidas: `/users`, `/projects`, `/files`, `/documents`, `/chat`, `/ai` e `/cad`
+* Rotas protegidas: `/users`, `/projects`, `/files`, `/documents`, `/chat`, `/ai`, `/cad`, `/manufacturing`, `/cnc` e `/research`
 * `POST /documents/{document_id}/processing` — extrai texto de PDF e persiste chunks
 * `GET /documents/{document_id}/chunks` — consulta chunks rastreáveis por documento/página
 * `POST /documents/{document_id}/embeddings` — indexa chunks no pgvector
 * `POST /projects/{project_id}/knowledge/search` — busca semântica rastreável
 * `POST /projects/{project_id}/knowledge/ask` — resposta fundamentada em documentos
 * `POST /cad/documents/{document_id}/analysis` — análise STEP preliminar autenticada
+* `/research/articles` — biblioteca científica vinculada a projeto/documento
+* `/research/articles/{id}/references` — referências preliminares auditáveis
+* `/research/synthesis` — síntese RAG fundamentada com revisão humana
+* `/research/doe/studies` — planos DOE preliminares
+* `/research/anova/datasets` — preparação descritiva, sem inferência estatística
+* `/research/reports` — relatórios em rascunho que exigem revisão do autor
 
 Rotas protegidas aceitam cookie HttpOnly ou `Authorization: Bearer <token>`.
 Consulte `docs/AUTHORIZATION_MATRIX.md`.
