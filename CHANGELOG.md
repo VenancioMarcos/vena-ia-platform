@@ -8,6 +8,19 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Corrigido
+* Documentos em `FAILED` podem ser reprocessados com substituição idempotente
+  dos chunks, permitindo recuperação após falhas transitórias de extração ou
+  armazenamento.
+* A tela de projeto atualiza o estado após falhas e permite tentar novamente o
+  processamento ou a indexação quando o provedor de IA voltar a responder.
+* Relatórios rejeitam evidências fora de `document_ids`, coordenadas inválidas,
+  scores fora do intervalo e trechos que não correspondem ao chunk persistido.
+
+### Testes
+* Cobertura de regressão para reprocessamento de documentos `FAILED` e para
+  rejeição de evidências fabricadas ou não declaradas em relatórios.
+
 ## [1.0.0] — 2026-07-30 — Vena_IA Platform MVP
 
 ### Adicionado

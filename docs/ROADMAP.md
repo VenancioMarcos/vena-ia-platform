@@ -310,6 +310,28 @@ Critério de conclusão:
 
 ---
 
+## v1.1 — Stabilization
+
+Objetivo: auditar o MVP publicado e corrigir o menor conjunto de falhas reais de
+maior impacto, preservando arquitetura, segurança e contratos públicos.
+
+Status: primeiro pacote autorizado em `release/v1.1.0-stabilization`; entrega
+exclusivamente por Draft PR, sem merge, tag ou release nesta missão.
+
+Escopo do pacote 1:
+
+* recuperação idempotente de documentos em `FAILED`;
+* retry de processamento e indexação visível no frontend;
+* validação das evidências de relatórios contra documentos e chunks persistidos;
+* testes de regressão, validação integral e atualização da documentação afetada.
+
+Critério de conclusão:
+
+* Draft PR com CI aprovado e evidências locais reproduzíveis, pronta para revisão
+  do CTO.
+
+---
+
 # 4. Fases Operacionais
 
 ## Fase 0 — Fundação Documental
