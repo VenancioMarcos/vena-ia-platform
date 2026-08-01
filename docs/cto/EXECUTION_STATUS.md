@@ -1,11 +1,11 @@
 # Estado de execução CTO
 
 ```text
-MISSION=TASK_V11_001_STABILIZATION_PACKAGE_1
-STATE=VENA_IA_V1_1_STABILIZATION_PACKAGE_1_READY_FOR_CTO_REVIEW
+MISSION=TASK_V11_002_STABILIZATION_PACKAGE_2
+STATE=VENA_IA_V1_1_STABILIZATION_PACKAGE_2_READY_FOR_CTO_REVIEW
 BRANCH=release/v1.1.0-stabilization
 START_HEAD=2d083af029ffb489a4b6a2d603863b36e8d1693c
-IMPLEMENTATION_COMMIT=c298fe1
+IMPLEMENTATION_COMMIT=e5e44f3
 PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/11
 PR_STATE=DRAFT
 BLOCKERS=NONE
@@ -16,7 +16,7 @@ RUNTIME=OPENAPI_47_PATHS_APPROVED
 POSTGRES_MIGRATIONS=UPGRADE_DOWNGRADE_UPGRADE_E15A7C9D4F20_APPROVED
 DOCKER=COMPOSE_CONFIG_API_WEB_BUILDS_APPROVED
 SECRET_SCAN=APPROVED
-GITHUB_CHECKS=BUILD_TEST_APPROVED
+GITHUB_CHECKS=PENDING_PUSH
 MERGE_TAG_RELEASE=NOT_AUTHORIZED_NOT_PERFORMED
 NEXT=CTO_REVIEW
 ```
@@ -27,22 +27,21 @@ Este arquivo deve ser atualizado apenas com evidências verificadas.
 
 ### Objetivo
 
-Auditar o fluxo principal da v1.0 e entregar o menor pacote de estabilização de
-alto impacto sem alterar a arquitetura nem publicar uma nova release.
+Auditar a qualidade operacional do MVP e entregar o segundo pacote de
+estabilização sem alterar arquitetura, adicionar módulos ou iniciar a v1.2.
 
 ### Escopo entregue
 
-* reprocessamento de documentos em `FAILED`;
-* retry de indexação no frontend após indisponibilidade do provedor;
-* validação de evidências de relatório contra chunks persistidos;
-* testes de regressão e atualização da documentação operacional afetada.
+* cliente API único com detalhes FastAPI normalizados e timeout de 30 segundos;
+* erros de autenticação/logout e falhas persistidas do chat apresentados ao usuário;
+* projeto, documentos e histórico disponíveis mesmo se a listagem de relatórios falhar;
+* remoção de controles de navegação que não executavam ação;
+* pacote 1 preservado integralmente, sem mudança de arquitetura ou migration.
 
 ### Arquivos modificados
 
-* pipeline, schemas e serviços em `apps/api/app/modules/documents` e
-  `apps/api/app/modules/research`;
-* testes de Documents e Research em `apps/api/tests`;
-* detalhe integrado do projeto em `apps/web/app/projects/[projectId]/page.tsx`;
+* mensagem de erro operacional do chat em `apps/api/app/modules/chats` e seu teste;
+* cliente API, login, dashboard, página inicial e detalhe do projeto em `apps/web`;
 * `CHANGELOG.md`, `CONTEXT.md`, roadmaps, matriz MVP, registro de riscos e
   controles CTO.
 
@@ -54,8 +53,8 @@ migrations e varredura local de segredos.
 
 ### Critérios de aceitação
 
-Draft PR #11 aberta, CI aprovado, árvore de trabalho limpa e nenhuma operação de
-merge, tag, release ou deploy executada.
+Mesma Draft PR #11 atualizada, CI aprovado, árvore de trabalho limpa e nenhuma
+nova PR, merge, tag, release ou deploy executada.
 
 ### Próximo passo
 

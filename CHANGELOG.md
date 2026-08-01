@@ -9,6 +9,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 ## [Unreleased]
 
 ### Corrigido
+* Requisições do frontend agora compartilham um único cliente, normalizam também
+  os detalhes estruturados de validação do FastAPI e encerram carregamentos após
+  30 segundos quando a API não responde.
+* Dashboard e autenticação deixam de ocultar falhas de logout e apresentam
+  mensagens consistentes para credenciais, conflitos e indisponibilidade.
+* A tela de projeto mantém o fluxo principal disponível quando somente a listagem
+  de relatórios falha e expõe no histórico o erro persistido de perguntas sem
+  resposta, sem criar resposta falsa.
+* Controles sem ação foram removidos da navegação inicial; o acesso ao MVP aponta
+  somente para o fluxo operacional existente.
 * Documentos em `FAILED` podem ser reprocessados com substituição idempotente
   dos chunks, permitindo recuperação após falhas transitórias de extração ou
   armazenamento.
@@ -18,6 +28,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   scores fora do intervalo e trechos que não correspondem ao chunk persistido.
 
 ### Testes
+* Cobertura do contrato de erro persistido no chat e nova validação integral do
+  pacote 2 com 165 testes, frontend, Docker, PostgreSQL e OpenAPI.
 * Cobertura de regressão para reprocessamento de documentos `FAILED` e para
   rejeição de evidências fabricadas ou não declaradas em relatórios.
 

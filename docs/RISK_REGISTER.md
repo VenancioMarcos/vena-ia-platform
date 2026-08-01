@@ -26,6 +26,7 @@
 | R-032 | MÉDIO | Observabilidade limita-se a health, erros controlados e CI. | Adotar métricas/tracing antes de operação externa. | MONITORAR v1.0 |
 | R-033 | ALTO | Chat/RAG depende de PostgreSQL, MinIO, pgvector e provedor de IA. | Falhar sem resposta falsa; v1.1 permite retry de processamento/indexação; documentar dependências. | MITIGADO PARCIALMENTE v1.1 / MONITORAR |
 | R-035 | ALTO | Relatórios aceitavam evidência declarada sem verificar correspondência com o chunk persistido. | Validar documento, página, índice e trecho antes de persistir o relatório. | MITIGADO v1.1 |
+| R-036 | MÉDIO | Requisições sem timeout, falhas silenciosas e dependência da listagem de relatórios podiam bloquear ou confundir o fluxo principal do frontend. | Cliente API único com timeout; erros de logout/chat visíveis; relatórios carregados sem impedir projeto, documentos e histórico. | MITIGADO v1.1 |
 | R-034 | MÉDIO | Não há deploy, capacidade ou escalabilidade validados. | Release limita-se ao código e ambiente local; medir antes de piloto/deploy. | ACEITO v1.0 |
 | R-006 | MÉDIO | O frontend apresentava textos históricos enquanto backend e roadmap avançavam. | Textos operacionais foram atualizados e as versões de API/frontend unificadas em 1.0.0. | MITIGADO v1.0 |
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
