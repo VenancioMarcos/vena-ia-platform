@@ -113,15 +113,19 @@ export default function ProjectPage({
     }
   }
 
-  async function processDocument(documentId: string) {
-    setBusy(documentId);
+  async function processDocument(document: Document) {
+    setBusy(document.id);
     setError(null);
     try {
-      await api(`/documents/${documentId}/processing`, { method: "POST" });
-      await api(`/documents/${documentId}/embeddings`, { method: "POST" });
+      if (document.status !== "READY") {
+        await api(`/documents/${document.id}/processing`, { method: "POST" });
+      }
+      await api(`/documents/${document.id}/embeddings`, { method: "POST" });
       await load();
     } catch (reason) {
+      await load();
       setError(describeError(reason));
+    } finally {
       setBusy(null);
     }
   }
@@ -235,14 +239,18 @@ export default function ProjectPage({
                       </span>
                       <span className="text-xs text-steel">{document.status}</span>
                     </div>
-                    {document.status !== "READY" && (
+                    {document.status !== "PROCESSING" && (
                       <button
                         type="button"
                         disabled={busy !== null}
-                        onClick={() => void processDocument(document.id)}
+                        onClick={() => void processDocument(document)}
                         className="mt-3 text-sm text-machine underline disabled:opacity-50"
                       >
-                        Processar e indexar
+                        {document.status === "READY"
+                          ? "Indexar novamente"
+                          : document.status === "FAILED"
+                            ? "Tentar novamente"
+                            : "Processar e indexar"}
                       </button>
                     )}
                   </div>

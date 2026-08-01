@@ -23,7 +23,7 @@ class DocumentPipeline:
     def start_processing(self, document_id: str) -> Document:
         return self._transition(
             document_id,
-            expected=DocumentStatus.UPLOADED,
+            expected=(DocumentStatus.UPLOADED, DocumentStatus.FAILED),
             target=DocumentStatus.PROCESSING,
         )
 
@@ -44,7 +44,7 @@ class DocumentPipeline:
     def _transition(
         self,
         document_id: str,
-        expected: DocumentStatus,
+        expected: DocumentStatus | tuple[DocumentStatus, ...],
         target: DocumentStatus,
     ) -> Document:
         document = self._repository.get(document_id)
@@ -57,9 +57,12 @@ class DocumentPipeline:
             raise InvalidDocumentTransitionError(
                 f"Unknown document status: {document.status}"
             ) from exc
-        if current is not expected:
+        allowed = expected if isinstance(expected, tuple) else (expected,)
+        if current not in allowed:
+            expected_states = ", ".join(state.value for state in allowed)
             raise InvalidDocumentTransitionError(
-                f"Cannot transition document from {current.value} to {target.value}"
+                f"Cannot transition document from {current.value} to {target.value}; "
+                f"expected one of: {expected_states}"
             )
 
         updated = self._repository.update_status(document_id, target)
