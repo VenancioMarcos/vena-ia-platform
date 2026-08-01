@@ -5,7 +5,7 @@ import { Boxes, Gauge, Loader2, LogOut, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+import { api, ApiError, API_URL } from "../../lib/api";
 
 type Project = {
   id: string;
@@ -16,31 +16,6 @@ type Project = {
 };
 type CurrentUser = { id: string; name: string; email: string; role: string };
 
-class ApiError extends Error {
-  constructor(
-    message: string,
-    readonly status: number
-  ) {
-    super(message);
-  }
-}
-
-async function fetchJson<T>(input: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(input, {
-    ...init,
-    credentials: "include",
-    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) }
-  });
-  if (!response.ok) {
-    const body = await response.json().catch(() => ({}));
-    throw new ApiError(
-      body.detail ?? `Request failed with status ${response.status}`,
-      response.status
-    );
-  }
-  return response.json() as Promise<T>;
-}
-
 export default function Dashboard() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
@@ -48,14 +23,19 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [projectName, setProjectName] = useState("");
 
   async function loadProjects() {
     setLoading(true);
     setError(null);
     try {
-      setCurrentUser(await fetchJson<CurrentUser>(`${API_URL}/auth/me`));
-      setProjects(await fetchJson<Project[]>(`${API_URL}/projects`));
+      const [user, projectList] = await Promise.all([
+        api<CurrentUser>("/auth/me"),
+        api<Project[]>("/projects")
+      ]);
+      setCurrentUser(user);
+      setProjects(projectList);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         router.replace("/login");
@@ -82,7 +62,7 @@ export default function Dashboard() {
     setSubmitting(true);
     setError(null);
     try {
-      await fetchJson<Project>(`${API_URL}/projects`, {
+      await api<Project>("/projects", {
         method: "POST",
         body: JSON.stringify({ name: projectName })
       });
@@ -106,11 +86,20 @@ export default function Dashboard() {
   }
 
   async function handleLogout() {
-    await fetch(`${API_URL}/auth/logout`, {
-      method: "POST",
-      credentials: "include"
-    });
-    router.replace("/login");
+    setLoggingOut(true);
+    setError(null);
+    try {
+      await api<void>("/auth/logout", { method: "POST" });
+      router.replace("/login");
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? `Não foi possível encerrar a sessão: ${reason.message}`
+          : "Não foi possível encerrar a sessão."
+      );
+    } finally {
+      setLoggingOut(false);
+    }
   }
 
   return (
@@ -131,9 +120,14 @@ export default function Dashboard() {
           <button
             type="button"
             onClick={() => void handleLogout()}
-            className="flex items-center gap-2 rounded border border-line px-3 py-2 text-sm"
+            disabled={loggingOut}
+            className="flex items-center gap-2 rounded border border-line px-3 py-2 text-sm disabled:opacity-60"
           >
-            <LogOut size={16} aria-hidden="true" />
+            {loggingOut ? (
+              <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+            ) : (
+              <LogOut size={16} aria-hidden="true" />
+            )}
             Sair
           </button>
         </div>

@@ -95,3 +95,4 @@ def test_failed_provider_persists_failed_question_without_fake_answer(
     assert len(history.json()) == 1
     assert history.json()[0]["status"] == "FAILED"
     assert history.json()[0]["role"] == "user"
+    assert history.json()[0]["error"] == "Serviço de IA indisponível; tente novamente."

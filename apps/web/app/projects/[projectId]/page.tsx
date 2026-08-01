@@ -45,7 +45,10 @@ function describeError(error: unknown): string {
   if (!(error instanceof Error)) return "Falha inesperada.";
   if (error instanceof ApiError) {
     if (error.status === 401) return "Sua sessão expirou. Entre novamente.";
+    if (error.status === 408) return "A API demorou demais para responder. Tente novamente.";
+    if (error.status === 403) return "Você não possui permissão para executar esta ação.";
     if (error.status === 404) return "Recurso não encontrado ou sem acesso.";
+    if (error.status === 409) return `A operação conflita com o estado atual: ${error.message}`;
     if (error.status === 422) return `Dados inválidos: ${error.message}`;
     if (error.status >= 500) return "Serviço temporariamente indisponível. Tente novamente.";
   }
@@ -70,17 +73,32 @@ export default function ProjectPage({
 
   const load = useCallback(async () => {
     setError(null);
+    const reportRequest = api<Report[]>(
+      `/research/reports?project_id=${encodeURIComponent(projectId)}`
+    ).then(
+      (data) => ({ ok: true as const, data }),
+      (reason: unknown) => ({ ok: false as const, reason })
+    );
     try {
-      const [projectData, documentData, messageData, reportData] = await Promise.all([
+      const [projectData, documentData, messageData] = await Promise.all([
         api<Project>(`/projects/${projectId}`),
         api<DocumentList>(`/projects/${projectId}/documents`),
-        api<Message[]>(`/chat/${projectId}/messages`),
-        api<Report[]>(`/research/reports?project_id=${encodeURIComponent(projectId)}`)
+        api<Message[]>(`/chat/${projectId}/messages`)
       ]);
       setProject(projectData);
       setDocuments(documentData.documents);
       setMessages(messageData);
-      setReports(reportData);
+      setBusy(null);
+
+      const reportResult = await reportRequest;
+      if (!reportResult.ok) {
+        const reason = reportResult.reason;
+        if (reason instanceof ApiError && reason.status === 401) throw reason;
+        setReports([]);
+        setError(`Projeto carregado, mas os relatórios não: ${describeError(reason)}`);
+      } else {
+        setReports(reportResult.data);
+      }
     } catch (reason) {
       if (reason instanceof ApiError && reason.status === 401) {
         router.replace("/login");
@@ -280,6 +298,11 @@ export default function ProjectPage({
                       {message.role === "assistant" ? "Vena_IA" : "Você"} · {message.status}
                     </p>
                     <p className="mt-1 whitespace-pre-wrap">{message.content}</p>
+                    {message.error && (
+                      <p className="mt-2 border border-red-200 bg-red-50 p-2 text-xs text-red-700">
+                        {message.error}
+                      </p>
+                    )}
                     {message.evidence.length > 0 && (
                       <ul className="mt-2 space-y-1 text-xs text-steel">
                         {message.evidence.map((source) => (

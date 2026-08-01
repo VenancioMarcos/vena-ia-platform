@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Gauge, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+import { api, ApiError } from "../../lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,16 +16,10 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   async function request(path: string, body: object) {
-    const response = await fetch(`${API_URL}${path}`, {
+    await api(path, {
       method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
     });
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(payload.detail ?? "Não foi possível autenticar.");
-    }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -39,7 +33,15 @@ export default function LoginPage() {
       await request("/auth/login", { email, password });
       router.replace("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha de autenticação.");
+      if (err instanceof ApiError && err.status === 401) {
+        setError("E-mail ou senha inválidos.");
+      } else if (err instanceof ApiError && err.status === 409) {
+        setError("Este e-mail já está cadastrado.");
+      } else if (err instanceof ApiError && err.status >= 500) {
+        setError("Serviço de autenticação indisponível. Tente novamente.");
+      } else {
+        setError(err instanceof Error ? err.message : "Falha de autenticação.");
+      }
     } finally {
       setSubmitting(false);
     }
