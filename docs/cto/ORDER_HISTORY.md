@@ -103,3 +103,8 @@ backend/frontend na PR #13; o risco distribuído R-013 permanece explícito.
 O CTO aprovou o Package 2 e emitiu `TASK-V12-003` para credenciais legadas e
 auditoria persistente de eventos sensíveis na mesma Draft PR #13. Migration é
 autorizada; merge, tag, release, deploy, nova PR e v1.3 permanecem proibidos.
+
+O Package 3 foi publicado na PR #13 com 182 testes, migration PostgreSQL
+upgrade/downgrade/upgrade, OpenAPI e CI backend/frontend aprovados. O cliente
+Docker local excedeu o tempo durante build de imagem; configuração Docker e o
+build do CI foram aprovados, sem tornar o limite local um bloqueio do código.

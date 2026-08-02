@@ -430,8 +430,9 @@ backend/frontend estão aprovados; o pacote aguarda revisão do CTO.
 
 Estado do Package 3: fluxo administrativo para credencial legada, invalidação
 por versão de autenticação e auditoria persistente de eventos sensíveis foram
-implementados na mesma Draft PR #13. A validação local aprova Ruff, mypy e 182
-testes; migration PostgreSQL, Docker e CI permanecem gates antes do retorno.
+implementados na mesma Draft PR #13. Ruff, mypy, 182 testes, migration
+PostgreSQL reversível, OpenAPI e CI final de backend/frontend estão aprovados;
+o pacote aguarda revisão do CTO.
 
 Entregas posteriores da v1.2:
 
