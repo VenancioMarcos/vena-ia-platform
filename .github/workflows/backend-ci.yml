@@ -59,6 +59,7 @@ jobs:
       MINIO_ENDPOINT: localhost:9000
       MINIO_ACCESS_KEY: test-minio-access
       MINIO_SECRET_KEY: test-minio-secret
+      MINIO_BUCKET: vena-ia-files-test
       RUN_MINIO_BACKUP_INTEGRATION: "1"
       RUN_READINESS_INTEGRATION: "1"
     steps:
