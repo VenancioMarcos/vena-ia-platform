@@ -1,7 +1,7 @@
-# Smoke test manual — v1.0
+# Smoke test manual — v1.1
 
 1. Execute a instalação de `docs/INSTALLATION.md` e confirme `/health` com
-   `status=ok` e `version=1.0.0`.
+   `status=ok` e `version=1.1.0`.
 2. Crie conta, faça login, crie projeto e atualize a página.
 3. Envie PDF textual pequeno, processe e indexe.
 4. Pergunte algo presente no PDF; confirme resposta e fonte por página/chunk.

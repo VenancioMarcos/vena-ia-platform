@@ -1,18 +1,17 @@
 # Ordem atual do CTO
 
-**Versão:** v1.1.0 — Third Stabilization Package (`TASK-V11-003`)
+**Versão:** v1.1.0 — Final Validation, Merge and Release (`TASK-V11-004`)
 **Data:** 2026-08-01
-**Estado:** Executada; mesma Draft PR #11 pronta para revisão do CTO
+**Estado:** Em execução; fechamento e publicação autorizados
 
 Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
 
-Objetivo vigente: realizar a terceira auditoria do MVP, corrigindo somente
-consultas e chamadas HTTP repetidas, carregamentos/renderizações desnecessários,
-estados inválidos, operações duplicadas, código morto e warnings comprovados.
+Objetivo vigente: confirmar o diff final da PR #11, versionar API/frontend em
+1.1.0, revalidar todos os gates, retirar a PR de Draft, realizar Squash Merge,
+publicar tag/release e validar diretamente a tag.
 
-Autorizações: atualizar `release/v1.1.0-stabilization` e a mesma Draft PR #11 com
-implementação, testes, documentação, commits e push. Nova PR, merge, tag, release
-e deploy não estão autorizados; contratos públicos, migrations, novos módulos e
-mudanças de arquitetura também estão fora desta tarefa.
+Autorizações: commits de versionamento/documentação, atualização da PR #11,
+retirada de Draft, Squash Merge, tag anotada `v1.1.0` e GitHub Release. Deploy,
+v1.2, novos módulos, migrations e refatorações adicionais não estão autorizados.
 
 Limites permanentes continuam em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.

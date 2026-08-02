@@ -315,8 +315,9 @@ Critério de conclusão:
 Objetivo: auditar o MVP publicado e corrigir o menor conjunto de falhas reais de
 maior impacto, preservando arquitetura, segurança e contratos públicos.
 
-Status: três pacotes executados em `release/v1.1.0-stabilization`; entrega
-exclusivamente pela mesma Draft PR #11, sem merge, tag ou release nesta missão.
+Status: candidata `v1.1.0` após três pacotes na PR #11. Os gates locais e do CI
+foram aprovados; Squash Merge, tag, release e validação direta da tag estão
+autorizados e pendentes. Nenhum deploy faz parte da missão.
 
 Escopo do pacote 1:
 
@@ -343,8 +344,8 @@ Escopo do pacote 3:
 
 Critério de conclusão:
 
-* Draft PR com CI aprovado e evidências locais reproduzíveis, pronta para revisão
-  do CTO.
+* release `v1.1.0` publicada, tag validada, 165 testes sem warnings e fluxo
+  estabilizado sem reduzir segurança nem alterar contratos públicos.
 
 ---
 

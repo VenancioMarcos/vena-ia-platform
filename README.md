@@ -10,7 +10,7 @@ Este repositório é desenvolvido com apoio intensivo de múltiplos agentes de I
 
 ## Status Atual
 
-**Fase:** v1.0 — MVP integrado em validação de release.
+**Fase:** v1.1.0 — Stabilization and Professionalization em validação final.
 
 Para o estado técnico exato (o que está implementado vs. apenas planejado), ver [`CONTEXT.md`](CONTEXT.md) — leitura obrigatória antes de qualquer contribuição.
 
@@ -121,7 +121,7 @@ Ver [`CONTRIBUTING.md`](CONTRIBUTING.md) para branches, Conventional Commits, ch
 
 ## Roadmap Resumido
 
-v0.1 Foundation ✅ → v0.2 Core ✅ → v0.3 IA Base ✅ → v0.4 Upload ✅ → v0.4.1 Security Gate ✅ → v0.5 RAG ✅ → v0.6 CAD ✅ → v0.7 CAM ✅ → v0.8 CNC ✅ → v0.9 Pesquisa ✅ → v1.0 MVP em validação.
+v0.1 Foundation ✅ → v0.2 Core ✅ → v0.3 IA Base ✅ → v0.4 Upload ✅ → v0.4.1 Security Gate ✅ → v0.5 RAG ✅ → v0.6 CAD ✅ → v0.7 CAM ✅ → v0.8 CNC ✅ → v0.9 Pesquisa ✅ → v1.0 MVP ✅ → v1.1 Estabilização ✅.
 
 Detalhes completos em [`docs/ROADMAP.md`](docs/ROADMAP.md).
 

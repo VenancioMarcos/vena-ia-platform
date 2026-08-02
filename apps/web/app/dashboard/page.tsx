@@ -114,7 +114,7 @@ export default function Dashboard() {
             <div>
               <p className="text-sm font-semibold leading-5">Vena_IA Platform</p>
               <p className="text-xs text-steel">
-                MVP v1.0 · {currentUser?.name ?? "sessão autenticada"}
+                v1.1 · {currentUser?.name ?? "sessão autenticada"}
               </p>
             </div>
           </div>

@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-08-01 — Stabilization and Professionalization
+
 ### Corrigido
 * Criação de projeto, upload, processamento/indexação, falha de chat e criação de
   relatório deixam de recarregar indiscriminadamente projeto, documentos,

@@ -14,7 +14,7 @@
 | Evidências | JSON em mensagem do assistente | `ChatService` | fontes por página/chunk/score | E2E | Migration v1.0 |
 | Relatório inicial | ResearchReport persistente | `/research/reports` | geração/listagem/reabertura | research + E2E | Evidência validada; falha da lista não bloqueia o projeto |
 | Autorização | `AuthorizationService` | recursos subordinados | 401 redireciona; outros erros visíveis | dois usuários no E2E | Não enumera recurso alheio |
-| Instalação/uso | documentação versionada | health `version=1.0.0` | versão 1.0 | smoke checklist | Guias v1.0 adicionados |
+| Instalação/uso | documentação versionada | health `version=1.1.0` | versão 1.1 | smoke checklist | Guias v1.1 validados |
 | CI | workflows backend/frontend | Ruff/mypy/pytest/build | build Next.js | GitHub Checks | 165 testes sem warning; HTTPX2 no ambiente dev |
 
 Capacidades CAD, manufatura, CNC e pesquisa continuam disponíveis, mas não fazem

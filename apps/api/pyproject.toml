@@ -1,6 +1,6 @@
 [project]
 name = "vena-ia-api"
-version = "1.0.0"
+version = "1.1.0"
 description = "Backend API for Vena_IA Platform"
 requires-python = ">=3.13"
 dependencies = [

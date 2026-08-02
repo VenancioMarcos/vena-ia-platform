@@ -44,7 +44,7 @@ export default function Home() {
           </div>
           <div className="hidden items-center gap-2 text-sm text-steel sm:flex">
             <CircleCheck size={17} className="text-signal" aria-hidden="true" />
-            v1.0 MVP
+            v1.1 Stabilization
           </div>
         </div>
       </section>
@@ -82,7 +82,7 @@ export default function Home() {
                 </div>
                 <div className="border border-line bg-white px-4 py-3">
                   <p className="text-xs text-steel">Roadmap</p>
-                  <p className="font-semibold">v1.0</p>
+                  <p className="font-semibold">v1.1</p>
                 </div>
               </div>
             </div>

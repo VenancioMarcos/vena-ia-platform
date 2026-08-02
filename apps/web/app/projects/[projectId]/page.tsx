@@ -251,7 +251,7 @@ export default function ProjectPage({
             <h1 className="mt-2 text-2xl font-semibold">
               {project?.name ?? "Carregando projeto..."}
             </h1>
-            <p className="text-sm text-steel">Fluxo integrado Vena_IA Platform v1.0</p>
+            <p className="text-sm text-steel">Fluxo integrado Vena_IA Platform v1.1</p>
           </div>
         </header>
 
