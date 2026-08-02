@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization ✅ → v1.2 — Security and Data Protection com Package 1 implementado para revisão.
+* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization ✅ → v1.2 — Security and Data Protection com Packages 1–3 aprovados e Package 4 implementado para revisão.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.1.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração e autorização centralizada. `X-User-ID` não autentica. A migration `e15a7c9d4f20` integra autoria, estado e evidências ao histórico de chat; a v1.1 não adiciona migrations.
@@ -55,6 +55,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 * **v1.2 Security Package 2:** a mesma Draft PR #13 passa a invalidar no processo os tokens apresentados no logout, rejeita reutilização posterior e tokens emitidos no futuro, preserva logout idempotente e melhora a mensagem frontend para `429`. Os 177 testes e os CI de backend/frontend estão aprovados. A denylist não é compartilhada entre réplicas nem persiste em reinício; revogação distribuída continua pendente antes de produção horizontal.
 * **v1.2 Security Package 3:** contas legadas com `password_hash` nulo recebem credencial somente por admin, uma única vez e sem autoatendimento; `auth_version` invalida tokens anteriores após a definição. Eventos de login, limite, logout, token e operação administrativa são persistidos sem segredos e consultados apenas por admin. A retenção padrão documentada é 90 dias e a limpeza permanece operacional/manual nesta entrega.
   A Draft PR #13 está limpa e os CI finais de backend/frontend foram aprovados.
+* **v1.2 Security Package 4:** Redis substitui os controles locais como padrão para rate limiting e revogação, compartilhando estado entre réplicas com operações atômicas e TTL. Origem e fingerprint não aparecem em texto puro nas chaves. Indisponibilidade falha fechada com `503` e auditoria; memória é modo explícito de desenvolvimento/teste. A validação inclui integração com Redis real e preserva `auth_version`.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
@@ -66,7 +67,7 @@ PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 
 ## 4. O que NÃO está implementado ainda
 
-* Rate limiting distribuído/gateway, revogação imediata de JWT e fluxo administrativo de recuperação/definição de senha para usuários legados.
+* Gateway externo confiável e fluxo público de recuperação de senha; controles distribuídos internos de autenticação já usam Redis.
 * OCR para PDFs sem camada textual e processamento assíncrono por fila/worker.
 * Kernel geométrico CAD, propriedades topológicas, volume/área robustos, CAM, CNC ou simulação.
 * Backup/restore automatizado, logging estruturado, métricas, tracing e capacidade validada para piloto/produção.

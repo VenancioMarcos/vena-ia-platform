@@ -25,13 +25,17 @@ usar login fora dos testes.
 Os limites públicos de autenticação são configurados por
 `AUTH_LOGIN_RATE_LIMIT_REQUESTS`, `AUTH_REGISTRATION_RATE_LIMIT_REQUESTS` e
 `AUTH_RATE_LIMIT_WINDOW_SECONDS`. Ao excedê-los, a API retorna `429` com
-`Retry-After`. O controle é local ao processo; produção horizontal ainda exige
-um limitador distribuído ou gateway confiável.
+`Retry-After`. Redis é o armazenamento padrão e compartilha a cota atomicamente
+entre réplicas. `AUTH_REDIS_PREFIX` isola as chaves com TTL e
+`AUTH_REDIS_TIMEOUT_SECONDS` limita a espera. Origem e identificadores de token
+são transformados por SHA-256 antes de formar chaves Redis.
 
-O logout invalida o token apresentado no processo atual até sua expiração, além
-de remover o cookie. Essa denylist é uma proteção intermediária: não persiste em
-reinícios e deve ser distribuída antes de execução com múltiplas réplicas. Não
-há renovação silenciosa de sessão.
+O logout invalida cookie e/ou Bearer no Redis até a expiração do JWT, armazenando
+somente um identificador SHA-256. Todas as réplicas consultam a mesma denylist.
+Se Redis falhar, cadastro/login, consulta de revogação e logout falham fechados
+com `503` e evento auditável; logout não declara sucesso fictício. O modo local
+exige `AUTH_SECURITY_STORE=memory` explícito e destina-se apenas a desenvolvimento
+ou testes. Não há renovação silenciosa de sessão.
 
 `SECURITY_AUDIT_RETENTION_DAYS` documenta a retenção operacional da trilha
 persistente (90 dias por padrão); não há limpeza automática nesta entrega.

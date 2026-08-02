@@ -1,16 +1,16 @@
 # Ordem atual do CTO
 
-**Versão:** v1.2 Security Package 3 (`TASK-V12-003`)
+**Versão:** v1.2 Security Package 4 (`TASK-V12-004`)
 **Data:** 2026-08-01
-**Estado:** Packages 1–2 aprovados; Package 3 pronto para revisão na Draft PR #13
+**Estado:** Packages 1–3 aprovados; Package 4 em validação na Draft PR #13
 
 Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
 
-Objetivo vigente: fechar a lacuna real de credenciais legadas e persistir uma
-trilha mínima de eventos sensíveis, com acesso administrativo e sem segredos.
+Objetivo vigente: distribuir rate limiting e revogação por Redis, com TTL,
+atomicidade, confidencialidade de chaves e falha fechada auditável.
 
 Autorizados: autenticação/auditoria, migration real, testes, documentação,
 commits, push e CI na PR #13. Proibidos: nova PR, merge, tag, release, deploy,
-rate limiting distribuído, recuperação pública, v1.3 e módulos alheios ao escopo.
+gateway externo, recuperação pública, v1.3 e módulos alheios ao escopo.
 
 Limites permanentes continuam em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.

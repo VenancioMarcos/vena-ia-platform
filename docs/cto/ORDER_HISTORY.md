@@ -108,3 +108,10 @@ O Package 3 foi publicado na PR #13 com 182 testes, migration PostgreSQL
 upgrade/downgrade/upgrade, OpenAPI e CI backend/frontend aprovados. O cliente
 Docker local excedeu o tempo durante build de imagem; configuração Docker e o
 build do CI foram aprovados, sem tornar o limite local um bloqueio do código.
+
+## 2026-08-02 — v1.2 Security Package 4
+
+O CTO aprovou o Package 3 e emitiu `TASK-V12-004` para distribuir rate limiting
+e revogação usando o Redis existente, manter `auth_version`, falhar fechado e
+continuar exclusivamente na Draft PR #13. Merge, tag, release, deploy, nova PR,
+gateway externo, recuperação pública e v1.3 permanecem proibidos.

@@ -434,12 +434,16 @@ implementados na mesma Draft PR #13. Ruff, mypy, 182 testes, migration
 PostgreSQL reversível, OpenAPI e CI final de backend/frontend estão aprovados;
 o pacote aguarda revisão do CTO.
 
+Estado do Package 4: rate limiting e revogação usam o Redis já adotado, com
+estado compartilhado entre réplicas, incremento/expiração atômicos, TTL até a
+expiração do JWT e chaves sem origem, token ou PII em texto puro. Indisponibilidade
+falha fechada e auditável; memória é modo explícito de desenvolvimento/teste.
+Implementado na mesma Draft PR #13 e aguardando revisão do CTO.
+
 Entregas posteriores da v1.2:
 
-* revogação/rotação auditável de sessões JWT;
-* fluxo administrativo seguro para credenciais legadas;
-* trilha de eventos sensíveis e políticas de retenção/proteção;
-* rate limiting distribuído ou gateway validado para exposição externa.
+* política operacional automatizada de retenção/proteção da auditoria;
+* validação de fronteira de proxy/gateway para exposição externa.
 
 Fora do escopo: SSO, provedor de identidade externo, deploy e mudança de
 arquitetura.

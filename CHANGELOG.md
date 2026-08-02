@@ -21,12 +21,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   `security_audit_events`.
 
 ### Segurança
+* Redis passa a compartilhar rate limiting e revogação de JWT entre réplicas,
+  com operações atômicas, namespace, TTL e chaves derivadas por SHA-256.
+* Falhas do Redis bloqueiam autenticação pública, validação de sessão e logout
+  com `503` auditável; o modo em memória exige configuração explícita de teste ou
+  desenvolvimento e não é fallback silencioso.
 * Primeiro controle de aplicação para tentativas públicas de autenticação. A
-  implementação é local ao processo e não substitui gateway/limite distribuído
-  antes de exposição pública horizontal.
+  origem vem da conexão e ignora `X-Forwarded-For` e `X-User-ID`.
 * Logout invalida o token apresentado em uma denylist local até sua expiração,
-  impedindo reutilização no mesmo processo; tokens com emissão futura são
-  rejeitados e logout permanece idempotente sem revelar validade do token.
+  agora substituída pela denylist Redis distribuída; tokens com emissão futura
+  são rejeitados e logout permanece idempotente sem revelar validade do token.
 * A tela de autenticação apresenta mensagem específica para excesso de
   tentativas (`429`) em vez de expor o detalhe técnico da API.
 

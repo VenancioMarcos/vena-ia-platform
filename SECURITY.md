@@ -66,20 +66,23 @@ a mesma cota para impedir bypass por alias.
 
 Cabeçalhos `X-Forwarded-For` são ignorados até existir uma fronteira de proxy
 confiável configurada; `X-User-ID` nunca participa da identidade nem da chave do
-limite. O limitador atual é local ao processo e deve ser complementado por um
-controle distribuído/gateway antes de exposição pública horizontal.
+limite. Redis aplica incremento e expiração atomicamente e compartilha a cota
+entre réplicas. A origem é representada por SHA-256 na chave com namespace e TTL.
+O modo em memória é permitido somente quando configurado explicitamente para
+desenvolvimento/testes.
 
 ### 5.2 Invalidação de sessão
 
-O logout remove o cookie e registra a impressão SHA-256 do token apresentado em
-uma denylist local até sua expiração. Reutilização desse token no mesmo processo
-retorna `401`; tokens emitidos no futuro também são rejeitados. O endpoint é
-idempotente e não informa se um token inválido ou expirado existia.
+O logout remove o cookie e registra no Redis somente uma chave derivada por
+SHA-256 do fingerprint do token, com TTL até sua expiração. Cookie, Bearer ou
+ambos são revogados para todas as réplicas. Tokens emitidos no futuro também são
+rejeitados; token inválido ou expirado mantém o logout idempotente.
 
-A denylist não persiste entre reinícios e não é compartilhada entre réplicas.
-Produção horizontal exige armazenamento distribuído ou outra estratégia de
-revogação auditável. Não existe renovação silenciosa: após expiração, o usuário
-deve autenticar-se novamente.
+Redis é obrigatório por padrão. Indisponibilidade não permite bypass: rotas
+públicas de autenticação, consulta da denylist e escrita do logout retornam `503`
+e registram `SECURITY_STORE_UNAVAILABLE` sem segredo. O logout não informa sucesso
+se não puder persistir uma revogação válida. `auth_version` no banco continua
+invalidando em todas as réplicas os tokens anteriores à definição de credencial.
 
 ### 5.3 Credenciais legadas e auditoria
 

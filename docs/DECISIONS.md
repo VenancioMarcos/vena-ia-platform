@@ -676,6 +676,33 @@ Decisão:
 
 ---
 
+## DEC-018 — Redis para controles distribuídos de autenticação
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Segurança / Infraestrutura
+**Documentos relacionados:** `docs/adr/ADR-0018-distributed-authentication-security-store.md`,
+`SECURITY.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Rate limiting e revogação locais não compartilhavam estado entre réplicas.
+
+### Decisão
+
+Usar o Redis já existente para incremento/TTL atômicos de rate limiting e para
+revogação por chave derivada do fingerprint até a expiração do JWT. Falhas do
+Redis bloqueiam os fluxos protegidos e geram auditoria; memória exige modo
+explícito de desenvolvimento/teste. Preservar `auth_version` no banco.
+
+### Impacto
+
+Redis passa a ser dependência obrigatória por padrão para autenticação. Chaves
+têm namespace, TTL e não contêm origem, token, PII ou fingerprint em texto puro.
+Gateway/proxy confiável continua uma decisão separada.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown
