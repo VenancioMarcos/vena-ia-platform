@@ -1,17 +1,17 @@
 # Ordem atual do CTO
 
-**Versão:** v1.1.0 — Final Validation, Merge and Release (`TASK-V11-004`)
+**Versão:** Roadmap pós-v1.1 até v2.0 (`TASK-ROADMAP-V2-001`)
 **Data:** 2026-08-01
-**Estado:** Em execução; fechamento e publicação autorizados
+**Estado:** Em execução; roadmap e primeiro pacote v1.2 autorizados
 
 Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
 
-Objetivo vigente: confirmar o diff final da PR #11, versionar API/frontend em
-1.1.0, revalidar todos os gates, retirar a PR de Draft, realizar Squash Merge,
-publicar tag/release e validar diretamente a tag.
+Objetivo vigente: consolidar v1.2–v2.0 exclusivamente a partir das fontes
+oficiais, integrar o roadmap e iniciar imediatamente o primeiro pacote da v1.2.
 
-Autorizações: commits de versionamento/documentação, atualização da PR #11,
-retirada de Draft, Squash Merge, tag anotada `v1.1.0` e GitHub Release. Deploy,
-v1.2, novos módulos, migrations e refatorações adicionais não estão autorizados.
+Autorizações: branch, documentação, commits, push, PR, CI e Squash Merge do
+roadmap; branch, implementação, testes, documentação, commits, push e Draft PR
+somente do primeiro pacote v1.2. v1.3, deploy, compra, publicação comercial,
+G-code executável e transmissão CNC permanecem proibidos.
 
 Limites permanentes continuam em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.

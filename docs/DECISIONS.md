@@ -534,6 +534,46 @@ usuários sem consumir API paga.
 
 ---
 
+## DEC-016 — Sequenciamento pós-v1.1 até v2.0 por gates de risco
+
+**Data:** 2026-08-01
+**Status:** Aprovada
+**Tipo:** Produto / Segurança / Operação
+**Documentos relacionados:** `docs/ROADMAP.md`, `docs/RISK_REGISTER.md`,
+`docs/PERMANENT_OPERATIONAL_LIMITS.md`
+
+### Contexto
+
+A v1.1 estabilizou o MVP, mas rate limiting, revogação de sessão,
+backup/restore, observabilidade, processamento assíncrono e capacidade ainda
+bloqueiam piloto ou produção. Ao mesmo tempo, o plano fundador prevê evolução
+CAD/CAM/CNC, pesquisa e produto comercial.
+
+### Decisão
+
+Sequenciar v1.2–v2.0 por gates dependentes: segurança/proteção de dados,
+backup/restore, observabilidade, processamento assíncrono, confiabilidade e
+escala, engenharia/CAM, CAD/features, piloto controlado e consolidação v2.0.
+
+A v1.2 inicia por rate limiting configurável para cadastro e login. Essa primeira
+camada local não substitui gateway ou armazenamento distribuído antes de produção
+horizontal. Cada versão exige seus próprios gates, testes e aceite antes da seguinte.
+
+### Justificativa
+
+Tratar riscos operacionais antes de ampliar engenharia reduz impacto de abuso ou
+perda de dados, torna falhas diagnosticáveis e cria base mensurável para um piloto.
+As versões de engenharia reutilizam capacidades e limites já documentados, sem
+inventar módulos fora do `PROJECT.md`.
+
+### Impacto
+
+O roadmap passa a definir v1.2 a v2.0. Deploy, compra, publicação comercial,
+G-code liberado e transmissão CNC continuam missões separadas e dependentes de
+autorização explícita. Mudança arquitetural real durante uma versão exige ADR.
+
+---
+
 # 5. Decisões Pendentes
 
 ## PEN-001 — Nome Final do Repositório GitHub
