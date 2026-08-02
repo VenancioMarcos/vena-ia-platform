@@ -1,5 +1,5 @@
 import pytest
-from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 from pydantic import ValidationError
 
 from app.modules.manufacturing.schemas import MaterialFamily, MillingInput

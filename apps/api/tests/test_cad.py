@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
-from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 
 from app.main import app
 from app.modules.cad.dependencies import get_cad_analysis_service

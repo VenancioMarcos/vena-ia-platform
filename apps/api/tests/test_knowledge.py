@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
 import pytest
-from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 
 from app.main import app
 from app.modules.documents.contracts import (
