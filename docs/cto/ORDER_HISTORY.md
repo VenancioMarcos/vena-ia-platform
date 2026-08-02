@@ -121,3 +121,11 @@ Ruff, mypy e frontend aprovados. Backend CI (com PostgreSQL e Redis) e Frontend 
 passaram. O build local da API compilou todas as camadas, mas o Docker Desktop
 falhou ao exportar a imagem com EOF/500 e permaneceu indisponível após reinício;
 nenhuma falha de código ou CI foi observada.
+
+## 2026-08-02 — v1.2 Release e v1.3 Package 1
+
+O CTO aprovou o Package 4 e emitiu `TASK-V12-005`, autorizando explicitamente a
+validação final, Squash Merge da PR #13, tag e Release `v1.2.0`. Após validar a
+tag, a execução deve iniciar somente backup/restore PostgreSQL verificável no
+Package 1 da v1.3, em branch e Draft PR próprias. Deploy, dados reais, storage
+externo e v1.4 permanecem proibidos.

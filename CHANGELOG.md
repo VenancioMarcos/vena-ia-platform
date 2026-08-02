@@ -6,7 +6,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ---
 
-## [Unreleased]
+## [1.2.0] — 2026-08-02 — Security and Data Protection
 
 ### Adicionado
 * Rate limiting de janela fixa, configurável e seguro para concorrência protege
