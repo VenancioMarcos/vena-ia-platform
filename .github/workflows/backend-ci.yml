@@ -6,6 +6,8 @@ on:
       - "apps/api/**"
       - "packages/ai/**"
       - "packages/__init__.py"
+      - "scripts/**"
+      - "tests/operations/**"
       - "pyproject.toml"
       - ".github/workflows/backend-ci.yml"
   push:
@@ -15,6 +17,8 @@ on:
       - "apps/api/**"
       - "packages/ai/**"
       - "packages/__init__.py"
+      - "scripts/**"
+      - "tests/operations/**"
       - "pyproject.toml"
       - ".github/workflows/backend-ci.yml"
 
@@ -48,6 +52,10 @@ jobs:
       DATABASE_URL: postgresql+psycopg://vena_ia:test-only-password@localhost:5432/vena_ia_test
       REDIS_URL: redis://localhost:6379/0
       RUN_REDIS_INTEGRATION: "1"
+      RUN_POSTGRES_BACKUP_INTEGRATION: "1"
+      POSTGRES_DB: vena_ia_test
+      POSTGRES_USER: vena_ia
+      POSTGRES_PASSWORD: test-only-password
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,3 +87,9 @@ jobs:
       - name: Test
         working-directory: apps/api
         run: pytest
+
+      - name: Locate PostgreSQL service container
+        run: echo "POSTGRES_CONTAINER_ID=$(docker ps --filter ancestor=pgvector/pgvector:pg17 --format '{{.ID}}' | head -n 1)" >> "$GITHUB_ENV"
+
+      - name: Test PostgreSQL backup and restore
+        run: pytest tests/operations
