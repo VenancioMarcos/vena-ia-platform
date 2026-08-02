@@ -315,9 +315,8 @@ Critério de conclusão:
 Objetivo: auditar o MVP publicado e corrigir o menor conjunto de falhas reais de
 maior impacto, preservando arquitetura, segurança e contratos públicos.
 
-Status: primeiro e segundo pacotes executados em `release/v1.1.0-stabilization`;
-entrega exclusivamente pela mesma Draft PR #11, sem merge, tag ou release nesta
-missão.
+Status: três pacotes executados em `release/v1.1.0-stabilization`; entrega
+exclusivamente pela mesma Draft PR #11, sem merge, tag ou release nesta missão.
 
 Escopo do pacote 1:
 
@@ -333,6 +332,14 @@ Escopo do pacote 2:
 * abertura do fluxo principal preservada quando apenas relatórios falham;
 * remoção de controles de navegação sem ação;
 * nova auditoria integral de API, frontend, Docker, PostgreSQL, OpenAPI e CI.
+
+Escopo do pacote 3:
+
+* eliminar recargas de quatro endpoints após operações que já retornam o recurso;
+* sincronizar somente documentos ou histórico quando uma operação falhar;
+* cancelar requests iniciais quando dashboard/projeto forem desmontados;
+* remover tipos não consumidos e o warning legado do `TestClient` com HTTPX2;
+* preservar contratos públicos, arquitetura, migrations e escopo da v1.1.
 
 Critério de conclusão:
 

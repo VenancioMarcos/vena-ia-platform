@@ -9,6 +9,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 ## [Unreleased]
 
 ### Corrigido
+* Criação de projeto, upload, processamento/indexação, falha de chat e criação de
+  relatório deixam de recarregar indiscriminadamente projeto, documentos,
+  histórico e relatórios; cada operação atualiza somente o estado afetado.
+* Carregamentos iniciais de dashboard e projeto agora cancelam requests ao
+  desmontar o componente, evitando atualizações obsoletas e trabalho de rede sem
+  consumidor.
+* A suíte migra do cliente HTTP legado para HTTPX2, removendo o warning de
+  depreciação do `TestClient` sem alterar contratos públicos da API.
 * Requisições do frontend agora compartilham um único cliente, normalizam também
   os detalhes estruturados de validação do FastAPI e encerram carregamentos após
   30 segundos quando a API não responde.
@@ -28,6 +36,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   scores fora do intervalo e trechos que não correspondem ao chunk persistido.
 
 ### Testes
+* Suíte integral preservada em 165 testes aprovados e sem warnings no pacote 3.
 * Cobertura do contrato de erro persistido no chat e nova validação integral do
   pacote 2 com 165 testes, frontend, Docker, PostgreSQL e OpenAPI.
 * Cobertura de regressão para reprocessamento de documentos `FAILED` e para

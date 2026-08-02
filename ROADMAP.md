@@ -20,7 +20,7 @@
 | v0.8 | CNC Inicial | ✅ Publicada |
 | v0.9 | Pesquisa Científica | ✅ Publicada |
 | v1.0 | MVP Vena_IA | ✅ Publicada |
-| v1.1 | Stabilization Packages 1 e 2 | Draft PR #11 pronta para revisão |
+| v1.1 | Stabilization Packages 1, 2 e 3 | Draft PR #11 pronta para revisão |
 
 Critérios de conclusão, entregas detalhadas por versão, fases operacionais (0 a 22), marcos e riscos estão documentados em [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
