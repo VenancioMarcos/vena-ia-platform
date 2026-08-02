@@ -17,6 +17,7 @@ from app.modules.auth.service import (
     DuplicateIdentityError,
     InvalidCredentialsError,
 )
+from app.modules.auth.security_store import SecurityStoreUnavailable
 from app.modules.auth.tokens import (
     InvalidTokenError,
     TokenConfigurationError,
@@ -126,8 +127,21 @@ def logout(
     for token in _request_tokens(request):
         try:
             identity = decode_access_token(token, settings.auth_secret_key)
-            request.app.state.revoked_auth_tokens.revoke(identity)
             actor_user_id = identity.user_id
+            request.app.state.auth_security_store.revoke(identity)
+        except SecurityStoreUnavailable as exc:
+            record_security_event(
+                db,
+                request,
+                "SECURITY_STORE_UNAVAILABLE",
+                outcome="ERROR",
+                reason="TOKEN_REVOCATION_WRITE",
+                actor_user_id=actor_user_id,
+            )
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Authentication security control unavailable",
+            ) from exc
         except (InvalidTokenError, TokenConfigurationError):
             # Logout is idempotent and never reveals whether a presented token was valid.
             saw_invalid_token = True

@@ -7,19 +7,23 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import get_db
-from app.core.rate_limit import FixedWindowRateLimiter, RateLimitExceeded
+from app.core.rate_limit import RateLimitExceeded
 from app.modules.audit.service import record_security_event
+from app.modules.auth.security_store import (
+    AuthenticationSecurityStore,
+    SecurityStoreUnavailable,
+)
 
 AuthRateLimitScope = Literal["login", "registration"]
 
 
-def get_auth_rate_limiter(request: Request) -> FixedWindowRateLimiter:
-    return request.app.state.auth_rate_limiter
+def get_auth_security_store(request: Request) -> AuthenticationSecurityStore:
+    return request.app.state.auth_security_store
 
 
-AuthRateLimiterDependency = Annotated[
-    FixedWindowRateLimiter,
-    Depends(get_auth_rate_limiter),
+AuthSecurityStoreDependency = Annotated[
+    AuthenticationSecurityStore,
+    Depends(get_auth_security_store),
 ]
 
 
@@ -32,7 +36,7 @@ def _client_key(request: Request) -> str:
 def _enforce(
     scope: AuthRateLimitScope,
     request: Request,
-    limiter: AuthRateLimiterDependency,
+    store: AuthSecurityStoreDependency,
     db: Session,
 ) -> None:
     if scope == "login":
@@ -41,11 +45,23 @@ def _enforce(
         limit = settings.auth_registration_rate_limit_requests
 
     try:
-        limiter.consume(
+        store.consume(
             f"auth:{scope}:{_client_key(request)}",
             limit=limit,
             window_seconds=settings.auth_rate_limit_window_seconds,
         )
+    except SecurityStoreUnavailable as exc:
+        record_security_event(
+            db,
+            request,
+            "SECURITY_STORE_UNAVAILABLE",
+            outcome="ERROR",
+            reason=f"{scope.upper()}_RATE_LIMIT",
+        )
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Authentication security control unavailable",
+        ) from exc
     except RateLimitExceeded as exc:
         record_security_event(
             db,
@@ -63,18 +79,18 @@ def _enforce(
 
 def enforce_login_rate_limit(
     request: Request,
-    limiter: AuthRateLimiterDependency,
+    store: AuthSecurityStoreDependency,
     db: Annotated[Session, Depends(get_db)],
 ) -> None:
-    _enforce("login", request, limiter, db)
+    _enforce("login", request, store, db)
 
 
 def enforce_registration_rate_limit(
     request: Request,
-    limiter: AuthRateLimiterDependency,
+    store: AuthSecurityStoreDependency,
     db: Annotated[Session, Depends(get_db)],
 ) -> None:
-    _enforce("registration", request, limiter, db)
+    _enforce("registration", request, store, db)
 
 
 LoginRateLimitDependency = Annotated[None, Depends(enforce_login_rate_limit)]

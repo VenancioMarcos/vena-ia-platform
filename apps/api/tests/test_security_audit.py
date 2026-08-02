@@ -3,6 +3,7 @@ from sqlalchemy import select
 from app.core.config import settings
 from app.modules.audit.models import SecurityAuditEvent
 from app.modules.auth.tokens import create_access_token
+from app.modules.auth.security_store import SecurityStoreUnavailable
 from app.modules.users.models import User
 
 NEW_PASSWORD = "new-legacy-password-safe"
@@ -197,3 +198,49 @@ def test_audit_query_is_admin_only_filtered_and_paginated(
     assert "password_hash" not in serialized
     assert "access_token" not in serialized
     assert "ADMIN_OPERATION_DENIED" in _event_types(db_session)
+
+
+class UnavailableSecurityStore:
+    def consume(self, *args, **kwargs) -> None:
+        raise SecurityStoreUnavailable
+
+    def revoke(self, *args, **kwargs) -> None:
+        raise SecurityStoreUnavailable
+
+    def contains(self, *args, **kwargs) -> bool:
+        raise SecurityStoreUnavailable
+
+
+def test_security_store_failure_is_fail_closed_and_audited(
+    client, db_session, make_account
+) -> None:
+    account = make_account("redis-failure@vena-ia.dev")
+    original = client.app.state.auth_security_store
+    client.app.state.auth_security_store = UnavailableSecurityStore()
+    try:
+        login = client.post(
+            "/auth/login",
+            json={"email": account.email, "password": "irrelevant"},
+        )
+        session = client.get("/auth/me", headers=account.headers)
+        logout = client.post("/auth/logout", headers=account.headers)
+    finally:
+        client.app.state.auth_security_store = original
+
+    assert login.status_code == 503
+    assert session.status_code == 503
+    assert logout.status_code == 503
+    events = list(
+        db_session.scalars(
+            select(SecurityAuditEvent).where(
+                SecurityAuditEvent.event_type == "SECURITY_STORE_UNAVAILABLE"
+            )
+        )
+    )
+    assert {event.reason for event in events} == {
+        "LOGIN_RATE_LIMIT",
+        "TOKEN_REVOCATION_LOOKUP",
+        "TOKEN_REVOCATION_WRITE",
+    }
+    assert all(event.outcome == "ERROR" for event in events)
+    assert "Bearer " not in str([(event.reason, event.origin) for event in events])

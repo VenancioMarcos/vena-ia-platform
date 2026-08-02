@@ -19,6 +19,7 @@ from app.core import models_registry  # noqa: F401
 from app.core.config import settings
 from app.core.database import Base, get_db
 from app.main import app
+from app.modules.auth.security_store import MemoryAuthenticationSecurityStore
 from app.modules.users.models import User
 
 TEST_PASSWORD = "correct-horse-battery-staple"
@@ -47,12 +48,10 @@ def _reset_database(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, No
         "test-only-auth-secret-key-with-at-least-32-bytes",
     )
     monkeypatch.setattr(settings, "auth_cookie_secure", False)
-    app.state.auth_rate_limiter.clear()
-    app.state.revoked_auth_tokens.clear()
+    app.state.auth_security_store = MemoryAuthenticationSecurityStore()
     Base.metadata.create_all(bind=engine)
     yield
-    app.state.auth_rate_limiter.clear()
-    app.state.revoked_auth_tokens.clear()
+    app.state.auth_security_store.clear()
     Base.metadata.drop_all(bind=engine)
 
 

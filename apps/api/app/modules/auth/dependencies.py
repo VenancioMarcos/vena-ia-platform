@@ -8,6 +8,7 @@ from app.core.database import get_db
 from app.modules.audit.service import record_security_event
 from app.modules.auth.authorization import AuthorizationService
 from app.modules.auth.service import AuthService
+from app.modules.auth.security_store import SecurityStoreUnavailable
 from app.modules.auth.tokens import (
     InvalidTokenError,
     TokenConfigurationError,
@@ -61,7 +62,23 @@ def get_current_user(
         )
         raise _authentication_error("Invalid authentication token") from None
 
-    if request.app.state.revoked_auth_tokens.contains(identity):
+    try:
+        revoked = request.app.state.auth_security_store.contains(identity)
+    except SecurityStoreUnavailable as exc:
+        record_security_event(
+            db,
+            request,
+            "SECURITY_STORE_UNAVAILABLE",
+            outcome="ERROR",
+            reason="TOKEN_REVOCATION_LOOKUP",
+            actor_user_id=identity.user_id,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Authentication security control unavailable",
+        ) from exc
+
+    if revoked:
         record_security_event(
             db,
             request,
