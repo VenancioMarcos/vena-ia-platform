@@ -14,3 +14,5 @@ class SecurityAuditEventRead(BaseModel):
     outcome: str
     reason: str | None
     origin: str
+    request_id: str | None
+    correlation_id: str | None

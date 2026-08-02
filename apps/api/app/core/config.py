@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     )
     auth_redis_timeout_seconds: float = Field(default=1.0, gt=0, le=30)
     security_audit_retention_days: int = Field(default=90, ge=1, le=3_650)
+    observability_collection_enabled: bool = True
+    observability_metrics_endpoint_enabled: bool = False
+    observability_alert_cooldown_seconds: float = Field(default=30, ge=0, le=86_400)
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"

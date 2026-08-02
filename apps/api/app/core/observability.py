@@ -92,10 +92,29 @@ def emit_structured_event(event: str, level: str = "INFO", **fields: Any) -> Non
 
 
 class ObservabilityMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app: Any, *, application_version: str, environment: str) -> None:
+    def __init__(
+        self,
+        app: Any,
+        *,
+        application_version: str,
+        environment: str,
+        metric_collector: Any,
+        tracer: Any,
+        alert_manager: Any,
+    ) -> None:
         super().__init__(app)
         self.application_version = application_version
         self.environment = environment
+        self.metric_collector = metric_collector
+        self.tracer = tracer
+        self.alert_manager = alert_manager
+
+    @staticmethod
+    def _safe(operation: Any, *args: Any, **kwargs: Any) -> None:
+        try:
+            operation(*args, **kwargs)
+        except Exception:
+            pass
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         request_id = _safe_identifier(request.headers.get(REQUEST_ID_HEADER))
@@ -107,33 +126,129 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
         started = time.perf_counter()
         error_type: str | None = None
         try:
-            try:
-                response = await call_next(request)
-            except Exception as exc:
-                error_type = type(exc).__name__
-                response = JSONResponse(
-                    status_code=500,
-                    content={
-                        "detail": "Internal server error",
-                        "request_id": request_id,
-                        "correlation_id": correlation_id,
-                    },
-                )
+            with self.tracer.start_span("http.request") as span:
+                try:
+                    response = await call_next(request)
+                except Exception as exc:
+                    error_type = type(exc).__name__
+                    span.set_error(error_type)
+                    response = JSONResponse(
+                        status_code=500,
+                        content={
+                            "detail": "Internal server error",
+                            "request_id": request_id,
+                            "correlation_id": correlation_id,
+                        },
+                    )
+                if response.status_code >= 500 and error_type is None:
+                    span.set_error("http_5xx")
             response.headers[REQUEST_ID_HEADER] = request_id
             response.headers[CORRELATION_ID_HEADER] = correlation_id
             route = request.scope.get("route")
             route_path = getattr(route, "path", "unmatched")
+            duration_ms = round((time.perf_counter() - started) * 1000, 3)
+            status_class = f"{response.status_code // 100}xx"
             emit_structured_event(
                 "http.request.completed",
                 "ERROR" if response.status_code >= 500 else "INFO",
                 method=request.method,
                 route=route_path,
                 status_http=response.status_code,
-                duration_ms=round((time.perf_counter() - started) * 1000, 3),
+                duration_ms=duration_ms,
                 application_version=self.application_version,
                 environment=self.environment,
                 error_type=error_type,
             )
+            request_labels = {
+                "method": request.method,
+                "route": route_path,
+                "status_class": status_class,
+            }
+            self._safe(
+                self.metric_collector.increment,
+                "http_requests_total",
+                request_labels,
+            )
+            self._safe(
+                self.metric_collector.observe,
+                "http_request_duration_ms",
+                request_labels,
+                duration_ms,
+            )
+            if response.status_code >= 500:
+                self._safe(
+                    self.metric_collector.increment,
+                    "http_internal_errors_total",
+                    {"route": route_path},
+                )
+                if response.status_code == 500:
+                    self._safe(
+                        self.alert_manager.emit,
+                        "unexpected_internal_error",
+                        "critical",
+                        context={"route": route_path, "status_class": status_class},
+                        correlation_id=correlation_id,
+                    )
+            if response.status_code == 429:
+                scope = "authentication" if route_path.startswith(("/auth", "/users")) else "api"
+                self._safe(
+                    self.metric_collector.increment,
+                    "rate_limits_total",
+                    {"scope": scope},
+                )
+                self._safe(
+                    self.alert_manager.emit,
+                    "rate_limit_threshold",
+                    "warning",
+                    context={"scope": scope},
+                    correlation_id=correlation_id,
+                )
+                if scope == "authentication":
+                    self._safe(
+                        self.alert_manager.emit,
+                        "repeated_auth_failure_threshold",
+                        "warning",
+                        context={"scope": scope},
+                        correlation_id=correlation_id,
+                    )
+            if response.status_code in {502, 503} and (
+                route_path.startswith("/ai/")
+                or route_path.endswith("/knowledge/ask")
+                or route_path.endswith("/embeddings")
+                or route_path.endswith("/ask")
+            ):
+                self._safe(
+                    self.metric_collector.increment,
+                    "ai_provider_failures_total",
+                    {"operation": "ai.request"},
+                )
+                self._safe(
+                    self.alert_manager.emit,
+                    "ai_provider_unavailable",
+                    "critical",
+                    context={"operation": "ai.request"},
+                    correlation_id=correlation_id,
+                )
+            processing_routes = {
+                "/documents/{document_id}/process",
+                "/documents/{document_id}/processing",
+                "/documents/{document_id}/embeddings",
+            }
+            if route_path in processing_routes:
+                outcome = "completed" if response.status_code < 400 else "failed"
+                self._safe(
+                    self.metric_collector.increment,
+                    "processing_jobs_total",
+                    {"operation": "document.processing", "outcome": outcome},
+                )
+                if outcome == "failed":
+                    self._safe(
+                        self.alert_manager.emit,
+                        "processing_failure_threshold",
+                        "warning",
+                        context={"operation": "document.processing"},
+                        correlation_id=correlation_id,
+                    )
             return response
         finally:
             _request_id.reset(request_token)

@@ -49,9 +49,14 @@ def _reset_database(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, No
     )
     monkeypatch.setattr(settings, "auth_cookie_secure", False)
     app.state.auth_security_store = MemoryAuthenticationSecurityStore()
+    app.state.audit_session_factory = TestingSessionLocal
+    app.state.metric_collector.reset()
+    app.state.alert_manager.reset()
     Base.metadata.create_all(bind=engine)
     yield
     app.state.auth_security_store.clear()
+    app.state.metric_collector.reset()
+    app.state.alert_manager.reset()
     Base.metadata.drop_all(bind=engine)
 
 
