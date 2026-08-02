@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization ✅ → v1.2.0 — Security and Data Protection ✅ → v1.3 — Backup and Recovery Package 1 em implementação.
+* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization ✅ → v1.2.0 — Security and Data Protection ✅ → v1.3 — Backup and Recovery Package 2 em implementação.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.2.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `f42a1b7c9d30` adiciona auditoria persistente e `auth_version`.
@@ -61,6 +61,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 * **Release v1.2.0:** a tag anotada aponta para `663dbc2` e a [GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.2.0) foi publicada sem deploy.
 * **v1.3 Backup Package 1:** branch `codex/v1.3-backup-recovery` adiciona contrato versionado, manifesto/checksum, backup PostgreSQL custom-format, restore somente em alvo vazio explicitamente confirmado e teste descartável de round trip. MinIO, nuvem, criptografia, agendamento e retenção automática permanecem fora do pacote.
   A Draft PR [#14](https://github.com/VenancioMarcos/vena-ia-platform/pull/14) aprovou o Backend CI com backup → restore real em PostgreSQL/pgvector descartável.
+* **v1.3 Backup Package 2:** a mesma Draft PR #14 adiciona backup e restore MinIO
+  verificáveis, manifesto de backup-set compartilhado com PostgreSQL e detecção
+  fail-closed de objeto ausente, órfão ou fora do projeto/documento esperado. O CI
+  executa round trip real combinado em PostgreSQL/pgvector e MinIO descartáveis.
+  Retenção continua operacional/manual; criptografia deve usar controles nativos
+  do storage/infraestrutura após decisão de chaves, sem criptografia improvisada.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

@@ -728,6 +728,35 @@ retenção automatizada, agendamento e storage externo continuam fora do pacote.
 
 ---
 
+## DEC-020 — Contrato MinIO e backup-set consistente
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Operação / Armazenamento / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0020-minio-cross-store-backup-contract.md`,
+`docs/runbooks/POSTGRES_BACKUP_RESTORE.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Recuperar somente PostgreSQL não garante a existência e integridade dos objetos
+referenciados no MinIO.
+
+### Decisão
+
+Versionar contratos separados para objetos MinIO e para o conjunto PostgreSQL +
+MinIO. Ambos compartilham UUID, timestamp e versão. O conjunto registra Alembic
+head, contagens e checksums, e falha fechado sem reparo automático em qualquer
+inconsistência. Restore MinIO exige destino vazio, confirmação e allowlist.
+
+### Impacto
+
+O CI comprova round trip combinado descartável. Retenção segue classe manual e
+expiração de 30 dias no ambiente não produtivo; descarte exige validação de outro
+backup recuperável. Criptografia fica delegada ao storage e gestão de chaves a
+ser aprovada, evitando formato criptográfico próprio.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

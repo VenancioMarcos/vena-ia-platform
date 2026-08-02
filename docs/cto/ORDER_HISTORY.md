@@ -144,3 +144,11 @@ O Package 1 foi publicado na Draft PR #14. Ruff, mypy e 200 testes locais foram
 aprovados; o Backend CI executou PostgreSQL/Redis, backup custom-format, checksum,
 restore em banco descartável, migration head e prova de integridade em 1m54s.
 Uma falha inicial de import do runner Linux foi corrigida sem alterar o contrato.
+
+## 2026-08-02 — v1.3 Backup Package 2
+
+O CTO aprovou o Package 1 e emitiu `TASK-V13-002` para continuar exclusivamente
+na Draft PR #14 com backup/restore MinIO, manifesto compartilhado de backup-set,
+detecção de inconsistência entre metadados e objetos, round trip combinado real,
+retenção/RPO/RTO documentados e avaliação de criptografia. Merge, tag, release,
+deploy, nova PR, v1.4, dados reais e CNC permanecem fora desta missão.

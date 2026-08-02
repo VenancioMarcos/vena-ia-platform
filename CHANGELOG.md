@@ -9,12 +9,24 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 ## [Unreleased]
 
 ### Adicionado
+* Contrato `vena-ia.minio-backup/v1` com exportação determinística de objetos,
+  metadados seguros, SHA-256 por conteúdo e restauração controlada em destino vazio.
+* Contrato `vena-ia.backup-set/v1` que relaciona PostgreSQL e MinIO pelo mesmo
+  identificador, instante, versão e validação de objetos ausentes, órfãos e isolamento.
+* Round trip descartável combinado no CI, incluindo perda simulada, restauração
+  dos dois stores, migration head e prova de integridade dos metadados e conteúdos.
 * Contrato `vena-ia.postgresql-backup/v1` com dump custom-format, manifesto,
   SHA-256, migration head e identificação do conjunto.
 * Scripts seguros de backup e restore PostgreSQL: artefatos fora do repositório,
   senha somente por ambiente, alvo vazio e confirmação/allowlist explícitas.
 * Testes de contrato e round trip descartável para backup, perda simulada,
   restore e verificação mínima de integridade sem dados reais.
+
+### Segurança
+* Restore MinIO valida contrato, paths, tamanho e checksum de todos os artefatos
+  antes de mutar o destino; exige confirmação/allowlist e remove escrita parcial.
+* Credenciais MinIO permanecem exclusivamente no ambiente e nunca integram
+  argumentos, manifestos, logs ou artefatos versionados.
 
 ## [1.2.0] — 2026-08-02 — Security and Data Protection
 

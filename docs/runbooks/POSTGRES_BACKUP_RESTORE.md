@@ -1,7 +1,7 @@
-# Runbook — PostgreSQL Backup and Restore
+# Runbook — PostgreSQL and MinIO Backup and Restore
 
-**Status:** v1.3 Package 1
-**Scope:** PostgreSQL/pgvector only; MinIO is a later package.
+**Status:** v1.3 Package 2
+**Scope:** PostgreSQL/pgvector, MinIO and cross-store consistency.
 
 ## Contract
 
@@ -63,5 +63,53 @@ database. No customer or production data is used.
 
 Initial non-production targets: RPO equals the time since the last manually
 verified backup; RTO is not yet guaranteed and must be measured before pilot.
-MinIO consistency, encryption, automated retention, scheduling and external
-storage remain explicit later work in v1.3.
+MinIO recovery and cross-store consistency are defined below. Scheduling,
+automatic retention and external storage remain later v1.3 work.
+
+## MinIO contract and restore
+
+`python -m scripts.minio_backup` creates `vena-ia.minio-backup/v1`, one external
+artifact per object and a deterministic JSON manifest. Each object records key,
+byte size, SHA-256, content type, UTC modification time, trustworthy single-part
+ETag when available, and project/document identifiers derivable from its key.
+Contents and credentials never enter the manifest.
+
+```bash
+python -m scripts.minio_backup \
+  --output-directory /secure/vena-ia-backups \
+  --bucket vena-ia-files \
+  --application-version 1.3.0-dev \
+  --backup-set-id UUID-SHARED-WITH-POSTGRES
+```
+
+Restore validates the complete manifest and every artifact before mutation. The
+destination bucket or controlled prefix must be empty and match confirmation and
+allowlist exactly.
+
+```bash
+python -m scripts.minio_restore \
+  --manifest /secure/vena-ia-backups/vena-ia-minio-TIMESTAMP-UUID/manifest.json \
+  --target-bucket vena-ia-restore \
+  --confirm-target vena-ia-restore \
+  --allow-bucket vena-ia-restore
+```
+
+Traversal, symlink, overwrite, contract/version, size or checksum errors fail
+closed. Partial writes are cleaned from a disposable destination.
+
+## Backup-set consistency
+
+`vena-ia.backup-set/v1` binds PostgreSQL and MinIO manifests with the same UUID,
+UTC timestamp and application version. It records Alembic head, manifest
+checksums and counts. Missing, orphaned or cross-project objects fail without
+automatic repair. CI creates disposable metadata/content, backs up both stores,
+simulates loss, restores into a new database and bucket, verifies them and cleans up.
+
+## Retention, discard, encryption, RPO and RTO
+
+- initial class: `non-production-manual`, expiration target 30 days;
+- discard only after another complete set passes a restore drill;
+- encryption must use destination/platform controls plus approved key management;
+  application-level improvised encryption is forbidden;
+- RPO is the age of the last verified complete set;
+- RTO must be measured before pilot and is not guaranteed by this package.
