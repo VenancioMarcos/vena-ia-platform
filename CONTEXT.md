@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization and Professionalization em validação final.
+* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization and Professionalization publicada e validada.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.1.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração e autorização centralizada. `X-User-ID` não autentica. A migration `e15a7c9d4f20` integra autoria, estado e evidências ao histórico de chat; a v1.1 não adiciona migrations.
@@ -49,7 +49,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 * **v1.1 Stabilization Package 1:** `TASK-V11-001` autorizou auditoria completa do fluxo principal. A Draft PR [#11](https://github.com/VenancioMarcos/vena-ia-platform/pull/11) corrige recuperação de documentos `FAILED`, retry de indexação no frontend e integridade verificável das evidências de relatórios; merge, tag e release permanecem fora desta missão.
 * **v1.1 Stabilization Package 2:** `TASK-V11-002` mantém a mesma Draft PR #11 e corrige falhas operacionais reais do frontend: timeout contra carregamento infinito, cliente API duplicado, logout silencioso, erro de chat oculto, dependência indevida da listagem de relatórios para abrir o projeto e controles de navegação sem ação. Nenhuma arquitetura, migration ou funcionalidade estratégica foi adicionada.
 * **v1.1 Stabilization Package 3:** `TASK-V11-003` reduz chamadas redundantes no fluxo principal: operações bem-sucedidas atualizam somente projetos, documentos, mensagens ou relatórios afetados; falhas sincronizam apenas o recurso necessário; requests iniciais são canceladas no unmount. A suíte substitui HTTPX legado por HTTPX2 e passa sem warnings. Contratos públicos, migrations e arquitetura permanecem inalterados.
-* **Candidata v1.1.0 2026-08-01:** os três pacotes da Draft PR [#11](https://github.com/VenancioMarcos/vena-ia-platform/pull/11) foram aprovados nos gates locais e no CI. O versionamento 1.1.0 e a validação final precedem o Squash Merge, a tag e a release autorizados, sem deploy.
+* **Release v1.1.0 2026-08-01:** os três pacotes da PR [#11](https://github.com/VenancioMarcos/vena-ia-platform/pull/11) foram aprovados nos gates locais e no CI e integrados por Squash Merge em `1f5263f`. A release [v1.1.0](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.1.0) foi publicada sem deploy; a validação pós-merge e diretamente da tag aprovou 165 testes sem warnings, API/OpenAPI 1.1.0 com 47 rotas, frontend, Docker e migrations PostgreSQL.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

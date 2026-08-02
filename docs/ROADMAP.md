@@ -315,9 +315,9 @@ Critério de conclusão:
 Objetivo: auditar o MVP publicado e corrigir o menor conjunto de falhas reais de
 maior impacto, preservando arquitetura, segurança e contratos públicos.
 
-Status: candidata `v1.1.0` após três pacotes na PR #11. Os gates locais e do CI
-foram aprovados; Squash Merge, tag, release e validação direta da tag estão
-autorizados e pendentes. Nenhum deploy faz parte da missão.
+Status: publicada como `v1.1.0` após três pacotes na PR #11, Squash Merge e
+aprovação dos gates locais, do CI, pós-merge e diretamente da tag. Nenhum deploy
+foi executado.
 
 Escopo do pacote 1:
 

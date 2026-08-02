@@ -10,7 +10,7 @@ Este repositório é desenvolvido com apoio intensivo de múltiplos agentes de I
 
 ## Status Atual
 
-**Fase:** v1.1.0 — Stabilization and Professionalization em validação final.
+**Fase:** v1.1.0 — Stabilization and Professionalization publicada e validada.
 
 Para o estado técnico exato (o que está implementado vs. apenas planejado), ver [`CONTEXT.md`](CONTEXT.md) — leitura obrigatória antes de qualquer contribuição.
 

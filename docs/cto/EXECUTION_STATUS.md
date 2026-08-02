@@ -2,12 +2,16 @@
 
 ```text
 MISSION=TASK_V11_004_FINAL_VALIDATION_MERGE_RELEASE
-STATE=VENA_IA_V1_1_FINAL_VALIDATION_IN_PROGRESS
-BRANCH=release/v1.1.0-stabilization
+STATE=VENA_IA_V1_1_RELEASED_AND_FULLY_VERIFIED
+BRANCH=main
 START_HEAD=2d083af029ffb489a4b6a2d603863b36e8d1693c
-RELEASE_CANDIDATE_HEAD=69d92f093b0357d300ae313da103358f0e18722e
+RELEASE_CANDIDATE_HEAD=4e13e2836a6548f6e3bd392c850176e414c7082e
+MERGE_COMMIT=1f5263fc610b26b2068462d9da1e43ad71d683a5
+RELEASE_COMMIT=TAG_TARGET
 PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/11
-PR_STATE=DRAFT
+PR_STATE=MERGED
+TAG=v1.1.0
+RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.1.0
 BLOCKERS=NONE
 TESTS=165_PASSED_0_WARNINGS
 E2E=MVP_FLOW_AND_CROSS_USER_AUTHORIZATION_APPROVED
@@ -16,9 +20,9 @@ RUNTIME=OPENAPI_47_PATHS_APPROVED
 POSTGRES_MIGRATIONS=UPGRADE_DOWNGRADE_UPGRADE_E15A7C9D4F20_APPROVED
 DOCKER=COMPOSE_CONFIG_API_WEB_BUILDS_APPROVED
 SECRET_SCAN=APPROVED
-GITHUB_CHECKS=RELEASE_VERSIONING_PENDING_PUSH
-MERGE_TAG_RELEASE=AUTHORIZED_PENDING_FINAL_GATES
-NEXT=VERSION_COMMIT_AND_FINAL_GATES
+GITHUB_CHECKS=FRONTEND_BUILD_37S_BACKEND_TEST_1M43S_APPROVED
+MERGE_TAG_RELEASE=COMPLETED_NO_DEPLOY
+NEXT=CTO_TERMINAL_ACCEPTANCE
 ```
 
 Este arquivo deve ser atualizado apenas com evidências verificadas.
@@ -35,7 +39,7 @@ tag anotada, GitHub Release e validação direta da tag, sem deploy.
 * três pacotes de estabilização aprovados pelo CTO;
 * API, frontend, health e documentação versionados em 1.1.0;
 * diff final limitado a estabilização, sem módulo ou migration nova;
-* merge, tag, release e validações finais autorizados pela `TASK-V11-004`.
+* merge, tag, release e validações finais concluídos pela `TASK-V11-004`.
 
 ### Arquivos modificados
 
@@ -56,4 +60,4 @@ pós-merge e da tag aprovadas, árvore limpa e nenhum deploy executado.
 
 ### Próximo passo
 
-Aceite terminal do CTO para a release v1.1.0.
+Missão técnica encerrada; v1.2 não autorizada.

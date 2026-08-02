@@ -61,3 +61,10 @@ Após aprovação dos três pacotes de estabilização, a ordem `TASK-V11-004`
 autorizou explicitamente versionamento `v1.1.0`, retirada da PR #11 de Draft,
 Squash Merge, tag anotada, GitHub Release e validação direta da tag. Deploy e
 início da v1.2 permanecem proibidos.
+
+## 2026-08-01 — v1.1.0 publicada
+
+A PR #11 foi integrada por Squash Merge em `1f5263f`. A main sincronizada passou
+novamente por Ruff, mypy, 165 testes sem warnings, frontend, Docker, runtime com
+47 rotas OpenAPI, migrations PostgreSQL e secret scan. A tag anotada `v1.1.0` e
+a GitHub Release foram publicadas e validadas diretamente, sem deploy.
