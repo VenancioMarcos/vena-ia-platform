@@ -428,6 +428,11 @@ tokens emitidos no futuro não encerram o gate de revogação distribuída R-013
 Ruff, mypy, 177 testes, frontend, Docker, PostgreSQL, OpenAPI e CI final de
 backend/frontend estão aprovados; o pacote aguarda revisão do CTO.
 
+Estado do Package 3: fluxo administrativo para credencial legada, invalidação
+por versão de autenticação e auditoria persistente de eventos sensíveis foram
+implementados na mesma Draft PR #13. A validação local aprova Ruff, mypy e 182
+testes; migration PostgreSQL, Docker e CI permanecem gates antes do retorno.
+
 Entregas posteriores da v1.2:
 
 * revogação/rotação auditável de sessões JWT;

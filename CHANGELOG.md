@@ -13,6 +13,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   cadastro e login por cliente da conexão, com resposta `429` e `Retry-After`.
 * As rotas compatíveis `POST /auth/register` e `POST /users` compartilham o mesmo
   limite de cadastro; cabeçalhos encaminhados e `X-User-ID` não alteram a chave.
+* Fluxo administrativo restrito para definir credencial somente em conta legada
+  sem senha, com versão de autenticação e invalidação das sessões anteriores.
+* Trilha persistente de eventos sensíveis com consulta administrativa paginada
+  e filtrável, sem senha, hash, JWT, cookie ou corpo de requisição.
+* Migration `f42a1b7c9d30` adiciona `users.auth_version` e a tabela indexada
+  `security_audit_events`.
 
 ### Segurança
 * Primeiro controle de aplicação para tentativas públicas de autenticação. A

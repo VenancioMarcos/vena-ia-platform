@@ -97,3 +97,9 @@ proibidos.
 O Package 2 corrigiu reutilização de JWT após logout, validou emissão temporal e
 melhorou o erro `429` no frontend. A validação aprovou 177 testes e os CI de
 backend/frontend na PR #13; o risco distribuído R-013 permanece explícito.
+
+## 2026-08-02 — v1.2 Security Package 3
+
+O CTO aprovou o Package 2 e emitiu `TASK-V12-003` para credenciais legadas e
+auditoria persistente de eventos sensíveis na mesma Draft PR #13. Migration é
+autorizada; merge, tag, release, deploy, nova PR e v1.3 permanecem proibidos.

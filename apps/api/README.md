@@ -33,6 +33,9 @@ de remover o cookie. Essa denylist é uma proteção intermediária: não persis
 reinícios e deve ser distribuída antes de execução com múltiplas réplicas. Não
 há renovação silenciosa de sessão.
 
+`SECURITY_AUDIT_RETENTION_DAYS` documenta a retenção operacional da trilha
+persistente (90 dias por padrão); não há limpeza automática nesta entrega.
+
 ## Endpoints
 
 * `GET /health`
@@ -40,6 +43,8 @@ há renovação silenciosa de sessão.
 * `POST /auth/login`
 * `GET /auth/me`
 * `POST /auth/logout`
+* `PUT /users/{user_id}/credentials` — admin define senha somente para conta legada
+* `GET /audit/security-events` — auditoria sensível paginada, somente admin
 * Rotas protegidas: `/users`, `/projects`, `/files`, `/documents`, `/chat`, `/ai`, `/cad`, `/manufacturing`, `/cnc` e `/research`
 * `POST /documents/{document_id}/processing` — extrai texto de PDF e persiste chunks
 * `GET /documents/{document_id}/chunks` — consulta chunks rastreáveis por documento/página

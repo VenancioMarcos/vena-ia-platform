@@ -81,6 +81,25 @@ Produção horizontal exige armazenamento distribuído ou outra estratégia de
 revogação auditável. Não existe renovação silenciosa: após expiração, o usuário
 deve autenticar-se novamente.
 
+### 5.3 Credenciais legadas e auditoria
+
+Somente admin pode usar `PUT /users/{user_id}/credentials`, e apenas para uma
+conta com `password_hash` ausente. O fluxo rejeita autoatendimento, redefinição
+de credencial existente, mass assignment e senhas fora de 12–128 caracteres.
+O papel não muda, senha/hash nunca são retornados e `auth_version` invalida todos
+os tokens anteriores da conta de forma verificável no banco.
+
+Eventos `LOGIN_SUCCESS`, `LOGIN_FAILURE`, `RATE_LIMIT_EXCEEDED`, `LOGOUT`,
+`TOKEN_REJECTED`, `LEGACY_CREDENTIAL_SET`, `LEGACY_CREDENTIAL_RESET_DENIED` e
+`ADMIN_OPERATION_DENIED` são persistidos com IDs, horário, ator/alvo quando
+aplicável, resultado, motivo categorizado e origem da conexão. Nunca armazenam
+senha, hash, JWT, cookie, segredo, corpo integral, prompt ou documento.
+
+Somente admin consulta `GET /audit/security-events`, com filtros e limite máximo
+de 100 itens. A retenção padrão é 90 dias (`SECURITY_AUDIT_RETENTION_DAYS`); a
+limpeza é responsabilidade operacional controlada nesta entrega, sem exclusão
+automática. Logs gerais, métricas e tracing continuam fora deste pacote.
+
 ## 6. Autorização
 
 * cadastro público cria somente papel `member`;
