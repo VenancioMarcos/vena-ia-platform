@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization ✅ → v1.2.0 — Security and Data Protection ✅ → v1.3 — Backup and Recovery Package 3 em implementação.
+* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization ✅ → v1.2.0 — Security and Data Protection ✅ → v1.3 — Backup and Recovery Packages 1–3 prontos para revisão do CTO.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.2.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `f42a1b7c9d30` adiciona auditoria persistente e `auth_version`.
@@ -72,6 +72,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   `key_id`; adiciona retenção fail-closed com dry-run, job com lock/timeout e drill
   que mede apenas RPO/RTO técnicos do cenário descartável. Nenhum agendamento real,
   KMS, nuvem, dado real, SLO de produção ou deploy integra este pacote.
+  O Backend CI aprovou 194 testes de API e 43 testes operacionais. No probe de 1
+  objeto/27 bytes, registrou backup 0,409 s, restore 0,415 s e RPO técnico 1,262 s;
+  esses valores não representam capacidade ou compromisso de produção.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

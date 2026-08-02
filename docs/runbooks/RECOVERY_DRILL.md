@@ -45,6 +45,11 @@ simulated loss. These values are evidence of reproducibility, not production RPO
 RTO, SLO, capacity or pilot approval. Repeated drills on representative approved
 infrastructure are required before real data.
 
+Observed evidence on GitHub Actions run `30745399876` (2026-08-02): one object,
+27 bytes; backup `0.409 s`; restore `0.415 s`; scenario technical RPO `1.262 s`;
+194 API tests and 43 operational tests passed. This tiny probe is reproducibility
+evidence only and must not be extrapolated to production capacity or SLOs.
+
 ## Key rotation
 
 Create a new random 32-byte key in the external secret manager and advance the
