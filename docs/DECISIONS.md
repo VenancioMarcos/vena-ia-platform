@@ -703,6 +703,31 @@ Gateway/proxy confiável continua uma decisão separada.
 
 ---
 
+## DEC-019 — Contrato versionado de backup PostgreSQL
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Operação / Banco de Dados / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0019-postgresql-backup-contract.md`,
+`docs/runbooks/POSTGRES_BACKUP_RESTORE.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Não existia backup verificável, manifesto ou proteção contra restore acidental.
+
+### Decisão
+
+Usar dump custom-format com manifesto versionado, SHA-256, migration head e UUID.
+Artefatos ficam fora do Git; senha passa apenas por ambiente. Restore exige alvo
+vazio, confirmação/allowlist exatas e validação antes e depois da mutação.
+
+### Impacto
+
+O CI realiza round trip descartável com PostgreSQL/pgvector. MinIO, criptografia,
+retenção automatizada, agendamento e storage externo continuam fora do pacote.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

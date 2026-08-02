@@ -484,6 +484,11 @@ reproduzível em ambiente descartável com RPO/RTO documentados.
 
 Condição de avanço: R-031 deixa de bloquear piloto controlado.
 
+Estado do Package 1: contrato versionado, manifesto SHA-256, scripts seguros de
+backup/restore PostgreSQL e round trip em banco descartável implementados na
+branch `codex/v1.3-backup-recovery`. MinIO e consistência cruzada permanecem para
+pacote posterior da v1.3.
+
 ---
 
 ## v1.4 — Observability and Auditability

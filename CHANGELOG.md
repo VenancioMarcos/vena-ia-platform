@@ -6,6 +6,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ---
 
+## [Unreleased]
+
+### Adicionado
+* Contrato `vena-ia.postgresql-backup/v1` com dump custom-format, manifesto,
+  SHA-256, migration head e identificação do conjunto.
+* Scripts seguros de backup e restore PostgreSQL: artefatos fora do repositório,
+  senha somente por ambiente, alvo vazio e confirmação/allowlist explícitas.
+* Testes de contrato e round trip descartável para backup, perda simulada,
+  restore e verificação mínima de integridade sem dados reais.
+
 ## [1.2.0] — 2026-08-02 — Security and Data Protection
 
 ### Adicionado

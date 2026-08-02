@@ -134,3 +134,8 @@ A PR #13 foi retirada de Draft e integrada por Squash Merge em `0e386802`. A
 `main` sincronizada aprovou Ruff, mypy, 193 testes locais, frontend e OpenAPI
 1.2.0. A integração Redis permanece comprovada pelo Backend CI; o Docker Desktop
 local continuou indisponível por erro de daemon/exportação, sem falha de código.
+
+A tag anotada `v1.2.0` foi publicada apontando para `663dbc2`, junto da GitHub
+Release “Vena_IA Platform v1.2.0 — Security and Data Protection”, sem deploy. A
+execução iniciou imediatamente a branch `codex/v1.3-backup-recovery`, limitada
+ao Package 1 de backup/restore PostgreSQL.
