@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Request, Response, status
 
 from app.core.config import settings
 from app.modules.auth.dependencies import (
@@ -14,7 +14,12 @@ from app.modules.auth.service import (
     DuplicateIdentityError,
     InvalidCredentialsError,
 )
-from app.modules.auth.tokens import TokenConfigurationError, create_access_token
+from app.modules.auth.tokens import (
+    InvalidTokenError,
+    TokenConfigurationError,
+    create_access_token,
+    decode_access_token,
+)
 from app.modules.users.schemas import UserRead, UserRegister
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -75,8 +80,30 @@ def me(current_user: CurrentUserDependency) -> UserRead:
     return UserRead.model_validate(current_user)
 
 
+def _request_tokens(request: Request) -> set[str]:
+    tokens: set[str] = set()
+    cookie = request.cookies.get(settings.auth_cookie_name)
+    if cookie:
+        tokens.add(cookie)
+
+    authorization = request.headers.get("Authorization")
+    if authorization is not None:
+        scheme, separator, credentials = authorization.partition(" ")
+        if separator == " " and scheme.lower() == "bearer" and credentials.strip():
+            tokens.add(credentials.strip())
+    return tokens
+
+
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
-def logout(response: Response) -> Response:
+def logout(request: Request, response: Response) -> Response:
+    for token in _request_tokens(request):
+        try:
+            identity = decode_access_token(token, settings.auth_secret_key)
+            request.app.state.revoked_auth_tokens.revoke(identity)
+        except (InvalidTokenError, TokenConfigurationError):
+            # Logout is idempotent and never reveals whether a presented token was valid.
+            pass
+
     response.delete_cookie(
         key=settings.auth_cookie_name,
         path="/",

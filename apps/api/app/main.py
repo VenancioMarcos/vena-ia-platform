@@ -9,6 +9,7 @@ from app.core import models_registry  # noqa: F401  (ensures all ORM models are 
 from app.core.rate_limit import FixedWindowRateLimiter
 from app.modules.ai.api.routes import router as ai_router
 from app.modules.auth.api.routes import router as auth_router
+from app.modules.auth.tokens import RevokedTokenStore
 from app.modules.chats.api.routes import router as chats_router
 from app.modules.cnc.api.routes import router as cnc_router
 from app.modules.cad.api.routes import router as cad_router
@@ -37,6 +38,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.state.auth_rate_limiter = FixedWindowRateLimiter()
+    app.state.revoked_auth_tokens = RevokedTokenStore()
 
     app.add_middleware(
         CORSMiddleware,

@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Cookie, Depends, Header, HTTPException, status
+from fastapi import Cookie, Depends, Header, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -31,6 +31,7 @@ def _authentication_error(detail: str = "Authentication required") -> HTTPExcept
 
 
 def get_current_user(
+    request: Request,
     db: Annotated[Session, Depends(get_db)],
     authorization: Annotated[str | None, Header()] = None,
     session_cookie: Annotated[
@@ -51,6 +52,9 @@ def get_current_user(
         identity = decode_access_token(token, settings.auth_secret_key)
     except (InvalidTokenError, TokenConfigurationError):
         raise _authentication_error("Invalid authentication token") from None
+
+    if request.app.state.revoked_auth_tokens.contains(identity):
+        raise _authentication_error("Invalid authentication token")
 
     user = db.get(User, identity.user_id)
     if user is None:
