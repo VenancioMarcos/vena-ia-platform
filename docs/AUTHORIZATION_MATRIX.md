@@ -14,8 +14,11 @@
 
 | Recurso | Ação | Usuário comum | Proprietário | Admin | Não autenticado |
 |---|---|---|---|---|---|
-| Autenticação | cadastrar conta member | Permitido | Permitido | Permitido | Permitido |
-| Autenticação | login | Permitido | Permitido | Permitido | Permitido |
+| Autenticação | cadastrar conta member | Permitido, sujeito a `429` | Permitido, sujeito a `429` | Permitido, sujeito a `429` | Permitido, sujeito a `429` |
+| Autenticação | login | Permitido, sujeito a `429` | Permitido, sujeito a `429` | Permitido, sujeito a `429` | Permitido, sujeito a `429` |
+| Autenticação | logout e invalidação local do token apresentado | Permitido | Permitido | Permitido | Permitido e idempotente |
+| Credencial legada | definir senha ausente de outro usuário | Negado (`403`) | Negado (`403`) | Permitido; nunca para si ou conta já credenciada | Negado (`401`) |
+| Auditoria sensível | consultar eventos com filtros/limite | Negado (`403`) | Negado (`403`) | Permitido | Negado (`401`) |
 | Perfil | consultar próprio perfil | Próprio | Próprio | Permitido | Negado (`401`) |
 | Perfis | listar usuários | Negado (`403`) | Negado (`403`) | Permitido | Negado (`401`) |
 | Perfil | consultar outro usuário | Negado (`404`) | Negado (`404`) | Permitido | Negado (`401`) |
@@ -43,6 +46,13 @@
 - Rotas protegidas exigem cookie de sessão HttpOnly ou
   `Authorization: Bearer <token>`.
 - `POST /users` e `POST /auth/register` exigem `password` e rejeitam `role`.
+- `POST /users` e `POST /auth/register` compartilham o limite de cadastro;
+  `POST /auth/login` possui limite próprio. Todos retornam `429` com
+  `Retry-After` quando a cota local do cliente da conexão é excedida.
+- `POST /auth/logout` remove o cookie e invalida localmente o token apresentado;
+  repetir logout ou apresentar token inválido continua retornando `204`.
+- `PUT /users/{user_id}/credentials` aceita somente `password`, não altera papel,
+  nunca retorna senha/hash e invalida tokens anteriores via `auth_version`.
 - `POST /projects` não aceita mais `owner_id`; o proprietário é extraído do token.
 - Listagens de projetos e arquivos são limitadas ao proprietário, salvo admin.
 - `POST /chat/{project_id}/messages` aceita somente papel `user`; o cliente não

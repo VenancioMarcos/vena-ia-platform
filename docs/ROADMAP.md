@@ -417,12 +417,34 @@ Primeiro pacote autorizado:
 * limite local explicitamente classificado como primeira camada; gateway ou
   armazenamento distribuído continua obrigatório antes de produção horizontal.
 
+Estado do Package 1: implementado na branch `codex/v1.2-auth-rate-limiting` e
+publicado na Draft PR [#13](https://github.com/VenancioMarcos/vena-ia-platform/pull/13),
+com Ruff, mypy, 172 testes e Backend CI aprovados. Nenhuma entrega posterior da
+v1.2 foi iniciada.
+
+Estado do Package 2: auditoria de autenticação/sessão aprovada pelo CTO e em
+execução na mesma Draft PR #13. A invalidação local no logout e a rejeição de
+tokens emitidos no futuro não encerram o gate de revogação distribuída R-013.
+Ruff, mypy, 177 testes, frontend, Docker, PostgreSQL, OpenAPI e CI final de
+backend/frontend estão aprovados; o pacote aguarda revisão do CTO.
+
+Estado do Package 3: fluxo administrativo para credencial legada, invalidação
+por versão de autenticação e auditoria persistente de eventos sensíveis foram
+implementados na mesma Draft PR #13. Ruff, mypy, 182 testes, migration
+PostgreSQL reversível, OpenAPI e CI final de backend/frontend estão aprovados;
+o pacote aguarda revisão do CTO.
+
+Estado do Package 4: rate limiting e revogação usam o Redis já adotado, com
+estado compartilhado entre réplicas, incremento/expiração atômicos, TTL até a
+expiração do JWT e chaves sem origem, token ou PII em texto puro. Indisponibilidade
+falha fechada e auditável; memória é modo explícito de desenvolvimento/teste.
+Implementado na mesma Draft PR #13, aprovado pelo CTO e em validação final para
+a Release `v1.2.0`.
+
 Entregas posteriores da v1.2:
 
-* revogação/rotação auditável de sessões JWT;
-* fluxo administrativo seguro para credenciais legadas;
-* trilha de eventos sensíveis e políticas de retenção/proteção;
-* rate limiting distribuído ou gateway validado para exposição externa.
+* política operacional automatizada de retenção/proteção da auditoria;
+* validação de fronteira de proxy/gateway para exposição externa.
 
 Fora do escopo: SSO, provedor de identidade externo, deploy e mudança de
 arquitetura.
@@ -1089,7 +1111,8 @@ v1.2 Package 1 explícito e nenhuma autorização implícita de deploy ou CNC re
 
 ## Próximos Passos
 
-Integrar este roadmap e implementar somente o primeiro pacote da v1.2.
+Revisar a Draft PR do primeiro pacote v1.2; não iniciar entregas posteriores ou
+v1.3 sem nova ordem oficial.
 
 ---
 

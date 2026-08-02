@@ -1,17 +1,16 @@
 # Ordem atual do CTO
 
-**Versão:** Roadmap pós-v1.1 até v2.0 (`TASK-ROADMAP-V2-001`)
+**Versão:** v1.2 Release + v1.3 Package 1 (`TASK-V12-005`)
 **Data:** 2026-08-01
-**Estado:** Em execução; roadmap e primeiro pacote v1.2 autorizados
+**Estado:** Package 4 aprovado; v1.2 em validação final antes do Squash Merge
 
 Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
 
-Objetivo vigente: consolidar v1.2–v2.0 exclusivamente a partir das fontes
-oficiais, integrar o roadmap e iniciar imediatamente o primeiro pacote da v1.2.
+Objetivo vigente: versionar, integrar, publicar e validar a v1.2.0; depois iniciar
+somente o Package 1 da v1.3 para backup/restore PostgreSQL verificável.
 
-Autorizações: branch, documentação, commits, push, PR, CI e Squash Merge do
-roadmap; branch, implementação, testes, documentação, commits, push e Draft PR
-somente do primeiro pacote v1.2. v1.3, deploy, compra, publicação comercial,
-G-code executável e transmissão CNC permanecem proibidos.
+Autorizados: finalizar PR #13, Squash Merge, tag/release v1.2.0 e validação da
+tag; depois branch e Draft PR própria da v1.3 Package 1. Proibidos: deploy,
+backup real, storage externo, v1.4 e módulos alheios ao escopo.
 
 Limites permanentes continuam em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.

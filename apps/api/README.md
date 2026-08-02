@@ -22,6 +22,24 @@ uvicorn app.main:app --reload
 Defina `AUTH_SECRET_KEY` com um segredo aleatório de pelo menos 32 bytes antes de
 usar login fora dos testes.
 
+Os limites públicos de autenticação são configurados por
+`AUTH_LOGIN_RATE_LIMIT_REQUESTS`, `AUTH_REGISTRATION_RATE_LIMIT_REQUESTS` e
+`AUTH_RATE_LIMIT_WINDOW_SECONDS`. Ao excedê-los, a API retorna `429` com
+`Retry-After`. Redis é o armazenamento padrão e compartilha a cota atomicamente
+entre réplicas. `AUTH_REDIS_PREFIX` isola as chaves com TTL e
+`AUTH_REDIS_TIMEOUT_SECONDS` limita a espera. Origem e identificadores de token
+são transformados por SHA-256 antes de formar chaves Redis.
+
+O logout invalida cookie e/ou Bearer no Redis até a expiração do JWT, armazenando
+somente um identificador SHA-256. Todas as réplicas consultam a mesma denylist.
+Se Redis falhar, cadastro/login, consulta de revogação e logout falham fechados
+com `503` e evento auditável; logout não declara sucesso fictício. O modo local
+exige `AUTH_SECURITY_STORE=memory` explícito e destina-se apenas a desenvolvimento
+ou testes. Não há renovação silenciosa de sessão.
+
+`SECURITY_AUDIT_RETENTION_DAYS` documenta a retenção operacional da trilha
+persistente (90 dias por padrão); não há limpeza automática nesta entrega.
+
 ## Endpoints
 
 * `GET /health`
@@ -29,6 +47,8 @@ usar login fora dos testes.
 * `POST /auth/login`
 * `GET /auth/me`
 * `POST /auth/logout`
+* `PUT /users/{user_id}/credentials` — admin define senha somente para conta legada
+* `GET /audit/security-events` — auditoria sensível paginada, somente admin
 * Rotas protegidas: `/users`, `/projects`, `/files`, `/documents`, `/chat`, `/ai`, `/cad`, `/manufacturing`, `/cnc` e `/research`
 * `POST /documents/{document_id}/processing` — extrai texto de PDF e persiste chunks
 * `GET /documents/{document_id}/chunks` — consulta chunks rastreáveis por documento/página
@@ -45,7 +65,7 @@ usar login fora dos testes.
 * `POST /chat/{project_id}/ask` — RAG fundamentado com histórico persistente
 * `GET /chat/{project_id}/messages` — histórico cronológico com fontes e estados
 
-`GET /health` identifica a versão `1.1.0`.
+`GET /health` identifica a versão `1.2.0`.
 
 Rotas protegidas aceitam cookie HttpOnly ou `Authorization: Bearer <token>`.
 Consulte `docs/AUTHORIZATION_MATRIX.md`.

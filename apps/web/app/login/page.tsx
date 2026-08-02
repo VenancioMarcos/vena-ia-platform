@@ -35,6 +35,8 @@ export default function LoginPage() {
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setError("E-mail ou senha inválidos.");
+      } else if (err instanceof ApiError && err.status === 429) {
+        setError("Muitas tentativas. Aguarde antes de tentar novamente.");
       } else if (err instanceof ApiError && err.status === 409) {
         setError("Este e-mail já está cadastrado.");
       } else if (err instanceof ApiError && err.status >= 500) {

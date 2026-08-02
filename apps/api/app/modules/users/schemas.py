@@ -11,6 +11,12 @@ class UserRegister(BaseModel):
     password: str = Field(min_length=12, max_length=128)
 
 
+class AdminCredentialSet(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    password: str = Field(min_length=12, max_length=128)
+
+
 class UserRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

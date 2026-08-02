@@ -75,3 +75,57 @@ O CTO declarou `VENA_IA_V1_1_RELEASED_AND_FULLY_VERIFIED` e emitiu a
 `TASK-ROADMAP-V2-001`: consolidar v1.2–v2.0, integrar o roadmap e iniciar sem
 nova parada somente o primeiro pacote da v1.2. Deploy, v1.3, compra, publicação
 comercial, G-code executável e transmissão CNC permanecem proibidos.
+
+## 2026-08-01 — roadmap integrado e v1.2 Package 1 iniciado
+
+O proprietário autorizou explicitamente o Squash Merge da PR #12, a sincronização
+da `main` e o início imediato do primeiro pacote v1.2. A PR #12 foi integrada em
+`6e1065d`; a branch `codex/v1.2-auth-rate-limiting` implementa somente rate
+limiting de cadastro/login e deve permanecer em Draft PR para revisão do CTO.
+
+A implementação foi publicada na Draft PR #13 com 172 testes locais, Ruff,
+mypy, frontend, Docker e Backend CI aprovados, sem bloqueadores e sem iniciar
+entregas posteriores da v1.2.
+
+## 2026-08-02 — v1.2 Security Package 2
+
+O CTO aprovou o Package 1 e emitiu `TASK-V12-002` para auditar exclusivamente
+autenticação e sessão, corrigir falhas comprovadas e continuar na Draft PR #13.
+Nova PR, merge, tag, release, deploy, migration e novos módulos permanecem
+proibidos.
+
+O Package 2 corrigiu reutilização de JWT após logout, validou emissão temporal e
+melhorou o erro `429` no frontend. A validação aprovou 177 testes e os CI de
+backend/frontend na PR #13; o risco distribuído R-013 permanece explícito.
+
+## 2026-08-02 — v1.2 Security Package 3
+
+O CTO aprovou o Package 2 e emitiu `TASK-V12-003` para credenciais legadas e
+auditoria persistente de eventos sensíveis na mesma Draft PR #13. Migration é
+autorizada; merge, tag, release, deploy, nova PR e v1.3 permanecem proibidos.
+
+O Package 3 foi publicado na PR #13 com 182 testes, migration PostgreSQL
+upgrade/downgrade/upgrade, OpenAPI e CI backend/frontend aprovados. O cliente
+Docker local excedeu o tempo durante build de imagem; configuração Docker e o
+build do CI foram aprovados, sem tornar o limite local um bloqueio do código.
+
+## 2026-08-02 — v1.2 Security Package 4
+
+O CTO aprovou o Package 3 e emitiu `TASK-V12-004` para distribuir rate limiting
+e revogação usando o Redis existente, manter `auth_version`, falhar fechado e
+continuar exclusivamente na Draft PR #13. Merge, tag, release, deploy, nova PR,
+gateway externo, recuperação pública e v1.3 permanecem proibidos.
+
+O Package 4 foi publicado na PR #13 com 190 testes locais, integração Redis real,
+Ruff, mypy e frontend aprovados. Backend CI (com PostgreSQL e Redis) e Frontend CI
+passaram. O build local da API compilou todas as camadas, mas o Docker Desktop
+falhou ao exportar a imagem com EOF/500 e permaneceu indisponível após reinício;
+nenhuma falha de código ou CI foi observada.
+
+## 2026-08-02 — v1.2 Release e v1.3 Package 1
+
+O CTO aprovou o Package 4 e emitiu `TASK-V12-005`, autorizando explicitamente a
+validação final, Squash Merge da PR #13, tag e Release `v1.2.0`. Após validar a
+tag, a execução deve iniciar somente backup/restore PostgreSQL verificável no
+Package 1 da v1.3, em branch e Draft PR próprias. Deploy, dados reais, storage
+externo e v1.4 permanecem proibidos.

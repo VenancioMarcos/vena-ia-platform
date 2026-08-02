@@ -21,7 +21,7 @@
 | R-027 | ALTO | Preparação ANOVA pode ser confundida com inferência validada. | Não calcular F, valor-p ou significância; expor somente resumo descritivo e checklist. | MONITORAR v0.9 |
 | R-028 | CRÍTICO | Recursos científicos poderiam vazar entre projetos. | AuthorizationService em todos os recursos; identidade somente do JWT; acesso negado como 404. | MONITORAR v0.9 |
 | R-029 | ALTO | Biblioteca preliminar pode ser apresentada como revisão sistemática. | Documentar exclusão de PRISMA, bases externas, meta-análise e publicação. | MONITORAR v0.9 |
-| R-030 | ALTO | A API não possui rate limiting. | Aceito para código MVP local; exigir proxy/gateway e limites antes de exposição pública. | ACEITO v1.0 / BLOQUEIA PRODUÇÃO |
+| R-030 | ALTO | Rate limiting de autenticação precisava compartilhar estado entre réplicas. | Redis aplica incremento/TTL atômicos nas rotas de cadastro/login e falha fechado; gateway confiável continua necessário para topologias com proxy. | MITIGADO PARCIALMENTE v1.2 PACKAGE 4 / MONITORAR PROXY |
 | R-031 | ALTO | Não há backup/restore automatizado para PostgreSQL e MinIO. | Aceito para ambiente local; definir e testar política antes de piloto com dados reais. | ACEITO v1.0 / BLOQUEIA PRODUÇÃO |
 | R-032 | MÉDIO | Observabilidade limita-se a health, erros controlados e CI. | Adotar métricas/tracing antes de operação externa. | MONITORAR v1.0 |
 | R-033 | ALTO | Chat/RAG depende de PostgreSQL, MinIO, pgvector e provedor de IA. | Falhar sem resposta falsa; v1.1 permite retry de processamento/indexação; documentar dependências. | MITIGADO PARCIALMENTE v1.1 / MONITORAR |
@@ -33,11 +33,11 @@
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
 | R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o projeto e o CI exigem Python 3.13. | Validar também em Python 3.13 e manter matriz explícita de versões suportadas. | ABERTO |
 | R-009 | MÉDIO | `minio/minio:latest` não está fixado por versão ou digest. | Fixar imagem validada e estabelecer rotina de atualização. | ABERTO |
-| R-010 | MÉDIO | Observabilidade é limitada a health check e mensagens de erro; não há métricas, tracing ou auditoria de acesso. | Adicionar logging estruturado, correlação e trilha de operações sensíveis. | ABERTO |
+| R-010 | MÉDIO | Eventos sensíveis possuem trilha persistente, mas ainda não há logging estruturado geral, correlação, métricas ou tracing. | Preservar auditoria redigida e completar observabilidade na v1.4. | MITIGADO PARCIALMENTE v1.2 PACKAGE 3 / ABERTO |
 | R-011 | BAIXO | Existe `.env` local real, embora ignorado e sem segredo detectado na auditoria. | Manter ignorado, limitar permissões e revisar antes de qualquer empacotamento. | MONITORAR |
 | R-012 | BAIXO | A suíte gerava aviso de depreciação de `TestClient`/HTTPX. | Dependência de desenvolvimento migrada para HTTPX2 e imports direcionados ao cliente Starlette compatível. | MITIGADO v1.1 |
-| R-013 | MÉDIO | JWT stateless não possui revogação imediata antes da expiração. | Adicionar rotação/revogação de sessão antes de produção multiusuário. | ABERTO |
-| R-014 | MÉDIO | Usuários legados preservados pela migration não possuem hash de senha. | Criar fluxo administrativo auditável de definição ou recuperação de credencial. | ABERTO |
+| R-013 | MÉDIO | Logout precisava compartilhar revogação entre réplicas e reinícios. | Redis guarda somente chave derivada do fingerprint com TTL do JWT; falha de Redis bloqueia consulta e escrita com auditoria. | MITIGADO v1.2 PACKAGE 4 |
+| R-014 | MÉDIO | Usuários legados preservados pela migration podem não possuir hash de senha. | Admin define credencial ausente uma única vez, com auditoria, política oficial e invalidação das sessões anteriores. | MITIGADO v1.2 PACKAGE 3 |
 | R-015 | BAIXO | O contexto Docker do Web incluía artefatos locais (`node_modules` e `.next`), ampliando o build para centenas de MB. | `.dockerignore` dedicado reduz o contexto a arquivos-fonte e exclui ambientes, dependências, builds e logs locais. | MITIGADO v0.4.1 |
 | R-016 | MÉDIO | A ingestão de PDF da fundação v0.5 ocorre de forma síncrona na requisição HTTP. | Introduzir fila, worker, timeout e retomada antes de processar documentos extensos em produção. | ABERTO |
 | R-017 | MÉDIO | PDFs criptografados ou sem camada textual não geram chunks. | Manter falha explícita e adicionar OCR somente após avaliação de segurança, recursos e qualidade. | ABERTO |

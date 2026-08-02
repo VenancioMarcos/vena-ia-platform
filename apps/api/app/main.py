@@ -7,7 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core import models_registry  # noqa: F401  (ensures all ORM models are registered)
 from app.modules.ai.api.routes import router as ai_router
+from app.modules.audit.api.routes import router as audit_router
 from app.modules.auth.api.routes import router as auth_router
+from app.modules.auth.security_store import build_authentication_security_store
 from app.modules.chats.api.routes import router as chats_router
 from app.modules.cnc.api.routes import router as cnc_router
 from app.modules.cad.api.routes import router as cad_router
@@ -19,7 +21,7 @@ from app.modules.projects.api.routes import router as projects_router
 from app.modules.research.api.routes import router as research_router
 from app.modules.users.api.routes import router as users_router
 
-API_VERSION = "1.1.0"
+API_VERSION = "1.2.0"
 
 
 @asynccontextmanager
@@ -35,6 +37,7 @@ def create_app() -> FastAPI:
         version=API_VERSION,
         lifespan=lifespan,
     )
+    app.state.auth_security_store = build_authentication_security_store(settings)
 
     app.add_middleware(
         CORSMiddleware,
@@ -54,6 +57,7 @@ def create_app() -> FastAPI:
     app.include_router(files_router)
     app.include_router(chats_router)
     app.include_router(ai_router)
+    app.include_router(audit_router)
     app.include_router(documents_router)
     app.include_router(cad_router)
     app.include_router(manufacturing_router)

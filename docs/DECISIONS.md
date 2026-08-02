@@ -574,6 +574,39 @@ autorização explícita. Mudança arquitetural real durante uma versão exige A
 
 ---
 
+## DEC-017 — Auditoria persistente e versão de autenticação
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Segurança / Banco de Dados
+**Documentos relacionados:** `docs/adr/ADR-0017-security-audit-credential-version.md`,
+`SECURITY.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Contas anteriores ao Security Gate podem ter `password_hash` nulo, e eventos
+sensíveis não possuíam trilha persistente. A denylist local não basta para
+invalidar todas as sessões de uma conta após definir sua credencial.
+
+### Decisão
+
+Persistir eventos mínimos redigidos em tabela própria e adicionar uma versão de
+autenticação ao usuário e ao JWT. Somente admin define credencial ausente de
+outra conta; a operação incrementa a versão e invalida tokens anteriores.
+
+### Justificativa
+
+A solução reutiliza autenticação, autorização, PBKDF2, SQLAlchemy e Alembic,
+sem provedor externo, recuperação pública ou segredo em log.
+
+### Impacto
+
+A migration `f42a1b7c9d30` cria a tabela e a coluna. Auditoria tem consulta admin
+limitada e retenção operacional de 90 dias. Logout geral ainda usa denylist
+local; observabilidade completa continua planejada para v1.4.
+
+---
+
 # 5. Decisões Pendentes
 
 ## PEN-001 — Nome Final do Repositório GitHub
@@ -640,6 +673,33 @@ Decisão:
 
 * autenticação própria com JWT assinado para o MVP, mantendo fronteiras que
   permitam substituição futura.
+
+---
+
+## DEC-018 — Redis para controles distribuídos de autenticação
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Segurança / Infraestrutura
+**Documentos relacionados:** `docs/adr/ADR-0018-distributed-authentication-security-store.md`,
+`SECURITY.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Rate limiting e revogação locais não compartilhavam estado entre réplicas.
+
+### Decisão
+
+Usar o Redis já existente para incremento/TTL atômicos de rate limiting e para
+revogação por chave derivada do fingerprint até a expiração do JWT. Falhas do
+Redis bloqueiam os fluxos protegidos e geram auditoria; memória exige modo
+explícito de desenvolvimento/teste. Preservar `auth_version` no banco.
+
+### Impacto
+
+Redis passa a ser dependência obrigatória por padrão para autenticação. Chaves
+têm namespace, TTL e não contêm origem, token, PII ou fingerprint em texto puro.
+Gateway/proxy confiável continua uma decisão separada.
 
 ---
 

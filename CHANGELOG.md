@@ -6,7 +6,33 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ---
 
-## [Unreleased]
+## [1.2.0] — 2026-08-02 — Security and Data Protection
+
+### Adicionado
+* Rate limiting de janela fixa, configurável e seguro para concorrência protege
+  cadastro e login por cliente da conexão, com resposta `429` e `Retry-After`.
+* As rotas compatíveis `POST /auth/register` e `POST /users` compartilham o mesmo
+  limite de cadastro; cabeçalhos encaminhados e `X-User-ID` não alteram a chave.
+* Fluxo administrativo restrito para definir credencial somente em conta legada
+  sem senha, com versão de autenticação e invalidação das sessões anteriores.
+* Trilha persistente de eventos sensíveis com consulta administrativa paginada
+  e filtrável, sem senha, hash, JWT, cookie ou corpo de requisição.
+* Migration `f42a1b7c9d30` adiciona `users.auth_version` e a tabela indexada
+  `security_audit_events`.
+
+### Segurança
+* Redis passa a compartilhar rate limiting e revogação de JWT entre réplicas,
+  com operações atômicas, namespace, TTL e chaves derivadas por SHA-256.
+* Falhas do Redis bloqueiam autenticação pública, validação de sessão e logout
+  com `503` auditável; o modo em memória exige configuração explícita de teste ou
+  desenvolvimento e não é fallback silencioso.
+* Primeiro controle de aplicação para tentativas públicas de autenticação. A
+  origem vem da conexão e ignora `X-Forwarded-For` e `X-User-ID`.
+* Logout invalida o token apresentado em uma denylist local até sua expiração,
+  agora substituída pela denylist Redis distribuída; tokens com emissão futura
+  são rejeitados e logout permanece idempotente sem revelar validade do token.
+* A tela de autenticação apresenta mensagem específica para excesso de
+  tentativas (`429`) em vez de expor o detalhe técnico da API.
 
 ### Documentação
 * Roadmap pós-v1.1 consolidado de v1.2 a v2.0 por gates de segurança,

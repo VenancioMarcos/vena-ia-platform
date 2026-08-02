@@ -7,6 +7,7 @@ import hmac
 import json
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+from threading import Lock
 from typing import Any
 
 _ALGORITHM = "HS256"
@@ -26,6 +27,35 @@ class InvalidTokenError(Exception):
 class TokenIdentity:
     user_id: str
     expires_at: datetime
+    fingerprint: str
+    auth_version: int
+
+
+class RevokedTokenStore:
+    """Process-local denylist pruned by token expiration."""
+
+    def __init__(self) -> None:
+        self._expirations: dict[str, datetime] = {}
+        self._lock = Lock()
+
+    def revoke(self, identity: TokenIdentity) -> None:
+        with self._lock:
+            self._prune(datetime.now(timezone.utc))
+            self._expirations[identity.fingerprint] = identity.expires_at
+
+    def contains(self, identity: TokenIdentity) -> bool:
+        with self._lock:
+            self._prune(datetime.now(timezone.utc))
+            return identity.fingerprint in self._expirations
+
+    def clear(self) -> None:
+        with self._lock:
+            self._expirations.clear()
+
+    def _prune(self, now: datetime) -> None:
+        expired = [key for key, expires_at in self._expirations.items() if expires_at <= now]
+        for key in expired:
+            del self._expirations[key]
 
 
 def _encode(value: bytes) -> str:
@@ -54,6 +84,7 @@ def create_access_token(
     secret: str,
     expiration_minutes: int,
     *,
+    auth_version: int = 0,
     now: datetime | None = None,
 ) -> tuple[str, datetime]:
     if not 1 <= expiration_minutes <= 1_440:
@@ -68,6 +99,7 @@ def create_access_token(
         "iss": _ISSUER,
         "iat": int(issued_at.timestamp()),
         "exp": int(expires_at.timestamp()),
+        "ver": auth_version,
     }
     header_segment = _encode(
         json.dumps(header, separators=(",", ":"), sort_keys=True).encode("utf-8")
@@ -101,7 +133,9 @@ def decode_access_token(
         payload: dict[str, Any] = json.loads(_decode(payload_segment))
         user_id = payload["sub"]
         issuer = payload["iss"]
+        issued = payload["iat"]
         expires = payload["exp"]
+        auth_version = payload.get("ver", 0)
     except (json.JSONDecodeError, KeyError, TypeError, UnicodeDecodeError) as exc:
         raise InvalidTokenError("Invalid authentication token") from exc
 
@@ -109,11 +143,24 @@ def decode_access_token(
         raise InvalidTokenError("Invalid authentication token")
     if issuer != _ISSUER or not isinstance(user_id, str) or not user_id:
         raise InvalidTokenError("Invalid authentication token")
-    if not isinstance(expires, int):
+    if (
+        not isinstance(issued, int)
+        or not isinstance(expires, int)
+        or not isinstance(auth_version, int)
+        or auth_version < 0
+    ):
         raise InvalidTokenError("Invalid authentication token")
 
     expires_at = datetime.fromtimestamp(expires, timezone.utc)
     current = now or datetime.now(timezone.utc)
+    if issued > int(current.timestamp()):
+        raise InvalidTokenError("Invalid authentication token")
     if expires_at <= current:
         raise InvalidTokenError("Authentication token has expired")
-    return TokenIdentity(user_id=user_id, expires_at=expires_at)
+    fingerprint = hashlib.sha256(token.encode("ascii")).hexdigest()
+    return TokenIdentity(
+        user_id=user_id,
+        expires_at=expires_at,
+        fingerprint=fingerprint,
+        auth_version=auth_version,
+    )
