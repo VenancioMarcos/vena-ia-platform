@@ -28,6 +28,11 @@ Os limites públicos de autenticação são configurados por
 `Retry-After`. O controle é local ao processo; produção horizontal ainda exige
 um limitador distribuído ou gateway confiável.
 
+O logout invalida o token apresentado no processo atual até sua expiração, além
+de remover o cookie. Essa denylist é uma proteção intermediária: não persiste em
+reinícios e deve ser distribuída antes de execução com múltiplas réplicas. Não
+há renovação silenciosa de sessão.
+
 ## Endpoints
 
 * `GET /health`

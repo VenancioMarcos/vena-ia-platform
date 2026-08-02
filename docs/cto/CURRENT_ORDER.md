@@ -1,18 +1,17 @@
 # Ordem atual do CTO
 
-**Versão:** Roadmap pós-v1.1 até v2.0 (`TASK-ROADMAP-V2-001`)
+**Versão:** v1.2 Security Package 2 (`TASK-V12-002`)
 **Data:** 2026-08-01
-**Estado:** Roadmap integrado; primeiro pacote v1.2 pronto para revisão na Draft PR #13
+**Estado:** Package 1 aprovado; Package 2 em execução na Draft PR #13
 
 Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
 
-Objetivo vigente: consolidar v1.2–v2.0 exclusivamente a partir das fontes
-oficiais, integrar o roadmap e iniciar imediatamente o primeiro pacote da v1.2.
+Objetivo vigente: auditar autenticação, JWT, sessão, cookies, logout, expiração,
+tokens inválidos e consistência frontend/backend; corrigir somente falhas
+comprovadas e continuar exclusivamente na Draft PR #13.
 
-Autorizações: branch, documentação, commits, push, PR, CI e Squash Merge do
-roadmap; branch, implementação, testes, documentação, commits, push e Draft PR
-somente do primeiro pacote v1.2. O proprietário autorizou explicitamente o
-Squash Merge da PR #12 e a sincronização da `main`. v1.3, deploy, compra, publicação comercial,
-G-code executável e transmissão CNC permanecem proibidos.
+Autorizados: correções, testes, documentação, commits, push e CI na PR #13.
+Proibidos: nova PR, merge, tag, release, deploy, migrations, novos módulos e
+alteração de contratos públicos.
 
 Limites permanentes continuam em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.

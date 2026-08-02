@@ -69,6 +69,18 @@ confiável configurada; `X-User-ID` nunca participa da identidade nem da chave d
 limite. O limitador atual é local ao processo e deve ser complementado por um
 controle distribuído/gateway antes de exposição pública horizontal.
 
+### 5.2 Invalidação de sessão
+
+O logout remove o cookie e registra a impressão SHA-256 do token apresentado em
+uma denylist local até sua expiração. Reutilização desse token no mesmo processo
+retorna `401`; tokens emitidos no futuro também são rejeitados. O endpoint é
+idempotente e não informa se um token inválido ou expirado existia.
+
+A denylist não persiste entre reinícios e não é compartilhada entre réplicas.
+Produção horizontal exige armazenamento distribuído ou outra estratégia de
+revogação auditável. Não existe renovação silenciosa: após expiração, o usuário
+deve autenticar-se novamente.
+
 ## 6. Autorização
 
 * cadastro público cria somente papel `member`;

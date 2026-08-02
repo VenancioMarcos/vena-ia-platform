@@ -36,7 +36,7 @@
 | R-010 | MÉDIO | Observabilidade é limitada a health check e mensagens de erro; não há métricas, tracing ou auditoria de acesso. | Adicionar logging estruturado, correlação e trilha de operações sensíveis. | ABERTO |
 | R-011 | BAIXO | Existe `.env` local real, embora ignorado e sem segredo detectado na auditoria. | Manter ignorado, limitar permissões e revisar antes de qualquer empacotamento. | MONITORAR |
 | R-012 | BAIXO | A suíte gerava aviso de depreciação de `TestClient`/HTTPX. | Dependência de desenvolvimento migrada para HTTPX2 e imports direcionados ao cliente Starlette compatível. | MITIGADO v1.1 |
-| R-013 | MÉDIO | JWT stateless não possui revogação imediata antes da expiração. | Adicionar rotação/revogação de sessão antes de produção multiusuário. | ABERTO |
+| R-013 | MÉDIO | Logout revoga o token somente na memória do processo; reinício ou outra réplica não compartilha a denylist. | Package 2 impede reutilização local; adicionar revogação distribuída/auditável antes de produção horizontal. | MITIGADO PARCIALMENTE v1.2 PACKAGE 2 / BLOQUEIA PRODUÇÃO |
 | R-014 | MÉDIO | Usuários legados preservados pela migration não possuem hash de senha. | Criar fluxo administrativo auditável de definição ou recuperação de credencial. | ABERTO |
 | R-015 | BAIXO | O contexto Docker do Web incluía artefatos locais (`node_modules` e `.next`), ampliando o build para centenas de MB. | `.dockerignore` dedicado reduz o contexto a arquivos-fonte e exclui ambientes, dependências, builds e logs locais. | MITIGADO v0.4.1 |
 | R-016 | MÉDIO | A ingestão de PDF da fundação v0.5 ocorre de forma síncrona na requisição HTTP. | Introduzir fila, worker, timeout e retomada antes de processar documentos extensos em produção. | ABERTO |

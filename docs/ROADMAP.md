@@ -422,6 +422,12 @@ publicado na Draft PR [#13](https://github.com/VenancioMarcos/vena-ia-platform/p
 com Ruff, mypy, 172 testes e Backend CI aprovados. Nenhuma entrega posterior da
 v1.2 foi iniciada.
 
+Estado do Package 2: auditoria de autenticação/sessão aprovada pelo CTO e em
+execução na mesma Draft PR #13. A invalidação local no logout e a rejeição de
+tokens emitidos no futuro não encerram o gate de revogação distribuída R-013.
+Ruff, mypy, 177 testes, frontend, Docker, PostgreSQL e OpenAPI estão aprovados
+localmente; CI final permanece obrigatório após o push.
+
 Entregas posteriores da v1.2:
 
 * revogação/rotação auditável de sessões JWT;

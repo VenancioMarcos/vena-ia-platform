@@ -86,3 +86,10 @@ limiting de cadastro/login e deve permanecer em Draft PR para revisão do CTO.
 A implementação foi publicada na Draft PR #13 com 172 testes locais, Ruff,
 mypy, frontend, Docker e Backend CI aprovados, sem bloqueadores e sem iniciar
 entregas posteriores da v1.2.
+
+## 2026-08-02 — v1.2 Security Package 2
+
+O CTO aprovou o Package 1 e emitiu `TASK-V12-002` para auditar exclusivamente
+autenticação e sessão, corrigir falhas comprovadas e continuar na Draft PR #13.
+Nova PR, merge, tag, release, deploy, migration e novos módulos permanecem
+proibidos.

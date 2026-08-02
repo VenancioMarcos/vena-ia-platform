@@ -16,6 +16,7 @@
 |---|---|---|---|---|---|
 | Autenticação | cadastrar conta member | Permitido, sujeito a `429` | Permitido, sujeito a `429` | Permitido, sujeito a `429` | Permitido, sujeito a `429` |
 | Autenticação | login | Permitido, sujeito a `429` | Permitido, sujeito a `429` | Permitido, sujeito a `429` | Permitido, sujeito a `429` |
+| Autenticação | logout e invalidação local do token apresentado | Permitido | Permitido | Permitido | Permitido e idempotente |
 | Perfil | consultar próprio perfil | Próprio | Próprio | Permitido | Negado (`401`) |
 | Perfis | listar usuários | Negado (`403`) | Negado (`403`) | Permitido | Negado (`401`) |
 | Perfil | consultar outro usuário | Negado (`404`) | Negado (`404`) | Permitido | Negado (`401`) |
@@ -46,6 +47,8 @@
 - `POST /users` e `POST /auth/register` compartilham o limite de cadastro;
   `POST /auth/login` possui limite próprio. Todos retornam `429` com
   `Retry-After` quando a cota local do cliente da conexão é excedida.
+- `POST /auth/logout` remove o cookie e invalida localmente o token apresentado;
+  repetir logout ou apresentar token inválido continua retornando `204`.
 - `POST /projects` não aceita mais `owner_id`; o proprietário é extraído do token.
 - Listagens de projetos e arquivos são limitadas ao proprietário, salvo admin.
 - `POST /chat/{project_id}/messages` aceita somente papel `user`; o cliente não

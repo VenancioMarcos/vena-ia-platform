@@ -18,6 +18,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * Primeiro controle de aplicação para tentativas públicas de autenticação. A
   implementação é local ao processo e não substitui gateway/limite distribuído
   antes de exposição pública horizontal.
+* Logout invalida o token apresentado em uma denylist local até sua expiração,
+  impedindo reutilização no mesmo processo; tokens com emissão futura são
+  rejeitados e logout permanece idempotente sem revelar validade do token.
+* A tela de autenticação apresenta mensagem específica para excesso de
+  tentativas (`429`) em vez de expor o detalhe técnico da API.
 
 ### Documentação
 * Roadmap pós-v1.1 consolidado de v1.2 a v2.0 por gates de segurança,
