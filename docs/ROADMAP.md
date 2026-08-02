@@ -484,6 +484,22 @@ reproduzível em ambiente descartável com RPO/RTO documentados.
 
 Condição de avanço: R-031 deixa de bloquear piloto controlado.
 
+Estado do Package 1: contrato versionado, manifesto SHA-256, scripts seguros de
+backup/restore PostgreSQL e round trip em banco descartável implementados na
+branch `codex/v1.3-backup-recovery`.
+
+Estado do Package 2: a mesma branch e Draft PR #14 incluem contrato versionado
+MinIO, checksums de conteúdo, restauração em bucket/prefixo vazio explicitamente
+permitido, manifesto compartilhado de backup-set e teste real combinado. A
+consistência cruzada falha sem reparo automático diante de objeto ausente, órfão
+ou divergência de projeto/documento. Automação de retenção, agendamento, storage
+externo e gestão de chaves permanecem para decisão/pacote posterior.
+
+Estado do Package 3: retenção executável e atômica por set completo, job agendável
+com lock/timeout, bundle autenticado AES-256-GCM e recovery drill mensurável são
+implementados na mesma Draft PR #14. Chaves permanecem externas e rotacionadas por
+identificador; KMS/nuvem/agendamento real e qualquer SLO de produção ficam fora.
+
 ---
 
 ## v1.4 — Observability and Auditability

@@ -703,6 +703,89 @@ Gateway/proxy confiável continua uma decisão separada.
 
 ---
 
+## DEC-019 — Contrato versionado de backup PostgreSQL
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Operação / Banco de Dados / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0019-postgresql-backup-contract.md`,
+`docs/runbooks/POSTGRES_BACKUP_RESTORE.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Não existia backup verificável, manifesto ou proteção contra restore acidental.
+
+### Decisão
+
+Usar dump custom-format com manifesto versionado, SHA-256, migration head e UUID.
+Artefatos ficam fora do Git; senha passa apenas por ambiente. Restore exige alvo
+vazio, confirmação/allowlist exatas e validação antes e depois da mutação.
+
+### Impacto
+
+O CI realiza round trip descartável com PostgreSQL/pgvector. MinIO, criptografia,
+retenção automatizada, agendamento e storage externo continuam fora do pacote.
+
+---
+
+## DEC-020 — Contrato MinIO e backup-set consistente
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Operação / Armazenamento / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0020-minio-cross-store-backup-contract.md`,
+`docs/runbooks/POSTGRES_BACKUP_RESTORE.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Recuperar somente PostgreSQL não garante a existência e integridade dos objetos
+referenciados no MinIO.
+
+### Decisão
+
+Versionar contratos separados para objetos MinIO e para o conjunto PostgreSQL +
+MinIO. Ambos compartilham UUID, timestamp e versão. O conjunto registra Alembic
+head, contagens e checksums, e falha fechado sem reparo automático em qualquer
+inconsistência. Restore MinIO exige destino vazio, confirmação e allowlist.
+
+### Impacto
+
+O CI comprova round trip combinado descartável. Retenção segue classe manual e
+expiração de 30 dias no ambiente não produtivo; descarte exige validação de outro
+backup recuperável. Criptografia fica delegada ao storage e gestão de chaves a
+ser aprovada, evitando formato criptográfico próprio.
+
+---
+
+## DEC-021 — Bundle criptografado, retenção e execução controlada
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Operação / Criptografia / Recuperação
+**Documentos relacionados:** `docs/adr/ADR-0021-encrypted-backup-retention.md`,
+`docs/runbooks/BACKUP_RETENTION_AND_SCHEDULING.md`,
+`docs/runbooks/RECOVERY_DRILL.md`
+
+### Contexto
+
+Backup verificável ainda precisava de proteção autenticada, expiração segura,
+exclusão por set completo, controle de concorrência e medição de recuperação.
+
+### Decisão
+
+Usar AES-256-GCM da dependência fixada `cryptography==49.0.0`, chave externa e
+`key_id` não sensível. Retenção é fail-closed, dry-run por padrão e nunca exclui
+o último set válido. O job é um CLI com lock e timeout, adequado a cron/Task
+Scheduler sem instalar daemon ou agendamento no computador do proprietário.
+
+### Impacto
+
+Chaves antigas devem permanecer recuperáveis em custódia externa para rotação.
+O drill mede somente o cenário descartável; KMS, nuvem, dados reais, agendamento
+real e SLOs de produção continuam fora do escopo.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

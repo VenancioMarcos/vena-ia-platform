@@ -6,6 +6,8 @@ on:
       - "apps/api/**"
       - "packages/ai/**"
       - "packages/__init__.py"
+      - "scripts/**"
+      - "tests/operations/**"
       - "pyproject.toml"
       - ".github/workflows/backend-ci.yml"
   push:
@@ -15,6 +17,8 @@ on:
       - "apps/api/**"
       - "packages/ai/**"
       - "packages/__init__.py"
+      - "scripts/**"
+      - "tests/operations/**"
       - "pyproject.toml"
       - ".github/workflows/backend-ci.yml"
 
@@ -48,6 +52,14 @@ jobs:
       DATABASE_URL: postgresql+psycopg://vena_ia:test-only-password@localhost:5432/vena_ia_test
       REDIS_URL: redis://localhost:6379/0
       RUN_REDIS_INTEGRATION: "1"
+      RUN_POSTGRES_BACKUP_INTEGRATION: "1"
+      POSTGRES_DB: vena_ia_test
+      POSTGRES_USER: vena_ia
+      POSTGRES_PASSWORD: test-only-password
+      MINIO_ENDPOINT: localhost:9000
+      MINIO_ACCESS_KEY: test-minio-access
+      MINIO_SECRET_KEY: test-minio-secret
+      RUN_MINIO_BACKUP_INTEGRATION: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -66,8 +78,8 @@ jobs:
       - name: Lint
         run: ruff check .
 
-      - name: Type check API and AI Layer
-        run: mypy apps/api/app packages/ai
+      - name: Type check API, AI Layer and operational scripts
+        run: mypy apps/api/app packages/ai scripts
 
       - name: Validate PostgreSQL migrations
         working-directory: apps/api
@@ -79,3 +91,22 @@ jobs:
       - name: Test
         working-directory: apps/api
         run: pytest
+
+      - name: Locate PostgreSQL service container
+        run: echo "POSTGRES_CONTAINER_ID=$(docker ps --filter ancestor=pgvector/pgvector:pg17 --format '{{.ID}}' | head -n 1)" >> "$GITHUB_ENV"
+
+      - name: Start disposable MinIO service
+        run: |
+          docker run --detach --name vena-minio-ci --publish 9000:9000 \
+            --env MINIO_ROOT_USER="$MINIO_ACCESS_KEY" \
+            --env MINIO_ROOT_PASSWORD="$MINIO_SECRET_KEY" \
+            minio/minio:latest server /data
+          for attempt in $(seq 1 30); do
+            curl --fail --silent http://localhost:9000/minio/health/live && exit 0
+            sleep 2
+          done
+          docker logs vena-minio-ci
+          exit 1
+
+      - name: Test PostgreSQL and MinIO backup and restore
+        run: python -m pytest -s tests/operations

@@ -1,16 +1,18 @@
-# Ordem atual do CTO
+# Ordem CTO atual
 
-**Versão:** v1.2 Release + v1.3 Package 1 (`TASK-V12-005`)
-**Data:** 2026-08-01
-**Estado:** Package 4 aprovado; v1.2 em validação final antes do Squash Merge
+```text
+MISSION=TASK_V13_004
+TITLE=V1_3_FINAL_VALIDATION_MERGE_RELEASE_AND_V1_4_PACKAGE_1
+BRANCH=codex/v1.3-backup-recovery
+PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/14
+START_HEAD=fb8f8b2a3ee20220db3f657f9fdb51d2c5a43c39
+EXPECTED_STATE=VENA_IA_V1_3_RELEASED_AND_V1_4_PACKAGE_1_READY_FOR_CTO_REVIEW
+MERGE=AUTHORIZED_PR_14
+TAG_RELEASE=AUTHORIZED_V1_3_0
+DEPLOY=PROHIBITED
+V1_4_PACKAGE_1=AUTHORIZED
+V1_5_REAL_DATA_CLOUD_PAID_KMS_SCHEDULING=PROHIBITED
+```
 
-Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
-
-Objetivo vigente: versionar, integrar, publicar e validar a v1.2.0; depois iniciar
-somente o Package 1 da v1.3 para backup/restore PostgreSQL verificável.
-
-Autorizados: finalizar PR #13, Squash Merge, tag/release v1.2.0 e validação da
-tag; depois branch e Draft PR própria da v1.3 Package 1. Proibidos: deploy,
-backup real, storage externo, v1.4 e módulos alheios ao escopo.
-
-Limites permanentes continuam em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
+Escopo: integrar e publicar v1.3.0; validar a tag; iniciar somente o Package 1 da
+v1.4 com logging estruturado, request/correlation ID, redaction e readiness.

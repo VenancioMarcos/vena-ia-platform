@@ -134,3 +134,48 @@ A PR #13 foi retirada de Draft e integrada por Squash Merge em `0e386802`. A
 `main` sincronizada aprovou Ruff, mypy, 193 testes locais, frontend e OpenAPI
 1.2.0. A integração Redis permanece comprovada pelo Backend CI; o Docker Desktop
 local continuou indisponível por erro de daemon/exportação, sem falha de código.
+
+A tag anotada `v1.2.0` foi publicada apontando para `663dbc2`, junto da GitHub
+Release “Vena_IA Platform v1.2.0 — Security and Data Protection”, sem deploy. A
+execução iniciou imediatamente a branch `codex/v1.3-backup-recovery`, limitada
+ao Package 1 de backup/restore PostgreSQL.
+
+O Package 1 foi publicado na Draft PR #14. Ruff, mypy e 200 testes locais foram
+aprovados; o Backend CI executou PostgreSQL/Redis, backup custom-format, checksum,
+restore em banco descartável, migration head e prova de integridade em 1m54s.
+Uma falha inicial de import do runner Linux foi corrigida sem alterar o contrato.
+
+## 2026-08-02 — v1.3 Backup Package 2
+
+O CTO aprovou o Package 1 e emitiu `TASK-V13-002` para continuar exclusivamente
+na Draft PR #14 com backup/restore MinIO, manifesto compartilhado de backup-set,
+detecção de inconsistência entre metadados e objetos, round trip combinado real,
+retenção/RPO/RTO documentados e avaliação de criptografia. Merge, tag, release,
+deploy, nova PR, v1.4, dados reais e CNC permanecem fora desta missão.
+
+O Package 2 foi publicado na mesma Draft PR #14. Ruff, mypy, 215 testes locais,
+frontend e Docker Compose passaram. O Backend CI executou PostgreSQL/pgvector e
+MinIO reais, perda simulada, restore combinado, checksums, Alembic head e prova
+de integridade. Uma asserção de teste sensível a maiúsculas no Linux foi
+corrigida e a execução final passou em 1m57s. Não houve merge, tag ou deploy.
+
+## 2026-08-02 — v1.3 Backup Package 3
+
+O CTO aprovou o Package 2 e emitiu `TASK-V13-003` para concluir na mesma Draft
+PR #14 retenção executável, agendamento controlado, criptografia autenticada com
+chave externa, rotação, recovery drill e métricas técnicas de RPO/RTO. Merge,
+tag, release, deploy, dados reais, nuvem, KMS pago, agendamento real e v1.4
+permanecem proibidos.
+
+O Package 3 foi publicado na mesma Draft PR #14. Os gates locais aprovaram Ruff,
+mypy, 232 testes (5 integrações condicionais), frontend e Docker Compose. O
+Backend CI aprovou 194 testes de API e 43 operacionais, incluindo o round trip
+criptografado real. O probe descartável mediu backup 0,409 s, restore 0,415 s e
+RPO técnico 1,262 s para 1 objeto/27 bytes, sem declaração produtiva.
+
+## 2026-08-02 — v1.3 final e início da v1.4
+
+O CTO aprovou o Package 3 e emitiu `TASK-V13-004`, autorizando retirar a PR #14
+de Draft, Squash Merge, versionar/publicar `v1.3.0`, validar diretamente a tag e
+iniciar somente o Package 1 da v1.4 em branch e Draft PR próprias. Deploy, v1.5,
+telemetria externa, dados reais e CNC permanecem proibidos.

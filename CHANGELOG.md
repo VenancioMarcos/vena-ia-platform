@@ -6,6 +6,41 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ---
 
+## [Unreleased]
+
+## [1.3.0] — 2026-08-02 — Backup, Recovery and Retention
+
+### Adicionado
+* Bundle `vena-ia.encrypted-backup-set/v1` com AES-256-GCM autenticado, chave
+  externa, `key_id` não sensível, streaming, recusa de algoritmo desconhecido e
+  cleanup de plaintext temporário após sucesso ou falha.
+* Retenção executável por quantidade/idade e classes diária, semanal e mensal,
+  com dry-run padrão, proteção, validação integral e preservação do último set.
+* Job operacional com lock exclusivo, timeout e worker interno idempotente para
+  cron/Task Scheduler, sem daemon próprio ou agendamento real automático.
+* Recovery drill criptografado mede backup, restore, RPO técnico do cenário e
+  RTO observado usando PostgreSQL/pgvector e MinIO descartáveis no CI.
+* Contrato `vena-ia.minio-backup/v1` com exportação determinística de objetos,
+  metadados seguros, SHA-256 por conteúdo e restauração controlada em destino vazio.
+* Contrato `vena-ia.backup-set/v1` que relaciona PostgreSQL e MinIO pelo mesmo
+  identificador, instante, versão e validação de objetos ausentes, órfãos e isolamento.
+* Round trip descartável combinado no CI, incluindo perda simulada, restauração
+  dos dois stores, migration head e prova de integridade dos metadados e conteúdos.
+* Contrato `vena-ia.postgresql-backup/v1` com dump custom-format, manifesto,
+  SHA-256, migration head e identificação do conjunto.
+* Scripts seguros de backup e restore PostgreSQL: artefatos fora do repositório,
+  senha somente por ambiente, alvo vazio e confirmação/allowlist explícitas.
+* Testes de contrato e round trip descartável para backup, perda simulada,
+  restore e verificação mínima de integridade sem dados reais.
+
+### Segurança
+* `cryptography==49.0.0` fornece AES-256-GCM; a chave permanece exclusivamente em
+  ambiente/arquivo protegido e nenhum valor padrão ou material de chave é versionado.
+* Restore MinIO valida contrato, paths, tamanho e checksum de todos os artefatos
+  antes de mutar o destino; exige confirmação/allowlist e remove escrita parcial.
+* Credenciais MinIO permanecem exclusivamente no ambiente e nunca integram
+  argumentos, manifestos, logs ou artefatos versionados.
+
 ## [1.2.0] — 2026-08-02 — Security and Data Protection
 
 ### Adicionado
