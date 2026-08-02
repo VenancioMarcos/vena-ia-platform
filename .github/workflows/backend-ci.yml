@@ -92,4 +92,4 @@ jobs:
         run: echo "POSTGRES_CONTAINER_ID=$(docker ps --filter ancestor=pgvector/pgvector:pg17 --format '{{.ID}}' | head -n 1)" >> "$GITHUB_ENV"
 
       - name: Test PostgreSQL backup and restore
-        run: pytest tests/operations
+        run: python -m pytest tests/operations
