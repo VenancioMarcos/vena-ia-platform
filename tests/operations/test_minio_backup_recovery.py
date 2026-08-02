@@ -243,7 +243,7 @@ def test_restore_rejects_invalid_manifest_version_size_checksum_and_symlink(
     original["objects"][0]["size_bytes"] = (root / "manifest.json").stat().st_size
     original["objects"][0]["artifact_path"] = "objects/link"
     manifest_path.write_text(json.dumps(original), encoding="utf-8")
-    with pytest.raises(BackupContractError, match="symlink"):
+    with pytest.raises(BackupContractError, match="(?i)symlink"):
         restore_minio_backup(
             manifest_path,
             _client(FakeMinio()),
