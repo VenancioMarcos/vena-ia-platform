@@ -417,6 +417,10 @@ Primeiro pacote autorizado:
 * limite local explicitamente classificado como primeira camada; gateway ou
   armazenamento distribuído continua obrigatório antes de produção horizontal.
 
+Estado do Package 1: implementado na branch `codex/v1.2-auth-rate-limiting`, com
+Ruff, mypy e 172 testes aprovados localmente; aguardando Draft PR e CI para
+revisão do CTO. Nenhuma entrega posterior da v1.2 foi iniciada.
+
 Entregas posteriores da v1.2:
 
 * revogação/rotação auditável de sessões JWT;
@@ -1089,7 +1093,8 @@ v1.2 Package 1 explícito e nenhuma autorização implícita de deploy ou CNC re
 
 ## Próximos Passos
 
-Integrar este roadmap e implementar somente o primeiro pacote da v1.2.
+Revisar a Draft PR do primeiro pacote v1.2; não iniciar entregas posteriores ou
+v1.3 sem nova ordem oficial.
 
 ---
 

@@ -8,6 +8,17 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado
+* Rate limiting de janela fixa, configurável e seguro para concorrência protege
+  cadastro e login por cliente da conexão, com resposta `429` e `Retry-After`.
+* As rotas compatíveis `POST /auth/register` e `POST /users` compartilham o mesmo
+  limite de cadastro; cabeçalhos encaminhados e `X-User-ID` não alteram a chave.
+
+### Segurança
+* Primeiro controle de aplicação para tentativas públicas de autenticação. A
+  implementação é local ao processo e não substitui gateway/limite distribuído
+  antes de exposição pública horizontal.
+
 ### Documentação
 * Roadmap pós-v1.1 consolidado de v1.2 a v2.0 por gates de segurança,
   recuperação, observabilidade, processamento assíncrono, confiabilidade,

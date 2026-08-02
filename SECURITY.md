@@ -57,6 +57,18 @@ A v0.4.1 adota:
 `AUTH_SECRET_KEY` nunca possui valor padrão utilizável e deve ser fornecido por
 ambiente seguro. `X-User-ID` não é fonte de identidade.
 
+### 5.1 Rate limiting de autenticação
+
+`POST /auth/login`, `POST /auth/register` e a rota compatível `POST /users`
+possuem limite configurável por cliente da conexão. Exceder o limite retorna
+`429 Too Many Requests` com `Retry-After`. As duas rotas de cadastro compartilham
+a mesma cota para impedir bypass por alias.
+
+Cabeçalhos `X-Forwarded-For` são ignorados até existir uma fronteira de proxy
+confiável configurada; `X-User-ID` nunca participa da identidade nem da chave do
+limite. O limitador atual é local ao processo e deve ser complementado por um
+controle distribuído/gateway antes de exposição pública horizontal.
+
 ## 6. Autorização
 
 * cadastro público cria somente papel `member`;

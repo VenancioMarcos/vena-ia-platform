@@ -75,3 +75,10 @@ O CTO declarou `VENA_IA_V1_1_RELEASED_AND_FULLY_VERIFIED` e emitiu a
 `TASK-ROADMAP-V2-001`: consolidar v1.2–v2.0, integrar o roadmap e iniciar sem
 nova parada somente o primeiro pacote da v1.2. Deploy, v1.3, compra, publicação
 comercial, G-code executável e transmissão CNC permanecem proibidos.
+
+## 2026-08-01 — roadmap integrado e v1.2 Package 1 iniciado
+
+O proprietário autorizou explicitamente o Squash Merge da PR #12, a sincronização
+da `main` e o início imediato do primeiro pacote v1.2. A PR #12 foi integrada em
+`6e1065d`; a branch `codex/v1.2-auth-rate-limiting` implementa somente rate
+limiting de cadastro/login e deve permanecer em Draft PR para revisão do CTO.

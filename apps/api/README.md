@@ -22,6 +22,12 @@ uvicorn app.main:app --reload
 Defina `AUTH_SECRET_KEY` com um segredo aleatório de pelo menos 32 bytes antes de
 usar login fora dos testes.
 
+Os limites públicos de autenticação são configurados por
+`AUTH_LOGIN_RATE_LIMIT_REQUESTS`, `AUTH_REGISTRATION_RATE_LIMIT_REQUESTS` e
+`AUTH_RATE_LIMIT_WINDOW_SECONDS`. Ao excedê-los, a API retorna `429` com
+`Retry-After`. O controle é local ao processo; produção horizontal ainda exige
+um limitador distribuído ou gateway confiável.
+
 ## Endpoints
 
 * `GET /health`

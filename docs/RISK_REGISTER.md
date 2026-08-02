@@ -21,7 +21,7 @@
 | R-027 | ALTO | Preparação ANOVA pode ser confundida com inferência validada. | Não calcular F, valor-p ou significância; expor somente resumo descritivo e checklist. | MONITORAR v0.9 |
 | R-028 | CRÍTICO | Recursos científicos poderiam vazar entre projetos. | AuthorizationService em todos os recursos; identidade somente do JWT; acesso negado como 404. | MONITORAR v0.9 |
 | R-029 | ALTO | Biblioteca preliminar pode ser apresentada como revisão sistemática. | Documentar exclusão de PRISMA, bases externas, meta-análise e publicação. | MONITORAR v0.9 |
-| R-030 | ALTO | A API não possui rate limiting. | Aceito para código MVP local; exigir proxy/gateway e limites antes de exposição pública. | ACEITO v1.0 / BLOQUEIA PRODUÇÃO |
+| R-030 | ALTO | Rate limiting de autenticação é local ao processo e não cobre distribuição horizontal nem todas as rotas públicas. | Package 1 limita cadastro/login por conexão; exigir proxy/gateway distribuído antes de exposição pública. | MITIGADO PARCIALMENTE v1.2 PACKAGE 1 / BLOQUEIA PRODUÇÃO |
 | R-031 | ALTO | Não há backup/restore automatizado para PostgreSQL e MinIO. | Aceito para ambiente local; definir e testar política antes de piloto com dados reais. | ACEITO v1.0 / BLOQUEIA PRODUÇÃO |
 | R-032 | MÉDIO | Observabilidade limita-se a health, erros controlados e CI. | Adotar métricas/tracing antes de operação externa. | MONITORAR v1.0 |
 | R-033 | ALTO | Chat/RAG depende de PostgreSQL, MinIO, pgvector e provedor de IA. | Falhar sem resposta falsa; v1.1 permite retry de processamento/indexação; documentar dependências. | MITIGADO PARCIALMENTE v1.1 / MONITORAR |
