@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core import models_registry  # noqa: F401  (ensures all ORM models are registered)
+from app.core.rate_limit import FixedWindowRateLimiter
 from app.modules.ai.api.routes import router as ai_router
 from app.modules.auth.api.routes import router as auth_router
 from app.modules.chats.api.routes import router as chats_router
@@ -35,6 +36,7 @@ def create_app() -> FastAPI:
         version=API_VERSION,
         lifespan=lifespan,
     )
+    app.state.auth_rate_limiter = FixedWindowRateLimiter()
 
     app.add_middleware(
         CORSMiddleware,

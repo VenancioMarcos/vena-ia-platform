@@ -9,6 +9,7 @@ from app.modules.auth.dependencies import (
     AuthorizationDependency,
 )
 from app.modules.auth.service import DuplicateIdentityError
+from app.modules.auth.rate_limit import RegistrationRateLimitDependency
 from app.modules.users.models import User
 from app.modules.users.schemas import UserRead, UserRegister
 
@@ -24,7 +25,11 @@ def list_users(
 
 
 @router.post("", response_model=UserRead, status_code=201)
-def create_user(payload: UserRegister, service: AuthServiceDependency) -> User:
+def create_user(
+    payload: UserRegister,
+    service: AuthServiceDependency,
+    _rate_limit: RegistrationRateLimitDependency,
+) -> User:
     """Compatibility registration endpoint; role is always assigned by the server."""
     try:
         return service.register(payload)

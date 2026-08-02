@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     auth_cookie_name: str = "vena_ia_session"
     auth_cookie_secure: bool = False
     password_hash_iterations: int = 600_000
+    auth_login_rate_limit_requests: int = Field(default=10, ge=1, le=10_000)
+    auth_registration_rate_limit_requests: int = Field(default=5, ge=1, le=10_000)
+    auth_rate_limit_window_seconds: int = Field(default=60, ge=1, le=86_400)
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"

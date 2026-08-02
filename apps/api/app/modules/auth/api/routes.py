@@ -6,6 +6,10 @@ from app.modules.auth.dependencies import (
     CurrentUserDependency,
 )
 from app.modules.auth.schemas import AuthSession, LoginRequest
+from app.modules.auth.rate_limit import (
+    LoginRateLimitDependency,
+    RegistrationRateLimitDependency,
+)
 from app.modules.auth.service import (
     DuplicateIdentityError,
     InvalidCredentialsError,
@@ -17,7 +21,11 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
-def register(payload: UserRegister, service: AuthServiceDependency) -> UserRead:
+def register(
+    payload: UserRegister,
+    service: AuthServiceDependency,
+    _rate_limit: RegistrationRateLimitDependency,
+) -> UserRead:
     try:
         return UserRead.model_validate(service.register(payload))
     except DuplicateIdentityError as exc:
@@ -29,6 +37,7 @@ def login(
     payload: LoginRequest,
     response: Response,
     service: AuthServiceDependency,
+    _rate_limit: LoginRateLimitDependency,
 ) -> AuthSession:
     try:
         user = service.authenticate(payload.email, payload.password)

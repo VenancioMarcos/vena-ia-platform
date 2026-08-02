@@ -47,8 +47,10 @@ def _reset_database(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, No
         "test-only-auth-secret-key-with-at-least-32-bytes",
     )
     monkeypatch.setattr(settings, "auth_cookie_secure", False)
+    app.state.auth_rate_limiter.clear()
     Base.metadata.create_all(bind=engine)
     yield
+    app.state.auth_rate_limiter.clear()
     Base.metadata.drop_all(bind=engine)
 
 
