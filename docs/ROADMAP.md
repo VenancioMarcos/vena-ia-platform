@@ -495,6 +495,11 @@ consistência cruzada falha sem reparo automático diante de objeto ausente, ór
 ou divergência de projeto/documento. Automação de retenção, agendamento, storage
 externo e gestão de chaves permanecem para decisão/pacote posterior.
 
+Estado do Package 3: retenção executável e atômica por set completo, job agendável
+com lock/timeout, bundle autenticado AES-256-GCM e recovery drill mensurável são
+implementados na mesma Draft PR #14. Chaves permanecem externas e rotacionadas por
+identificador; KMS/nuvem/agendamento real e qualquer SLO de produção ficam fora.
+
 ---
 
 ## v1.4 — Observability and Auditability

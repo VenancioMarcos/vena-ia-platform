@@ -757,6 +757,35 @@ ser aprovada, evitando formato criptográfico próprio.
 
 ---
 
+## DEC-021 — Bundle criptografado, retenção e execução controlada
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Operação / Criptografia / Recuperação
+**Documentos relacionados:** `docs/adr/ADR-0021-encrypted-backup-retention.md`,
+`docs/runbooks/BACKUP_RETENTION_AND_SCHEDULING.md`,
+`docs/runbooks/RECOVERY_DRILL.md`
+
+### Contexto
+
+Backup verificável ainda precisava de proteção autenticada, expiração segura,
+exclusão por set completo, controle de concorrência e medição de recuperação.
+
+### Decisão
+
+Usar AES-256-GCM da dependência fixada `cryptography==49.0.0`, chave externa e
+`key_id` não sensível. Retenção é fail-closed, dry-run por padrão e nunca exclui
+o último set válido. O job é um CLI com lock e timeout, adequado a cron/Task
+Scheduler sem instalar daemon ou agendamento no computador do proprietário.
+
+### Impacto
+
+Chaves antigas devem permanecer recuperáveis em custódia externa para rotação.
+O drill mede somente o cenário descartável; KMS, nuvem, dados reais, agendamento
+real e SLOs de produção continuam fora do escopo.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

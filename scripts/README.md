@@ -34,3 +34,23 @@ python -m scripts.minio_restore \
 `MINIO_ENDPOINT`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY` and `MINIO_BUCKET` are
 read from the environment. PostgreSQL and MinIO manifests may be joined by
 `vena-ia.backup-set/v1`; inconsistent sets are rejected and never auto-repaired.
+
+Package 3 creates authenticated encrypted sets and never places key material in
+arguments or manifests:
+
+```bash
+python -m scripts.backup_job --timeout-seconds 3600
+python -m scripts.encrypted_restore \
+  --index /secure/vena-ia-backups/vena-ia-encrypted-UUID/encrypted-set.json \
+  --output-directory /secure/disposable-restore/UUID
+python -m scripts.backup_retention --root /secure/vena-ia-backups
+python -m scripts.backup_retention \
+  --root /secure/vena-ia-backups \
+  --confirm-root /secure/vena-ia-backups \
+  --apply
+```
+
+The first retention command is the mandatory dry-run. `backup_job` reads database,
+MinIO and AES-256-GCM key settings exclusively from the environment, requires a
+quiesced consistency window, uses a lock and removes plaintext staging. See the
+backup, retention and recovery runbooks before enabling an OS scheduler.

@@ -158,3 +158,11 @@ frontend e Docker Compose passaram. O Backend CI executou PostgreSQL/pgvector e
 MinIO reais, perda simulada, restore combinado, checksums, Alembic head e prova
 de integridade. Uma asserção de teste sensível a maiúsculas no Linux foi
 corrigida e a execução final passou em 1m57s. Não houve merge, tag ou deploy.
+
+## 2026-08-02 — v1.3 Backup Package 3
+
+O CTO aprovou o Package 2 e emitiu `TASK-V13-003` para concluir na mesma Draft
+PR #14 retenção executável, agendamento controlado, criptografia autenticada com
+chave externa, rotação, recovery drill e métricas técnicas de RPO/RTO. Merge,
+tag, release, deploy, dados reais, nuvem, KMS pago, agendamento real e v1.4
+permanecem proibidos.

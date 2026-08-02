@@ -1,16 +1,18 @@
-# Ordem atual do CTO
+# Ordem CTO atual
 
-**Versão:** v1.2 Release + v1.3 Package 1 (`TASK-V12-005`)
-**Data:** 2026-08-01
-**Estado:** v1.2.0 publicada; v1.3 Package 1 em execução
+```text
+MISSION=TASK_V13_003
+TITLE=VENA_IA_PLATFORM_V1_3_PACKAGE_3_RETENTION_ENCRYPTION_RECOVERY_DRILL
+BRANCH=codex/v1.3-backup-recovery
+PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/14
+START_HEAD=fb8f8b2a3ee20220db3f657f9fdb51d2c5a43c39
+EXPECTED_STATE=VENA_IA_V1_3_PACKAGE_3_READY_FOR_CTO_REVIEW
+MERGE=PROHIBITED
+TAG_RELEASE_DEPLOY=PROHIBITED
+V1_4=PROHIBITED
+REAL_DATA_CLOUD_PAID_KMS_SCHEDULING=PROHIBITED
+```
 
-Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
-
-Objetivo vigente: concluir somente o Package 1 da v1.3 para backup/restore
-PostgreSQL verificável em banco descartável e publicar uma Draft PR própria.
-
-Autorizados: finalizar PR #13, Squash Merge, tag/release v1.2.0 e validação da
-tag; depois branch e Draft PR própria da v1.3 Package 1. Proibidos: deploy,
-backup real, storage externo, v1.4 e módulos alheios ao escopo.
-
-Limites permanentes continuam em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
+Escopo: retenção executável por set completo, agendamento documentado com lock e
+timeout, criptografia autenticada com chave externa, rotação, recovery drill e
+RPO/RTO observados somente no ambiente descartável.

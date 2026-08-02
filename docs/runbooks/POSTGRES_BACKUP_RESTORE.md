@@ -113,3 +113,8 @@ simulates loss, restores into a new database and bucket, verifies them and clean
   application-level improvised encryption is forbidden;
 - RPO is the age of the last verified complete set;
 - RTO must be measured before pilot and is not guaranteed by this package.
+
+Package 3 operationalizes these controls through
+`vena-ia.encrypted-backup-set/v1`, AES-256-GCM, `scripts.backup_job` and
+`scripts.backup_retention`. Procedures and limits are authoritative in
+`BACKUP_RETENTION_AND_SCHEDULING.md` and `RECOVERY_DRILL.md`.
