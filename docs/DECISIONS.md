@@ -786,6 +786,33 @@ real e SLOs de produção continuam fora do escopo.
 
 ---
 
+## DEC-022 — Schema estruturado e contexto de correlação
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Observabilidade / Segurança / API
+**Documentos relacionados:** `docs/adr/ADR-0022-structured-observability-context.md`,
+`docs/runbooks/OBSERVABILITY.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Health e auditoria existiam, mas não havia correlação estável entre requisição,
+serviços, resposta e falha.
+
+### Decisão
+
+Usar UUIDs validados para request/correlation ID, `ContextVar` para propagação e
+eventos JSON `vena-ia.observability/v1` com allowlist estrita. Não coletar body,
+headers sensíveis ou conteúdo de documentos/IA. Readiness informa apenas estado
+por dependência, sem diagnóstico sensível.
+
+### Impacto
+
+Falhas são correlacionáveis sem expor segredo. Métricas, tracing, alertas e envio
+externo continuam fora do Package 1.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

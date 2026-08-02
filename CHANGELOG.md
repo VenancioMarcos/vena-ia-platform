@@ -8,6 +8,18 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado
+* Middleware com schema `vena-ia.observability/v1`, eventos JSON allowlisted,
+  duração, rota normalizada, request ID e correlation ID.
+* Headers `X-Request-ID` e `X-Correlation-ID` validados/gerados e propagados em
+  respostas, contexto de serviço e erros internos genéricos.
+* `GET /ready` verifica PostgreSQL, Redis e MinIO sem expor diagnóstico sensível;
+  `/health` preserva o contrato existente.
+
+### Segurança
+* Redaction e allowlist proíbem Authorization, Cookie, JWT, senha, segredo,
+  conteúdo documental, prompts, respostas e embeddings nos eventos.
+
 ## [1.3.0] — 2026-08-02 — Backup, Recovery and Retention
 
 ### Adicionado

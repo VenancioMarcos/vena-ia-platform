@@ -33,7 +33,7 @@
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
 | R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o projeto e o CI exigem Python 3.13. | Validar também em Python 3.13 e manter matriz explícita de versões suportadas. | ABERTO |
 | R-009 | MÉDIO | `minio/minio:latest` não está fixado por versão ou digest. | Fixar imagem validada e estabelecer rotina de atualização. | ABERTO |
-| R-010 | MÉDIO | Eventos sensíveis possuem trilha persistente, mas ainda não há logging estruturado geral, correlação, métricas ou tracing. | Preservar auditoria redigida e completar observabilidade na v1.4. | MITIGADO PARCIALMENTE v1.2 PACKAGE 3 / ABERTO |
+| R-010 | MÉDIO | Eventos sensíveis possuem trilha persistente, mas faltavam logging estruturado geral e correlação. | Package 1 da v1.4 adiciona schema/allowlist, request/correlation ID e redaction; métricas, tracing e alertas permanecem abertos. | MITIGADO PARCIALMENTE v1.4 PACKAGE 1 / MONITORAR |
 | R-011 | BAIXO | Existe `.env` local real, embora ignorado e sem segredo detectado na auditoria. | Manter ignorado, limitar permissões e revisar antes de qualquer empacotamento. | MONITORAR |
 | R-012 | BAIXO | A suíte gerava aviso de depreciação de `TestClient`/HTTPX. | Dependência de desenvolvimento migrada para HTTPX2 e imports direcionados ao cliente Starlette compatível. | MITIGADO v1.1 |
 | R-013 | MÉDIO | Logout precisava compartilhar revogação entre réplicas e reinícios. | Redis guarda somente chave derivada do fingerprint com TTL do JWT; falha de Redis bloqueia consulta e escrita com auditoria. | MITIGADO v1.2 PACKAGE 4 |

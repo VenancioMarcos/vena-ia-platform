@@ -522,6 +522,12 @@ registrado; eventos críticos são correlacionáveis e acionáveis.
 
 Condição de avanço: operação local/piloto diagnosticável por evidência.
 
+Estado do Package 1: logging estruturado versionado, request/correlation ID,
+redaction allowlisted, exceção interna correlacionada, health versionado e
+readiness preliminar de PostgreSQL/Redis/MinIO são implementados na branch
+`codex/v1.4-observability-auditability`. Métricas, tracing, alertas e backend
+externo permanecem para pacotes posteriores.
+
 ---
 
 ## v1.5 — Asynchronous Processing

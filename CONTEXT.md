@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization ✅ → v1.2.0 — Security and Data Protection ✅ → v1.3 — Backup and Recovery Packages 1–3 prontos para revisão do CTO.
+* **Fase:** v0.1–v1.3 concluídas e publicadas; v1.4 — Observability and Auditability Package 1 em implementação.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.3.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `f42a1b7c9d30` adiciona auditoria persistente e `auth_version`.
@@ -83,6 +83,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   [GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.3.0)
   foi publicada sem deploy. A validação direta aprovou health/runtime 1.3.0,
   49 paths OpenAPI e 40 testes de operações/health (4 integrações locais omitidas).
+* **v1.4 Observability Package 1:** branch `codex/v1.4-observability-auditability`
+  adiciona eventos estruturados allowlisted, request/correlation IDs, respostas
+  de erro correlacionadas e readiness preliminar de PostgreSQL, Redis e MinIO.
+  Nenhum conteúdo de usuário/IA, credencial ou telemetria externa é coletado.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

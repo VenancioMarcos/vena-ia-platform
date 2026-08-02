@@ -188,3 +188,7 @@ A tag anotada `v1.3.0` foi publicada apontando para `e075657`, junto da GitHub
 Release “Vena_IA Platform v1.3.0 — Backup, Recovery and Retention”. A validação
 direta da tag aprovou health/runtime 1.3.0, OpenAPI com 49 paths e 40 testes de
 health/operações; nenhum deploy foi realizado.
+
+A branch `codex/v1.4-observability-auditability` foi criada a partir da main com
+a evidência da release. O Package 1 limita-se a logging estruturado, correlação,
+redaction e readiness; métricas/tracing externos e v1.5 não foram iniciados.
