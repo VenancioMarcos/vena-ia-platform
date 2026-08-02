@@ -2,7 +2,7 @@
 
 ```text
 MISSION=TASK_V12_004
-STATE=V1_2_PACKAGE_4_IMPLEMENTED_PENDING_CI
+STATE=V1_2_PACKAGE_4_READY_FOR_CTO_REVIEW
 BRANCH=codex/v1.2-auth-rate-limiting
 START_HEAD=47102286cfe1f6f977b69693da943337118399a7
 V1_1_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.1.0
@@ -19,11 +19,11 @@ ROADMAP_MERGE=6e1065d3df78b27d01a16009579af3c7fa8c961e
 V1_2_PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/13
 LOCAL_GATES=RUFF_MYPY_PYTEST_190_REDIS_INTEGRATION_FRONTEND_DOCKER_CONFIG_PASS
 DOCKER_IMAGE_BUILD=API_COMPILED_EXPORT_FAILED_DOCKER_DAEMON_500_WEB_PENDING_CI
-GITHUB_CHECKS=PACKAGE_4_PENDING
+GITHUB_CHECKS=PACKAGE_4_BACKEND_AND_FRONTEND_CI_PASS
 PACKAGE_4_CODE_HEAD=f7e83ada4ea6984b2cee93a79ced327c0a7ac36a
 PACKAGE_3_HEAD=eae12bf3e1616cef88f994b99fcd629f682cfbec
 PACKAGE_2_HEAD=90138c3bde37f4196626942bbce3e375d3dcbda7
-NEXT=DOCUMENT_COMMIT_PUSH_AND_CI
+NEXT=CTO_REVIEW
 ```
 
 Este arquivo deve ser atualizado apenas com evidências verificadas.
@@ -53,7 +53,8 @@ infraestrutura Redis existente, com falha fechada e auditoria.
 
 Ruff e mypy aprovados; 190 testes incluindo Redis real; frontend typecheck/build;
 Docker Compose válido. O build API compilou integralmente, mas o daemon Docker
-local falhou na exportação com EOF/500 e ficou indisponível; CI repetirá os gates.
+local falhou na exportação com EOF/500 e ficou indisponível. Backend CI com
+PostgreSQL e Redis e Frontend CI/build concluíram com sucesso.
 
 ### Critérios de aceitação
 
@@ -62,4 +63,4 @@ indisponibilidade sem bypass e contratos/autorização preservados.
 
 ### Próximo passo
 
-Publicar na Draft PR #13, aguardar CI e corrigir qualquer falha.
+Revisão do CTO na Draft PR #13; nenhuma ação posterior foi iniciada.

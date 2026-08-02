@@ -56,6 +56,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 * **v1.2 Security Package 3:** contas legadas com `password_hash` nulo recebem credencial somente por admin, uma única vez e sem autoatendimento; `auth_version` invalida tokens anteriores após a definição. Eventos de login, limite, logout, token e operação administrativa são persistidos sem segredos e consultados apenas por admin. A retenção padrão documentada é 90 dias e a limpeza permanece operacional/manual nesta entrega.
   A Draft PR #13 está limpa e os CI finais de backend/frontend foram aprovados.
 * **v1.2 Security Package 4:** Redis substitui os controles locais como padrão para rate limiting e revogação, compartilhando estado entre réplicas com operações atômicas e TTL. Origem e fingerprint não aparecem em texto puro nas chaves. Indisponibilidade falha fechada com `503` e auditoria; memória é modo explícito de desenvolvimento/teste. A validação inclui integração com Redis real e preserva `auth_version`.
+  A Draft PR #13 aprovou Backend CI com PostgreSQL/Redis e Frontend CI/build.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

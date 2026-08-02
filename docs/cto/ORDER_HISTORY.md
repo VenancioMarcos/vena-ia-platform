@@ -115,3 +115,9 @@ O CTO aprovou o Package 3 e emitiu `TASK-V12-004` para distribuir rate limiting
 e revogação usando o Redis existente, manter `auth_version`, falhar fechado e
 continuar exclusivamente na Draft PR #13. Merge, tag, release, deploy, nova PR,
 gateway externo, recuperação pública e v1.3 permanecem proibidos.
+
+O Package 4 foi publicado na PR #13 com 190 testes locais, integração Redis real,
+Ruff, mypy e frontend aprovados. Backend CI (com PostgreSQL e Redis) e Frontend CI
+passaram. O build local da API compilou todas as camadas, mas o Docker Desktop
+falhou ao exportar a imagem com EOF/500 e permaneceu indisponível após reinício;
+nenhuma falha de código ou CI foi observada.
