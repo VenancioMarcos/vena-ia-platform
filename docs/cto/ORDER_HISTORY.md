@@ -139,3 +139,8 @@ A tag anotada `v1.2.0` foi publicada apontando para `663dbc2`, junto da GitHub
 Release “Vena_IA Platform v1.2.0 — Security and Data Protection”, sem deploy. A
 execução iniciou imediatamente a branch `codex/v1.3-backup-recovery`, limitada
 ao Package 1 de backup/restore PostgreSQL.
+
+O Package 1 foi publicado na Draft PR #14. Ruff, mypy e 200 testes locais foram
+aprovados; o Backend CI executou PostgreSQL/Redis, backup custom-format, checksum,
+restore em banco descartável, migration head e prova de integridade em 1m54s.
+Uma falha inicial de import do runner Linux foi corrigida sem alterar o contrato.

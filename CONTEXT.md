@@ -60,6 +60,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 * **Integração v1.2.0:** a PR [#13](https://github.com/VenancioMarcos/vena-ia-platform/pull/13) foi integrada por Squash Merge em `0e386802`. A `main` pós-merge aprovou Ruff, mypy, 193 testes locais, frontend e OpenAPI 1.2.0; a integração Redis foi aprovada no Backend CI. O Docker Desktop local permaneceu indisponível por erro de daemon/exportação, sem falha de código.
 * **Release v1.2.0:** a tag anotada aponta para `663dbc2` e a [GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.2.0) foi publicada sem deploy.
 * **v1.3 Backup Package 1:** branch `codex/v1.3-backup-recovery` adiciona contrato versionado, manifesto/checksum, backup PostgreSQL custom-format, restore somente em alvo vazio explicitamente confirmado e teste descartável de round trip. MinIO, nuvem, criptografia, agendamento e retenção automática permanecem fora do pacote.
+  A Draft PR [#14](https://github.com/VenancioMarcos/vena-ia-platform/pull/14) aprovou o Backend CI com backup → restore real em PostgreSQL/pgvector descartável.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
