@@ -10,7 +10,7 @@ Este repositório é desenvolvido com apoio intensivo de múltiplos agentes de I
 
 ## Status Atual
 
-**Fase:** v1.2.0 — Security and Data Protection em validação final para Release.
+**Fase:** v1.2.0 — Security and Data Protection validada para Release.
 
 Para o estado técnico exato (o que está implementado vs. apenas planejado), ver [`CONTEXT.md`](CONTEXT.md) — leitura obrigatória antes de qualquer contribuição.
 

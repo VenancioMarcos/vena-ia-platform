@@ -438,8 +438,8 @@ Estado do Package 4: rate limiting e revogação usam o Redis já adotado, com
 estado compartilhado entre réplicas, incremento/expiração atômicos, TTL até a
 expiração do JWT e chaves sem origem, token ou PII em texto puro. Indisponibilidade
 falha fechada e auditável; memória é modo explícito de desenvolvimento/teste.
-Implementado na mesma Draft PR #13, aprovado pelo CTO e em validação final para
-a Release `v1.2.0`.
+Integrado pela PR #13, aprovado pelo CTO e validado na `main` para a Release
+`v1.2.0`.
 
 Entregas posteriores da v1.2:
 

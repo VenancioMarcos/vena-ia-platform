@@ -129,3 +129,8 @@ validação final, Squash Merge da PR #13, tag e Release `v1.2.0`. Após validar
 tag, a execução deve iniciar somente backup/restore PostgreSQL verificável no
 Package 1 da v1.3, em branch e Draft PR próprias. Deploy, dados reais, storage
 externo e v1.4 permanecem proibidos.
+
+A PR #13 foi retirada de Draft e integrada por Squash Merge em `0e386802`. A
+`main` sincronizada aprovou Ruff, mypy, 193 testes locais, frontend e OpenAPI
+1.2.0. A integração Redis permanece comprovada pelo Backend CI; o Docker Desktop
+local continuou indisponível por erro de daemon/exportação, sem falha de código.
