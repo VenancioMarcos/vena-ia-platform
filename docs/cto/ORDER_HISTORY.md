@@ -192,3 +192,9 @@ health/operações; nenhum deploy foi realizado.
 A branch `codex/v1.4-observability-auditability` foi criada a partir da main com
 a evidência da release. O Package 1 limita-se a logging estruturado, correlação,
 redaction e readiness; métricas/tracing externos e v1.5 não foram iniciados.
+
+O Package 1 foi publicado na Draft PR #15. Localmente, Ruff, mypy, 240 testes,
+frontend e Compose passaram. O Backend CI aprovou 202 testes de API e 44
+operacionais, incluindo readiness real simultânea de PostgreSQL, Redis e MinIO.
+Uma falha inicial por bucket descartável ainda não criado foi corrigida no setup
+do teste, preservando a semântica fail-closed do endpoint.
