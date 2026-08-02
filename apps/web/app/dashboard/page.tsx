@@ -11,10 +11,8 @@ type Project = {
   id: string;
   name: string;
   status: string;
-  owner_id: string;
-  created_at: string;
 };
-type CurrentUser = { id: string; name: string; email: string; role: string };
+type CurrentUser = { name: string };
 
 export default function Dashboard() {
   const router = useRouter();
@@ -26,17 +24,18 @@ export default function Dashboard() {
   const [loggingOut, setLoggingOut] = useState(false);
   const [projectName, setProjectName] = useState("");
 
-  async function loadProjects() {
+  async function loadProjects(signal?: AbortSignal) {
     setLoading(true);
     setError(null);
     try {
       const [user, projectList] = await Promise.all([
-        api<CurrentUser>("/auth/me"),
-        api<Project[]>("/projects")
+        api<CurrentUser>("/auth/me", { signal }),
+        api<Project[]>("/projects", { signal })
       ]);
       setCurrentUser(user);
       setProjects(projectList);
     } catch (err) {
+      if (signal?.aborted) return;
       if (err instanceof ApiError && err.status === 401) {
         router.replace("/login");
         return;
@@ -47,12 +46,14 @@ export default function Dashboard() {
           : "Erro desconhecido ao carregar projetos."
       );
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }
 
   useEffect(() => {
-    void loadProjects();
+    const controller = new AbortController();
+    void loadProjects(controller.signal);
+    return () => controller.abort();
     // loadProjects intentionally runs once for the current authenticated session.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -62,12 +63,12 @@ export default function Dashboard() {
     setSubmitting(true);
     setError(null);
     try {
-      await api<Project>("/projects", {
+      const created = await api<Project>("/projects", {
         method: "POST",
         body: JSON.stringify({ name: projectName })
       });
       setProjectName("");
-      await loadProjects();
+      setProjects((current) => [...current, created]);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         router.replace("/login");

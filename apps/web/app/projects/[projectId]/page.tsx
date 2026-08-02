@@ -12,9 +12,9 @@ type Document = {
   id: string;
   filename: string;
   status: string;
-  file_size: number;
 };
-type DocumentList = { documents: Document[]; total: number };
+type DocumentList = { documents: Document[] };
+type DocumentProcessingResponse = { document: Document };
 type Evidence = {
   document_id: string;
   page_number: number;
@@ -38,7 +38,6 @@ type Report = {
   status: string;
   synthesis: string;
   evidence: Evidence[];
-  created_at: string;
 };
 
 function describeError(error: unknown): string {
@@ -71,19 +70,20 @@ export default function ProjectPage({
   const [busy, setBusy] = useState<string | null>("load");
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: AbortSignal) => {
     setError(null);
     const reportRequest = api<Report[]>(
-      `/research/reports?project_id=${encodeURIComponent(projectId)}`
+      `/research/reports?project_id=${encodeURIComponent(projectId)}`,
+      { signal }
     ).then(
       (data) => ({ ok: true as const, data }),
       (reason: unknown) => ({ ok: false as const, reason })
     );
     try {
       const [projectData, documentData, messageData] = await Promise.all([
-        api<Project>(`/projects/${projectId}`),
-        api<DocumentList>(`/projects/${projectId}/documents`),
-        api<Message[]>(`/chat/${projectId}/messages`)
+        api<Project>(`/projects/${projectId}`, { signal }),
+        api<DocumentList>(`/projects/${projectId}/documents`, { signal }),
+        api<Message[]>(`/chat/${projectId}/messages`, { signal })
       ]);
       setProject(projectData);
       setDocuments(documentData.documents);
@@ -91,6 +91,7 @@ export default function ProjectPage({
       setBusy(null);
 
       const reportResult = await reportRequest;
+      if (signal?.aborted) return;
       if (!reportResult.ok) {
         const reason = reportResult.reason;
         if (reason instanceof ApiError && reason.status === 401) throw reason;
@@ -100,33 +101,51 @@ export default function ProjectPage({
         setReports(reportResult.data);
       }
     } catch (reason) {
+      if (signal?.aborted) return;
       if (reason instanceof ApiError && reason.status === 401) {
         router.replace("/login");
         return;
       }
       setError(describeError(reason));
     } finally {
-      setBusy(null);
+      if (!signal?.aborted) setBusy(null);
     }
   }, [projectId, router]);
 
   useEffect(() => {
-    void load();
+    const controller = new AbortController();
+    void load(controller.signal);
+    return () => controller.abort();
   }, [load]);
+
+  async function refreshDocuments() {
+    const result = await api<DocumentList>(`/projects/${projectId}/documents`);
+    setDocuments(result.documents);
+  }
+
+  async function refreshMessages() {
+    setMessages(await api<Message[]>(`/chat/${projectId}/messages`));
+  }
 
   async function uploadDocument(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!file) return;
+    const formElement = event.currentTarget;
     setBusy("upload");
     setError(null);
     const form = new FormData();
     form.append("file", file);
     try {
-      await api(`/projects/${projectId}/documents`, { method: "POST", body: form });
+      const created = await api<Document>(`/projects/${projectId}/documents`, {
+        method: "POST",
+        body: form
+      });
+      setDocuments((current) => [...current, created]);
       setFile(null);
-      await load();
+      formElement.reset();
     } catch (reason) {
       setError(describeError(reason));
+    } finally {
       setBusy(null);
     }
   }
@@ -136,13 +155,25 @@ export default function ProjectPage({
     setError(null);
     try {
       if (document.status !== "READY") {
-        await api(`/documents/${document.id}/processing`, { method: "POST" });
+        const processed = await api<DocumentProcessingResponse>(
+          `/documents/${document.id}/processing`,
+          { method: "POST" }
+        );
+        setDocuments((current) =>
+          current.map((item) =>
+            item.id === processed.document.id ? processed.document : item
+          )
+        );
       }
       await api(`/documents/${document.id}/embeddings`, { method: "POST" });
-      await load();
     } catch (reason) {
-      await load();
-      setError(describeError(reason));
+      const operationError = describeError(reason);
+      try {
+        await refreshDocuments();
+        setError(operationError);
+      } catch (refreshReason) {
+        setError(`${operationError} Estado não atualizado: ${describeError(refreshReason)}`);
+      }
     } finally {
       setBusy(null);
     }
@@ -164,8 +195,13 @@ export default function ProjectPage({
         result.assistant_message
       ]);
     } catch (reason) {
-      setError(describeError(reason));
-      await load();
+      const operationError = describeError(reason);
+      try {
+        await refreshMessages();
+        setError(operationError);
+      } catch (refreshReason) {
+        setError(`${operationError} Histórico não atualizado: ${describeError(refreshReason)}`);
+      }
     } finally {
       setBusy(null);
     }
@@ -180,7 +216,7 @@ export default function ProjectPage({
     setBusy("report");
     setError(null);
     try {
-      await api("/research/reports", {
+      const created = await api<Report>("/research/reports", {
         method: "POST",
         body: JSON.stringify({
           project_id: projectId,
@@ -196,9 +232,10 @@ export default function ProjectPage({
           ]
         })
       });
-      await load();
+      setReports((current) => [...current, created]);
     } catch (reason) {
       setError(describeError(reason));
+    } finally {
       setBusy(null);
     }
   }
