@@ -2,11 +2,12 @@ import re
 from collections import defaultdict
 
 from fastapi import HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.modules.auth.authorization import AuthorizationService
 from app.modules.documents.knowledge import KnowledgeService
-from app.modules.documents.models import Document
+from app.modules.documents.models import Document, DocumentChunk
 from app.modules.documents.repository import DocumentChunkRepository
 from app.modules.research.contracts import ResearchRepositoryContract
 from app.modules.research.models import (
@@ -213,6 +214,16 @@ class ResearchService:
             document = self._db.get(Document, document_id)
             if document is None or document.project_id != payload.project_id:
                 raise HTTPException(status_code=404, detail="Document not found")
+        for evidence in payload.evidence:
+            chunk = self._db.scalar(
+                select(DocumentChunk).where(
+                    DocumentChunk.document_id == evidence.document_id,
+                    DocumentChunk.page_number == evidence.page_number,
+                    DocumentChunk.chunk_index == evidence.chunk_index,
+                )
+            )
+            if chunk is None or not chunk.content.startswith(evidence.excerpt):
+                raise HTTPException(status_code=422, detail="Report evidence is invalid")
         report = ResearchReport(
             project_id=payload.project_id,
             created_by=self._authorization.current_user.id,

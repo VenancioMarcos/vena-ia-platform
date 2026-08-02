@@ -12,9 +12,9 @@ type Document = {
   id: string;
   filename: string;
   status: string;
-  file_size: number;
 };
-type DocumentList = { documents: Document[]; total: number };
+type DocumentList = { documents: Document[] };
+type DocumentProcessingResponse = { document: Document };
 type Evidence = {
   document_id: string;
   page_number: number;
@@ -38,14 +38,16 @@ type Report = {
   status: string;
   synthesis: string;
   evidence: Evidence[];
-  created_at: string;
 };
 
 function describeError(error: unknown): string {
   if (!(error instanceof Error)) return "Falha inesperada.";
   if (error instanceof ApiError) {
     if (error.status === 401) return "Sua sessão expirou. Entre novamente.";
+    if (error.status === 408) return "A API demorou demais para responder. Tente novamente.";
+    if (error.status === 403) return "Você não possui permissão para executar esta ação.";
     if (error.status === 404) return "Recurso não encontrado ou sem acesso.";
+    if (error.status === 409) return `A operação conflita com o estado atual: ${error.message}`;
     if (error.status === 422) return `Dados inválidos: ${error.message}`;
     if (error.status >= 500) return "Serviço temporariamente indisponível. Tente novamente.";
   }
@@ -68,60 +70,111 @@ export default function ProjectPage({
   const [busy, setBusy] = useState<string | null>("load");
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: AbortSignal) => {
     setError(null);
+    const reportRequest = api<Report[]>(
+      `/research/reports?project_id=${encodeURIComponent(projectId)}`,
+      { signal }
+    ).then(
+      (data) => ({ ok: true as const, data }),
+      (reason: unknown) => ({ ok: false as const, reason })
+    );
     try {
-      const [projectData, documentData, messageData, reportData] = await Promise.all([
-        api<Project>(`/projects/${projectId}`),
-        api<DocumentList>(`/projects/${projectId}/documents`),
-        api<Message[]>(`/chat/${projectId}/messages`),
-        api<Report[]>(`/research/reports?project_id=${encodeURIComponent(projectId)}`)
+      const [projectData, documentData, messageData] = await Promise.all([
+        api<Project>(`/projects/${projectId}`, { signal }),
+        api<DocumentList>(`/projects/${projectId}/documents`, { signal }),
+        api<Message[]>(`/chat/${projectId}/messages`, { signal })
       ]);
       setProject(projectData);
       setDocuments(documentData.documents);
       setMessages(messageData);
-      setReports(reportData);
+      setBusy(null);
+
+      const reportResult = await reportRequest;
+      if (signal?.aborted) return;
+      if (!reportResult.ok) {
+        const reason = reportResult.reason;
+        if (reason instanceof ApiError && reason.status === 401) throw reason;
+        setReports([]);
+        setError(`Projeto carregado, mas os relatórios não: ${describeError(reason)}`);
+      } else {
+        setReports(reportResult.data);
+      }
     } catch (reason) {
+      if (signal?.aborted) return;
       if (reason instanceof ApiError && reason.status === 401) {
         router.replace("/login");
         return;
       }
       setError(describeError(reason));
     } finally {
-      setBusy(null);
+      if (!signal?.aborted) setBusy(null);
     }
   }, [projectId, router]);
 
   useEffect(() => {
-    void load();
+    const controller = new AbortController();
+    void load(controller.signal);
+    return () => controller.abort();
   }, [load]);
+
+  async function refreshDocuments() {
+    const result = await api<DocumentList>(`/projects/${projectId}/documents`);
+    setDocuments(result.documents);
+  }
+
+  async function refreshMessages() {
+    setMessages(await api<Message[]>(`/chat/${projectId}/messages`));
+  }
 
   async function uploadDocument(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!file) return;
+    const formElement = event.currentTarget;
     setBusy("upload");
     setError(null);
     const form = new FormData();
     form.append("file", file);
     try {
-      await api(`/projects/${projectId}/documents`, { method: "POST", body: form });
+      const created = await api<Document>(`/projects/${projectId}/documents`, {
+        method: "POST",
+        body: form
+      });
+      setDocuments((current) => [...current, created]);
       setFile(null);
-      await load();
+      formElement.reset();
     } catch (reason) {
       setError(describeError(reason));
+    } finally {
       setBusy(null);
     }
   }
 
-  async function processDocument(documentId: string) {
-    setBusy(documentId);
+  async function processDocument(document: Document) {
+    setBusy(document.id);
     setError(null);
     try {
-      await api(`/documents/${documentId}/processing`, { method: "POST" });
-      await api(`/documents/${documentId}/embeddings`, { method: "POST" });
-      await load();
+      if (document.status !== "READY") {
+        const processed = await api<DocumentProcessingResponse>(
+          `/documents/${document.id}/processing`,
+          { method: "POST" }
+        );
+        setDocuments((current) =>
+          current.map((item) =>
+            item.id === processed.document.id ? processed.document : item
+          )
+        );
+      }
+      await api(`/documents/${document.id}/embeddings`, { method: "POST" });
     } catch (reason) {
-      setError(describeError(reason));
+      const operationError = describeError(reason);
+      try {
+        await refreshDocuments();
+        setError(operationError);
+      } catch (refreshReason) {
+        setError(`${operationError} Estado não atualizado: ${describeError(refreshReason)}`);
+      }
+    } finally {
       setBusy(null);
     }
   }
@@ -142,8 +195,13 @@ export default function ProjectPage({
         result.assistant_message
       ]);
     } catch (reason) {
-      setError(describeError(reason));
-      await load();
+      const operationError = describeError(reason);
+      try {
+        await refreshMessages();
+        setError(operationError);
+      } catch (refreshReason) {
+        setError(`${operationError} Histórico não atualizado: ${describeError(refreshReason)}`);
+      }
     } finally {
       setBusy(null);
     }
@@ -158,7 +216,7 @@ export default function ProjectPage({
     setBusy("report");
     setError(null);
     try {
-      await api("/research/reports", {
+      const created = await api<Report>("/research/reports", {
         method: "POST",
         body: JSON.stringify({
           project_id: projectId,
@@ -174,9 +232,10 @@ export default function ProjectPage({
           ]
         })
       });
-      await load();
+      setReports((current) => [...current, created]);
     } catch (reason) {
       setError(describeError(reason));
+    } finally {
       setBusy(null);
     }
   }
@@ -192,7 +251,7 @@ export default function ProjectPage({
             <h1 className="mt-2 text-2xl font-semibold">
               {project?.name ?? "Carregando projeto..."}
             </h1>
-            <p className="text-sm text-steel">Fluxo integrado Vena_IA Platform v1.0</p>
+            <p className="text-sm text-steel">Fluxo integrado Vena_IA Platform v1.1</p>
           </div>
         </header>
 
@@ -235,14 +294,18 @@ export default function ProjectPage({
                       </span>
                       <span className="text-xs text-steel">{document.status}</span>
                     </div>
-                    {document.status !== "READY" && (
+                    {document.status !== "PROCESSING" && (
                       <button
                         type="button"
                         disabled={busy !== null}
-                        onClick={() => void processDocument(document.id)}
+                        onClick={() => void processDocument(document)}
                         className="mt-3 text-sm text-machine underline disabled:opacity-50"
                       >
-                        Processar e indexar
+                        {document.status === "READY"
+                          ? "Indexar novamente"
+                          : document.status === "FAILED"
+                            ? "Tentar novamente"
+                            : "Processar e indexar"}
                       </button>
                     )}
                   </div>
@@ -272,6 +335,11 @@ export default function ProjectPage({
                       {message.role === "assistant" ? "Vena_IA" : "Você"} · {message.status}
                     </p>
                     <p className="mt-1 whitespace-pre-wrap">{message.content}</p>
+                    {message.error && (
+                      <p className="mt-2 border border-red-200 bg-red-50 p-2 text-xs text-red-700">
+                        {message.error}
+                      </p>
+                    )}
                     {message.evidence.length > 0 && (
                       <ul className="mt-2 space-y-1 text-xs text-steel">
                         {message.evidence.map((source) => (

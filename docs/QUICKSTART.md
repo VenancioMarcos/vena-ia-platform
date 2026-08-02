@@ -1,4 +1,4 @@
-# Guia rápido do usuário — Vena_IA Platform v1.0
+# Guia rápido do usuário — Vena_IA Platform v1.1
 
 1. Abra `http://localhost:3000/login`, selecione **Criar uma conta** e entre.
 2. No dashboard, crie um projeto e abra-o pela lista.

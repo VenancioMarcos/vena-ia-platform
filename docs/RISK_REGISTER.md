@@ -1,6 +1,6 @@
 # Registro de Riscos
 
-**Data da revisão:** 2026-07-30
+**Data da revisão:** 2026-08-01
 
 | ID | Severidade | Risco e evidência | Mitigação recomendada | Estado |
 |---|---|---|---|---|
@@ -24,7 +24,10 @@
 | R-030 | ALTO | A API não possui rate limiting. | Aceito para código MVP local; exigir proxy/gateway e limites antes de exposição pública. | ACEITO v1.0 / BLOQUEIA PRODUÇÃO |
 | R-031 | ALTO | Não há backup/restore automatizado para PostgreSQL e MinIO. | Aceito para ambiente local; definir e testar política antes de piloto com dados reais. | ACEITO v1.0 / BLOQUEIA PRODUÇÃO |
 | R-032 | MÉDIO | Observabilidade limita-se a health, erros controlados e CI. | Adotar métricas/tracing antes de operação externa. | MONITORAR v1.0 |
-| R-033 | ALTO | Chat/RAG depende de PostgreSQL, MinIO, pgvector e provedor de IA. | Falhar sem resposta falsa; permitir retry; documentar dependências. | MONITORAR v1.0 |
+| R-033 | ALTO | Chat/RAG depende de PostgreSQL, MinIO, pgvector e provedor de IA. | Falhar sem resposta falsa; v1.1 permite retry de processamento/indexação; documentar dependências. | MITIGADO PARCIALMENTE v1.1 / MONITORAR |
+| R-035 | ALTO | Relatórios aceitavam evidência declarada sem verificar correspondência com o chunk persistido. | Validar documento, página, índice e trecho antes de persistir o relatório. | MITIGADO v1.1 |
+| R-036 | MÉDIO | Requisições sem timeout, falhas silenciosas e dependência da listagem de relatórios podiam bloquear ou confundir o fluxo principal do frontend. | Cliente API único com timeout; erros de logout/chat visíveis; relatórios carregados sem impedir projeto, documentos e histórico. | MITIGADO v1.1 |
+| R-037 | BAIXO | Operações do frontend recarregavam até quatro endpoints mesmo quando a resposta já continha o recurso atualizado. | Atualizar localmente o recurso retornado e, em falha, sincronizar somente documentos ou histórico; cancelar requests no unmount. | MITIGADO v1.1 |
 | R-034 | MÉDIO | Não há deploy, capacidade ou escalabilidade validados. | Release limita-se ao código e ambiente local; medir antes de piloto/deploy. | ACEITO v1.0 |
 | R-006 | MÉDIO | O frontend apresentava textos históricos enquanto backend e roadmap avançavam. | Textos operacionais foram atualizados e as versões de API/frontend unificadas em 1.0.0. | MITIGADO v1.0 |
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
@@ -32,7 +35,7 @@
 | R-009 | MÉDIO | `minio/minio:latest` não está fixado por versão ou digest. | Fixar imagem validada e estabelecer rotina de atualização. | ABERTO |
 | R-010 | MÉDIO | Observabilidade é limitada a health check e mensagens de erro; não há métricas, tracing ou auditoria de acesso. | Adicionar logging estruturado, correlação e trilha de operações sensíveis. | ABERTO |
 | R-011 | BAIXO | Existe `.env` local real, embora ignorado e sem segredo detectado na auditoria. | Manter ignorado, limitar permissões e revisar antes de qualquer empacotamento. | MONITORAR |
-| R-012 | BAIXO | A suíte gera aviso de depreciação de `TestClient`/HTTPX. | Planejar atualização compatível antes que a dependência remova o comportamento. | ABERTO |
+| R-012 | BAIXO | A suíte gerava aviso de depreciação de `TestClient`/HTTPX. | Dependência de desenvolvimento migrada para HTTPX2 e imports direcionados ao cliente Starlette compatível. | MITIGADO v1.1 |
 | R-013 | MÉDIO | JWT stateless não possui revogação imediata antes da expiração. | Adicionar rotação/revogação de sessão antes de produção multiusuário. | ABERTO |
 | R-014 | MÉDIO | Usuários legados preservados pela migration não possuem hash de senha. | Criar fluxo administrativo auditável de definição ou recuperação de credencial. | ABERTO |
 | R-015 | BAIXO | O contexto Docker do Web incluía artefatos locais (`node_modules` e `.next`), ampliando o build para centenas de MB. | `.dockerignore` dedicado reduz o contexto a arquivos-fonte e exclui ambientes, dependências, builds e logs locais. | MITIGADO v0.4.1 |

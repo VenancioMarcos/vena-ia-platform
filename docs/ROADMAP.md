@@ -310,6 +310,45 @@ Critério de conclusão:
 
 ---
 
+## v1.1 — Stabilization
+
+Objetivo: auditar o MVP publicado e corrigir o menor conjunto de falhas reais de
+maior impacto, preservando arquitetura, segurança e contratos públicos.
+
+Status: candidata `v1.1.0` após três pacotes na PR #11. Os gates locais e do CI
+foram aprovados; Squash Merge, tag, release e validação direta da tag estão
+autorizados e pendentes. Nenhum deploy faz parte da missão.
+
+Escopo do pacote 1:
+
+* recuperação idempotente de documentos em `FAILED`;
+* retry de processamento e indexação visível no frontend;
+* validação das evidências de relatórios contra documentos e chunks persistidos;
+* testes de regressão, validação integral e atualização da documentação afetada.
+
+Escopo do pacote 2:
+
+* cliente HTTP único e timeout para impedir carregamento indefinido;
+* mensagens consistentes e falhas de logout/chat visíveis;
+* abertura do fluxo principal preservada quando apenas relatórios falham;
+* remoção de controles de navegação sem ação;
+* nova auditoria integral de API, frontend, Docker, PostgreSQL, OpenAPI e CI.
+
+Escopo do pacote 3:
+
+* eliminar recargas de quatro endpoints após operações que já retornam o recurso;
+* sincronizar somente documentos ou histórico quando uma operação falhar;
+* cancelar requests iniciais quando dashboard/projeto forem desmontados;
+* remover tipos não consumidos e o warning legado do `TestClient` com HTTPX2;
+* preservar contratos públicos, arquitetura, migrations e escopo da v1.1.
+
+Critério de conclusão:
+
+* release `v1.1.0` publicada, tag validada, 165 testes sem warnings e fluxo
+  estabilizado sem reduzir segurança nem alterar contratos públicos.
+
+---
+
 # 4. Fases Operacionais
 
 ## Fase 0 — Fundação Documental

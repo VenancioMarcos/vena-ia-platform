@@ -1,7 +1,7 @@
 from collections.abc import Callable, Generator
 
 import pytest
-from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 
 from app.main import app
 from app.modules.ai.dependencies import get_provider_factory

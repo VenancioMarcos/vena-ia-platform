@@ -2,7 +2,7 @@ from collections.abc import Generator
 from unittest.mock import MagicMock
 
 import pytest
-from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 
 from app.core.config import settings
 from app.main import app
@@ -458,6 +458,16 @@ def test_processing_failure_sets_failed_state(
     assert processed.status_code == 422
     assert processed.json() == {"detail": "No extractable text"}
     assert fetched.json()["status"] == "FAILED"
+
+    text_extractor.extract_pages.side_effect = None
+    retried = client.post(
+        f"/documents/{created['id']}/processing",
+        headers=_headers(user_id),
+    )
+
+    assert retried.status_code == 200, retried.text
+    assert retried.json()["document"]["status"] == "READY"
+    assert retried.json()["chunk_count"] == 2
 
 
 def test_denies_chunk_query_for_another_project_owner(

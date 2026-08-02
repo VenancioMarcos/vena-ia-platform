@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
 import pytest
-from fastapi.testclient import TestClient
+from starlette.testclient import TestClient
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
@@ -361,6 +361,70 @@ def test_report_is_always_a_review_gated_draft(
     )
     assert response.status_code == 201, response.text
     assert response.json()["status"] == "DRAFT_REQUIRES_AUTHOR_REVIEW"
+
+
+def test_report_rejects_fabricated_evidence(
+    client: TestClient, make_account, db_session: Session
+) -> None:
+    account = make_account("report-evidence@vena-ia.dev")
+    project, document = _scientific_context(db_session, account.id)
+    payload = {
+        "project_id": project.id,
+        "report_type": "TECHNICAL_SYNTHESIS",
+        "title": "Preliminary synthesis",
+        "objective": "Organize current evidence",
+        "document_ids": [document.id],
+        "synthesis": "Evidence-limited draft.",
+        "evidence": [
+            {
+                "document_id": document.id,
+                "page_number": 7,
+                "chunk_index": 0,
+                "score": 0.9,
+                "excerpt": "Fabricated evidence.",
+            }
+        ],
+        "limitations": ["Requires author review."],
+    }
+
+    response = client.post(
+        "/research/reports", headers=account.headers, json=payload
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {"detail": "Report evidence is invalid"}
+
+
+def test_report_rejects_evidence_from_unlisted_document(
+    client: TestClient, make_account, db_session: Session
+) -> None:
+    account = make_account("report-unlisted@vena-ia.dev")
+    project, document = _scientific_context(db_session, account.id)
+
+    response = client.post(
+        "/research/reports",
+        headers=account.headers,
+        json={
+            "project_id": project.id,
+            "report_type": "TECHNICAL_SYNTHESIS",
+            "title": "Preliminary synthesis",
+            "objective": "Organize current evidence",
+            "document_ids": [],
+            "synthesis": "Evidence-limited draft.",
+            "evidence": [
+                {
+                    "document_id": document.id,
+                    "page_number": 7,
+                    "chunk_index": 0,
+                    "score": 0.9,
+                    "excerpt": "References",
+                }
+            ],
+            "limitations": ["Requires author review."],
+        },
+    )
+
+    assert response.status_code == 422
 
 
 def test_synthesis_adds_grounding_and_prompt_injection_guard() -> None:

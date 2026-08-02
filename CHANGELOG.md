@@ -8,6 +8,42 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-08-01 — Stabilization and Professionalization
+
+### Corrigido
+* Criação de projeto, upload, processamento/indexação, falha de chat e criação de
+  relatório deixam de recarregar indiscriminadamente projeto, documentos,
+  histórico e relatórios; cada operação atualiza somente o estado afetado.
+* Carregamentos iniciais de dashboard e projeto agora cancelam requests ao
+  desmontar o componente, evitando atualizações obsoletas e trabalho de rede sem
+  consumidor.
+* A suíte migra do cliente HTTP legado para HTTPX2, removendo o warning de
+  depreciação do `TestClient` sem alterar contratos públicos da API.
+* Requisições do frontend agora compartilham um único cliente, normalizam também
+  os detalhes estruturados de validação do FastAPI e encerram carregamentos após
+  30 segundos quando a API não responde.
+* Dashboard e autenticação deixam de ocultar falhas de logout e apresentam
+  mensagens consistentes para credenciais, conflitos e indisponibilidade.
+* A tela de projeto mantém o fluxo principal disponível quando somente a listagem
+  de relatórios falha e expõe no histórico o erro persistido de perguntas sem
+  resposta, sem criar resposta falsa.
+* Controles sem ação foram removidos da navegação inicial; o acesso ao MVP aponta
+  somente para o fluxo operacional existente.
+* Documentos em `FAILED` podem ser reprocessados com substituição idempotente
+  dos chunks, permitindo recuperação após falhas transitórias de extração ou
+  armazenamento.
+* A tela de projeto atualiza o estado após falhas e permite tentar novamente o
+  processamento ou a indexação quando o provedor de IA voltar a responder.
+* Relatórios rejeitam evidências fora de `document_ids`, coordenadas inválidas,
+  scores fora do intervalo e trechos que não correspondem ao chunk persistido.
+
+### Testes
+* Suíte integral preservada em 165 testes aprovados e sem warnings no pacote 3.
+* Cobertura do contrato de erro persistido no chat e nova validação integral do
+  pacote 2 com 165 testes, frontend, Docker, PostgreSQL e OpenAPI.
+* Cobertura de regressão para reprocessamento de documentos `FAILED` e para
+  rejeição de evidências fabricadas ou não declaradas em relatórios.
+
 ## [1.0.0] — 2026-07-30 — Vena_IA Platform MVP
 
 ### Adicionado

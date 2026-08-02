@@ -119,11 +119,11 @@ class SynthesisRequest(StrictModel):
 
 
 class EvidenceRead(StrictModel):
-    document_id: str
-    page_number: int
-    chunk_index: int
-    score: float
-    excerpt: str
+    document_id: str = Field(min_length=1, max_length=36)
+    page_number: int = Field(ge=1)
+    chunk_index: int = Field(ge=0)
+    score: float = Field(ge=0, le=1)
+    excerpt: str = Field(min_length=1, max_length=1_000)
 
 
 class SynthesisResponse(StrictModel):
@@ -266,6 +266,13 @@ class ReportCreate(StrictModel):
     synthesis: str = Field(min_length=1, max_length=100_000)
     evidence: list[EvidenceRead] = Field(default_factory=list, max_length=100)
     limitations: list[str] = Field(min_length=1, max_length=50)
+
+    @model_validator(mode="after")
+    def validate_evidence_documents(self) -> "ReportCreate":
+        known_documents = set(self.document_ids)
+        if any(item.document_id not in known_documents for item in self.evidence):
+            raise ValueError("evidence must reference a document listed in document_ids")
+        return self
 
 
 class ReportRead(BaseModel):

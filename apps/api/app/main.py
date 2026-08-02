@@ -19,6 +19,8 @@ from app.modules.projects.api.routes import router as projects_router
 from app.modules.research.api.routes import router as research_router
 from app.modules.users.api.routes import router as users_router
 
+API_VERSION = "1.1.0"
+
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
@@ -30,7 +32,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Vena_IA API",
         description="API for intelligent engineering and CNC manufacturing workflows.",
-        version="1.0.0",
+        version=API_VERSION,
         lifespan=lifespan,
     )
 
@@ -44,7 +46,7 @@ def create_app() -> FastAPI:
 
     @app.get("/health", tags=["health"])
     def health() -> dict[str, str]:
-        return {"status": "ok", "service": "vena-ia-api", "version": "1.0.0"}
+        return {"status": "ok", "service": "vena-ia-api", "version": API_VERSION}
 
     app.include_router(users_router)
     app.include_router(auth_router)

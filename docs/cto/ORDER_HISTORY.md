@@ -47,3 +47,17 @@ tag foram aprovadas; o aceite formal foi registrado na etapa seguinte.
 
 O CTO declarou `VENA_IA_V1_0_RELEASED_AND_FULLY_VERIFIED`, aprovou a release e
 encerrou a missão técnica. A próxima versão não está autorizada.
+
+## 2026-08-01 — v1.1 Stabilization Package 1
+
+A ordem `TASK-V11-001` autorizou auditoria integral do MVP, correções de
+estabilização, testes, documentação, commits, push e Draft PR na branch
+`release/v1.1.0-stabilization`. Merge, tag e release permanecem proibidos nesta
+missão.
+
+## 2026-08-01 — v1.1 Final Validation, Merge and Release
+
+Após aprovação dos três pacotes de estabilização, a ordem `TASK-V11-004`
+autorizou explicitamente versionamento `v1.1.0`, retirada da PR #11 de Draft,
+Squash Merge, tag anotada, GitHub Release e validação direta da tag. Deploy e
+início da v1.2 permanecem proibidos.

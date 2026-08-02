@@ -66,7 +66,7 @@ class ChatService:
             answer = self._knowledge.answer(project_id, question, limit)
         except Exception as exc:
             user_message.status = "FAILED"
-            user_message.error = "AI service unavailable; retry is allowed"
+            user_message.error = "Serviço de IA indisponível; tente novamente."
             self._db.commit()
             raise ChatGenerationError("Unable to generate grounded response") from exc
 

@@ -1,4 +1,4 @@
-# Instalação local — Vena_IA Platform v1.0
+# Instalação local — Vena_IA Platform v1.1
 
 ## Requisitos
 
@@ -68,4 +68,4 @@ docker compose down
 `docker compose down -v` apaga volumes locais e só deve ser usado em ambiente
 descartável após confirmação. Erros de IA sem chave devem ser controlados; use os
 providers determinísticos apenas nos testes. PDF sem camada textual requer OCR,
-que não faz parte da v1.0.
+que não faz parte da v1.1.

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  Bot,
   Boxes,
   BrainCircuit,
   CircleCheck,
@@ -11,7 +10,6 @@ import {
   MessageSquareText,
   ShieldCheck
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 const modules = [
   { name: "Projetos", status: "Operacional", icon: Boxes },
@@ -30,14 +28,6 @@ const milestones = [
   "Frontend base operacional"
 ];
 
-const navigationItems: Array<[string, LucideIcon]> = [
-  ["Dashboard", LayoutDashboard],
-  ["Projetos", Boxes],
-  ["Arquivos", FileUp],
-  ["Assistente", Bot],
-  ["Indicadores", Gauge]
-];
-
 export default function Home() {
   return (
     <main className="min-h-screen bg-surface text-ink">
@@ -54,7 +44,7 @@ export default function Home() {
           </div>
           <div className="hidden items-center gap-2 text-sm text-steel sm:flex">
             <CircleCheck size={17} className="text-signal" aria-hidden="true" />
-            v1.0 MVP
+            v1.1 Stabilization
           </div>
         </div>
       </section>
@@ -62,27 +52,13 @@ export default function Home() {
       <section className="mx-auto grid max-w-7xl gap-6 px-6 py-6 lg:grid-cols-[260px_1fr]">
         <aside className="border-r border-line pr-6">
           <nav className="grid gap-1">
-            {navigationItems.map(([label, Icon]) =>
-              label === "Dashboard" ? (
-                <Link
-                  key={label}
-                  href="/dashboard"
-                  className="flex h-10 items-center gap-3 rounded border border-transparent px-3 text-left text-sm text-machine hover:border-line hover:bg-white"
-                >
-                  <Icon size={17} aria-hidden="true" />
-                  {label}
-                </Link>
-              ) : (
-                <button
-                  key={label}
-                  className="flex h-10 items-center gap-3 rounded border border-transparent px-3 text-left text-sm text-machine hover:border-line hover:bg-white"
-                  type="button"
-                >
-                  <Icon size={17} aria-hidden="true" />
-                  {label}
-                </button>
-              )
-            )}
+            <Link
+              href="/dashboard"
+              className="flex h-10 items-center gap-3 rounded border border-transparent px-3 text-left text-sm text-machine hover:border-line hover:bg-white"
+            >
+              <LayoutDashboard size={17} aria-hidden="true" />
+              Acessar o MVP
+            </Link>
           </nav>
         </aside>
 
@@ -106,7 +82,7 @@ export default function Home() {
                 </div>
                 <div className="border border-line bg-white px-4 py-3">
                   <p className="text-xs text-steel">Roadmap</p>
-                  <p className="font-semibold">v1.0</p>
+                  <p className="font-semibold">v1.1</p>
                 </div>
               </div>
             </div>

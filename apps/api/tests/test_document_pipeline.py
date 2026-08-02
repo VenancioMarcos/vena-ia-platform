@@ -48,6 +48,19 @@ def test_start_processing() -> None:
     assert document.status == DocumentStatus.PROCESSING.value
 
 
+def test_start_processing_retries_failed_document() -> None:
+    pipeline, repository = _pipeline(
+        DocumentStatus.FAILED, DocumentStatus.PROCESSING
+    )
+
+    document = pipeline.start_processing("document")
+
+    assert document.status == DocumentStatus.PROCESSING.value
+    repository.update_status.assert_called_once_with(
+        "document", DocumentStatus.PROCESSING
+    )
+
+
 def test_finish_processing() -> None:
     pipeline, repository = _pipeline(DocumentStatus.PROCESSING, DocumentStatus.READY)
 
@@ -79,7 +92,6 @@ def test_rejects_invalid_state_transition() -> None:
     ("operation", "current"),
     [
         ("start_processing", DocumentStatus.PROCESSING),
-        ("start_processing", DocumentStatus.FAILED),
         ("finish_processing", DocumentStatus.UPLOADED),
         ("finish_processing", DocumentStatus.READY),
         ("finish_processing", DocumentStatus.FAILED),
