@@ -15,6 +15,14 @@ class InvalidCredentialsError(Exception):
     pass
 
 
+class LegacyCredentialNotEligibleError(Exception):
+    pass
+
+
+class IdentityNotFoundError(Exception):
+    pass
+
+
 class AuthService:
     def __init__(self, db: Session) -> None:
         self._db = db
@@ -42,4 +50,16 @@ class AuthService:
         user = self._db.scalar(select(User).where(User.email == email))
         if user is None or not verify_password(password, user.password_hash):
             raise InvalidCredentialsError("Invalid email or password")
+        return user
+
+    def set_legacy_credential(self, user_id: str, password: str) -> User:
+        user = self._db.get(User, user_id)
+        if user is None:
+            raise IdentityNotFoundError("User not found")
+        if user.password_hash is not None:
+            raise LegacyCredentialNotEligibleError("Credential is already defined")
+        user.password_hash = hash_password(password, settings.password_hash_iterations)
+        user.auth_version += 1
+        self._db.commit()
+        self._db.refresh(user)
         return user

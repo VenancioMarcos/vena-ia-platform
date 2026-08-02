@@ -1,6 +1,9 @@
-from fastapi import APIRouter, HTTPException, Request, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.core.database import get_db
+from app.modules.audit.service import record_security_event
 from app.modules.auth.dependencies import (
     AuthServiceDependency,
     CurrentUserDependency,
@@ -39,10 +42,12 @@ def register(
 
 @router.post("/login", response_model=AuthSession)
 def login(
+    request: Request,
     payload: LoginRequest,
     response: Response,
     service: AuthServiceDependency,
     _rate_limit: LoginRateLimitDependency,
+    db: Session = Depends(get_db),
 ) -> AuthSession:
     try:
         user = service.authenticate(payload.email, payload.password)
@@ -50,14 +55,30 @@ def login(
             user.id,
             settings.auth_secret_key,
             settings.auth_token_expiration_minutes,
+            auth_version=user.auth_version,
         )
     except InvalidCredentialsError as exc:
+        record_security_event(
+            db,
+            request,
+            "LOGIN_FAILURE",
+            outcome="DENIED",
+            reason="INVALID_CREDENTIALS",
+        )
         raise HTTPException(status_code=401, detail=str(exc)) from exc
     except TokenConfigurationError as exc:
         raise HTTPException(
             status_code=503,
             detail="Authentication service is not configured",
         ) from exc
+
+    record_security_event(
+        db,
+        request,
+        "LOGIN_SUCCESS",
+        outcome="ALLOWED",
+        actor_user_id=user.id,
+    )
 
     response.set_cookie(
         key=settings.auth_cookie_name,
@@ -95,14 +116,37 @@ def _request_tokens(request: Request) -> set[str]:
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
-def logout(request: Request, response: Response) -> Response:
+def logout(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+) -> Response:
+    actor_user_id: str | None = None
+    saw_invalid_token = False
     for token in _request_tokens(request):
         try:
             identity = decode_access_token(token, settings.auth_secret_key)
             request.app.state.revoked_auth_tokens.revoke(identity)
+            actor_user_id = identity.user_id
         except (InvalidTokenError, TokenConfigurationError):
             # Logout is idempotent and never reveals whether a presented token was valid.
-            pass
+            saw_invalid_token = True
+
+    if saw_invalid_token:
+        record_security_event(
+            db,
+            request,
+            "TOKEN_REJECTED",
+            outcome="DENIED",
+            reason="INVALID_TOKEN",
+        )
+    record_security_event(
+        db,
+        request,
+        "LOGOUT",
+        outcome="ALLOWED",
+        actor_user_id=actor_user_id,
+    )
 
     response.delete_cookie(
         key=settings.auth_cookie_name,

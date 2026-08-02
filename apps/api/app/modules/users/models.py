@@ -27,6 +27,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     role: Mapped[str] = mapped_column(String(50), nullable=False, default="member")
     password_hash: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    auth_version: Mapped[int] = mapped_column(nullable=False, default=0)
     created_at: Mapped[datetime] = mapped_column(default=_utcnow)
 
     projects: Mapped[list["Project"]] = relationship(back_populates="owner")

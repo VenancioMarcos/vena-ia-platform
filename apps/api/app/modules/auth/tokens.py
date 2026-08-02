@@ -28,6 +28,7 @@ class TokenIdentity:
     user_id: str
     expires_at: datetime
     fingerprint: str
+    auth_version: int
 
 
 class RevokedTokenStore:
@@ -83,6 +84,7 @@ def create_access_token(
     secret: str,
     expiration_minutes: int,
     *,
+    auth_version: int = 0,
     now: datetime | None = None,
 ) -> tuple[str, datetime]:
     if not 1 <= expiration_minutes <= 1_440:
@@ -97,6 +99,7 @@ def create_access_token(
         "iss": _ISSUER,
         "iat": int(issued_at.timestamp()),
         "exp": int(expires_at.timestamp()),
+        "ver": auth_version,
     }
     header_segment = _encode(
         json.dumps(header, separators=(",", ":"), sort_keys=True).encode("utf-8")
@@ -132,6 +135,7 @@ def decode_access_token(
         issuer = payload["iss"]
         issued = payload["iat"]
         expires = payload["exp"]
+        auth_version = payload.get("ver", 0)
     except (json.JSONDecodeError, KeyError, TypeError, UnicodeDecodeError) as exc:
         raise InvalidTokenError("Invalid authentication token") from exc
 
@@ -139,7 +143,12 @@ def decode_access_token(
         raise InvalidTokenError("Invalid authentication token")
     if issuer != _ISSUER or not isinstance(user_id, str) or not user_id:
         raise InvalidTokenError("Invalid authentication token")
-    if not isinstance(issued, int) or not isinstance(expires, int):
+    if (
+        not isinstance(issued, int)
+        or not isinstance(expires, int)
+        or not isinstance(auth_version, int)
+        or auth_version < 0
+    ):
         raise InvalidTokenError("Invalid authentication token")
 
     expires_at = datetime.fromtimestamp(expires, timezone.utc)
@@ -153,4 +162,5 @@ def decode_access_token(
         user_id=user_id,
         expires_at=expires_at,
         fingerprint=fingerprint,
+        auth_version=auth_version,
     )

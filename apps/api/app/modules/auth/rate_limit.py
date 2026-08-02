@@ -3,9 +3,12 @@
 from typing import Annotated, Literal
 
 from fastapi import Depends, HTTPException, Request, status
+from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.core.database import get_db
 from app.core.rate_limit import FixedWindowRateLimiter, RateLimitExceeded
+from app.modules.audit.service import record_security_event
 
 AuthRateLimitScope = Literal["login", "registration"]
 
@@ -30,6 +33,7 @@ def _enforce(
     scope: AuthRateLimitScope,
     request: Request,
     limiter: AuthRateLimiterDependency,
+    db: Session,
 ) -> None:
     if scope == "login":
         limit = settings.auth_login_rate_limit_requests
@@ -43,6 +47,13 @@ def _enforce(
             window_seconds=settings.auth_rate_limit_window_seconds,
         )
     except RateLimitExceeded as exc:
+        record_security_event(
+            db,
+            request,
+            "RATE_LIMIT_EXCEEDED",
+            outcome="DENIED",
+            reason=scope.upper(),
+        )
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail="Too many authentication attempts",
@@ -53,15 +64,17 @@ def _enforce(
 def enforce_login_rate_limit(
     request: Request,
     limiter: AuthRateLimiterDependency,
+    db: Annotated[Session, Depends(get_db)],
 ) -> None:
-    _enforce("login", request, limiter)
+    _enforce("login", request, limiter, db)
 
 
 def enforce_registration_rate_limit(
     request: Request,
     limiter: AuthRateLimiterDependency,
+    db: Annotated[Session, Depends(get_db)],
 ) -> None:
-    _enforce("registration", request, limiter)
+    _enforce("registration", request, limiter, db)
 
 
 LoginRateLimitDependency = Annotated[None, Depends(enforce_login_rate_limit)]

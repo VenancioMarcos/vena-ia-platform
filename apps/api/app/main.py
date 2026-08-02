@@ -8,6 +8,7 @@ from app.core.config import settings
 from app.core import models_registry  # noqa: F401  (ensures all ORM models are registered)
 from app.core.rate_limit import FixedWindowRateLimiter
 from app.modules.ai.api.routes import router as ai_router
+from app.modules.audit.api.routes import router as audit_router
 from app.modules.auth.api.routes import router as auth_router
 from app.modules.auth.tokens import RevokedTokenStore
 from app.modules.chats.api.routes import router as chats_router
@@ -58,6 +59,7 @@ def create_app() -> FastAPI:
     app.include_router(files_router)
     app.include_router(chats_router)
     app.include_router(ai_router)
+    app.include_router(audit_router)
     app.include_router(documents_router)
     app.include_router(cad_router)
     app.include_router(manufacturing_router)
