@@ -2,7 +2,7 @@
 
 **Versão:** v1.2 Security Package 2 (`TASK-V12-002`)
 **Data:** 2026-08-01
-**Estado:** Package 1 aprovado; Package 2 em execução na Draft PR #13
+**Estado:** Package 1 aprovado; Package 2 pronto para revisão na Draft PR #13
 
 Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
 

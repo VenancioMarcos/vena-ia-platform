@@ -2,7 +2,7 @@
 
 ```text
 MISSION=TASK_V12_002
-STATE=V1_2_PACKAGE_2_IMPLEMENTATION
+STATE=V1_2_PACKAGE_2_READY_FOR_CTO_REVIEW
 BRANCH=codex/v1.2-auth-rate-limiting
 START_HEAD=47102286cfe1f6f977b69693da943337118399a7
 V1_1_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.1.0
@@ -16,8 +16,9 @@ ROADMAP_PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/12
 ROADMAP_MERGE=6e1065d3df78b27d01a16009579af3c7fa8c961e
 V1_2_PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/13
 LOCAL_GATES=RUFF_MYPY_PYTEST_177_FRONTEND_DOCKER_POSTGRES_OPENAPI_SECRETS_PASS
-GITHUB_CHECKS=PACKAGE_1_BACKEND_CI_PASS
-NEXT=COMPLETE_PACKAGE_2_GATES_AND_UPDATE_PR_13
+GITHUB_CHECKS=PACKAGE_2_BACKEND_AND_FRONTEND_CI_PASS
+PACKAGE_2_HEAD=90138c3bde37f4196626942bbce3e375d3dcbda7
+NEXT=CTO_REVIEW
 ```
 
 Este arquivo deve ser atualizado apenas com evidências verificadas.
@@ -54,4 +55,4 @@ testes e CI aprovados; nenhuma v1.3 ou ação proibida iniciada.
 
 ### Próximo passo
 
-Concluir validação integral do Package 2 e retornar ao CTO com a PR #13.
+Revisão do CTO na Draft PR #13; nenhuma ação posterior foi iniciada.

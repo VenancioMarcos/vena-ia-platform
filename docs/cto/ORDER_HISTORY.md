@@ -93,3 +93,7 @@ O CTO aprovou o Package 1 e emitiu `TASK-V12-002` para auditar exclusivamente
 autenticação e sessão, corrigir falhas comprovadas e continuar na Draft PR #13.
 Nova PR, merge, tag, release, deploy, migration e novos módulos permanecem
 proibidos.
+
+O Package 2 corrigiu reutilização de JWT após logout, validou emissão temporal e
+melhorou o erro `429` no frontend. A validação aprovou 177 testes e os CI de
+backend/frontend na PR #13; o risco distribuído R-013 permanece explícito.
