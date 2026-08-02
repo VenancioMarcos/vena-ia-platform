@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-08-02 — Backup, Recovery and Retention
+
 ### Adicionado
 * Bundle `vena-ia.encrypted-backup-set/v1` com AES-256-GCM autenticado, chave
   externa, `key_id` não sensível, streaming, recusa de algoritmo desconhecido e

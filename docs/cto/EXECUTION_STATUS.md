@@ -1,8 +1,8 @@
 # Estado de execução CTO
 
 ```text
-MISSION=TASK_V13_003
-STATE=VENA_IA_V1_3_PACKAGE_3_READY_FOR_CTO_REVIEW
+MISSION=TASK_V13_004
+STATE=V1_3_RELEASE_PREPARATION
 BRANCH=codex/v1.3-backup-recovery
 START_HEAD=47102286cfe1f6f977b69693da943337118399a7
 V1_1_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.1.0

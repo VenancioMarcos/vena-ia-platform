@@ -65,7 +65,7 @@ persistente (90 dias por padrão); não há limpeza automática nesta entrega.
 * `POST /chat/{project_id}/ask` — RAG fundamentado com histórico persistente
 * `GET /chat/{project_id}/messages` — histórico cronológico com fontes e estados
 
-`GET /health` identifica a versão `1.2.0`.
+`GET /health` identifica a versão `1.3.0`.
 
 Rotas protegidas aceitam cookie HttpOnly ou `Authorization: Bearer <token>`.
 Consulte `docs/AUTHORIZATION_MATRIX.md`.

@@ -172,3 +172,10 @@ mypy, 232 testes (5 integrações condicionais), frontend e Docker Compose. O
 Backend CI aprovou 194 testes de API e 43 operacionais, incluindo o round trip
 criptografado real. O probe descartável mediu backup 0,409 s, restore 0,415 s e
 RPO técnico 1,262 s para 1 objeto/27 bytes, sem declaração produtiva.
+
+## 2026-08-02 — v1.3 final e início da v1.4
+
+O CTO aprovou o Package 3 e emitiu `TASK-V13-004`, autorizando retirar a PR #14
+de Draft, Squash Merge, versionar/publicar `v1.3.0`, validar diretamente a tag e
+iniciar somente o Package 1 da v1.4 em branch e Draft PR próprias. Deploy, v1.5,
+telemetria externa, dados reais e CNC permanecem proibidos.
