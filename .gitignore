@@ -17,6 +17,8 @@ build/
 *.egg-info/
 vena-ia-postgres-*.dump
 vena-ia-postgres-*.manifest.json
+vena-ia-minio-*/
+vena-ia-backup-set-*.json
 
 # Node
 node_modules/

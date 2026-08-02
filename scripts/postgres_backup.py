@@ -31,6 +31,7 @@ def create_backup(
     psql_bin: str = "psql",
     runner: Runner = run_postgres_command,
     now: datetime | None = None,
+    backup_set_id: str | None = None,
 ) -> tuple[Path, Path]:
     directory = ensure_outside_repository(output_directory)
     directory.mkdir(parents=True, exist_ok=True)
@@ -75,7 +76,7 @@ def create_backup(
 
     manifest = BackupManifest(
         contract_version=CONTRACT_VERSION,
-        backup_set_id=str(uuid4()),
+        backup_set_id=backup_set_id or str(uuid4()),
         created_at=timestamp.isoformat().replace("+00:00", "Z"),
         application_version=application_version,
         database=config.database,
