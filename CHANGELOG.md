@@ -8,6 +8,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Documentação
+* Roadmap pós-v1.1 consolidado de v1.2 a v2.0 por gates de segurança,
+  recuperação, observabilidade, processamento assíncrono, confiabilidade,
+  engenharia, CAD, piloto e consolidação da plataforma.
+* Primeiro pacote da v1.2 definido como rate limiting configurável e testável
+  para cadastro/login, sem substituir o gate distribuído exigido para produção.
+
 ## [1.1.0] — 2026-08-01 — Stabilization and Professionalization
 
 ### Corrigido

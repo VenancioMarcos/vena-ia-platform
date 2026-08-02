@@ -42,6 +42,20 @@
 | R-016 | MÉDIO | A ingestão de PDF da fundação v0.5 ocorre de forma síncrona na requisição HTTP. | Introduzir fila, worker, timeout e retomada antes de processar documentos extensos em produção. | ABERTO |
 | R-017 | MÉDIO | PDFs criptografados ou sem camada textual não geram chunks. | Manter falha explícita e adicionar OCR somente após avaliação de segurança, recursos e qualidade. | ABERTO |
 
+## Tratamento planejado v1.2–v2.0
+
+| Gate | Riscos principais | Condição de saída |
+|---|---|---|
+| v1.2 Security and Data Protection | R-030, R-013, R-014 | rate limiting, revogação de sessão e credencial legada auditável; o Package 1 mitiga apenas cadastro/login e não substitui o limite distribuído |
+| v1.3 Backup and Recovery | R-031, R-011 | restore testado de PostgreSQL/MinIO, checksums, retenção e nenhum artefato sensível no Git |
+| v1.4 Observability and Auditability | R-010, R-032, R-033 | logs correlacionados/redigidos, auditoria, readiness, métricas e runbooks |
+| v1.5 Asynchronous Processing | R-016, R-017, R-033 | jobs idempotentes, retry/recovery e OCR somente após gate de qualidade/segurança |
+| v1.6 Reliability and Scalability | R-008, R-009, R-018, R-034 | runtimes/imagens reproduzíveis, resiliência e capacidade medidas |
+| v1.7 Engineering Catalogs and CAM | R-020 | dados/rules rastreáveis, limites de máquina e revisão humana |
+| v1.8 CAD Interoperability | R-019 | kernel decidido por ADR e propriedades validadas contra corpus conhecido |
+| v1.9 Controlled Pilot Readiness | R-021 a R-029 | isolamento, restore, SLOs e simulação controlada; nenhuma transmissão CNC |
+| v2.0 Integrated Engineering Platform | riscos residuais | dono, prazo, controle e aceite registrados; deploy permanece missão separada |
+
 ## Segurança de segredos
 
 - `.env` está ignorado pelo Git e não aparece no histórico.

@@ -68,3 +68,10 @@ A PR #11 foi integrada por Squash Merge em `1f5263f`. A main sincronizada passou
 novamente por Ruff, mypy, 165 testes sem warnings, frontend, Docker, runtime com
 47 rotas OpenAPI, migrations PostgreSQL e secret scan. A tag anotada `v1.1.0` e
 a GitHub Release foram publicadas e validadas diretamente, sem deploy.
+
+## 2026-08-01 — aceite v1.1.0 e roadmap até v2.0
+
+O CTO declarou `VENA_IA_V1_1_RELEASED_AND_FULLY_VERIFIED` e emitiu a
+`TASK-ROADMAP-V2-001`: consolidar v1.2–v2.0, integrar o roadmap e iniciar sem
+nova parada somente o primeiro pacote da v1.2. Deploy, v1.3, compra, publicação
+comercial, G-code executável e transmissão CNC permanecem proibidos.

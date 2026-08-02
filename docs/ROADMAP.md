@@ -1,9 +1,10 @@
 # Vena_IA Platform
 
-# Documento 03 — Roadmap Executivo Vena_IA v1.0
+# Documento 03 — Roadmap Executivo Vena_IA até v2.0
 
 **Status:** Documento Oficial de Planejamento  
 **Data:** 2026-07-10  
+**Última atualização:** 2026-08-01
 **Projeto:** Vena_IA — Engenharia Inteligente para Manufatura CNC  
 **Documento relacionado:** `PROJECT.md`  
 **ADR relacionado:** `ADR-001 — Adoção de Arquitetura Modular Monolith`
@@ -346,6 +347,286 @@ Critério de conclusão:
 
 * release `v1.1.0` publicada, tag validada, 165 testes sem warnings e fluxo
   estabilizado sem reduzir segurança nem alterar contratos públicos.
+
+---
+
+## Diagnóstico pós-v1.1
+
+### Capacidades concluídas
+
+* autenticação, autorização e isolamento por proprietário estão em
+  `apps/api/app/modules/auth`, cobertos por `test_auth.py` e pelo E2E
+  cross-user, conforme ADR-0009;
+* projeto, PDF, MinIO, chunks, embeddings, pgvector, RAG, chat persistente e
+  relatório formam o MVP integrado em `apps/api`, `packages/ai` e `apps/web`,
+  coberto por 165 testes e ADR-0010/ADR-0015;
+* CAD textual preliminar, recomendação de fresamento, plano CNC neutro e
+  fundação científica existem com limites explícitos em `cad`,
+  `manufacturing`, `cnc` e `research`.
+
+### Capacidades parciais
+
+* CAD não possui kernel geométrico, topologia, volume robusto ou reconhecimento
+  de features (ADR-0011, R-019);
+* CAM não possui catálogos persistentes de materiais, máquinas e ferramentas,
+  nem custo completo; as regras atuais são preliminares (ADR-0012, R-020);
+* CNC permanece neutro, não executável e sem transmissão (ADR-0013, R-021);
+* pesquisa oferece organização e preparação, não revisão sistemática,
+  ANOVA inferencial ou publicação (ADR-0014, R-022 a R-029).
+
+### Ausências e dívida real
+
+* rate limiting, revogação imediata de JWT e recuperação auditável de senha
+  para contas legadas (R-030, R-013 e R-014);
+* backup/restore de PostgreSQL e MinIO (R-031);
+* logging estruturado, correlação, auditoria, métricas e tracing (R-010/R-032);
+* fila/worker, processamento assíncrono e OCR seguro (R-016/R-017);
+* capacidade, escalabilidade, versões de runtime/imagens fixadas e resiliência
+  completa de provedores (R-008/R-009/R-018/R-033/R-034);
+* `packages/auth`, `packages/database`, `packages/engineering`, `packages/ui` e
+  `services/parser-*` continuam reservas documentais, não implementações.
+
+### Dependências de avanço
+
+```text
+Segurança e proteção de dados
+  → backup/restore
+  → observabilidade e auditoria
+  → processamento assíncrono
+  → confiabilidade e escalabilidade
+  → engenharia/CAM
+  → CAD e features
+  → piloto controlado
+  → consolidação v2.0
+```
+
+---
+
+## v1.2 — Security and Data Protection
+
+Objetivo: reduzir primeiro os riscos de abuso, sessão e proteção de dados que
+bloqueiam exposição externa.
+
+Primeiro pacote autorizado:
+
+* rate limiting configurável, determinístico e testável para cadastro e login;
+* chave por cliente sem confiar em identidade fornecida por `X-User-ID`;
+* resposta `429` com `Retry-After`, falha controlada e contratos públicos
+  existentes preservados fora do limite;
+* testes unitários e de integração, configuração e documentação;
+* limite local explicitamente classificado como primeira camada; gateway ou
+  armazenamento distribuído continua obrigatório antes de produção horizontal.
+
+Entregas posteriores da v1.2:
+
+* revogação/rotação auditável de sessões JWT;
+* fluxo administrativo seguro para credenciais legadas;
+* trilha de eventos sensíveis e políticas de retenção/proteção;
+* rate limiting distribuído ou gateway validado para exposição externa.
+
+Fora do escopo: SSO, provedor de identidade externo, deploy e mudança de
+arquitetura.
+
+Riscos/dependências: R-030, R-013, R-014; autenticação da ADR-0009.
+
+Testes obrigatórios: janelas/limites, isolamento de clientes, `Retry-After`,
+cadastro/login normal, autenticação, E2E e regressão cross-user.
+
+Critérios de segurança e aceite: abuso é limitado sem aceitar identidade do
+cliente; sessões podem ser encerradas antes da expiração; contas legadas recebem
+credencial somente por fluxo administrativo auditável; nenhum segredo é logado.
+
+Condição de avanço: R-030/R-013/R-014 mitigados ou com gate externo testado e
+documentado; CI e matriz de autorização aprovados.
+
+---
+
+## v1.3 — Backup and Recovery
+
+Objetivo: tornar PostgreSQL e MinIO recuperáveis antes de qualquer piloto com
+dados reais.
+
+Entregas: scripts versionados de backup/restore, manifesto e checksums, política
+de retenção e criptografia, restore em ambiente descartável, runbook e teste de
+consistência entre metadados e objetos.
+
+Fora do escopo: compra de storage, backup de produção ou envio de dados a nuvem.
+
+Dependências/riscos: v1.2 concluída; R-031 e R-011.
+
+Testes obrigatórios: backup → perda simulada → restore, checksums, migrations,
+arquivos MinIO e isolamento de dados.
+
+Critérios de segurança e aceite: nenhum segredo/backup entra no Git; restauração
+reproduzível em ambiente descartável com RPO/RTO documentados.
+
+Condição de avanço: R-031 deixa de bloquear piloto controlado.
+
+---
+
+## v1.4 — Observability and Auditability
+
+Objetivo: tornar falhas e operações sensíveis rastreáveis sem expor dados.
+
+Entregas: logging estruturado, correlation/request ID, trilha de auditoria para
+autenticação e mutações sensíveis, readiness de dependências, métricas e
+tracing por contratos substituíveis, runbooks e alertas definidos.
+
+Fora do escopo: contratar SaaS, monitorar usuários ou publicar telemetria externa.
+
+Dependências/riscos: v1.3; R-010, R-032 e R-033.
+
+Testes obrigatórios: correlação, redaction, falhas de dependência, auditoria,
+health/readiness e regressão de desempenho.
+
+Critérios de segurança e aceite: nenhum token, senha, documento ou prompt é
+registrado; eventos críticos são correlacionáveis e acionáveis.
+
+Condição de avanço: operação local/piloto diagnosticável por evidência.
+
+---
+
+## v1.5 — Asynchronous Processing
+
+Objetivo: retirar ingestão, OCR futuro e indexação longa da requisição HTTP.
+
+Entregas: contrato de job, fila/worker reutilizando Redis, estados e progresso,
+idempotência, retry/backoff, timeout, cancelamento, recuperação após reinício e
+avaliação segura de OCR para PDF sem texto.
+
+Fora do escopo: serviço distribuído independente sem ADR, GPU paga ou OCR sem
+validação de qualidade/segurança.
+
+Dependências/riscos: v1.4; R-016, R-017 e R-033. Worker separado exige ADR se
+alterar a fronteira do Modular Monolith.
+
+Testes obrigatórios: idempotência, retries, reinício, concorrência, autorização,
+falhas de MinIO/PostgreSQL/IA e documentos extensos.
+
+Critérios de segurança e aceite: jobs preservam proprietário/projeto, não
+executam conteúdo e nunca criam resposta falsa.
+
+Condição de avanço: processamento longo resiliente e observável fora do ciclo HTTP.
+
+---
+
+## v1.6 — Reliability and Scalability
+
+Objetivo: medir e fortalecer a plataforma antes de ampliar funções de engenharia.
+
+Entregas: imagens/runtime fixados, matriz Python suportada, budgets de timeout e
+retry, resiliência do provedor, limites de concorrência, testes de carga/capacidade,
+estado compartilhado seguro e runbook de degradação.
+
+Fora do escopo: deploy, autoscaling externo ou compra de infraestrutura.
+
+Dependências/riscos: v1.5; R-008, R-009, R-018, R-033 e R-034.
+
+Testes obrigatórios: carga controlada, soak curto, falha/retorno de dependências,
+compatibilidade Python, imagens reproduzíveis e regressão E2E.
+
+Critérios de segurança e aceite: limites medidos, falha segura, sem resposta
+fabricada e sem dependência de estado apenas em processo.
+
+Condição de avanço: capacidade e gargalos documentados para um piloto definido.
+
+---
+
+## v1.7 — Engineering Catalogs and CAM
+
+Objetivo: concluir a base CAM prevista com dados de engenharia rastreáveis.
+
+Entregas: catálogos persistentes de materiais, máquinas e ferramentas; versão e
+fonte dos dados; regras por operação; seleção preliminar; tempo/custo; relatório
+de hipóteses e revisão humana.
+
+Fora do escopo: toolpath, G-code executável ou envio a máquina.
+
+Dependências/riscos: v1.6; ADR-0012, R-020 e `packages/engineering` reservado.
+
+Testes obrigatórios: unidades, limites de máquina, origem/versão de dados,
+autorização, cálculos determinísticos e casos de borda.
+
+Critérios de segurança e aceite: toda recomendação é preliminar, rastreável e
+`REQUIRES_HUMAN_REVIEW`.
+
+Condição de avanço: processo preliminar reproduzível sem alegar liberação CNC.
+
+---
+
+## v1.8 — CAD Interoperability and Feature Recognition
+
+Objetivo: evoluir do parser textual para geometria validada e formatos previstos.
+
+Entregas: ADR de kernel/licença/portabilidade; STEP topológico com unidade,
+bounding box, área/volume e validade; features iniciais rastreáveis; fundações
+seguras para STL/DXF/IGES; relatório de tolerância e incerteza.
+
+Fora do escopo: executar macros/referências externas, afirmar manufaturabilidade
+automática ou substituir validação metrológica.
+
+Dependências/riscos: v1.7; ADR-0011, R-019 e `services/parser-*` reservados.
+
+Testes obrigatórios: corpus conhecido e malformado, unidades, topologia,
+propriedades contra referências verificadas, fuzzing limitado e isolamento.
+
+Critérios de segurança e aceite: parser não executa conteúdo; resultados incluem
+origem, tolerância, limitação e nível de confiança.
+
+Condição de avanço: features alimentam planejamento sem remover revisão humana.
+
+---
+
+## v1.9 — Controlled Pilot Readiness
+
+Objetivo: integrar os gates técnicos em um piloto controlado e reversível.
+
+Entregas: empresas/equipes e papéis mínimos, onboarding, runbooks, restore drill,
+SLOs, capacidade, checklist de privacidade, suporte/incidente e validação virtual
+de planos CNC neutros. Qualquer G-code futuro permanece em missão separada,
+`SIMULATION_ONLY` e sob aprovação humana explícita.
+
+Fora do escopo: deploy sem autorização, publicação comercial, produção real ou
+transmissão CNC.
+
+Dependências/riscos: v1.2 a v1.8; R-021, riscos científicos R-022 a R-029 e
+gates de produção ainda abertos.
+
+Testes obrigatórios: jornada piloto, isolamento organizacional, restore,
+incidente, carga-alvo, acessibilidade e validação virtual sem máquina.
+
+Critérios de segurança e aceite: piloto usa dados autorizados, rollback/runbooks
+testados e zero saída liberada para máquina.
+
+Condição de avanço: aceite humano do piloto e riscos de produção tratados.
+
+---
+
+## v2.0 — Integrated Engineering Platform
+
+Objetivo: consolidar a plataforma integrada de engenharia, conhecimento e
+pesquisa com base operacional pronta para decisão de produção.
+
+Entregas: fluxo CAD → features → CAM preliminar → plano CNC neutro → relatório;
+agentes especializados usando contratos existentes; pesquisa fundamentada;
+dashboard operacional; segurança, backup, observabilidade, processamento
+assíncrono e capacidade comprovados; documentação técnica/científica/comercial.
+
+Fora do escopo automático: deploy, compra, compromisso comercial, decisão
+científica autônoma, G-code aprovado para produção ou transmissão CNC.
+
+Dependências/riscos: conclusão e aceite das v1.2–v1.9; riscos residuais com dono,
+prazo e controle aprovados.
+
+Testes obrigatórios: regressão integral, E2E de engenharia, isolamento, segurança,
+restore, observabilidade, resiliência, carga, validação científica e simulação
+controlada.
+
+Critérios de segurança e aceite: gates de piloto/produção verificáveis, revisão
+humana preservada e nenhuma ação irreversível automática.
+
+Condição de conclusão: release v2.0 validada e decisão de deploy tratada como
+missão externa separada com autorização do proprietário.
 
 ---
 
@@ -780,4 +1061,36 @@ Criar e manter o `DECISIONS.md` como registro vivo de decisões técnicas e estr
 
 ---
 
-**Fim do Documento 03 — Roadmap Executivo Vena_IA v1.0**
+# 9. Registro de Entrega — Consolidação pós-v1.1
+
+## Objetivo
+
+Definir a progressão necessária de v1.2 até v2.0 a partir do estado real,
+backlog, decisões, riscos e limites oficiais.
+
+## Escopo
+
+Diagnóstico de capacidades, gates por versão, dependências, riscos, itens fora
+do escopo, testes, critérios de segurança/aceite e condição de avanço.
+
+## Arquivos Modificados
+
+Roadmaps, contexto, changelog, decisões, riscos e controles CTO oficiais.
+
+## Testes Realizados
+
+Consistência com `PROJECT.md`, arquitetura/ADRs, código/testes existentes,
+registro de riscos e limites operacionais.
+
+## Critérios de Aceitação
+
+Versões não artificiais, riscos tratados antes da ampliação funcional, escopo
+v1.2 Package 1 explícito e nenhuma autorização implícita de deploy ou CNC real.
+
+## Próximos Passos
+
+Integrar este roadmap e implementar somente o primeiro pacote da v1.2.
+
+---
+
+**Fim do Documento 03 — Roadmap Executivo Vena_IA até v2.0**
