@@ -152,3 +152,9 @@ na Draft PR #14 com backup/restore MinIO, manifesto compartilhado de backup-set,
 detecção de inconsistência entre metadados e objetos, round trip combinado real,
 retenção/RPO/RTO documentados e avaliação de criptografia. Merge, tag, release,
 deploy, nova PR, v1.4, dados reais e CNC permanecem fora desta missão.
+
+O Package 2 foi publicado na mesma Draft PR #14. Ruff, mypy, 215 testes locais,
+frontend e Docker Compose passaram. O Backend CI executou PostgreSQL/pgvector e
+MinIO reais, perda simulada, restore combinado, checksums, Alembic head e prova
+de integridade. Uma asserção de teste sensível a maiúsculas no Linux foi
+corrigida e a execução final passou em 1m57s. Não houve merge, tag ou deploy.
