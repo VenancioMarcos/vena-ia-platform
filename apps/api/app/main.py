@@ -3,8 +3,11 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 
 from app.core.config import settings
+from app.core.observability import ObservabilityMiddleware
+from app.core.readiness import DefaultReadinessChecker
 from app.core import models_registry  # noqa: F401  (ensures all ORM models are registered)
 from app.modules.ai.api.routes import router as ai_router
 from app.modules.audit.api.routes import router as audit_router
@@ -38,6 +41,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.state.auth_security_store = build_authentication_security_store(settings)
+    app.state.readiness_checker = DefaultReadinessChecker(settings)
 
     app.add_middleware(
         CORSMiddleware,
@@ -46,10 +50,29 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(
+        ObservabilityMiddleware,
+        application_version=API_VERSION,
+        environment=settings.app_env,
+    )
 
     @app.get("/health", tags=["health"])
     def health() -> dict[str, str]:
         return {"status": "ok", "service": "vena-ia-api", "version": API_VERSION}
+
+    @app.get("/ready", tags=["health"])
+    def readiness() -> JSONResponse:
+        dependencies = app.state.readiness_checker.check()
+        ready = all(status == "ready" for status in dependencies.values())
+        return JSONResponse(
+            status_code=200 if ready else 503,
+            content={
+                "status": "ready" if ready else "degraded",
+                "service": "vena-ia-api",
+                "version": API_VERSION,
+                "dependencies": dependencies,
+            },
+        )
 
     app.include_router(users_router)
     app.include_router(auth_router)

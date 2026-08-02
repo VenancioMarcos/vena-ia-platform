@@ -60,6 +60,7 @@ jobs:
       MINIO_ACCESS_KEY: test-minio-access
       MINIO_SECRET_KEY: test-minio-secret
       RUN_MINIO_BACKUP_INTEGRATION: "1"
+      RUN_READINESS_INTEGRATION: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
