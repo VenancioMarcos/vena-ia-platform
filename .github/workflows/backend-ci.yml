@@ -78,8 +78,8 @@ jobs:
       - name: Lint
         run: ruff check .
 
-      - name: Type check API and AI Layer
-        run: mypy apps/api/app packages/ai
+      - name: Type check API, AI Layer and operational scripts
+        run: mypy apps/api/app packages/ai scripts
 
       - name: Validate PostgreSQL migrations
         working-directory: apps/api
@@ -109,4 +109,4 @@ jobs:
           exit 1
 
       - name: Test PostgreSQL and MinIO backup and restore
-        run: python -m pytest tests/operations
+        run: python -m pytest -s tests/operations

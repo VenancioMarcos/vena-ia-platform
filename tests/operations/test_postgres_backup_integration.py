@@ -1,6 +1,9 @@
 import io
+import json
 import os
+import shutil
 import subprocess
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
@@ -11,6 +14,7 @@ from psycopg import connect, sql
 
 from scripts.backup_contract import DatabaseConfig
 from scripts.backup_set import DocumentReference, create_backup_set_manifest
+from scripts.encrypted_backup import EncryptionKey, create_encrypted_bundle, decrypt_bundle
 from scripts.minio_backup import create_minio_backup, restore_minio_backup
 from scripts.postgres_backup import create_backup
 from scripts.postgres_restore import restore_backup
@@ -164,6 +168,8 @@ def test_combined_postgresql_minio_backup_restore_round_trip(tmp_path: Path) -> 
     content = b"cross-store-integrity-probe"
     backup_set_id = str(uuid4())
     created_at = datetime.now(timezone.utc).replace(microsecond=0)
+    encryption_key = EncryptionKey("ci-recovery-key", bytes(range(32)))
+    backup_started = time.perf_counter()
 
     with connect(source_url, autocommit=True) as connection:
         connection.execute(
@@ -201,27 +207,42 @@ def test_combined_postgresql_minio_backup_restore_round_trip(tmp_path: Path) -> 
             [DocumentReference(document_id, project_id, object_key)],
         )
         assert combined.consistency_status == "CONSISTENT"
+        encrypted_root, encrypted_index = create_encrypted_bundle(
+            tmp_path / "encrypted",
+            postgres_manifest,
+            minio_manifest,
+            tmp_path / "backup-set.json",
+            encryption_key,
+        )
+        backup_duration = time.perf_counter() - backup_started
+        assert encrypted_root.is_dir()
 
         minio.remove_object(source_bucket, object_key)
         with connect(source_url, autocommit=True) as connection:
             connection.execute(
                 "DELETE FROM backup_document_probe WHERE document_id = %s", (document_id,)
             )
+        shutil.rmtree(tmp_path / "postgres")
+        shutil.rmtree(tmp_path / "minio")
+        (tmp_path / "backup-set.json").unlink()
+        loss_time = datetime.now(timezone.utc)
 
         with connect(admin_url, autocommit=True) as connection:
             connection.execute(
                 sql.SQL("DROP DATABASE IF EXISTS {}").format(sql.Identifier(target_database))
             )
             connection.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(target_database)))
+        restore_started = time.perf_counter()
+        decrypted = decrypt_bundle(encrypted_index, tmp_path / "decrypted", encryption_key)
         restore_backup(
-            postgres_manifest,
+            decrypted.postgres_manifest,
             target,
             confirmed_database=target_database,
             allowed_database=target_database,
             runner=runner,
         )
         restore_minio_backup(
-            minio_manifest,
+            decrypted.minio_manifest,
             minio,
             target_bucket,
             confirmed_bucket=target_bucket,
@@ -243,6 +264,24 @@ def test_combined_postgresql_minio_backup_restore_round_trip(tmp_path: Path) -> 
         assert restored == (document_id, project_id, object_key)
         assert restored_content == content
         assert migration == ("f42a1b7c9d30",)
+        restore_duration = time.perf_counter() - restore_started
+        rpo_seconds = max(0.0, (loss_time - created_at).total_seconds())
+        print(
+            "RECOVERY_METRICS="
+            + json.dumps(
+                {
+                    "environment": "github-actions" if os.getenv("GITHUB_ACTIONS") else "local",
+                    "objects": 1,
+                    "object_bytes": len(content),
+                    "backup_seconds": round(backup_duration, 3),
+                    "restore_seconds": round(restore_duration, 3),
+                    "technical_rpo_seconds": round(rpo_seconds, 3),
+                    "production_slo": False,
+                },
+                sort_keys=True,
+            )
+        )
+        shutil.rmtree(decrypted.root)
     finally:
         for bucket in (source_bucket, target_bucket):
             if minio.bucket_exists(bucket):

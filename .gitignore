@@ -19,6 +19,9 @@ vena-ia-postgres-*.dump
 vena-ia-postgres-*.manifest.json
 vena-ia-minio-*/
 vena-ia-backup-set-*.json
+vena-ia-encrypted-*/
+.vena-ia-plaintext-*/
+.backup-job.lock
 
 # Node
 node_modules/
