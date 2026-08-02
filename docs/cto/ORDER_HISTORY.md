@@ -179,3 +179,7 @@ O CTO aprovou o Package 3 e emitiu `TASK-V13-004`, autorizando retirar a PR #14
 de Draft, Squash Merge, versionar/publicar `v1.3.0`, validar diretamente a tag e
 iniciar somente o Package 1 da v1.4 em branch e Draft PR próprias. Deploy, v1.5,
 telemetria externa, dados reais e CNC permanecem proibidos.
+
+A PR #14 foi integrada por Squash Merge em `24c1919`. A main sincronizada passou
+por Ruff, mypy, 232 testes locais, frontend typecheck/build, Docker Compose,
+OpenAPI 1.3.0 e Alembic head antes da criação da tag.

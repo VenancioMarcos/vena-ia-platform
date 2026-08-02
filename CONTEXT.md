@@ -75,6 +75,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   O Backend CI aprovou 194 testes de API e 43 testes operacionais. No probe de 1
   objeto/27 bytes, registrou backup 0,409 s, restore 0,415 s e RPO técnico 1,262 s;
   esses valores não representam capacidade ou compromisso de produção.
+* **Integração v1.3.0:** a PR [#14](https://github.com/VenancioMarcos/vena-ia-platform/pull/14)
+  foi integrada por Squash Merge em `24c1919`. A main pós-merge aprovou Ruff,
+  mypy, 232 testes locais, frontend, Compose, OpenAPI 1.3.0 e Alembic head. Os
+  round trips reais PostgreSQL/MinIO e criptografado permanecem comprovados pelo CI.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
