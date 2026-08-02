@@ -528,6 +528,19 @@ readiness preliminar de PostgreSQL/Redis/MinIO são implementados na branch
 `codex/v1.4-observability-auditability`. Métricas, tracing, alertas e backend
 externo permanecem para pacotes posteriores.
 
+Estado do Package 2: métricas agregadas com contrato e cardinalidade fechados,
+endpoint admin opt-in, request/correlation ID persistidos na auditoria, contratos
+de alertas com provider no-op/local e tracing interno sem exportação são
+implementados na mesma Draft PR #15. Backend externo, SaaS, webhook, entrega de
+alertas e telemetria fora do processo permanecem fora; o Package 3 deve concluir
+os gates restantes de operação/auditoria antes da integração da v1.4.
+
+Itens restantes para definição/autorização do Package 3: critérios operacionais
+e drill de incidente ponta a ponta; decisão sobre retenção/backend de métricas;
+limiares calibrados com evidência; entrega real de alertas somente se aprovada;
+e fechamento formal dos riscos R-010/R-032/R-033. Nenhum desses itens está
+implícito ou implementado pelo contrato local do Package 2.
+
 ---
 
 ## v1.5 — Asynchronous Processing

@@ -87,6 +87,11 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   adiciona eventos estruturados allowlisted, request/correlation IDs, respostas
   de erro correlacionadas e readiness preliminar de PostgreSQL, Redis e MinIO.
   Nenhum conteúdo de usuário/IA, credencial ou telemetria externa é coletado.
+* **v1.4 Observability Package 2:** a mesma Draft PR #15 adiciona métricas locais
+  agregadas `vena-ia.metrics/v1`, endpoint admin desabilitado por padrão,
+  correlação persistente da auditoria, alertas no-op/local com cooldown e tracing
+  interno substituível. Labels dinâmicas/PII são proibidas; nenhum SaaS, webhook,
+  transporte ou exportador externo foi introduzido.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

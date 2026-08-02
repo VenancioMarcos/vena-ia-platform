@@ -19,6 +19,7 @@
 | Autenticação | logout e invalidação local do token apresentado | Permitido | Permitido | Permitido | Permitido e idempotente |
 | Credencial legada | definir senha ausente de outro usuário | Negado (`403`) | Negado (`403`) | Permitido; nunca para si ou conta já credenciada | Negado (`401`) |
 | Auditoria sensível | consultar eventos com filtros/limite | Negado (`403`) | Negado (`403`) | Permitido | Negado (`401`) |
+| Métricas operacionais opt-in | consultar `/internal/metrics` | Negado (`403`) | Negado (`403`) | Permitido somente quando habilitado | Negado (`401`) |
 | Perfil | consultar próprio perfil | Próprio | Próprio | Permitido | Negado (`401`) |
 | Perfis | listar usuários | Negado (`403`) | Negado (`403`) | Permitido | Negado (`401`) |
 | Perfil | consultar outro usuário | Negado (`404`) | Negado (`404`) | Permitido | Negado (`401`) |

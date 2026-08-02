@@ -813,6 +813,36 @@ externo continuam fora do Package 1.
 
 ---
 
+## DEC-023 — Métricas, auditoria correlacionada e contratos locais de alerta/tracing
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Observabilidade / Segurança / Operação
+**Documentos relacionados:** `docs/adr/ADR-0022-structured-observability-context.md`,
+`docs/runbooks/OBSERVABILITY.md`, `docs/runbooks/ALERTS.md`
+
+### Contexto
+
+O contexto estruturado do Package 1 não agregava sinais operacionais, não
+persistia os identificadores na auditoria e não oferecia contratos substituíveis
+para alertas ou tracing.
+
+### Decisão
+
+Adotar `vena-ia.metrics/v1` em memória, com nomes e labels fechados, rotas por
+template e falha do coletor sem impacto na requisição. O endpoint é opt-in e
+exige admin. Persistir UUIDs de request/correlação na auditoria sem duplicar os
+eventos de autenticação. Alertas e spans usam somente providers no-op/local,
+allowlists e nenhuma entrega/exportação externa.
+
+### Impacto
+
+A API ganha diagnóstico local correlacionável sem SaaS nem dados de usuário. As
+métricas são por processo e não constituem SLO, capacidade ou retenção histórica;
+um backend externo exige decisão e autorização posteriores.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

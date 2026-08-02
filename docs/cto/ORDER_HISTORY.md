@@ -198,3 +198,17 @@ frontend e Compose passaram. O Backend CI aprovou 202 testes de API e 44
 operacionais, incluindo readiness real simultânea de PostgreSQL, Redis e MinIO.
 Uma falha inicial por bucket descartável ainda não criado foi corrigida no setup
 do teste, preservando a semântica fail-closed do endpoint.
+
+## 2026-08-02 — v1.4 Observability Package 2
+
+O CTO aprovou o Package 1 e emitiu `TASK-V14-002` para continuar exclusivamente
+na Draft PR #15 com métricas agregadas, auditoria correlacionada, alert contracts
+e tracing local. Merge, tag, release, deploy, SaaS, webhook, telemetria externa,
+dados reais e v1.5 permanecem proibidos.
+
+O código adiciona `vena-ia.metrics/v1`, endpoint admin opt-in, migration dos IDs
+de correlação, eventos de mutação sem conteúdo, providers no-op/local e controles
+de redaction/cardinalidade. Os gates locais aprovaram Ruff, mypy, 212 testes de
+API, 39 testes operacionais condicionais, frontend, Compose e OpenAPI com 51
+paths. O daemon Docker local não respondeu; integrações reais e ciclo PostgreSQL
+da migration permanecem como gates explícitos do Backend CI.

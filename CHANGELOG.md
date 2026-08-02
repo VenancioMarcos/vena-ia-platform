@@ -9,6 +9,17 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 ## [Unreleased]
 
 ### Adicionado
+* Contrato `vena-ia.metrics/v1` com counters, gauge de readiness, histogramas,
+  labels/buckets fechados, reset de testes e coletor local thread-safe/fail-open.
+* Endpoint administrativo `GET /internal/metrics`, desabilitado por padrão e
+  exposto somente por configuração explícita e autenticação/autorização admin.
+* `request_id` e `correlation_id` persistidos nos eventos de auditoria, com
+  correlação de autenticação e mutações de projeto, documento, processamento,
+  indexação, chat, relatório e administração.
+* Contratos locais substituíveis de alertas com severidade, cooldown,
+  deduplicação e contexto allowlisted, sem transporte externo.
+* Fundação de tracing local com spans pai/filho, duração, estado e erro controlado,
+  usando providers no-op/local e sem exportação.
 * Middleware com schema `vena-ia.observability/v1`, eventos JSON allowlisted,
   duração, rota normalizada, request ID e correlation ID.
 * Headers `X-Request-ID` e `X-Correlation-ID` validados/gerados e propagados em
@@ -17,6 +28,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   `/health` preserva o contrato existente.
 
 ### Segurança
+* Labels de alta cardinalidade e dados sensíveis são recusadas nas métricas;
+  alertas e spans não aceitam conteúdo de usuário, credenciais ou IDs de domínio.
 * Redaction e allowlist proíbem Authorization, Cookie, JWT, senha, segredo,
   conteúdo documental, prompts, respostas e embeddings nos eventos.
 
