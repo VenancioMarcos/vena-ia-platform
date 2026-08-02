@@ -183,3 +183,8 @@ telemetria externa, dados reais e CNC permanecem proibidos.
 A PR #14 foi integrada por Squash Merge em `24c1919`. A main sincronizada passou
 por Ruff, mypy, 232 testes locais, frontend typecheck/build, Docker Compose,
 OpenAPI 1.3.0 e Alembic head antes da criação da tag.
+
+A tag anotada `v1.3.0` foi publicada apontando para `e075657`, junto da GitHub
+Release “Vena_IA Platform v1.3.0 — Backup, Recovery and Retention”. A validação
+direta da tag aprovou health/runtime 1.3.0, OpenAPI com 49 paths e 40 testes de
+health/operações; nenhum deploy foi realizado.

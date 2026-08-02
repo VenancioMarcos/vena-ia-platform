@@ -79,6 +79,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   foi integrada por Squash Merge em `24c1919`. A main pós-merge aprovou Ruff,
   mypy, 232 testes locais, frontend, Compose, OpenAPI 1.3.0 e Alembic head. Os
   round trips reais PostgreSQL/MinIO e criptografado permanecem comprovados pelo CI.
+* **Release v1.3.0:** a tag anotada aponta para `e075657` e a
+  [GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.3.0)
+  foi publicada sem deploy. A validação direta aprovou health/runtime 1.3.0,
+  49 paths OpenAPI e 40 testes de operações/health (4 integrações locais omitidas).
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
