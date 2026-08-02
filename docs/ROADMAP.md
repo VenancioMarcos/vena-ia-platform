@@ -417,9 +417,10 @@ Primeiro pacote autorizado:
 * limite local explicitamente classificado como primeira camada; gateway ou
   armazenamento distribuído continua obrigatório antes de produção horizontal.
 
-Estado do Package 1: implementado na branch `codex/v1.2-auth-rate-limiting`, com
-Ruff, mypy e 172 testes aprovados localmente; aguardando Draft PR e CI para
-revisão do CTO. Nenhuma entrega posterior da v1.2 foi iniciada.
+Estado do Package 1: implementado na branch `codex/v1.2-auth-rate-limiting` e
+publicado na Draft PR [#13](https://github.com/VenancioMarcos/vena-ia-platform/pull/13),
+com Ruff, mypy, 172 testes e Backend CI aprovados. Nenhuma entrega posterior da
+v1.2 foi iniciada.
 
 Entregas posteriores da v1.2:
 

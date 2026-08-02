@@ -2,7 +2,7 @@
 
 **Versão:** Roadmap pós-v1.1 até v2.0 (`TASK-ROADMAP-V2-001`)
 **Data:** 2026-08-01
-**Estado:** Roadmap integrado; primeiro pacote v1.2 implementado em validação
+**Estado:** Roadmap integrado; primeiro pacote v1.2 pronto para revisão na Draft PR #13
 
 Fonte integral: conversa oficial do CTO no projeto Vena_IA Platform.
 

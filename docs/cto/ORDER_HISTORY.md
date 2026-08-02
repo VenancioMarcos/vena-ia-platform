@@ -82,3 +82,7 @@ O proprietário autorizou explicitamente o Squash Merge da PR #12, a sincroniza�
 da `main` e o início imediato do primeiro pacote v1.2. A PR #12 foi integrada em
 `6e1065d`; a branch `codex/v1.2-auth-rate-limiting` implementa somente rate
 limiting de cadastro/login e deve permanecer em Draft PR para revisão do CTO.
+
+A implementação foi publicada na Draft PR #13 com 172 testes locais, Ruff,
+mypy, frontend, Docker e Backend CI aprovados, sem bloqueadores e sem iniciar
+entregas posteriores da v1.2.

@@ -2,7 +2,7 @@
 
 ```text
 MISSION=TASK_ROADMAP_V2_001
-STATE=V1_2_PACKAGE_1_VALIDATION
+STATE=V1_2_PACKAGE_1_READY_FOR_CTO_REVIEW
 BRANCH=codex/v1.2-auth-rate-limiting
 START_HEAD=47102286cfe1f6f977b69693da943337118399a7
 V1_1_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.1.0
@@ -13,9 +13,10 @@ SOURCE_REVIEW=PROJECT_CONTEXT_CHANGELOG_ROADMAP_DECISIONS_GOVERNANCE_ARCHITECTUR
 DECISIONS_ROOT=MISSING_OFFICIAL_EQUIVALENT_docs/DECISIONS.md_USED
 ROADMAP_PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/12
 ROADMAP_MERGE=6e1065d3df78b27d01a16009579af3c7fa8c961e
-V1_2_PR=PENDING
-LOCAL_GATES=RUFF_MYPY_PYTEST_172_PASS
-NEXT=COMPLETE_GATES_COMMIT_PUSH_AND_OPEN_DRAFT_PR
+V1_2_PR=https://github.com/VenancioMarcos/vena-ia-platform/pull/13
+LOCAL_GATES=RUFF_MYPY_PYTEST_172_FRONTEND_DOCKER_SECRETS_PASS
+GITHUB_CHECKS=BACKEND_CI_PASS
+NEXT=CTO_REVIEW
 ```
 
 Este arquivo deve ser atualizado apenas com evidências verificadas.
@@ -52,4 +53,4 @@ testes e CI aprovados; nenhuma v1.3 ou ação proibida iniciada.
 
 ### Próximo passo
 
-Concluir gates, publicar a branch e abrir a Draft PR do primeiro pacote v1.2.
+Revisão do CTO na Draft PR #13; nenhuma entrega posterior foi iniciada.
