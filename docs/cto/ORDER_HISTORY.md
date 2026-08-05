@@ -254,3 +254,15 @@ O CTO aprovou formalmente a `TASK-V14-003` e emitiu `TASK-V14-004`, autorizando
 retirar a PR #15 de Draft, realizar Squash Merge, publicar/validar `v1.4.0` e,
 somente após a release, iniciar a fundação de jobs assíncronos da v1.5 em branch
 e Draft PR próprias. Merge da v1.5, OCR, deploy, SaaS e v1.6 permanecem proibidos.
+
+A PR #15 foi retirada de Draft e integrada por Squash Merge em `1380156`. Main e
+tag anotada `v1.4.0` foram validadas por Ruff, mypy, 215 testes de API, 46 testes
+operacionais, frontend e Compose. A GitHub Release “Vena_IA Platform v1.4.0 —
+Observability and Auditability” foi publicada sem deploy.
+
+Na branch `codex/v1.5-asynchronous-processing`, o Package 1 implementou o contrato
+durável `vena-ia.job/v1`, migration `b18e4c7d2a91`, fila Redis com lease/heartbeat,
+worker allowlisted, processamento/indexação PDF, API autenticada e frontend mínimo.
+Os gates locais aprovaram Ruff, mypy, 236 testes de API, 46 operacionais, frontend,
+Compose e OpenAPI 1.5.0-dev/55 paths. A Draft PR #16 foi aberta; integrações reais
+PostgreSQL/Redis/MinIO permanecem como gate do CI antes da revisão do CTO.

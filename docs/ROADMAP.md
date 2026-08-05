@@ -573,6 +573,14 @@ executam conteúdo e nunca criam resposta falsa.
 
 Condição de avanço: processamento longo resiliente e observável fora do ciclo HTTP.
 
+Estado do Package 1: `vena-ia.job/v1`, persistência PostgreSQL, fila Redis com
+lease/heartbeat, worker do Modular Monolith, idempotência, retry/backoff, timeout,
+cancelamento, recuperação e interface mínima foram implementados na branch
+`codex/v1.5-asynchronous-processing`. O primeiro handler executa extração, chunking
+e indexação já existente do PDF; endpoints síncronos permanecem compatíveis. OCR,
+novos tipos de busca, microserviço e deploy continuam fora. PDF sem texto mantém
+falha explícita.
+
 ---
 
 ## v1.6 — Reliability and Scalability

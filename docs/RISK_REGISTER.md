@@ -1,6 +1,6 @@
 # Registro de Riscos
 
-**Data da revisão:** 2026-08-04
+**Data da revisão:** 2026-08-05
 
 | ID | Severidade | Risco e evidência | Mitigação recomendada | Estado |
 |---|---|---|---|---|
@@ -39,8 +39,9 @@
 | R-013 | MÉDIO | Logout precisava compartilhar revogação entre réplicas e reinícios. | Redis guarda somente chave derivada do fingerprint com TTL do JWT; falha de Redis bloqueia consulta e escrita com auditoria. | MITIGADO v1.2 PACKAGE 4 |
 | R-014 | MÉDIO | Usuários legados preservados pela migration podem não possuir hash de senha. | Admin define credencial ausente uma única vez, com auditoria, política oficial e invalidação das sessões anteriores. | MITIGADO v1.2 PACKAGE 3 |
 | R-015 | BAIXO | O contexto Docker do Web incluía artefatos locais (`node_modules` e `.next`), ampliando o build para centenas de MB. | `.dockerignore` dedicado reduz o contexto a arquivos-fonte e exclui ambientes, dependências, builds e logs locais. | MITIGADO v0.4.1 |
-| R-016 | MÉDIO | A ingestão de PDF da fundação v0.5 ocorre de forma síncrona na requisição HTTP. | Introduzir fila, worker, timeout e retomada antes de processar documentos extensos em produção. | ABERTO |
-| R-017 | MÉDIO | PDFs criptografados ou sem camada textual não geram chunks. | Manter falha explícita e adicionar OCR somente após avaliação de segurança, recursos e qualidade. | ABERTO |
+| R-016 | MÉDIO | A ingestão de PDF da fundação v0.5 ocorria de forma síncrona na requisição HTTP. | Package 1 adiciona job durável, fila Redis, worker, lease, timeout, cancelamento, retry e recuperação; endpoints legados permanecem apenas por compatibilidade. | MITIGADO PARCIALMENTE v1.5 PACKAGE 1 / VALIDAR CAPACIDADE |
+| R-017 | MÉDIO | PDFs criptografados ou sem camada textual não geram chunks. | Package 1 preserva falha explícita; adicionar OCR somente após avaliação de segurança, recursos e qualidade. | ABERTO / OCR FORA DO PACKAGE 1 |
+| R-038 | MÉDIO | Timeout cooperativo não interrompe à força uma biblioteca síncrona bloqueada e efeitos parciais podem preceder o término. | Lease/recuperação, limite de tentativas e substituição idempotente de chunks; medir bibliotecas e isolamento no gate v1.6. | MONITORAR v1.5 PACKAGE 1 |
 
 ## Tratamento planejado v1.2–v2.0
 

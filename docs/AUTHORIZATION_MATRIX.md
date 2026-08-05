@@ -31,6 +31,7 @@
 | Metadados de arquivos | criar/listar | Próprio | Próprio | Permitido | Negado (`401`) |
 | Documentos | upload/listagem/consulta/remoção | Próprio | Próprio | Permitido | Negado (`401`) |
 | Documentos | iniciar processamento | Próprio | Próprio | Permitido | Negado (`401`) |
+| Jobs de documento | criar/consultar/cancelar/repetir | Próprio | Próprio | Permitido para recurso acessível | Negado (`401`) |
 | Catálogo de documentos | listar/status/estatísticas | Negado (`403`) | Negado (`403`) | Permitido | Negado (`401`) |
 | Chat | consultar capacidade | Permitido | Permitido | Permitido | Negado (`401`) |
 | Mensagens | criar/listar | Próprio | Próprio | Permitido | Negado (`401`) |
