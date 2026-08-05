@@ -4,7 +4,12 @@ import hashlib
 from datetime import datetime, timedelta, timezone
 
 from app.modules.documents.service import DocumentService
-from app.modules.jobs.contracts import JobQueueMessage, JobStatus, JobType
+from app.modules.jobs.contracts import (
+    SAFE_JOB_ERROR_CODES,
+    JobQueueMessage,
+    JobStatus,
+    JobType,
+)
 from app.modules.jobs.models import Job
 from app.modules.jobs.queue import JobQueue
 from app.modules.jobs.repository import InvalidJobTransitionError, JobRepository
@@ -192,6 +197,8 @@ class WorkerJobService:
             job_id,
             {JobStatus.CANCELLATION_REQUESTED},
             JobStatus.CANCELLED,
+            error_code="JOB_CANCELLED",
+            error_message="Job was cancelled",
             cancelled_at=datetime.now(timezone.utc),
             completed_at=datetime.now(timezone.utc),
         )
@@ -202,12 +209,13 @@ class WorkerJobService:
         if job is None:
             raise JobNotFoundError("Job not found")
         safe_message = message[:500]
+        safe_code = code if code in SAFE_JOB_ERROR_CODES else "INTERNAL_PROCESSING_ERROR"
         if job.attempt < job.max_attempts:
             return self._repository.transition(
                 job_id,
                 {JobStatus.RUNNING},
                 JobStatus.RETRY_SCHEDULED,
-                error_code=code[:64],
+                error_code=safe_code,
                 error_message=safe_message,
                 available_at=datetime.now(timezone.utc) + timedelta(seconds=retry_delay),
             )
@@ -215,8 +223,8 @@ class WorkerJobService:
             job_id,
             {JobStatus.RUNNING},
             JobStatus.FAILED,
-            error_code=code[:64],
-            error_message=safe_message,
+            error_code="JOB_RETRY_EXHAUSTED",
+            error_message="Job exhausted the configured attempt limit",
             completed_at=datetime.now(timezone.utc),
         )
 
@@ -225,17 +233,18 @@ class WorkerJobService:
             job_id,
             {JobStatus.RUNNING, JobStatus.CANCELLATION_REQUESTED},
             JobStatus.TIMED_OUT,
-            error_code="JOB_TIMEOUT",
+            error_code="JOB_TIMED_OUT",
             error_message="Job exceeded its execution time limit",
             completed_at=datetime.now(timezone.utc),
         )
 
     def fail_terminal(self, job_id: str, code: str, message: str) -> Job:
+        safe_code = code if code in SAFE_JOB_ERROR_CODES else "INTERNAL_PROCESSING_ERROR"
         return self._repository.transition(
             job_id,
             {JobStatus.RUNNING},
             JobStatus.FAILED,
-            error_code=code[:64],
+            error_code=safe_code,
             error_message=message[:500],
             completed_at=datetime.now(timezone.utc),
         )

@@ -61,7 +61,11 @@ def create_document_processing_job(
             context={"job_type": "document.processing"},
             correlation_id=getattr(request.state, "correlation_id", None),
         )
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=503,
+            detail=str(exc),
+            headers={"X-Vena-Error-Code": "QUEUE_UNAVAILABLE"},
+        ) from exc
 
 
 @router.get("/jobs/{job_id}", response_model=JobResponse)
@@ -119,4 +123,8 @@ def retry_job(
     except InvalidJobTransitionError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except JobQueueUnavailable as exc:
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=503,
+            detail=str(exc),
+            headers={"X-Vena-Error-Code": "QUEUE_UNAVAILABLE"},
+        ) from exc

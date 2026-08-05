@@ -1,2 +1,1 @@
 """Chats API routes."""
-

@@ -31,6 +31,7 @@ ALLOWED_TRANSITIONS: dict[JobStatus, frozenset[JobStatus]] = {
     ),
     JobStatus.RUNNING: frozenset(
         {
+            JobStatus.QUEUED,
             JobStatus.SUCCEEDED,
             JobStatus.FAILED,
             JobStatus.RETRY_SCHEDULED,
@@ -64,3 +65,22 @@ class JobQueueMessage:
 class ClaimedJob:
     message: JobQueueMessage
     worker_id: str
+
+
+SAFE_JOB_ERROR_CODES = frozenset(
+    {
+        "PDF_ENCRYPTED",
+        "PDF_NO_TEXT",
+        "PDF_INVALID",
+        "RESOURCE_NOT_FOUND",
+        "QUEUE_UNAVAILABLE",
+        "DEPENDENCY_UNAVAILABLE",
+        "JOB_TIMED_OUT",
+        "JOB_CANCELLED",
+        "JOB_RETRY_EXHAUSTED",
+        "JOB_LEASE_LOST",
+        "INTERNAL_PROCESSING_ERROR",
+        "JOB_TYPE_NOT_ALLOWED",
+        "JOB_PAYLOAD_INVALID",
+    }
+)

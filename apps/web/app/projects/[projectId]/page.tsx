@@ -365,7 +365,9 @@ export default function ProjectPage({
                             : "Processar em segundo plano"}
                       </button>
                     )}
-                    {jobs[document.id]?.status === "RUNNING" && (
+                    {["QUEUED", "RUNNING", "RETRY_SCHEDULED"].includes(
+                      jobs[document.id]?.status ?? "",
+                    ) && (
                       <button
                         type="button"
                         onClick={() => void cancelJob(document.id, jobs[document.id].id)}

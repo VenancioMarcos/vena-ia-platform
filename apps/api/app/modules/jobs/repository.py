@@ -31,6 +31,24 @@ class JobRepository:
             )
         )
 
+    def list_recoverable(self) -> list[Job]:
+        return list(
+            self._db.scalars(
+                select(Job)
+                .where(
+                    Job.status.in_(
+                        [
+                            JobStatus.QUEUED.value,
+                            JobStatus.RUNNING.value,
+                            JobStatus.RETRY_SCHEDULED.value,
+                            JobStatus.CANCELLATION_REQUESTED.value,
+                        ]
+                    )
+                )
+                .order_by(Job.created_at, Job.id)
+            )
+        )
+
     def create(self, job: Job) -> tuple[Job, bool]:
         existing = self.get_idempotent(job.owner_id, job.job_type, job.idempotency_key)
         if existing is not None:
@@ -83,9 +101,7 @@ class JobRepository:
             update(Job)
             .where(
                 Job.id == job_id,
-                Job.status.in_(
-                    [JobStatus.RUNNING.value, JobStatus.CANCELLATION_REQUESTED.value]
-                ),
+                Job.status.in_([JobStatus.RUNNING.value, JobStatus.CANCELLATION_REQUESTED.value]),
                 Job.progress <= progress,
             )
             .values(progress=progress, updated_at=now)

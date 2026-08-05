@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Generator
+from concurrent.futures import ThreadPoolExecutor
 import os
 import uuid
 from unittest.mock import MagicMock
@@ -37,9 +38,7 @@ def storage() -> Generator[MagicMock, None, None]:
 
 def _project_and_document(client, make_account, storage, email: str = "jobs@vena-ia.dev"):
     owner = make_account(email)
-    project = client.post(
-        "/projects", headers=owner.headers, json={"name": "Async Jobs"}
-    ).json()
+    project = client.post("/projects", headers=owner.headers, json={"name": "Async Jobs"}).json()
     document = client.post(
         f"/projects/{project['id']}/documents",
         headers=owner.headers,
@@ -127,12 +126,29 @@ def test_cancel_queued_job_is_terminal(client, make_account, storage) -> None:
     assert cancelled.json()["cancelled_at"] is not None
 
 
+def test_queue_unavailable_has_safe_compatible_error_code(client, make_account, storage) -> None:
+    class UnavailableQueue(MemoryJobQueue):
+        def enqueue(self, message, delay_seconds=0) -> bool:
+            del message, delay_seconds
+            raise JobQueueUnavailable("Asynchronous queue is unavailable")
+
+    owner, _project, document = _project_and_document(client, make_account, storage)
+    app.state.job_queue = UnavailableQueue()
+    response = client.post(
+        f"/documents/{document['id']}/jobs/processing",
+        headers=owner.headers,
+        json={"idempotency_key": "queue-unavailable-001"},
+    )
+
+    assert response.status_code == 503
+    assert response.headers["X-Vena-Error-Code"] == "QUEUE_UNAVAILABLE"
+    assert "redis" not in response.text.lower()
+
+
 def test_repository_rejects_terminal_state_regression(db_session: Session) -> None:
     job = _seed_job(db_session, status=JobStatus.SUCCEEDED)
     with pytest.raises(InvalidJobTransitionError):
-        JobRepository(db_session).transition(
-            job.id, {JobStatus.SUCCEEDED}, JobStatus.RUNNING
-        )
+        JobRepository(db_session).transition(job.id, {JobStatus.SUCCEEDED}, JobStatus.RUNNING)
 
 
 def test_repository_rejects_decreasing_progress(db_session: Session) -> None:
@@ -153,6 +169,7 @@ def test_memory_queue_claim_is_exclusive_and_ack_requires_owner() -> None:
     with pytest.raises(JobQueueUnavailable):
         queue.acknowledge("job-1", "worker-2")
     queue.acknowledge("job-1", "worker-1")
+    queue.acknowledge("job-1", "worker-1")
 
 
 def test_memory_queue_recovers_expired_lease() -> None:
@@ -161,7 +178,7 @@ def test_memory_queue_recovers_expired_lease() -> None:
     queue.enqueue(JobQueueMessage("job-1", JobType.DOCUMENT_PROCESSING.value))
     assert queue.claim("dead-worker", 5) is not None
     now[0] = 16.0
-    assert queue.recover_abandoned() == 1
+    assert queue.recover_abandoned() == ["job-1"]
     claimed = queue.claim("replacement", 5)
     assert claimed is not None and claimed.worker_id == "replacement"
 
@@ -174,9 +191,9 @@ def test_memory_queue_extends_owned_lease() -> None:
     assert queue.claim("worker", 5) is not None
     queue.extend_lease("job-1", "worker", 20)
     now[0] = 16
-    assert queue.recover_abandoned() == 0
+    assert queue.recover_abandoned() == []
     now[0] = 31
-    assert queue.recover_abandoned() == 1
+    assert queue.recover_abandoned() == ["job-1"]
 
 
 def test_memory_queue_honors_retry_delay() -> None:
@@ -189,6 +206,18 @@ def test_memory_queue_honors_retry_delay() -> None:
     assert queue.claim("worker", 5) is None
     now[0] = 14.0
     assert queue.claim("worker", 5) is not None
+
+
+def test_worker_readiness_expires_and_recovers_without_worker_labels() -> None:
+    now = [10.0]
+    queue = MemoryJobQueue(lambda: now[0])
+    assert not queue.worker_available()
+    queue.heartbeat("worker-a", 5)
+    assert queue.worker_available()
+    now[0] = 16
+    assert not queue.worker_available()
+    queue.heartbeat("worker-b", 5)
+    assert queue.worker_available()
 
 
 def test_worker_completes_allowlisted_job(db_session: Session) -> None:
@@ -238,7 +267,7 @@ def test_worker_retries_then_fails_without_exposing_exception(db_session: Sessio
     stored = db_session.get(Job, job.id)
     assert stored is not None and stored.status == JobStatus.FAILED.value
     assert stored.attempt == 2
-    assert stored.error_code == "JOB_EXECUTION_FAILED"
+    assert stored.error_code == "JOB_RETRY_EXHAUSTED"
     assert "secret" not in (stored.error_message or "")
 
 
@@ -348,7 +377,7 @@ def test_worker_marks_elapsed_job_timed_out(db_session: Session) -> None:
     db_session.expire_all()
     stored = db_session.get(Job, job.id)
     assert stored is not None and stored.status == JobStatus.TIMED_OUT.value
-    assert stored.error_code == "JOB_TIMEOUT"
+    assert stored.error_code == "JOB_TIMED_OUT"
 
 
 def test_worker_rejects_unallowlisted_type(db_session: Session) -> None:
@@ -409,9 +438,7 @@ def test_worker_reports_queue_unavailability_without_crashing() -> None:
     assert worker.run_once().outcome == "queue_unavailable"
 
 
-@pytest.mark.skipif(
-    os.getenv("RUN_REDIS_INTEGRATION") != "1", reason="requires disposable Redis"
-)
+@pytest.mark.skipif(os.getenv("RUN_REDIS_INTEGRATION") != "1", reason="requires disposable Redis")
 def test_real_redis_queue_claim_retry_ack_and_recovery() -> None:
     client = Redis.from_url(os.environ["REDIS_URL"], decode_responses=True)
     prefix = f"vena_ia:test:jobs:{uuid.uuid4().hex}"
@@ -432,7 +459,7 @@ def test_real_redis_queue_claim_retry_ack_and_recovery() -> None:
         queue.enqueue(abandoned)
         assert queue.claim("dead", 5) is not None
         client.zadd(f"{prefix}:leases", {abandoned.job_id: 0})
-        assert queue.recover_abandoned() == 1
+        assert queue.recover_abandoned() == [abandoned.job_id]
         assert queue.claim("replacement", 5) is not None
 
         malformed_id = str(uuid.uuid4())
@@ -441,6 +468,21 @@ def test_real_redis_queue_claim_retry_ack_and_recovery() -> None:
         with pytest.raises(InvalidJobQueueMessage):
             queue.claim("validator", 5)
         assert client.hget(f"{prefix}:payloads", malformed_id) is None
+
+        concurrent = JobQueueMessage(str(uuid.uuid4()), JobType.DOCUMENT_PROCESSING.value)
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            list(executor.map(lambda _index: queue.enqueue(concurrent), range(32)))
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            claims = list(executor.map(lambda index: queue.claim(f"worker-{index}", 5), range(2)))
+        assert sum(claim is not None for claim in claims) == 1
+        client.zadd(f"{prefix}:leases", {concurrent.job_id: 0})
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            recovered = list(executor.map(lambda _index: queue.recover_abandoned(), range(2)))
+        assert sum(item.count(concurrent.job_id) for item in recovered) == 1
+        replacement = queue.claim("recovery-worker", 5)
+        assert replacement is not None and replacement.message.job_id == concurrent.job_id
+        queue.acknowledge(concurrent.job_id, "recovery-worker")
+        queue.acknowledge(concurrent.job_id, "recovery-worker")
     finally:
         keys = list(client.scan_iter(f"{prefix}:*"))
         if keys:

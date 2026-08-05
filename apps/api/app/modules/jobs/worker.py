@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -15,11 +16,53 @@ from app.modules.audit.service import record_system_security_event
 from app.modules.jobs.contracts import JobStatus
 from app.modules.jobs.models import Job
 from app.modules.jobs.queue import InvalidJobQueueMessage, JobQueue, JobQueueUnavailable
+from app.modules.jobs.recovery import JobRecoveryReconciler
 from app.modules.jobs.repository import InvalidJobTransitionError, JobRepository
 from app.modules.jobs.service import JobNotFoundError, WorkerJobService
 
 JobHandler = Callable[[Job, Callable[[int], None], Callable[[], bool]], None]
 SessionFactory = Callable[[], Session]
+
+
+class SafeJobExecutionError(RuntimeError):
+    def __init__(self, code: str, message: str, *, retryable: bool) -> None:
+        super().__init__(message)
+        self.code = code
+        self.safe_message = message
+        self.retryable = retryable
+
+
+class _LeaseKeeper:
+    def __init__(self, queue: JobQueue, job_id: str, worker_id: str, lease_seconds: int) -> None:
+        self._queue = queue
+        self._job_id = job_id
+        self._worker_id = worker_id
+        self._lease_seconds = lease_seconds
+        self._stop = threading.Event()
+        self.lost = threading.Event()
+        self._thread = threading.Thread(target=self._run, name="job-lease-keeper", daemon=True)
+
+    def start(self) -> None:
+        self._thread.start()
+
+    def close(self) -> None:
+        self._stop.set()
+        self._thread.join(timeout=max(min(self._lease_seconds / 3, 1), 0.05) + 0.1)
+
+    def refresh(self) -> None:
+        try:
+            self._queue.extend_lease(self._job_id, self._worker_id, self._lease_seconds)
+        except JobQueueUnavailable:
+            self.lost.set()
+            raise
+
+    def _run(self) -> None:
+        interval = max(min(self._lease_seconds / 3, 5), 0.05)
+        while not self._stop.wait(interval):
+            try:
+                self.refresh()
+            except JobQueueUnavailable:
+                return
 
 
 @dataclass(frozen=True, slots=True)
@@ -61,7 +104,23 @@ class JobWorker:
     def run_once(self) -> WorkerResult:
         try:
             self._queue.heartbeat(self._worker_id, max(self._lease_seconds * 2, 10))
-            recovered = self._queue.recover_abandoned()
+            recovery_session = self._sessions()
+            try:
+                recovery = JobRecoveryReconciler(
+                    JobRepository(recovery_session), self._queue
+                ).reconcile()
+                if recovery.requeued or recovery.cancelled or recovery.exhausted:
+                    record_system_security_event(
+                        recovery_session,
+                        "job.recovery",
+                        outcome="recovered",
+                        reason=(
+                            f"requeued={recovery.requeued};cancelled={recovery.cancelled};"
+                            f"exhausted={recovery.exhausted}"
+                        ),
+                    )
+            finally:
+                recovery_session.close()
             claimed = self._queue.claim(self._worker_id, self._lease_seconds)
         except InvalidJobQueueMessage as exc:
             return self._reject_invalid_message(exc.job_id)
@@ -73,12 +132,26 @@ class JobWorker:
                 context={"job_type": "document.processing"},
             )
             return WorkerResult(None, "queue_unavailable")
-        if recovered:
+        except Exception:
+            safe_metric_call(
+                getattr(self._alerts, "emit", None),
+                "readiness_degraded",
+                "critical",
+                context={"dependency": "postgresql"},
+            )
+            return WorkerResult(None, "dependency_unavailable")
+        if recovery.requeued or recovery.cancelled or recovery.exhausted:
+            emit_structured_event(
+                "job.recovery",
+                recovered=recovery.requeued,
+                cancelled=recovery.cancelled,
+                exhausted=recovery.exhausted,
+            )
             safe_metric_call(
                 getattr(self._metrics, "increment", None),
                 "job_queue_recoveries_total",
                 {},
-                recovered,
+                recovery.requeued + recovery.cancelled + recovery.exhausted,
             )
         if claimed is None:
             return WorkerResult(None, "idle")
@@ -94,9 +167,17 @@ class JobWorker:
                     self._worker_id,
                     max(self._lease_seconds, job.timeout_seconds + self._lease_seconds),
                 )
+                lease_keeper = _LeaseKeeper(
+                    self._queue,
+                    job.id,
+                    self._worker_id,
+                    max(self._lease_seconds, job.timeout_seconds + self._lease_seconds),
+                )
+                lease_keeper.start()
                 self._observe(job, "running", session, "job.started")
                 handler = self._handlers.get(job.job_type)
                 if handler is None:
+                    lease_keeper.close()
                     service.fail_terminal(
                         job.id, "JOB_TYPE_NOT_ALLOWED", "Job type is not allowlisted"
                     )
@@ -105,6 +186,14 @@ class JobWorker:
                     return WorkerResult(job.id, "failed")
 
                 def report(progress: int) -> None:
+                    try:
+                        lease_keeper.refresh()
+                    except JobQueueUnavailable as exc:
+                        raise SafeJobExecutionError(
+                            "JOB_LEASE_LOST",
+                            "Worker lease was lost during processing",
+                            retryable=True,
+                        ) from exc
                     service.progress(job.id, progress)
                     emit_structured_event(
                         "job.progress",
@@ -115,19 +204,31 @@ class JobWorker:
                     )
 
                 def cancelled() -> bool:
+                    if lease_keeper.lost.is_set():
+                        return True
+                    if self._monotonic() - started > job.timeout_seconds:
+                        return True
                     session.expire_all()
                     current = JobRepository(session).get(job.id)
                     return bool(
-                        current
-                        and current.status == JobStatus.CANCELLATION_REQUESTED.value
+                        current and current.status == JobStatus.CANCELLATION_REQUESTED.value
                     )
 
-                with self._tracer.start_span("job.execute") as span:
-                    try:
-                        handler(job, report, cancelled)
-                    except Exception as exc:
-                        span.set_error(type(exc).__name__)
-                        raise
+                try:
+                    with self._tracer.start_span("job.execute") as span:
+                        try:
+                            handler(job, report, cancelled)
+                        except Exception as exc:
+                            span.set_error(type(exc).__name__)
+                            raise
+                finally:
+                    lease_keeper.close()
+                if lease_keeper.lost.is_set():
+                    raise SafeJobExecutionError(
+                        "JOB_LEASE_LOST",
+                        "Worker lease was lost during processing",
+                        retryable=True,
+                    )
                 elapsed = self._monotonic() - started
                 if service.cancel_if_requested(job.id):
                     outcome = "cancelled"
@@ -180,12 +281,24 @@ class JobWorker:
                     self._observe(failed_job, "cancelled", session, "job.cancelled")
                 return WorkerResult(failed_job.id, "cancelled")
             delay = self._retry_base * (2 ** max(failed_job.attempt - 1, 0))
-            failed = WorkerJobService(JobRepository(session)).fail(
-                failed_job.id,
-                "JOB_EXECUTION_FAILED",
-                "Job execution failed; inspect correlated operator logs",
-                delay,
+            safe_error = exc if isinstance(exc, SafeJobExecutionError) else None
+            error_code = safe_error.code if safe_error else "INTERNAL_PROCESSING_ERROR"
+            error_message = (
+                safe_error.safe_message
+                if safe_error
+                else "Job execution failed; inspect correlated operator logs"
             )
+            if safe_error is not None and not safe_error.retryable:
+                failed = WorkerJobService(JobRepository(session)).fail_terminal(
+                    failed_job.id, error_code, error_message
+                )
+            else:
+                failed = WorkerJobService(JobRepository(session)).fail(
+                    failed_job.id,
+                    error_code,
+                    error_message,
+                    delay,
+                )
             if failed.status == JobStatus.RETRY_SCHEDULED.value:
                 outcome = "retry_scheduled"
                 try:

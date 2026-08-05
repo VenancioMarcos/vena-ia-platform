@@ -18,17 +18,25 @@ from app.modules.ai.dependencies import get_ai_service, get_provider_factory
 from app.modules.auth.authorization import AuthorizationService
 from app.modules.documents.chunking import CharacterTextChunker
 from app.modules.documents.dependencies import get_document_storage
-from app.modules.documents.extraction import PdfTextExtractor
+from app.modules.documents.extraction import (
+    PdfExtractionCancelled,
+    PdfExtractionError,
+    PdfTextExtractor,
+)
 from app.modules.documents.knowledge import KnowledgeService
 from app.modules.documents.pipeline import DocumentPipeline
-from app.modules.documents.processing import DocumentProcessingService
+from app.modules.documents.processing import (
+    DocumentContentUnavailableError,
+    DocumentProcessingError,
+    DocumentProcessingService,
+)
 from app.modules.documents.repository import DocumentChunkRepository, DocumentRepository
 from app.modules.documents.schemas import DocumentStatus
 from app.modules.documents.service import DocumentService
 from app.modules.jobs.contracts import JobType
 from app.modules.jobs.dependencies import build_job_queue
 from app.modules.jobs.models import Job
-from app.modules.jobs.worker import JobHandler, JobWorker
+from app.modules.jobs.worker import JobHandler, JobWorker, SafeJobExecutionError
 from app.modules.users.models import User
 
 _stopping = False
@@ -40,9 +48,7 @@ def _stop(_signum: int, _frame: object) -> None:
 
 
 def _document_handler() -> JobHandler:
-    def handle(
-        job: Job, progress: Callable[[int], None], cancelled: Callable[[], bool]
-    ) -> None:
+    def handle(job: Job, progress: Callable[[int], None], cancelled: Callable[[], bool]) -> None:
         if cancelled():
             return
         progress(10)
@@ -50,11 +56,15 @@ def _document_handler() -> JobHandler:
         try:
             owner = db.get(User, job.owner_id)
             if owner is None:
-                raise RuntimeError("Job owner no longer exists")
+                raise SafeJobExecutionError(
+                    "RESOURCE_NOT_FOUND", "Job resource is unavailable", retryable=False
+                )
             repository = DocumentRepository(db)
             document = repository.get(job.resource_id)
             if document is None or document.project_id != job.project_id:
-                raise RuntimeError("Job resource is unavailable")
+                raise SafeJobExecutionError(
+                    "RESOURCE_NOT_FOUND", "Job resource is unavailable", retryable=False
+                )
             storage = get_document_storage()
             document_service = DocumentService(
                 repository,
@@ -65,30 +75,72 @@ def _document_handler() -> JobHandler:
                 DocumentPipeline(repository),
             )
             progress(25)
+            processing = DocumentProcessingService(
+                document_service,
+                DocumentChunkRepository(db),
+                storage,
+                PdfTextExtractor(),
+                CharacterTextChunker(
+                    chunk_size=settings.rag_chunk_size,
+                    overlap=settings.rag_chunk_overlap,
+                ),
+            )
             if document.status != DocumentStatus.READY.value:
-                DocumentProcessingService(
-                    document_service,
-                    DocumentChunkRepository(db),
-                    storage,
-                    PdfTextExtractor(),
-                    CharacterTextChunker(
-                        chunk_size=settings.rag_chunk_size,
-                        overlap=settings.rag_chunk_overlap,
-                    ),
-                ).process(document.id)
+                try:
+                    processing.process(
+                        document.id,
+                        mark_ready=False,
+                        page_progress=lambda current, total: progress(
+                            25 + int((current / max(total, 1)) * 35)
+                        ),
+                        cancelled=cancelled,
+                    )
+                except PdfExtractionCancelled:
+                    return
+                except PdfExtractionError as exc:
+                    raise SafeJobExecutionError(exc.code, str(exc), retryable=False) from exc
+                except DocumentContentUnavailableError as exc:
+                    raise SafeJobExecutionError(
+                        "DEPENDENCY_UNAVAILABLE",
+                        "Document storage is temporarily unavailable",
+                        retryable=True,
+                    ) from exc
+                except DocumentProcessingError as exc:
+                    raise SafeJobExecutionError(
+                        "INTERNAL_PROCESSING_ERROR",
+                        "Document processing failed safely",
+                        retryable=True,
+                    ) from exc
             if cancelled():
+                current = repository.get(document.id)
+                if current is not None and current.status == DocumentStatus.PROCESSING.value:
+                    document_service.fail_processing(document.id)
                 return
             progress(70)
-            KnowledgeService(
-                document_service=document_service,
-                authorization=AuthorizationService(db, owner),
-                chunk_repository=DocumentChunkRepository(db),
-                ai_service=get_ai_service(get_provider_factory()),
-                provider=settings.rag_ai_provider,
-                embedding_model=settings.rag_embedding_model,
-                chat_model=settings.rag_chat_model,
-                embedding_dimensions=settings.rag_embedding_dimensions,
-            ).index_document(document.id)
+            try:
+                KnowledgeService(
+                    document_service=document_service,
+                    authorization=AuthorizationService(db, owner),
+                    chunk_repository=DocumentChunkRepository(db),
+                    ai_service=get_ai_service(get_provider_factory()),
+                    provider=settings.rag_ai_provider,
+                    embedding_model=settings.rag_embedding_model,
+                    chat_model=settings.rag_chat_model,
+                    embedding_dimensions=settings.rag_embedding_dimensions,
+                    allow_processing=True,
+                ).index_document(document.id)
+            except Exception as exc:
+                current = repository.get(document.id)
+                if current is not None and current.status == DocumentStatus.PROCESSING.value:
+                    document_service.fail_processing(document.id)
+                raise SafeJobExecutionError(
+                    "DEPENDENCY_UNAVAILABLE",
+                    "Indexing dependency is temporarily unavailable",
+                    retryable=True,
+                ) from exc
+            current = repository.get(document.id)
+            if current is not None and current.status == DocumentStatus.PROCESSING.value:
+                document_service.finish_processing(document.id)
             progress(95)
         finally:
             db.close()

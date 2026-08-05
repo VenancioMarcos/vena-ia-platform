@@ -25,12 +25,13 @@ class InvalidJobQueueMessage(JobQueueUnavailable):
 
 
 class JobQueue(Protocol):
-    def enqueue(self, message: JobQueueMessage, delay_seconds: float = 0) -> None: ...
+    def enqueue(self, message: JobQueueMessage, delay_seconds: float = 0) -> bool: ...
     def claim(self, worker_id: str, lease_seconds: int) -> ClaimedJob | None: ...
     def acknowledge(self, job_id: str, worker_id: str) -> None: ...
     def retry(self, message: JobQueueMessage, worker_id: str, delay_seconds: float) -> None: ...
-    def recover_abandoned(self) -> int: ...
+    def recover_abandoned(self) -> list[str]: ...
     def extend_lease(self, job_id: str, worker_id: str, lease_seconds: int) -> None: ...
+    def has_active_lease(self, job_id: str) -> bool: ...
     def ping(self) -> bool: ...
     def heartbeat(self, worker_id: str, ttl_seconds: int) -> None: ...
     def worker_available(self) -> bool: ...
@@ -48,13 +49,20 @@ class MemoryJobQueue:
         self._lock = threading.Lock()
         self._heartbeat_until = 0.0
 
-    def enqueue(self, message: JobQueueMessage, delay_seconds: float = 0) -> None:
+    def enqueue(self, message: JobQueueMessage, delay_seconds: float = 0) -> bool:
         with self._lock:
             self._messages[message.job_id] = message
+            if (
+                message.job_id in self._ready
+                or message.job_id in self._delayed
+                or message.job_id in self._leases
+            ):
+                return False
             if delay_seconds > 0:
                 self._delayed[message.job_id] = self._clock() + delay_seconds
             elif message.job_id not in self._ready and message.job_id not in self._leases:
                 self._ready.append(message.job_id)
+            return True
 
     def _promote(self) -> None:
         now = self._clock()
@@ -81,6 +89,8 @@ class MemoryJobQueue:
     def acknowledge(self, job_id: str, worker_id: str) -> None:
         with self._lock:
             lease = self._leases.get(job_id)
+            if lease is None and job_id not in self._messages:
+                return
             if lease is None or lease[0] != worker_id:
                 raise JobQueueUnavailable("Job lease ownership mismatch")
             del self._leases[job_id]
@@ -96,7 +106,7 @@ class MemoryJobQueue:
             self._messages[message.job_id] = message
             self._delayed[message.job_id] = self._clock() + max(delay_seconds, 0)
 
-    def recover_abandoned(self) -> int:
+    def recover_abandoned(self) -> list[str]:
         with self._lock:
             now = self._clock()
             expired = [job_id for job_id, (_, until) in self._leases.items() if until <= now]
@@ -104,7 +114,7 @@ class MemoryJobQueue:
                 del self._leases[job_id]
                 if job_id in self._messages:
                     self._ready.appendleft(job_id)
-            return len(expired)
+            return expired
 
     def extend_lease(self, job_id: str, worker_id: str, lease_seconds: int) -> None:
         with self._lock:
@@ -112,6 +122,11 @@ class MemoryJobQueue:
             if lease is None or lease[0] != worker_id:
                 raise JobQueueUnavailable("Job lease ownership mismatch")
             self._leases[job_id] = (worker_id, self._clock() + lease_seconds)
+
+    def has_active_lease(self, job_id: str) -> bool:
+        with self._lock:
+            lease = self._leases.get(job_id)
+            return bool(lease and lease[1] > self._clock())
 
     def ping(self) -> bool:
         return True
@@ -148,11 +163,41 @@ class RedisJobQueue:
     """
 
     _ACK = """
-    if redis.call('HGET', KEYS[2], ARGV[1]) ~= ARGV[2] then return 0 end
+    local owner = redis.call('HGET', KEYS[2], ARGV[1])
+    if not owner and redis.call('HEXISTS', KEYS[3], ARGV[1]) == 0 then return 2 end
+    if owner ~= ARGV[2] then return 0 end
     redis.call('ZREM', KEYS[1], ARGV[1])
     redis.call('HDEL', KEYS[2], ARGV[1])
     redis.call('HDEL', KEYS[3], ARGV[1])
+    redis.call('SREM', KEYS[4], ARGV[1])
     return 1
+    """
+
+    _ENQUEUE = """
+    redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])
+    if redis.call('SADD', KEYS[4], ARGV[1]) == 0 then return 0 end
+    if tonumber(ARGV[3]) > 0 then
+      redis.call('ZADD', KEYS[3], ARGV[4], ARGV[1])
+    else
+      redis.call('RPUSH', KEYS[2], ARGV[1])
+    end
+    return 1
+    """
+
+    _RECOVER = """
+    local expired = redis.call('ZRANGEBYSCORE', KEYS[1], '-inf', ARGV[1])
+    local recovered = {}
+    for _, id in ipairs(expired) do
+      if redis.call('ZREM', KEYS[1], id) == 1 then
+        redis.call('HDEL', KEYS[2], id)
+        if redis.call('HEXISTS', KEYS[4], id) == 1 then
+          redis.call('SADD', KEYS[5], id)
+          redis.call('LPUSH', KEYS[3], id)
+          table.insert(recovered, id)
+        end
+      end
+    end
+    return recovered
     """
 
     _EXTEND = """
@@ -172,36 +217,42 @@ class RedisJobQueue:
     def _payload(message: JobQueueMessage) -> str:
         return json.dumps(asdict(message), separators=(",", ":"), sort_keys=True)
 
-    def enqueue(self, message: JobQueueMessage, delay_seconds: float = 0) -> None:
+    def enqueue(self, message: JobQueueMessage, delay_seconds: float = 0) -> bool:
         try:
-            pipe = self._client.pipeline(transaction=True)
-            pipe.hset(self._key("payloads"), message.job_id, self._payload(message))
-            if delay_seconds > 0:
-                pipe.zadd(
-                    self._key("delayed"),
-                    {message.job_id: time.time() + delay_seconds},
-                )
-            else:
-                pipe.rpush(self._key("ready"), message.job_id)
-            pipe.execute()
+            result = self._client.eval(
+                self._ENQUEUE,
+                4,
+                self._key("payloads"),
+                self._key("ready"),
+                self._key("delayed"),
+                self._key("scheduled"),
+                message.job_id,
+                self._payload(message),
+                str(max(delay_seconds, 0)),
+                str(time.time() + max(delay_seconds, 0)),
+            )
+            return result == 1
         except RedisError as exc:
             raise JobQueueUnavailable("Asynchronous queue is unavailable") from exc
 
     def claim(self, worker_id: str, lease_seconds: int) -> ClaimedJob | None:
         now = time.time()
         try:
-            raw = cast(Any, self._client.eval(
-                self._CLAIM,
-                5,
-                self._key("ready"),
-                self._key("delayed"),
-                self._key("leases"),
-                self._key("workers"),
-                self._key("payloads"),
-                str(now),
-                str(now + lease_seconds),
-                worker_id,
-            ))
+            raw = cast(
+                Any,
+                self._client.eval(
+                    self._CLAIM,
+                    5,
+                    self._key("ready"),
+                    self._key("delayed"),
+                    self._key("leases"),
+                    self._key("workers"),
+                    self._key("payloads"),
+                    str(now),
+                    str(now + lease_seconds),
+                    worker_id,
+                ),
+            )
         except RedisError as exc:
             raise JobQueueUnavailable("Asynchronous queue is unavailable") from exc
         if raw is None:
@@ -221,16 +272,17 @@ class RedisJobQueue:
         try:
             result = self._client.eval(
                 self._ACK,
-                3,
+                4,
                 self._key("leases"),
                 self._key("workers"),
                 self._key("payloads"),
+                self._key("scheduled"),
                 job_id,
                 worker_id,
             )
         except RedisError as exc:
             raise JobQueueUnavailable("Asynchronous queue is unavailable") from exc
-        if result != 1:
+        if result not in {1, 2}:
             raise JobQueueUnavailable("Job lease ownership mismatch")
 
     def retry(self, message: JobQueueMessage, worker_id: str, delay_seconds: float) -> None:
@@ -245,6 +297,7 @@ class RedisJobQueue:
                 pipe.zrem(self._key("leases"), message.job_id)
                 pipe.hdel(self._key("workers"), message.job_id)
                 pipe.hset(self._key("payloads"), message.job_id, self._payload(message))
+                pipe.sadd(self._key("scheduled"), message.job_id)
                 pipe.zadd(
                     self._key("delayed"),
                     {message.job_id: time.time() + max(delay_seconds, 0)},
@@ -253,22 +306,22 @@ class RedisJobQueue:
         except RedisError as exc:
             raise JobQueueUnavailable("Asynchronous queue is unavailable") from exc
 
-    def recover_abandoned(self) -> int:
+    def recover_abandoned(self) -> list[str]:
         try:
-            expired = cast(
+            raw_ids = cast(
                 list[str | bytes],
-                self._client.zrangebyscore(self._key("leases"), "-inf", time.time()),
+                self._client.eval(
+                    self._RECOVER,
+                    5,
+                    self._key("leases"),
+                    self._key("workers"),
+                    self._key("ready"),
+                    self._key("payloads"),
+                    self._key("scheduled"),
+                    str(time.time()),
+                ),
             )
-            count = 0
-            for raw in expired:
-                job_id = raw.decode() if isinstance(raw, bytes) else raw
-                with self._client.pipeline(transaction=True) as pipe:
-                    pipe.zrem(self._key("leases"), job_id)
-                    pipe.hdel(self._key("workers"), job_id)
-                    pipe.lpush(self._key("ready"), job_id)
-                    results = pipe.execute()
-                count += int(results[0] == 1)
-            return count
+            return [raw.decode() if isinstance(raw, bytes) else raw for raw in raw_ids]
         except RedisError as exc:
             raise JobQueueUnavailable("Asynchronous queue is unavailable") from exc
 
@@ -287,6 +340,13 @@ class RedisJobQueue:
             raise JobQueueUnavailable("Asynchronous queue is unavailable") from exc
         if result != 1:
             raise JobQueueUnavailable("Job lease ownership mismatch")
+
+    def has_active_lease(self, job_id: str) -> bool:
+        try:
+            score = cast(Any, self._client.zscore(self._key("leases"), job_id))
+            return score is not None and float(score) > time.time()
+        except RedisError as exc:
+            raise JobQueueUnavailable("Asynchronous queue is unavailable") from exc
 
     def ping(self) -> bool:
         try:
