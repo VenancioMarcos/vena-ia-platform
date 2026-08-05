@@ -596,6 +596,11 @@ novos tipos de busca, microserviço e deploy continuam fora. PDF sem texto mant�
 
 ## v1.6 — Reliability and Scalability
 
+**Estado do Package 1:** Runtime and Container Reproducibility implementa matriz
+oficial, manifesto/policy check, Python 3.13.11 oficial com 3.14.6 experimental,
+Node 22.20.0, pnpm 11.9.0, imagens/digests e CI de builds. Budgets, carga,
+capacidade, escalabilidade horizontal e packages posteriores não foram iniciados.
+
 Objetivo: medir e fortalecer a plataforma antes de ampliar funções de engenharia.
 
 Entregas: imagens/runtime fixados, matriz Python suportada, budgets de timeout e
@@ -613,6 +618,9 @@ Critérios de segurança e aceite: limites medidos, falha segura, sem resposta
 fabricada e sem dependência de estado apenas em processo.
 
 Condição de avanço: capacidade e gargalos documentados para um piloto definido.
+
+O Package 1 não satisfaz essa condição de avanço: ele reduz deriva de runtime e
+imagens, mas não mede capacidade nem altera R-034.
 
 ---
 

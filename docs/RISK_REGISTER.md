@@ -31,8 +31,8 @@
 | R-034 | MÉDIO | Não há deploy, capacidade ou escalabilidade validados. | Release limita-se ao código e ambiente local; medir antes de piloto/deploy. | ACEITO v1.0 |
 | R-006 | MÉDIO | O frontend apresentava textos históricos enquanto backend e roadmap avançavam. | Textos operacionais foram atualizados e as versões de API/frontend unificadas em 1.0.0. | MITIGADO v1.0 |
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
-| R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o projeto e o CI exigem Python 3.13. | Validar também em Python 3.13 e manter matriz explícita de versões suportadas. | ABERTO |
-| R-009 | MÉDIO | `minio/minio:latest` não está fixado por versão ou digest. | Fixar imagem validada e estabelecer rotina de atualização. | ABERTO |
+| R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o runtime oficial é Python 3.13.11. | Matriz/manifesto alinham CI, container e local recomendado em 3.13.11; regressão 3.14.6 passa, mas permanece experimental e não bloqueia o gate oficial. | MITIGADO v1.6 PACKAGE 1 / 3.14 EXPERIMENTAL |
+| R-009 | MÉDIO | Imagens flutuantes podiam alterar runtime sem mudança no Git. | Todas as bases/serviços usam tag explícita + digest; policy fail-closed proíbe `latest` e runbook exige revisão/rollback. | MITIGADO v1.6 PACKAGE 1 |
 | R-010 | MÉDIO | Eventos sensíveis precisavam de correlação persistente com requests e mutações operacionais. | Packages 1–3 adicionam schema/redaction, IDs persistidos, retenção de auditoria em PostgreSQL e drill integral com evidência allowlisted. | MITIGADO v1.4 PACKAGE 3 |
 | R-011 | BAIXO | Existe `.env` local real, embora ignorado e sem segredo detectado na auditoria. | Manter ignorado, limitar permissões e revisar antes de qualquer empacotamento. | MONITORAR |
 | R-012 | BAIXO | A suíte gerava aviso de depreciação de `TestClient`/HTTPX. | Dependência de desenvolvimento migrada para HTTPX2 e imports direcionados ao cliente Starlette compatível. | MITIGADO v1.1 |

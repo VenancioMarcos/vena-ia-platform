@@ -8,6 +8,27 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.6 Package 1
+* Manifesto executável `vena-ia.runtime-policy/v1`, matriz oficial e policy check
+  fail-closed alinham Python, Node, pnpm, Dockerfiles, Compose, CI e lockfile.
+* Runtime Policy CI valida configuração e constrói API/Web a partir de imagens-base
+  fixadas por versão e digest imutável.
+* Runbook versionado define revisão, proveniência, licença, compatibilidade de dados
+  e rollback sem merge ou atualização automática.
+
+### Alterado — v1.6 Package 1
+* Python 3.13.11 é oficial; Python 3.14.6 permanece experimental após regressão
+  local. Node 22.20.0, pnpm 11.9.0 e pip 26.1.2 passam a ser explícitos.
+* PostgreSQL/pgvector, Redis, MinIO, Python e Node deixam de usar referências
+  flutuantes; GitHub Actions são fixadas por commit.
+* Dockerfile Web usa pnpm frozen e build/start de produção; API/Web executam como
+  usuários não privilegiados, com healthchecks, e o worker reutiliza a imagem API.
+
+### Segurança — v1.6 Package 1
+* `latest` é proibido por teste; `.env`/segredos não entram em contextos ou
+  evidências. A ausência de scanner/SBOM e lock Python transitive permanece
+  documentada, sem alegação de ausência completa de vulnerabilidades.
+
 ## [1.5.0] — 2026-08-05 — Asynchronous Processing
 
 ### Adicionado — Package 2

@@ -934,6 +934,34 @@ Nenhum OCR, microserviço, dependência externa, GPU ou deploy integra a decisã
 
 ---
 
+## DEC-027 — Manifesto executável de runtimes e imagens imutáveis
+
+**Data:** 2026-08-05
+**Status:** Aprovada
+**Tipo:** Arquitetura / Infraestrutura / Segurança / Operação
+**Documentos relacionados:** `docs/adr/ADR-0026-runtime-and-container-reproducibility.md`,
+`docs/RUNTIME_SUPPORT_MATRIX.md`, `runtime-policy.json`
+
+### Contexto
+
+Runtimes por major/minor, imagens flutuantes e divergência npm/pnpm permitiam que
+CI e containers resolvessem artefatos diferentes sem mudança no Git.
+
+### Decisão
+
+Python 3.13.11 é oficial e 3.14.6 experimental; Node 22.20.0, pnpm 11.9.0 e pip
+26.1.2 são explícitos. Imagens externas exigem tag e digest, Actions exigem commit
+SHA, frontend exige lockfile frozen. `runtime-policy.json` é validado em CI e o
+procedimento de atualização sempre requer branch, regressão, revisão e rollback.
+
+### Impacto
+
+R-008 e R-009 são mitigados no Package 1. R-018/R-033/R-034/R-038 não são
+reduzidos. Ausência de lock transitive Python e scanner dedicado permanece
+limitação explícita. Não existe migration, deploy ou mudança de arquitetura.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

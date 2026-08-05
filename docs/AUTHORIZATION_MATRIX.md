@@ -33,6 +33,7 @@
 | Documentos | iniciar processamento | Próprio | Próprio | Permitido | Negado (`401`) |
 | Jobs de documento | criar/consultar/cancelar/repetir | Próprio | Próprio | Permitido para recurso acessível | Negado (`401`) |
 | Recovery de jobs | reconciliar automaticamente no worker, sem endpoint | Operação interna; sem acesso público | Operação interna; sem acesso público | Operação interna; sem endpoint admin | Negado; endpoint inexistente |
+| Política de runtimes/imagens | validar manifesto, pins, CI e rollback | Operação interna; sem endpoint | Operação interna; sem endpoint | Operação interna; sem endpoint | Negado; endpoint inexistente |
 | Catálogo de documentos | listar/status/estatísticas | Negado (`403`) | Negado (`403`) | Permitido | Negado (`401`) |
 | Chat | consultar capacidade | Permitido | Permitido | Permitido | Negado (`401`) |
 | Mensagens | criar/listar | Próprio | Próprio | Permitido | Negado (`401`) |

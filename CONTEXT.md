@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.5 concluídas e publicadas; v1.6 permanece planejada e não iniciada.
+* **Fase:** v0.1–v1.5 concluídas e publicadas; v1.6 Package 1 em implementação/revisão na branch `codex/v1.6-reliability-scalability`.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.5.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.
@@ -149,6 +149,11 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   operacionais, frontend, Compose, runtime/health/OpenAPI e validação direta da tag
   foram executados; integrações reais PostgreSQL/Redis/MinIO permanecem comprovadas
   pelo Backend CI final.
+* **v1.6 Reliability Package 1:** `runtime-policy.json` passa a ser o manifesto
+  executável de Python 3.13.11, Node 22.20.0, pnpm 11.9.0, pip 26.1.2, imagens e
+  Actions. Python 3.14.6 é experimental. Bases API/Web, PostgreSQL/pgvector, Redis
+  e MinIO usam tag explícita + digest; CI aplica policy e builds. Não há migration,
+  mudança de dados, capacidade medida, deploy ou início dos packages seguintes.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

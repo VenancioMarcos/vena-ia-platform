@@ -311,3 +311,12 @@ aponta ao commit deste registro de release e a GitHub Release foi publicada em
 `https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.5.0`, sem deploy.
 A validação direta da tag repetiu os gates locais; PostgreSQL/Redis/MinIO reais
 permanecem comprovados pelo CI final. A v1.6 não foi iniciada.
+
+## 2026-08-05 — v1.6 Package 1 Runtime and Container Reproducibility
+
+O CTO aprovou a Release v1.5.0 e emitiu `TASK-V16-001`, exclusivamente para
+eliminar deriva de runtimes, imagens, Dockerfiles, Compose e CI. A branch
+`codex/v1.6-reliability-scalability` parte de `f6b6399`. O escopo autoriza matriz,
+manifesto/policy, pins, builds, testes, documentação, commits, push e Draft PR.
+Merge, tag, Release, deploy, carga, capacidade, escalabilidade e packages seguintes
+permanecem proibidos.
