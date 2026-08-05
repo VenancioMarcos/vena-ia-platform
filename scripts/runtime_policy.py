@@ -98,7 +98,7 @@ def validate_repository(root: Path) -> list[str]:
         violations,
         file_name="apps/web/pnpm-workspace.yaml",
         content=pnpm_workspace,
-        expected="onlyBuiltDependencies:\n  - sharp\n  - unrs-resolver",
+        expected="allowBuilds:\n  sharp: true\n  unrs-resolver: true",
     )
     if "lockfileVersion: '9.0'" not in lockfile:
         violations.append("apps/web/pnpm-lock.yaml: expected lockfile version 9.0")
