@@ -49,7 +49,9 @@ jobs:
         run: python scripts/runtime_policy.py
 
       - name: Validate Compose
-        run: docker compose config --no-env-resolution --quiet
+        run: |
+          cp .env.example .env
+          docker compose config --quiet
 
       - name: Build pinned API and Web images
         run: |
