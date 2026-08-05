@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.3 concluídas e publicadas; v1.4 — Observability and Auditability Package 1 em implementação.
+* **Fase:** v0.1–v1.3 concluídas e publicadas; v1.4 — Observability and Auditability Packages 1–3 implementados na Draft PR #15, aguardando revisão.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.3.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `f42a1b7c9d30` adiciona auditoria persistente e `auth_version`.
@@ -100,6 +100,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   Alembic completo e integrações reais PostgreSQL/Redis/MinIO. O round trip
   criptografado descartável mediu backup 0,397 s, restore 0,404 s e RPO técnico
   1,248 s para 1 objeto/27 bytes; não são SLOs de produção.
+* **v1.4 Observability Package 3:** o drill controlado cobre indisponibilidade e
+  recuperação de PostgreSQL, Redis e MinIO, provedor de IA, readiness, rate limit,
+  autenticação, processamento, backup, restore e erro interno. O contrato
+  `vena-ia.incident-drill/v1` gera JSON determinístico e checksum fora do
+  repositório, sem logs brutos, segredos, IDs de domínio ou conteúdo. Limiares são
+  explícitos, validados e calibrados apenas com cenários sintéticos. Auditoria
+  sensível continua persistente no PostgreSQL por política de 90 dias; métricas e
+  tracing continuam efêmeros por processo, sem SaaS, backend externo ou transporte
+  real de alertas. R-010 é mitigado; R-032 e R-033 permanecem residuais/monitorados.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

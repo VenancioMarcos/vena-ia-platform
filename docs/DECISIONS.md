@@ -843,6 +843,39 @@ um backend externo exige decisão e autorização posteriores.
 
 ---
 
+## DEC-024 — Evidência operacional local e retenção separada por tipo de sinal
+
+**Data:** 2026-08-04
+**Status:** Aprovada
+**Tipo:** Arquitetura / Segurança / Operação
+**Documentos relacionados:** `docs/adr/ADR-0023-incident-drill-evidence-retention.md`,
+`docs/runbooks/INCIDENT_DRILL.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Métricas e spans locais não sobrevivem ao reinício e não existe infraestrutura
+aprovada para telemetria histórica externa. Ao mesmo tempo, eventos sensíveis
+precisam de retenção auditável e os gates da v1.4 exigem evidência reproduzível.
+
+### Decisão
+
+Manter auditoria sensível persistente no PostgreSQL sob a política atual de 90
+dias. Manter métricas e tracing efêmeros por processo, sem improvisar backend
+distribuído ou transporte externo. Produzir evidência controlada e allowlisted por
+`vena-ia.incident-drill/v1`, em artefato opcional fora do repositório com SHA-256.
+Limiares são configuração limitada e calibrada exclusivamente por cenários
+sintéticos; não derivam de comportamento individual nem constituem SLO.
+
+### Impacto
+
+R-010 pode ser encerrado como mitigado porque correlação, persistência, retenção e
+drill estão comprovados. R-032 continua parcialmente mitigado e R-033 continua
+monitorado: reinício, múltiplas réplicas, histórico e dependências externas exigem
+gate futuro de infraestrutura. SaaS, webhook, exportador e dados reais continuam
+fora do escopo.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

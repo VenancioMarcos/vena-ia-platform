@@ -1,4 +1,4 @@
-# Runbook — Structured Observability Packages 1–2
+# Runbook — Structured Observability Packages 1–3
 
 **Schema:** `vena-ia.observability/v1`
 **External telemetry:** disabled / not implemented
@@ -82,6 +82,9 @@ Metrics and spans are per-process and ephemeral. They are diagnostic evidence,
 not production SLOs, capacity results or historical monitoring. Adding an
 external backend, agent, exporter or public route requires a later approved gate.
 
-Package 3 remains responsible for an explicitly authorized operational acceptance
-scope: incident drill, evidence-based thresholds, historical backend/retention
-decision and any real alert delivery. None is active in Package 2.
+Package 3 deliberately keeps metrics and spans ephemeral and per process. Restart
+loses both; replicas do not aggregate. Persistent security audit remains in
+PostgreSQL under `SECURITY_AUDIT_RETENTION_DAYS` (90 days by default), while the
+allowlisted drill bundle provides reproducible point-in-time evidence outside the
+repository. No external backend or telemetry transport is active. See
+`INCIDENT_DRILL.md` and ADR-0023.

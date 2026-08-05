@@ -226,3 +226,18 @@ PostgreSQL/pgvector, Redis e MinIO reais validaram readiness, backup/restore
 PostgreSQL e round trip criptografado combinado. O probe descartável registrou
 backup 0,397 s, restore 0,404 s e RPO técnico 1,248 s para 1 objeto/27 bytes,
 sem SLO ou afirmação produtiva. A PR #15 permanece Draft, sem merge ou deploy.
+
+## 2026-08-04 — v1.4 Observability Package 3
+
+O CTO aprovou o Package 2 e emitiu `TASK-V14-003` para concluir exclusivamente na
+Draft PR #15 o incident drill ponta a ponta, contrato/bundle de evidência,
+retenção/backend, calibração de limiares e riscos R-010/R-032/R-033. Merge, tag,
+release, deploy, nova PR, backend/telemetria externos, transporte real de alertas,
+dados reais e v1.5 permanecem proibidos.
+
+O Package 3 implementa onze cenários controlados com recuperação das três
+dependências, `vena-ia.incident-drill/v1`, JSON determinístico e SHA-256 fora do
+repositório. Auditoria continua persistente por 90 dias; métricas/tracing são
+efêmeros. R-010 foi mitigado; R-032/R-033 continuam monitorados. Os gates locais
+aprovaram Ruff, mypy, 215 testes de API, 46 operacionais, frontend, Compose,
+OpenAPI 51 e secret scan; integrações reais permanecem reservadas ao Backend CI.

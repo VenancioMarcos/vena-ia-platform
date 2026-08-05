@@ -72,6 +72,10 @@ estados seguros. Todas as respostas incluem `X-Request-ID` e `X-Correlation-ID`;
 eventos seguem `vena-ia.observability/v1` e não coletam bodies, credenciais ou
 conteúdo de documentos/IA.
 
+O drill operacional controlado é executado por `python -m scripts.incident_drill`
+e grava `vena-ia.incident-drill/v1` somente fora do repositório. Ele não é endpoint
+da API, não usa dados reais e não envia telemetria ou alertas externamente.
+
 Rotas protegidas aceitam cookie HttpOnly ou `Authorization: Bearer <token>`.
 Consulte `docs/AUTHORIZATION_MATRIX.md`.
 

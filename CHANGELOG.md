@@ -9,6 +9,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 ## [Unreleased]
 
 ### Adicionado
+* Drill operacional controlado para onze cenários de incidente e recuperação,
+  com contrato `vena-ia.incident-drill/v1`, request/correlation IDs, métricas,
+  alertas locais, spans, eventos de auditoria aplicáveis e respostas seguras.
+* Bundle opcional de evidência JSON determinístico, armazenado fora do repositório,
+  com SHA-256, recusa de overwrite, traversal e symlink, sem logs brutos ou dados
+  de usuário.
+* Limiares configuráveis e validados para falhas repetidas de autenticação,
+  rate limit, processamento, readiness, dependências e erros internos.
 * Contrato `vena-ia.metrics/v1` com counters, gauge de readiness, histogramas,
   labels/buckets fechados, reset de testes e coletor local thread-safe/fail-open.
 * Endpoint administrativo `GET /internal/metrics`, desabilitado por padrão e
@@ -28,6 +36,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   `/health` preserva o contrato existente.
 
 ### Segurança
+* A evidência do drill usa allowlist e rejeita credenciais, IDs de domínio,
+  conteúdo documental/IA e stack traces; artefatos gerados permanecem ignorados.
 * Labels de alta cardinalidade e dados sensíveis são recusadas nas métricas;
   alertas e spans não aceitam conteúdo de usuário, credenciais ou IDs de domínio.
 

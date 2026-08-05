@@ -541,6 +541,14 @@ limiares calibrados com evidência; entrega real de alertas somente se aprovada;
 e fechamento formal dos riscos R-010/R-032/R-033. Nenhum desses itens está
 implícito ou implementado pelo contrato local do Package 2.
 
+Estado do Package 3: drill reproduzível para onze cenários controlados, contrato
+`vena-ia.incident-drill/v1`, bundle determinístico com SHA-256 e limiares
+configuráveis/validados foram implementados na mesma Draft PR #15. A auditoria
+sensível mantém retenção persistente de 90 dias; métricas e tracing permanecem
+efêmeros por processo. Não há backend histórico, SaaS, exportador ou transporte
+externo de alertas. R-010 foi mitigado; R-032 e R-033 permanecem monitorados como
+riscos residuais e não bloqueiam a revisão técnica do pacote.
+
 ---
 
 ## v1.5 — Asynchronous Processing
