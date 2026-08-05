@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.4 concluídas e publicadas; v1.5 — Asynchronous Processing finalizada tecnicamente e em preparação de release na PR #16.
+* **Fase:** v0.1–v1.5 concluídas e publicadas; v1.6 permanece planejada e não iniciada.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.5.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.
@@ -141,6 +141,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   O Backend CI do Package 2 no head `2086399` aprovou Ruff, mypy, ciclo Alembic,
   253 testes de API (incluindo Redis real) e 52 operacionais com PostgreSQL/pgvector,
   MinIO e round trip criptografado; Frontend CI/build também passou.
+* **Release v1.5.0:** a PR [#16](https://github.com/VenancioMarcos/vena-ia-platform/pull/16)
+  foi integrada por Squash Merge em `a3c2f6b`. A versão final 1.5.0 preserva o
+  Alembic head `b18e4c7d2a91`; a tag anotada e a
+  [GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.5.0)
+  foram publicadas sem deploy. Ruff, mypy, 251 testes locais de API, 46 testes
+  operacionais, frontend, Compose, runtime/health/OpenAPI e validação direta da tag
+  foram executados; integrações reais PostgreSQL/Redis/MinIO permanecem comprovadas
+  pelo Backend CI final.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

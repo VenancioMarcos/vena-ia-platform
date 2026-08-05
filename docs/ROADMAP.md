@@ -553,10 +553,9 @@ riscos residuais e não bloqueiam a revisão técnica do pacote.
 
 ## v1.5 — Asynchronous Processing
 
-**Estado:** Packages 1 e 2 concluídos e aprovados; release v1.5.0 em preparação
-na PR #16 em 2026-08-05. R-016 está parcialmente mitigado, R-017 permanece aberto
-com OCR adiado, R-033 é residual e R-038 permanece monitorado. A v1.6 não foi
-iniciada.
+**Estado:** concluída e publicada como v1.5.0 em 2026-08-05 pela PR #16. R-016 está
+parcialmente mitigado, R-017 permanece aberto com OCR adiado, R-033 é residual e
+R-038 permanece monitorado. A v1.6 não foi iniciada.
 
 Objetivo: retirar ingestão, OCR futuro e indexação longa da requisição HTTP.
 

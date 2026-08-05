@@ -302,3 +302,12 @@ A ordem encerra a v1.5 sem Package 3 e autoriza preparar a versão final 1.5.0,
 revalidar integralmente, retirar a PR #16 de Draft, realizar Squash Merge, publicar
 a tag anotada e a GitHub Release e validar diretamente a tag. Deploy, OCR, novos
 tipos de job, microserviço, serviços externos e início da v1.6 permanecem proibidos.
+
+A preparação final 1.5.0 foi validada localmente e no CI dos runs backend
+`31053239113` e frontend `31053244413`. A PR #16 saiu de Draft limpa/mergeável e
+foi integrada por Squash Merge em `a3c2f6b`. A main pós-merge aprovou Ruff, mypy,
+251 testes de API, 46 operacionais, frontend e Compose. A tag anotada `v1.5.0`
+aponta ao commit deste registro de release e a GitHub Release foi publicada em
+`https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.5.0`, sem deploy.
+A validação direta da tag repetiu os gates locais; PostgreSQL/Redis/MinIO reais
+permanecem comprovados pelo CI final. A v1.6 não foi iniciada.

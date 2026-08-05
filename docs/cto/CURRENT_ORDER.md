@@ -14,6 +14,10 @@ DEPLOY=PROHIBITED
 V1_5_PACKAGES_1_2=APPROVED_BY_CTO
 OCR_IMPLEMENTATION=PROHIBITED
 V1_6=PROHIBITED
+STATE=COMPLETED
+MERGE_COMMIT=a3c2f6befa11cdfe8a8678a6cc9212ea17a975be
+TAG=v1.5.0
+RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.5.0
 ```
 
 Escopo: finalizar versões e documentação, validar, retirar a PR #16 de Draft,
