@@ -55,3 +55,10 @@ Em 2026-08-04, 100 execuções sintéticas dos onze cenários totalizaram 151,97
 média 1,520 ms, p50 1,335 ms, p95 2,206 ms e p99 2,577 ms no workspace Windows
 local. O bundle verificado teve 11 cenários e checksum SHA-256 válido. A amostra é
 somente evidência do custo do runner sintético e não mede infraestrutura real.
+
+O Backend CI run `30967191649` validou o pacote em Python 3.13 com PostgreSQL/
+pgvector, Redis e MinIO descartáveis: 216 testes de API e 52 operacionais passaram,
+incluindo os seis testes do contrato de drill. O ciclo Alembic chegou ao head
+`a63d2f8c1b04`, realizou downgrade e retornou ao head. O probe criptografado de
+1 objeto/27 bytes mediu backup 0,426 s, restore 0,418 s e RPO técnico 1,247 s;
+esses números também não constituem SLO ou capacidade de produção.

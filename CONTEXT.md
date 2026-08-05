@@ -109,6 +109,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   sensível continua persistente no PostgreSQL por política de 90 dias; métricas e
   tracing continuam efêmeros por processo, sem SaaS, backend externo ou transporte
   real de alertas. R-010 é mitigado; R-032 e R-033 permanecem residuais/monitorados.
+  O Backend CI no head `22f224b` aprovou Ruff, mypy, o ciclo Alembic completo,
+  216 testes de API e 52 testes operacionais com PostgreSQL/pgvector, Redis e
+  MinIO reais. O round trip criptografado descartável mediu backup 0,426 s,
+  restore 0,418 s e RPO técnico 1,247 s para 1 objeto/27 bytes, sem SLO produtivo.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

@@ -241,3 +241,9 @@ repositório. Auditoria continua persistente por 90 dias; métricas/tracing são
 efêmeros. R-010 foi mitigado; R-032/R-033 continuam monitorados. Os gates locais
 aprovaram Ruff, mypy, 215 testes de API, 46 operacionais, frontend, Compose,
 OpenAPI 51 e secret scan; integrações reais permanecem reservadas ao Backend CI.
+
+O Backend CI final no head `22f224b` concluiu em 1m55s: Ruff, mypy, Alembic
+upgrade/downgrade/upgrade, 216 testes de API e 52 testes operacionais passaram.
+PostgreSQL/pgvector, Redis e MinIO reais validaram readiness e os round trips de
+backup/restore. O probe de 1 objeto/27 bytes registrou backup 0,426 s, restore
+0,418 s e RPO técnico 1,247 s, sem SLO ou alegação produtiva.
