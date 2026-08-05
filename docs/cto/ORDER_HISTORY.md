@@ -320,3 +320,9 @@ eliminar deriva de runtimes, imagens, Dockerfiles, Compose e CI. A branch
 manifesto/policy, pins, builds, testes, documentação, commits, push e Draft PR.
 Merge, tag, Release, deploy, carga, capacidade, escalabilidade e packages seguintes
 permanecem proibidos.
+
+A entrega foi concluída na Draft PR #17. O head `84c219a` passou no Backend CI
+`31057602795` (Ruff, mypy em 135 arquivos, ciclo Alembic, 253 testes de API e 55
+operacionais), Frontend CI `31057602796` e Runtime Policy CI `31057602808`. As
+imagens fixadas da API e Web foram construídas no CI; a PR permanece Draft,
+mergeável e sem merge, tag, Release ou deploy.

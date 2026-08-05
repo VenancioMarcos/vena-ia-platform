@@ -3,7 +3,7 @@
 ```text
 PROJECT=VENA_IA_PLATFORM
 ROLE=AUTONOMOUS_EXECUTOR
-STATE=V1_6_PACKAGE_1_IN_PROGRESS
+STATE=V1_6_PACKAGE_1_READY_FOR_CTO_REVIEW
 LAST_MISSION=TASK_V16_001
 LAST_RESULT=V1_5_RELEASE_APPROVED_BY_CTO
 ACTIVE_BRANCH=codex/v1.6-reliability-scalability
@@ -11,7 +11,7 @@ V1_2_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.
 V1_3_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.3.0
 V1_4_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.4.0
 V1_5_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.5.0
-PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/16
+PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/17
 V1_4_PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/15
 V1_5_PACKAGE_1_CODE_HEAD=6b6f871
 V1_5_PACKAGE_1_LOCAL=RUFF_MYPY_236_API_PASS_2_SKIP_46_OPERATIONAL_PASS_6_SKIP_FRONTEND_COMPOSE_OPENAPI_55_ALEMBIC_HEAD
@@ -37,7 +37,10 @@ V1_6_MIGRATION=b18e4c7d2a91_UNCHANGED
 V1_6_LOCAL=POLICY_RUFF_MYPY_251_API_49_OPERATIONAL_FRONTEND_COMPOSE_PASS
 V1_6_PYTHON_314_CLEAN=INSTALL_AND_FULL_REGRESSION_PASS_EXPERIMENTAL
 V1_6_LOCAL_DOCKER=DAEMON_ABSENT_BUILDS_DEFERRED_TO_CI
-NEXT_AUTHORIZED_ACTION=VALIDATE_COMMIT_PUSH_DRAFT_PR
+V1_6_FINAL_CODE_HEAD=84c219a8b94a4b0865dcd00860c68230159f5a27
+V1_6_FINAL_CI=BACKEND_31057602795_FRONTEND_31057602796_RUNTIME_POLICY_31057602808_SUCCESS
+V1_6_PR_STATE=DRAFT_MERGEABLE_CI_GREEN
+NEXT_AUTHORIZED_ACTION=CTO_REVIEW
 PERMANENT_OPERATIONAL_LIMITS_SOURCE=docs/PERMANENT_OPERATIONAL_LIMITS.md
 PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 ```
@@ -45,9 +48,9 @@ PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 ## Checkpoint
 
 ```text
-STATE=v1.6 Package 1 em execução na branch dedicada.
-DONE=v1.5.0 aprovada; diagnóstico e pins de runtime/imagens implementados.
-NEXT=Policy, regressão, commits, push e Draft PR; merge/deploy/packages seguintes proibidos.
+STATE=v1.6 Package 1 pronta para revisão do CTO na Draft PR #17.
+DONE=Policy, regressão, imagens API/Web e todos os checks aprovados.
+NEXT=Revisão do CTO; merge/deploy/packages seguintes permanecem proibidos.
 ERROR=NONE.
 ```
 
