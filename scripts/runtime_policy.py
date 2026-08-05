@@ -49,6 +49,7 @@ def validate_repository(root: Path) -> list[str]:
     policy_ci = _read(root, ".github/workflows/runtime-policy-ci.yml")
     package = json.loads(_read(root, "apps/web/package.json"))
     lockfile = _read(root, "apps/web/pnpm-lock.yaml")
+    pnpm_workspace = _read(root, "apps/web/pnpm-workspace.yaml")
 
     images = policy.get("images", {})
     expected_locations = {
@@ -93,6 +94,12 @@ def validate_repository(root: Path) -> list[str]:
         violations.append("apps/web/package.json: packageManager is not pinned")
     if package.get("engines", {}).get("node") != "22.20.x":
         violations.append("apps/web/package.json: Node engine diverges from policy")
+    _require_contains(
+        violations,
+        file_name="apps/web/pnpm-workspace.yaml",
+        content=pnpm_workspace,
+        expected="onlyBuiltDependencies:\n  - sharp\n  - unrs-resolver",
+    )
     if "lockfileVersion: '9.0'" not in lockfile:
         violations.append("apps/web/pnpm-lock.yaml: expected lockfile version 9.0")
 
@@ -104,6 +111,7 @@ def validate_repository(root: Path) -> list[str]:
         ("frontend-ci.yml", frontend_ci, "pnpm install --frozen-lockfile"),
         ("apps/web/Dockerfile", web_docker, f"pnpm@{pnpm['container']}"),
         ("apps/web/Dockerfile", web_docker, "pnpm install --frozen-lockfile"),
+        ("apps/web/Dockerfile", web_docker, "pnpm-workspace.yaml"),
         ("apps/web/Dockerfile", web_docker, 'CMD ["pnpm", "run", "start"]'),
         ("apps/api/Dockerfile", api_docker, "USER vena-ia"),
         ("apps/web/Dockerfile", web_docker, "USER node"),

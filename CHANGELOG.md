@@ -28,6 +28,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * `latest` é proibido por teste; `.env`/segredos não entram em contextos ou
   evidências. A ausência de scanner/SBOM e lock Python transitive permanece
   documentada, sem alegação de ausência completa de vulnerabilidades.
+* Scripts de instalação frontend ficam bloqueados por padrão; somente `sharp` e
+  `unrs-resolver`, exigidos pelo build validado, integram a allowlist pnpm.
 
 ## [1.5.0] — 2026-08-05 — Asynchronous Processing
 
