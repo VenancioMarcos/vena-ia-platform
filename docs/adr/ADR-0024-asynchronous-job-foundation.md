@@ -3,7 +3,7 @@
 **Status:** Aprovada
 **Data:** 2026-08-05
 **Decisão relacionada:** DEC-025
-**Riscos relacionados:** R-016, R-017, R-033
+**Riscos relacionados:** R-016, R-017, R-033, R-038
 
 ## Contexto
 
@@ -40,3 +40,18 @@ o resultado é recusado ao fim do orçamento e o risco permanece documentado.
 
 Busca vetorial, OCR, GPU, SaaS, microserviço, deploy e novos tipos de job permanecem
 fora desta decisão.
+
+## Complemento de resiliência — Package 2
+
+O PostgreSQL permanece a fonte de verdade. Antes de consumir, o worker reconcilia
+jobs não terminais e reconstrói no Redis somente identificadores/correlação. Um
+`RUNNING` sem lease volta atomicamente a `QUEUED`, consumindo nova tentativa; um
+lease válido nunca é tomado; limite esgotado termina em `JOB_RETRY_EXHAUSTED`.
+Enqueue, recuperação e acknowledge são idempotentes e a recuperação Redis usa Lua
+atômico para impedir dois recoverers de publicar o mesmo abandono.
+
+O documento permanece `PROCESSING` durante extração, chunks, embeddings e
+indexação, chegando a `READY` somente depois do efeito completo. Retry substitui
+chunks e embeddings da mesma versão em vez de anexar efeitos. Renovação de lease e
+cancelamento entre páginas reduzem janelas de abandono, mas timeout de chamada
+síncrona continua cooperativo e não é apresentado como preemptivo.

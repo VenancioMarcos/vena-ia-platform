@@ -129,6 +129,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   frontend, Compose, OpenAPI 1.5.0-dev/55 paths e Alembic head único.
   O CI final no head `0f57c57` aprovou 238 testes de API e 52 operacionais com
   PostgreSQL/pgvector, Redis e MinIO reais; Backend e Frontend CI estão verdes.
+* **v1.5 Asynchronous Processing Package 2:** a mesma Draft PR #16 fortalece
+  recovery após reinício/interrupção, recompõe Redis pela fonte PostgreSQL, renova
+  leases, fecha duplicação concorrente e mantém documento `PROCESSING` até a
+  indexação completa. Testes sintéticos cobrem 500 páginas, cancelamento entre
+  páginas, progresso e erros PDF seguros. OCR foi avaliado e adiado (classe B), sem
+  motor/dependência/serviço externo; R-017 continua aberto e R-038 monitorado. Os
+  gates locais aprovaram Ruff, mypy, 251 testes de API, 46 operacionais, frontend,
+  Compose, runtime/OpenAPI 1.5.0-dev/55 paths e Alembic head único. O daemon Docker
+  local está ausente; integrações reais permanecem como gate do Backend CI.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

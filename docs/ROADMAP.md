@@ -579,7 +579,13 @@ cancelamento, recuperação e interface mínima foram implementados na branch
 `codex/v1.5-asynchronous-processing`. O primeiro handler executa extração, chunking
 e indexação já existente do PDF; endpoints síncronos permanecem compatíveis. OCR,
 novos tipos de busca, microserviço e deploy continuam fora. PDF sem texto mantém
-falha explícita.
+  falha explícita.
+
+  Estado do Package 2: recovery automático recompõe o Redis pela fonte durável,
+  renova leases, resolve concorrência/duplicatas e preserva efeitos idempotentes.
+  Drills cobrem reinícios, dependências, cancelamento, timeout e PDFs sintéticos de
+  500 páginas. OCR foi formalmente classificado como adiado (B), sem implementação;
+  R-017 segue aberto e timeout preemptivo/capacidade permanecem gates futuros.
 
 ---
 

@@ -271,3 +271,19 @@ O Backend CI no head `0f57c57` concluiu em 2m04s: Ruff, mypy, ciclo Alembic,
 238 testes de API e 52 operacionais passaram, incluindo Redis real, readiness do
 worker e os round trips PostgreSQL/pgvector e MinIO. Frontend CI/build também
 passou. A PR #16 permanece Draft, limpa e mergeável, sem merge ou deploy.
+
+## 2026-08-05 — v1.5 Asynchronous Processing Package 2
+
+O CTO aprovou a `TASK-V14-004`/Package 1 e emitiu `TASK-V15-002` para continuar
+exclusivamente na branch `codex/v1.5-asynchronous-processing` e Draft PR #16.
+O escopo cobre recovery/restart, concorrência, leases, efeitos parciais, PDFs
+sintéticos extensos, falhas de dependências e avaliação formal de OCR. Merge, tag,
+Release, deploy, OCR, motor OCR, serviço externo, GPU, nova PR e v1.6 permanecem
+proibidos.
+
+O Package 2 comprovou localmente recovery PostgreSQL→Redis, lease renovável,
+concorrência/idempotência, efeitos parciais seguros e corpus de 500 páginas. Ruff,
+mypy, 251 testes de API, 46 operacionais, frontend e Compose passaram. A avaliação
+OCR decidiu B — adiado, sem instalação ou envio externo. O daemon Docker local
+estava ausente; PostgreSQL/Redis/MinIO reais e os dois recoverers permanecem como
+gate obrigatório do Backend CI antes do status terminal.

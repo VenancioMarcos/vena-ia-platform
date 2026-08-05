@@ -8,6 +8,22 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.5 Package 2
+* Reconciliador automático reconstrói o transporte Redis a partir dos jobs não
+  terminais no PostgreSQL e recupera `RUNNING` sem lease, retry vencido,
+  cancelamento pendente e fila perdida após reinício.
+* Enqueue, recuperação de lease e acknowledge passam a ser atômicos/idempotentes;
+  renovação periódica mantém o lease durante bibliotecas síncronas longas.
+* Extração PDF reporta progresso por página e admite cancelamento cooperativo entre
+  páginas. O documento só fica `READY` depois da persistência e indexação completas.
+* Códigos seguros distinguem PDF criptografado, sem texto ou inválido, recurso
+  removido, dependência indisponível, timeout, cancelamento, lease perdido e retry
+  esgotado, sem stack, caminho, conteúdo ou detalhe de infraestrutura.
+* Drills e testes sintéticos cobrem reinício, concorrência, duplicação, efeitos
+  parciais, 500 páginas, Redis real e falhas controladas de dependências.
+* Avaliação formal de OCR classifica a tecnologia como adiada; nenhum motor,
+  serviço, dependência, GPU ou envio externo foi introduzido.
+
 ### Adicionado — v1.5 Package 1
 * Contrato durável `vena-ia.job/v1` com proprietário, projeto, recurso, progresso,
   tentativas, timeout, idempotência derivada, correlação, erros seguros e estados

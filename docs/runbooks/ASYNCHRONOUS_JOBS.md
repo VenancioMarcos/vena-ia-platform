@@ -6,6 +6,8 @@
 - Redis coordena ready/delayed/lease e guarda somente `job_id`, tipo e IDs de correlação.
 - `python -m scripts.worker` executa handlers allowlisted no mesmo Modular Monolith.
 - `/ready` exige PostgreSQL, Redis, MinIO e heartbeat recente do worker.
+- Cada ciclo reconcilia jobs não terminais do PostgreSQL antes do claim. Isso
+  repopula uma fila Redis reiniciada sem reexecutar estados terminais.
 
 ## Inicialização local
 
@@ -30,11 +32,16 @@ configuração é recusada explicitamente.
 
 ## Diagnóstico seguro
 
-- `JOB_EXECUTION_FAILED`: consulte logs correlacionados do operador; a API não expõe
-  stack, conteúdo ou mensagem original da dependência.
+- `PDF_ENCRYPTED`, `PDF_NO_TEXT`, `PDF_INVALID`: falhas explícitas e não retryable;
+  não há OCR implícito.
+- `RESOURCE_NOT_FOUND`: proprietário ou documento deixou de existir; não repetir.
+- `QUEUE_UNAVAILABLE`/`DEPENDENCY_UNAVAILABLE`: restaurar a dependência e deixar o
+  retry/reconciliador preservar o mesmo job.
+- `JOB_TIMED_OUT`, `JOB_LEASE_LOST`, `JOB_RETRY_EXHAUSTED`: verificar efeito
+  parcial e correlação antes de retry manual.
+- `INTERNAL_PROCESSING_ERROR`: consulte logs correlacionados; a API não expõe stack,
+  conteúdo ou mensagem original da dependência.
 - `JOB_TYPE_NOT_ALLOWED`: dado persistido não possui handler aprovado; não execute.
-- `JOB_TIMEOUT`: o orçamento foi excedido; verifique dependências e efeito parcial
-  antes de retry. A substituição de chunks é idempotente.
 - readiness `worker=unavailable`: confirme o container/processo e o Redis. Nunca
   altere manualmente o status para simular conclusão.
 - retries esgotados: preserve o job e sua auditoria; corrija a dependência antes de
@@ -44,4 +51,17 @@ configuração é recusada explicitamente.
 
 Não há OCR, execução de payload, shell do usuário, backend externo de telemetria,
 deploy independente ou garantia de capacidade. PDF sem camada textual falha de
-forma explícita e exige avaliação futura antes de qualquer OCR.
+  forma explícita e exige avaliação futura antes de qualquer OCR.
+
+## Regras de recuperação
+
+- `QUEUED`: enqueue idempotente; duplicatas não criam segundo handler.
+- `RUNNING` com lease válido: preservado. Sem lease: `QUEUED` ou
+  `JOB_RETRY_EXHAUSTED` quando no limite.
+- `RETRY_SCHEDULED`: preserva `available_at`; quando vencido volta a `QUEUED`.
+- `CANCELLATION_REQUESTED`: termina `CANCELLED`, inclusive após reinício.
+- `SUCCEEDED`, `FAILED`, `CANCELLED`, `TIMED_OUT`: nunca reentram automaticamente.
+- Retry manual de `FAILED`/`TIMED_OUT` respeita `max_attempts` e mantém `job_id`,
+  request/correlation IDs, proprietário, projeto e recurso.
+
+Procedimento detalhado e matriz dos vinte drills: `docs/runbooks/JOB_RECOVERY.md`.
