@@ -247,3 +247,10 @@ upgrade/downgrade/upgrade, 216 testes de API e 52 testes operacionais passaram.
 PostgreSQL/pgvector, Redis e MinIO reais validaram readiness e os round trips de
 backup/restore. O probe de 1 objeto/27 bytes registrou backup 0,426 s, restore
 0,418 s e RPO técnico 1,247 s, sem SLO ou alegação produtiva.
+
+## 2026-08-04 — finalização v1.4.0 e início v1.5 Package 1
+
+O CTO aprovou formalmente a `TASK-V14-003` e emitiu `TASK-V14-004`, autorizando
+retirar a PR #15 de Draft, realizar Squash Merge, publicar/validar `v1.4.0` e,
+somente após a release, iniciar a fundação de jobs assíncronos da v1.5 em branch
+e Draft PR próprias. Merge da v1.5, OCR, deploy, SaaS e v1.6 permanecem proibidos.

@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-08-04 — Observability and Auditability
+
 ### Adicionado
 * Drill operacional controlado para onze cenários de incidente e recuperação,
   com contrato `vena-ia.incident-drill/v1`, request/correlation IDs, métricas,

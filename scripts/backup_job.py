@@ -110,7 +110,7 @@ def create_encrypted_cross_store_backup() -> tuple[Path, float]:
     backup_set_id = str(uuid4())
     config = DatabaseConfig.from_environment()
     key = EncryptionKey.from_environment()
-    application_version = os.getenv("BACKUP_APPLICATION_VERSION", "1.3.0-dev")
+    application_version = os.getenv("BACKUP_APPLICATION_VERSION", "1.4.0-dev")
     retention_class = os.getenv("BACKUP_RETENTION_CLASS", "daily")
     protected = os.getenv("BACKUP_SET_PROTECTED", "false").lower() == "true"
     with tempfile.TemporaryDirectory(prefix=".vena-ia-plaintext-", dir=output) as temporary:

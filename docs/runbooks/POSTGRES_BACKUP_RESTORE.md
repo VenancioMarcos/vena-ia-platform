@@ -30,7 +30,7 @@ only with the explicit CLI options when using a controlled installation.
 ```bash
 python -m scripts.postgres_backup \
   --output-directory /secure/vena-ia-backups \
-  --application-version 1.3.0
+  --application-version 1.4.0
 ```
 
 Store the dump and its manifest together. Protect access and retention according
@@ -84,7 +84,7 @@ Contents and credentials never enter the manifest.
 python -m scripts.minio_backup \
   --output-directory /secure/vena-ia-backups \
   --bucket vena-ia-files \
-  --application-version 1.3.0-dev \
+  --application-version 1.4.0-dev \
   --backup-set-id UUID-SHARED-WITH-POSTGRES
 ```
 
