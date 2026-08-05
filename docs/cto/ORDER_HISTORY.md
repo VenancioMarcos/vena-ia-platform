@@ -219,3 +219,10 @@ comparavam o banco restaurado a um head histórico fixo. A correção `2ce8f54`
 passa a derivar o head único do grafo oficial, exige que o manifesto o registre e
 compara o restore ao manifesto; um teste com grafo temporário prova que a
 expectativa avança automaticamente quando uma migration sucessora é adicionada.
+
+O Backend CI final no head `d588ece` concluiu em 2m04s: Ruff, mypy, Alembic
+upgrade/downgrade/upgrade, 214 testes de API e 46 testes operacionais passaram.
+PostgreSQL/pgvector, Redis e MinIO reais validaram readiness, backup/restore
+PostgreSQL e round trip criptografado combinado. O probe descartável registrou
+backup 0,397 s, restore 0,404 s e RPO técnico 1,248 s para 1 objeto/27 bytes,
+sem SLO ou afirmação produtiva. A PR #15 permanece Draft, sem merge ou deploy.

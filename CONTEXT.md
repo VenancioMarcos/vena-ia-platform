@@ -96,6 +96,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   revelou dois asserts operacionais presos ao head histórico `f42a1b7c9d30`.
   A correção deriva o head único do grafo Alembic, compara-o ao manifesto e exige
   que o restore preserve esse valor, sem enfraquecer checksum ou integridade.
+  O Backend CI final aprovou 214 testes de API, 46 testes operacionais, o ciclo
+  Alembic completo e integrações reais PostgreSQL/Redis/MinIO. O round trip
+  criptografado descartável mediu backup 0,397 s, restore 0,404 s e RPO técnico
+  1,248 s para 1 objeto/27 bytes; não são SLOs de produção.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
