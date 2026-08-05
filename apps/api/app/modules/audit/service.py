@@ -4,6 +4,7 @@ from fastapi import Request
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
+from app.core.observability import current_correlation_id, current_request_id
 from app.modules.audit.models import SecurityAuditEvent
 
 
@@ -25,6 +26,8 @@ def record_security_event(
         outcome=outcome,
         reason=reason,
         origin=origin,
+        request_id=current_request_id(),
+        correlation_id=current_correlation_id(),
     )
     db.add(event)
     db.commit()
@@ -37,6 +40,8 @@ def list_security_events(
     *,
     event_type: str | None,
     user_id: str | None,
+    request_id: str | None,
+    correlation_id: str | None,
     since: datetime | None,
     until: datetime | None,
     offset: int,
@@ -52,6 +57,10 @@ def list_security_events(
                 SecurityAuditEvent.target_user_id == user_id,
             )
         )
+    if request_id is not None:
+        statement = statement.where(SecurityAuditEvent.request_id == request_id)
+    if correlation_id is not None:
+        statement = statement.where(SecurityAuditEvent.correlation_id == correlation_id)
     if since is not None:
         statement = statement.where(SecurityAuditEvent.occurred_at >= since)
     if until is not None:

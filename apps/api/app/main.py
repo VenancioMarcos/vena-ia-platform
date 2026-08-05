@@ -1,15 +1,24 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 
 from app.core.config import settings
+from app.core.alerts import AlertManager, NoOpAlertProvider
+from app.core.database import SessionLocal
+from app.core.metrics import InMemoryMetricCollector, NoOpMetricCollector
+from app.core.observability import ObservabilityMiddleware
+from app.core.readiness import DefaultReadinessChecker
+from app.core.tracing import NoOpTraceProvider, Tracer
 from app.core import models_registry  # noqa: F401  (ensures all ORM models are registered)
 from app.modules.ai.api.routes import router as ai_router
 from app.modules.audit.api.routes import router as audit_router
 from app.modules.auth.api.routes import router as auth_router
+from app.modules.auth.dependencies import AdminUserDependency
 from app.modules.auth.security_store import build_authentication_security_store
+from app.modules.audit.middleware import AuditCorrelationMiddleware
 from app.modules.chats.api.routes import router as chats_router
 from app.modules.cnc.api.routes import router as cnc_router
 from app.modules.cad.api.routes import router as cad_router
@@ -21,7 +30,7 @@ from app.modules.projects.api.routes import router as projects_router
 from app.modules.research.api.routes import router as research_router
 from app.modules.users.api.routes import router as users_router
 
-API_VERSION = "1.3.0"
+API_VERSION = "1.4.0"
 
 
 @asynccontextmanager
@@ -38,6 +47,28 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.state.auth_security_store = build_authentication_security_store(settings)
+    app.state.readiness_checker = DefaultReadinessChecker(settings)
+    app.state.audit_session_factory = SessionLocal
+    app.state.metric_collector = (
+        InMemoryMetricCollector()
+        if settings.observability_collection_enabled
+        else NoOpMetricCollector()
+    )
+    app.state.alert_manager = AlertManager(
+        NoOpAlertProvider(),
+        cooldown_seconds=settings.observability_alert_cooldown_seconds,
+        thresholds={
+            "repeated_auth_failure_threshold": (
+                settings.observability_repeated_auth_failure_threshold
+            ),
+            "rate_limit_threshold": settings.observability_rate_limit_threshold,
+            "processing_failure_threshold": settings.observability_processing_failure_threshold,
+            "readiness_degraded": settings.observability_readiness_degradation_threshold,
+            "dependency_unavailable": settings.observability_dependency_failure_threshold,
+            "unexpected_internal_error": settings.observability_internal_error_threshold,
+        },
+    )
+    app.state.tracer = Tracer(NoOpTraceProvider())
 
     app.add_middleware(
         CORSMiddleware,
@@ -46,10 +77,65 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(
+        AuditCorrelationMiddleware,
+        session_factory=lambda: app.state.audit_session_factory(),
+    )
+    app.add_middleware(
+        ObservabilityMiddleware,
+        application_version=API_VERSION,
+        environment=settings.app_env,
+        metric_collector=app.state.metric_collector,
+        tracer=app.state.tracer,
+        alert_manager=app.state.alert_manager,
+    )
 
     @app.get("/health", tags=["health"])
     def health() -> dict[str, str]:
         return {"status": "ok", "service": "vena-ia-api", "version": API_VERSION}
+
+    @app.get("/ready", tags=["health"])
+    def readiness() -> JSONResponse:
+        dependencies = app.state.readiness_checker.check()
+        ready = all(status == "ready" for status in dependencies.values())
+        for dependency, dependency_status in dependencies.items():
+            try:
+                app.state.metric_collector.set_gauge(
+                    "readiness_state",
+                    {"dependency": dependency},
+                    1 if dependency_status == "ready" else 0,
+                )
+                if dependency_status != "ready":
+                    app.state.metric_collector.increment(
+                        "dependency_failures_total", {"dependency": dependency}
+                    )
+                    app.state.alert_manager.emit(
+                        "dependency_unavailable",
+                        "critical",
+                        context={"dependency": dependency},
+                    )
+            except Exception:
+                pass
+        if not ready:
+            try:
+                app.state.alert_manager.emit("readiness_degraded", "critical")
+            except Exception:
+                pass
+        return JSONResponse(
+            status_code=200 if ready else 503,
+            content={
+                "status": "ready" if ready else "degraded",
+                "service": "vena-ia-api",
+                "version": API_VERSION,
+                "dependencies": dependencies,
+            },
+        )
+
+    @app.get("/internal/metrics", tags=["operations"])
+    def metrics(_admin: AdminUserDependency) -> dict[str, object]:
+        if not settings.observability_metrics_endpoint_enabled:
+            raise HTTPException(status_code=404, detail="Not found")
+        return app.state.metric_collector.snapshot()
 
     app.include_router(users_router)
     app.include_router(auth_router)

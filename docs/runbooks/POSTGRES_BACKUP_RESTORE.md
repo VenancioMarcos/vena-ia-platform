@@ -30,7 +30,7 @@ only with the explicit CLI options when using a controlled installation.
 ```bash
 python -m scripts.postgres_backup \
   --output-directory /secure/vena-ia-backups \
-  --application-version 1.3.0
+  --application-version 1.4.0
 ```
 
 Store the dump and its manifest together. Protect access and retention according
@@ -55,6 +55,12 @@ invalid, or its checksum/size differs. `pg_restore` runs without `--clean`, so i
 cannot silently replace existing objects. After restore, Alembic head must match
 the manifest.
 
+Operational tests derive the repository's single official head from the Alembic
+revision graph. A backup must capture that value in its manifest; the restored
+database must then match the manifest exactly. Tests never pin a historical
+revision literal, so adding a valid migration advances the expectation without
+weakening the proof that the captured schema was restored.
+
 ## Verification and recovery objectives
 
 The CI drill backs up a test database, restores it to a fresh database, verifies
@@ -78,7 +84,7 @@ Contents and credentials never enter the manifest.
 python -m scripts.minio_backup \
   --output-directory /secure/vena-ia-backups \
   --bucket vena-ia-files \
-  --application-version 1.3.0-dev \
+  --application-version 1.4.0-dev \
   --backup-set-id UUID-SHARED-WITH-POSTGRES
 ```
 

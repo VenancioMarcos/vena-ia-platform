@@ -309,7 +309,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-directory", type=Path)
     parser.add_argument("--bucket")
-    parser.add_argument("--application-version", default="1.3.0-dev")
+    parser.add_argument("--application-version", default="1.4.0-dev")
     parser.add_argument("--backup-set-id")
     args = parser.parse_args()
     output = args.output_directory

@@ -12,7 +12,8 @@ import pytest
 from minio import Minio
 from psycopg import connect, sql
 
-from scripts.backup_contract import DatabaseConfig
+from scripts.alembic_head import official_alembic_head
+from scripts.backup_contract import BackupManifest, DatabaseConfig
 from scripts.backup_set import DocumentReference, create_backup_set_manifest
 from scripts.encrypted_backup import EncryptionKey, create_encrypted_bundle, decrypt_bundle
 from scripts.minio_backup import create_minio_backup, restore_minio_backup
@@ -109,6 +110,8 @@ def test_postgresql_backup_restore_round_trip(tmp_path: Path) -> None:
         runner=runner,
     )
     assert backup.is_file()
+    backup_manifest = BackupManifest.load(manifest)
+    assert backup_manifest.migration_head == official_alembic_head()
 
     with connect(admin_url, autocommit=True) as connection:
         connection.execute(sql.SQL("DROP DATABASE IF EXISTS {}").format(sql.Identifier(target_database)))
@@ -129,7 +132,7 @@ def test_postgresql_backup_restore_round_trip(tmp_path: Path) -> None:
                 "SELECT version_num FROM alembic_version"
             ).fetchone()
         assert restored == ("verified",)
-        assert migration == ("f42a1b7c9d30",)
+        assert migration == (backup_manifest.migration_head,)
     finally:
         with connect(admin_url, autocommit=True) as connection:
             connection.execute(
@@ -192,6 +195,8 @@ def test_combined_postgresql_minio_backup_restore_round_trip(tmp_path: Path) -> 
             now=created_at,
             backup_set_id=backup_set_id,
         )
+        backup_manifest = BackupManifest.load(postgres_manifest)
+        assert backup_manifest.migration_head == official_alembic_head()
         _, minio_manifest = create_minio_backup(
             tmp_path / "minio",
             minio,
@@ -263,7 +268,7 @@ def test_combined_postgresql_minio_backup_restore_round_trip(tmp_path: Path) -> 
             response.release_conn()
         assert restored == (document_id, project_id, object_key)
         assert restored_content == content
-        assert migration == ("f42a1b7c9d30",)
+        assert migration == (backup_manifest.migration_head,)
         restore_duration = time.perf_counter() - restore_started
         rpo_seconds = max(0.0, (loss_time - created_at).total_seconds())
         print(

@@ -9,17 +9,24 @@ from scripts.backup_contract import (
     BackupContractError,
     DatabaseConfig,
 )
+from scripts.alembic_head import official_alembic_head
 from scripts.postgres_backup import create_backup
 from scripts.postgres_restore import restore_backup
 
-MIGRATION_HEAD = "f42a1b7c9d30"
+TEST_MIGRATION_HEAD = "test-migration-head"
 PASSWORD = "test-only-database-password"
 
 
 class FakePostgresRunner:
-    def __init__(self, *, table_count: str = "0") -> None:
+    def __init__(
+        self,
+        *,
+        table_count: str = "0",
+        migration_head: str = TEST_MIGRATION_HEAD,
+    ) -> None:
         self.commands: list[list[str]] = []
         self.table_count = table_count
+        self.migration_head = migration_head
 
     def __call__(self, command: list[str], password: str, capture: bool) -> str:
         assert password == PASSWORD
@@ -28,7 +35,7 @@ class FakePostgresRunner:
         if command[0] == "psql":
             query = command[-1]
             if "alembic_version" in query:
-                return MIGRATION_HEAD
+                return self.migration_head
             if "server_version" in query:
                 return "17.6"
             if "pg_catalog.pg_tables" in query:
@@ -67,7 +74,7 @@ def test_backup_creates_versioned_manifest_checksum_and_no_secret(
     assert backup.name == "vena-ia-postgres-20260802T120000Z.dump"
     assert manifest["contract_version"] == "vena-ia.postgresql-backup/v1"
     assert manifest["application_version"] == "1.2.0"
-    assert manifest["migration_head"] == MIGRATION_HEAD
+    assert manifest["migration_head"] == runner.migration_head
     assert manifest["database_server_version"] == "17.6"
     assert manifest["backup_file"] == backup.name
     assert len(manifest["sha256"]) == 64
@@ -188,3 +195,25 @@ def test_invalid_manifest_and_environment_are_rejected(
     monkeypatch.delenv("POSTGRES_PASSWORD", raising=False)
     with pytest.raises(BackupContractError):
         DatabaseConfig.from_environment()
+
+
+def test_official_alembic_head_advances_with_the_revision_graph(tmp_path: Path) -> None:
+    versions = tmp_path / "versions"
+    versions.mkdir(parents=True)
+    (versions / "base.py").write_text(
+        "revision = 'base_revision'\ndown_revision = None\n",
+        encoding="utf-8",
+    )
+    assert official_alembic_head(tmp_path) == "base_revision"
+
+    (versions / "next.py").write_text(
+        "revision = 'next_revision'\ndown_revision = 'base_revision'\n",
+        encoding="utf-8",
+    )
+    assert official_alembic_head(tmp_path) == "next_revision"
+
+
+def test_repository_has_one_derived_official_alembic_head() -> None:
+    head = official_alembic_head()
+    assert head
+    assert len(head) <= 32

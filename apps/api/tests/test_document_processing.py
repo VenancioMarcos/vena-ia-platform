@@ -11,6 +11,7 @@ from app.modules.documents.processing import (
     DocumentProcessingService,
 )
 from app.modules.documents.storage import StorageError
+from app.core.metrics import InMemoryMetricCollector
 
 
 def _document(status: str) -> Document:
@@ -99,3 +100,23 @@ def test_chunk_query_checks_document_access() -> None:
 
     document_service.get.assert_called_once_with("document")
     repository.list_for_document.assert_called_once_with("document", 2)
+
+
+def test_processing_retry_and_started_job_are_aggregated() -> None:
+    processor, document_service, _repository, _storage = _processor()
+    collector = InMemoryMetricCollector()
+    processor._metric_collector = collector
+    document_service.get.return_value = _document("FAILED")
+
+    processor.process("document")
+
+    snapshot = collector.snapshot()
+    labels = {
+        item["name"]: item["labels"]
+        for item in snapshot["series"]  # type: ignore[index]
+    }
+    assert labels["processing_jobs_total"] == {
+        "operation": "document.processing",
+        "outcome": "started",
+    }
+    assert labels["retry_attempts_total"] == {"operation": "document.processing"}

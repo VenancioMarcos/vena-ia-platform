@@ -786,6 +786,96 @@ real e SLOs de produção continuam fora do escopo.
 
 ---
 
+## DEC-022 — Schema estruturado e contexto de correlação
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Observabilidade / Segurança / API
+**Documentos relacionados:** `docs/adr/ADR-0022-structured-observability-context.md`,
+`docs/runbooks/OBSERVABILITY.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Health e auditoria existiam, mas não havia correlação estável entre requisição,
+serviços, resposta e falha.
+
+### Decisão
+
+Usar UUIDs validados para request/correlation ID, `ContextVar` para propagação e
+eventos JSON `vena-ia.observability/v1` com allowlist estrita. Não coletar body,
+headers sensíveis ou conteúdo de documentos/IA. Readiness informa apenas estado
+por dependência, sem diagnóstico sensível.
+
+### Impacto
+
+Falhas são correlacionáveis sem expor segredo. Métricas, tracing, alertas e envio
+externo continuam fora do Package 1.
+
+---
+
+## DEC-023 — Métricas, auditoria correlacionada e contratos locais de alerta/tracing
+
+**Data:** 2026-08-02
+**Status:** Aprovada
+**Tipo:** Observabilidade / Segurança / Operação
+**Documentos relacionados:** `docs/adr/ADR-0022-structured-observability-context.md`,
+`docs/runbooks/OBSERVABILITY.md`, `docs/runbooks/ALERTS.md`
+
+### Contexto
+
+O contexto estruturado do Package 1 não agregava sinais operacionais, não
+persistia os identificadores na auditoria e não oferecia contratos substituíveis
+para alertas ou tracing.
+
+### Decisão
+
+Adotar `vena-ia.metrics/v1` em memória, com nomes e labels fechados, rotas por
+template e falha do coletor sem impacto na requisição. O endpoint é opt-in e
+exige admin. Persistir UUIDs de request/correlação na auditoria sem duplicar os
+eventos de autenticação. Alertas e spans usam somente providers no-op/local,
+allowlists e nenhuma entrega/exportação externa.
+
+### Impacto
+
+A API ganha diagnóstico local correlacionável sem SaaS nem dados de usuário. As
+métricas são por processo e não constituem SLO, capacidade ou retenção histórica;
+um backend externo exige decisão e autorização posteriores.
+
+---
+
+## DEC-024 — Evidência operacional local e retenção separada por tipo de sinal
+
+**Data:** 2026-08-04
+**Status:** Aprovada
+**Tipo:** Arquitetura / Segurança / Operação
+**Documentos relacionados:** `docs/adr/ADR-0023-incident-drill-evidence-retention.md`,
+`docs/runbooks/INCIDENT_DRILL.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Métricas e spans locais não sobrevivem ao reinício e não existe infraestrutura
+aprovada para telemetria histórica externa. Ao mesmo tempo, eventos sensíveis
+precisam de retenção auditável e os gates da v1.4 exigem evidência reproduzível.
+
+### Decisão
+
+Manter auditoria sensível persistente no PostgreSQL sob a política atual de 90
+dias. Manter métricas e tracing efêmeros por processo, sem improvisar backend
+distribuído ou transporte externo. Produzir evidência controlada e allowlisted por
+`vena-ia.incident-drill/v1`, em artefato opcional fora do repositório com SHA-256.
+Limiares são configuração limitada e calibrada exclusivamente por cenários
+sintéticos; não derivam de comportamento individual nem constituem SLO.
+
+### Impacto
+
+R-010 pode ser encerrado como mitigado porque correlação, persistência, retenção e
+drill estão comprovados. R-032 continua parcialmente mitigado e R-033 continua
+monitorado: reinício, múltiplas réplicas, histórico e dependências externas exigem
+gate futuro de infraestrutura. SaaS, webhook, exportador e dados reais continuam
+fora do escopo.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

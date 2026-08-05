@@ -22,6 +22,8 @@ vena-ia-backup-set-*.json
 vena-ia-encrypted-*/
 .vena-ia-plaintext-*/
 .backup-job.lock
+vena-ia-incident-drill-*.json
+vena-ia-incident-drill-*.sha256
 
 # Node
 node_modules/

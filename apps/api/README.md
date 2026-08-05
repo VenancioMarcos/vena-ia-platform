@@ -65,7 +65,16 @@ persistente (90 dias por padrão); não há limpeza automática nesta entrega.
 * `POST /chat/{project_id}/ask` — RAG fundamentado com histórico persistente
 * `GET /chat/{project_id}/messages` — histórico cronológico com fontes e estados
 
-`GET /health` identifica a versão `1.3.0`.
+`GET /health` identifica a versão `1.4.0`.
+
+`GET /ready` verifica preliminarmente PostgreSQL, Redis e MinIO e retorna somente
+estados seguros. Todas as respostas incluem `X-Request-ID` e `X-Correlation-ID`;
+eventos seguem `vena-ia.observability/v1` e não coletam bodies, credenciais ou
+conteúdo de documentos/IA.
+
+O drill operacional controlado é executado por `python -m scripts.incident_drill`
+e grava `vena-ia.incident-drill/v1` somente fora do repositório. Ele não é endpoint
+da API, não usa dados reais e não envia telemetria ou alertas externamente.
 
 Rotas protegidas aceitam cookie HttpOnly ou `Authorization: Bearer <token>`.
 Consulte `docs/AUTHORIZATION_MATRIX.md`.

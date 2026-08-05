@@ -192,6 +192,8 @@ def test_audit_query_is_admin_only_filtered_and_paginated(
         "outcome",
         "reason",
         "origin",
+        "request_id",
+        "correlation_id",
     }
     serialized = str(listed.json())
     assert "correct-horse-battery-staple" not in serialized

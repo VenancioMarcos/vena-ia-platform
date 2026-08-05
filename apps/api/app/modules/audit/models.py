@@ -29,3 +29,5 @@ class SecurityAuditEvent(Base):
     outcome: Mapped[str] = mapped_column(String(32), nullable=False)
     reason: Mapped[str | None] = mapped_column(String(64), nullable=True)
     origin: Mapped[str] = mapped_column(String(255), nullable=False)
+    request_id: Mapped[str | None] = mapped_column(String(36), nullable=True, index=True)
+    correlation_id: Mapped[str | None] = mapped_column(String(36), nullable=True, index=True)

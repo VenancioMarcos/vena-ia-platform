@@ -1,6 +1,6 @@
 # Registro de Riscos
 
-**Data da revisão:** 2026-08-01
+**Data da revisão:** 2026-08-04
 
 | ID | Severidade | Risco e evidência | Mitigação recomendada | Estado |
 |---|---|---|---|---|
@@ -23,8 +23,8 @@
 | R-029 | ALTO | Biblioteca preliminar pode ser apresentada como revisão sistemática. | Documentar exclusão de PRISMA, bases externas, meta-análise e publicação. | MONITORAR v0.9 |
 | R-030 | ALTO | Rate limiting de autenticação precisava compartilhar estado entre réplicas. | Redis aplica incremento/TTL atômicos nas rotas de cadastro/login e falha fechado; gateway confiável continua necessário para topologias com proxy. | MITIGADO PARCIALMENTE v1.2 PACKAGE 4 / MONITORAR PROXY |
 | R-031 | ALTO | PostgreSQL e MinIO não possuíam recuperação verificável. | Packages 1–3 adicionam contratos, restore combinado, AES-256-GCM, retenção segura e drill mensurado; repetição operacional, custódia de chaves e critérios formais pré-piloto ainda exigem aceite. | MITIGADO PARCIALMENTE v1.3 PACKAGE 3 / REVISÃO PRÉ-PILOTO |
-| R-032 | MÉDIO | Observabilidade limita-se a health, erros controlados e CI. | Adotar métricas/tracing antes de operação externa. | MONITORAR v1.0 |
-| R-033 | ALTO | Chat/RAG depende de PostgreSQL, MinIO, pgvector e provedor de IA. | Falhar sem resposta falsa; v1.1 permite retry de processamento/indexação; documentar dependências. | MITIGADO PARCIALMENTE v1.1 / MONITORAR |
+| R-032 | MÉDIO | Métricas e tracing existem somente no processo, sem retenção ou backend operacional externo. | Packages 2–3 fecham cardinalidade, documentam reinício/réplicas e geram evidência reproduzível; selecionar backend/exportação somente em gate futuro autorizado. | MITIGADO PARCIALMENTE v1.4 PACKAGE 3 / MONITORAR |
+| R-033 | ALTO | Chat/RAG depende de PostgreSQL, MinIO, pgvector e provedor de IA. | Falhar sem resposta falsa; retry/readiness, alertas locais e drill controlado demonstram detecção e recuperação, mas não eliminam a dependência externa. | MITIGADO PARCIALMENTE v1.4 PACKAGE 3 / MONITORAR |
 | R-035 | ALTO | Relatórios aceitavam evidência declarada sem verificar correspondência com o chunk persistido. | Validar documento, página, índice e trecho antes de persistir o relatório. | MITIGADO v1.1 |
 | R-036 | MÉDIO | Requisições sem timeout, falhas silenciosas e dependência da listagem de relatórios podiam bloquear ou confundir o fluxo principal do frontend. | Cliente API único com timeout; erros de logout/chat visíveis; relatórios carregados sem impedir projeto, documentos e histórico. | MITIGADO v1.1 |
 | R-037 | BAIXO | Operações do frontend recarregavam até quatro endpoints mesmo quando a resposta já continha o recurso atualizado. | Atualizar localmente o recurso retornado e, em falha, sincronizar somente documentos ou histórico; cancelar requests no unmount. | MITIGADO v1.1 |
@@ -33,7 +33,7 @@
 | R-007 | MÉDIO | Não havia lockfile frontend; o CI usava instalação não congelada. | `pnpm-lock.yaml` versionado e CI usa `pnpm install --frozen-lockfile`. | MITIGADO v0.4.1 |
 | R-008 | MÉDIO | O ambiente local auditado usa Python 3.14.6, enquanto o projeto e o CI exigem Python 3.13. | Validar também em Python 3.13 e manter matriz explícita de versões suportadas. | ABERTO |
 | R-009 | MÉDIO | `minio/minio:latest` não está fixado por versão ou digest. | Fixar imagem validada e estabelecer rotina de atualização. | ABERTO |
-| R-010 | MÉDIO | Eventos sensíveis possuem trilha persistente, mas ainda não há logging estruturado geral, correlação, métricas ou tracing. | Preservar auditoria redigida e completar observabilidade na v1.4. | MITIGADO PARCIALMENTE v1.2 PACKAGE 3 / ABERTO |
+| R-010 | MÉDIO | Eventos sensíveis precisavam de correlação persistente com requests e mutações operacionais. | Packages 1–3 adicionam schema/redaction, IDs persistidos, retenção de auditoria em PostgreSQL e drill integral com evidência allowlisted. | MITIGADO v1.4 PACKAGE 3 |
 | R-011 | BAIXO | Existe `.env` local real, embora ignorado e sem segredo detectado na auditoria. | Manter ignorado, limitar permissões e revisar antes de qualquer empacotamento. | MONITORAR |
 | R-012 | BAIXO | A suíte gerava aviso de depreciação de `TestClient`/HTTPX. | Dependência de desenvolvimento migrada para HTTPX2 e imports direcionados ao cliente Starlette compatível. | MITIGADO v1.1 |
 | R-013 | MÉDIO | Logout precisava compartilhar revogação entre réplicas e reinícios. | Redis guarda somente chave derivada do fingerprint com TTL do JWT; falha de Redis bloqueia consulta e escrita com auditoria. | MITIGADO v1.2 PACKAGE 4 |

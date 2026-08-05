@@ -2,7 +2,7 @@
 
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Request
 from minio import Minio
 from sqlalchemy.orm import Session
 
@@ -109,6 +109,7 @@ ChunkingStrategyDependency = Annotated[
 
 
 def get_document_processing_service(
+    request: Request,
     document_service: DocumentServiceDependency,
     chunk_repository: DocumentChunkRepositoryDependency,
     storage: DocumentStorageDependency,
@@ -121,6 +122,7 @@ def get_document_processing_service(
         storage=storage,
         extractor=extractor,
         chunker=chunker,
+        metric_collector=request.app.state.metric_collector,
     )
 
 

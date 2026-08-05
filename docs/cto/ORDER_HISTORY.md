@@ -188,3 +188,69 @@ A tag anotada `v1.3.0` foi publicada apontando para `e075657`, junto da GitHub
 Release “Vena_IA Platform v1.3.0 — Backup, Recovery and Retention”. A validação
 direta da tag aprovou health/runtime 1.3.0, OpenAPI com 49 paths e 40 testes de
 health/operações; nenhum deploy foi realizado.
+
+A branch `codex/v1.4-observability-auditability` foi criada a partir da main com
+a evidência da release. O Package 1 limita-se a logging estruturado, correlação,
+redaction e readiness; métricas/tracing externos e v1.5 não foram iniciados.
+
+O Package 1 foi publicado na Draft PR #15. Localmente, Ruff, mypy, 240 testes,
+frontend e Compose passaram. O Backend CI aprovou 202 testes de API e 44
+operacionais, incluindo readiness real simultânea de PostgreSQL, Redis e MinIO.
+Uma falha inicial por bucket descartável ainda não criado foi corrigida no setup
+do teste, preservando a semântica fail-closed do endpoint.
+
+## 2026-08-02 — v1.4 Observability Package 2
+
+O CTO aprovou o Package 1 e emitiu `TASK-V14-002` para continuar exclusivamente
+na Draft PR #15 com métricas agregadas, auditoria correlacionada, alert contracts
+e tracing local. Merge, tag, release, deploy, SaaS, webhook, telemetria externa,
+dados reais e v1.5 permanecem proibidos.
+
+O código adiciona `vena-ia.metrics/v1`, endpoint admin opt-in, migration dos IDs
+de correlação, eventos de mutação sem conteúdo, providers no-op/local e controles
+de redaction/cardinalidade. Os gates locais aprovaram Ruff, mypy, 212 testes de
+API, 39 testes operacionais condicionais, frontend, Compose e OpenAPI com 51
+paths. O daemon Docker local não respondeu; integrações reais e ciclo PostgreSQL
+da migration permanecem como gates explícitos do Backend CI.
+
+O primeiro Backend CI do Package 2 aprovou Ruff, mypy, o ciclo completo da nova
+migration e 214 testes de API. Dois round trips falharam somente porque os testes
+comparavam o banco restaurado a um head histórico fixo. A correção `2ce8f54`
+passa a derivar o head único do grafo oficial, exige que o manifesto o registre e
+compara o restore ao manifesto; um teste com grafo temporário prova que a
+expectativa avança automaticamente quando uma migration sucessora é adicionada.
+
+O Backend CI final no head `d588ece` concluiu em 2m04s: Ruff, mypy, Alembic
+upgrade/downgrade/upgrade, 214 testes de API e 46 testes operacionais passaram.
+PostgreSQL/pgvector, Redis e MinIO reais validaram readiness, backup/restore
+PostgreSQL e round trip criptografado combinado. O probe descartável registrou
+backup 0,397 s, restore 0,404 s e RPO técnico 1,248 s para 1 objeto/27 bytes,
+sem SLO ou afirmação produtiva. A PR #15 permanece Draft, sem merge ou deploy.
+
+## 2026-08-04 — v1.4 Observability Package 3
+
+O CTO aprovou o Package 2 e emitiu `TASK-V14-003` para concluir exclusivamente na
+Draft PR #15 o incident drill ponta a ponta, contrato/bundle de evidência,
+retenção/backend, calibração de limiares e riscos R-010/R-032/R-033. Merge, tag,
+release, deploy, nova PR, backend/telemetria externos, transporte real de alertas,
+dados reais e v1.5 permanecem proibidos.
+
+O Package 3 implementa onze cenários controlados com recuperação das três
+dependências, `vena-ia.incident-drill/v1`, JSON determinístico e SHA-256 fora do
+repositório. Auditoria continua persistente por 90 dias; métricas/tracing são
+efêmeros. R-010 foi mitigado; R-032/R-033 continuam monitorados. Os gates locais
+aprovaram Ruff, mypy, 215 testes de API, 46 operacionais, frontend, Compose,
+OpenAPI 51 e secret scan; integrações reais permanecem reservadas ao Backend CI.
+
+O Backend CI final no head `22f224b` concluiu em 1m55s: Ruff, mypy, Alembic
+upgrade/downgrade/upgrade, 216 testes de API e 52 testes operacionais passaram.
+PostgreSQL/pgvector, Redis e MinIO reais validaram readiness e os round trips de
+backup/restore. O probe de 1 objeto/27 bytes registrou backup 0,426 s, restore
+0,418 s e RPO técnico 1,247 s, sem SLO ou alegação produtiva.
+
+## 2026-08-04 — finalização v1.4.0 e início v1.5 Package 1
+
+O CTO aprovou formalmente a `TASK-V14-003` e emitiu `TASK-V14-004`, autorizando
+retirar a PR #15 de Draft, realizar Squash Merge, publicar/validar `v1.4.0` e,
+somente após a release, iniciar a fundação de jobs assíncronos da v1.5 em branch
+e Draft PR próprias. Merge da v1.5, OCR, deploy, SaaS e v1.6 permanecem proibidos.

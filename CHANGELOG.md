@@ -8,6 +8,48 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-08-04 — Observability and Auditability
+
+### Adicionado
+* Drill operacional controlado para onze cenários de incidente e recuperação,
+  com contrato `vena-ia.incident-drill/v1`, request/correlation IDs, métricas,
+  alertas locais, spans, eventos de auditoria aplicáveis e respostas seguras.
+* Bundle opcional de evidência JSON determinístico, armazenado fora do repositório,
+  com SHA-256, recusa de overwrite, traversal e symlink, sem logs brutos ou dados
+  de usuário.
+* Limiares configuráveis e validados para falhas repetidas de autenticação,
+  rate limit, processamento, readiness, dependências e erros internos.
+* Contrato `vena-ia.metrics/v1` com counters, gauge de readiness, histogramas,
+  labels/buckets fechados, reset de testes e coletor local thread-safe/fail-open.
+* Endpoint administrativo `GET /internal/metrics`, desabilitado por padrão e
+  exposto somente por configuração explícita e autenticação/autorização admin.
+* `request_id` e `correlation_id` persistidos nos eventos de auditoria, com
+  correlação de autenticação e mutações de projeto, documento, processamento,
+  indexação, chat, relatório e administração.
+* Contratos locais substituíveis de alertas com severidade, cooldown,
+  deduplicação e contexto allowlisted, sem transporte externo.
+* Fundação de tracing local com spans pai/filho, duração, estado e erro controlado,
+  usando providers no-op/local e sem exportação.
+* Middleware com schema `vena-ia.observability/v1`, eventos JSON allowlisted,
+  duração, rota normalizada, request ID e correlation ID.
+* Headers `X-Request-ID` e `X-Correlation-ID` validados/gerados e propagados em
+  respostas, contexto de serviço e erros internos genéricos.
+* `GET /ready` verifica PostgreSQL, Redis e MinIO sem expor diagnóstico sensível;
+  `/health` preserva o contrato existente.
+
+### Segurança
+* A evidência do drill usa allowlist e rejeita credenciais, IDs de domínio,
+  conteúdo documental/IA e stack traces; artefatos gerados permanecem ignorados.
+* Labels de alta cardinalidade e dados sensíveis são recusadas nas métricas;
+  alertas e spans não aceitam conteúdo de usuário, credenciais ou IDs de domínio.
+
+### Corrigido
+* Testes reais de backup/restore deixam de fixar um Alembic head histórico:
+  derivam o head único do grafo oficial, exigem que o manifesto o capture e
+  confirmam que o banco restaurado preserva exatamente o schema manifestado.
+* Redaction e allowlist proíbem Authorization, Cookie, JWT, senha, segredo,
+  conteúdo documental, prompts, respostas e embeddings nos eventos.
+
 ## [1.3.0] — 2026-08-02 — Backup, Recovery and Retention
 
 ### Adicionado

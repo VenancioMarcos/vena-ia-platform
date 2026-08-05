@@ -522,6 +522,33 @@ registrado; eventos críticos são correlacionáveis e acionáveis.
 
 Condição de avanço: operação local/piloto diagnosticável por evidência.
 
+Estado do Package 1: logging estruturado versionado, request/correlation ID,
+redaction allowlisted, exceção interna correlacionada, health versionado e
+readiness preliminar de PostgreSQL/Redis/MinIO são implementados na branch
+`codex/v1.4-observability-auditability`. Métricas, tracing, alertas e backend
+externo permanecem para pacotes posteriores.
+
+Estado do Package 2: métricas agregadas com contrato e cardinalidade fechados,
+endpoint admin opt-in, request/correlation ID persistidos na auditoria, contratos
+de alertas com provider no-op/local e tracing interno sem exportação são
+implementados na mesma Draft PR #15. Backend externo, SaaS, webhook, entrega de
+alertas e telemetria fora do processo permanecem fora; o Package 3 deve concluir
+os gates restantes de operação/auditoria antes da integração da v1.4.
+
+Itens restantes para definição/autorização do Package 3: critérios operacionais
+e drill de incidente ponta a ponta; decisão sobre retenção/backend de métricas;
+limiares calibrados com evidência; entrega real de alertas somente se aprovada;
+e fechamento formal dos riscos R-010/R-032/R-033. Nenhum desses itens está
+implícito ou implementado pelo contrato local do Package 2.
+
+Estado do Package 3: drill reproduzível para onze cenários controlados, contrato
+`vena-ia.incident-drill/v1`, bundle determinístico com SHA-256 e limiares
+configuráveis/validados foram implementados na mesma Draft PR #15. A auditoria
+sensível mantém retenção persistente de 90 dias; métricas e tracing permanecem
+efêmeros por processo. Não há backend histórico, SaaS, exportador ou transporte
+externo de alertas. R-010 foi mitigado; R-032 e R-033 permanecem monitorados como
+riscos residuais e não bloqueiam a revisão técnica do pacote.
+
 ---
 
 ## v1.5 — Asynchronous Processing

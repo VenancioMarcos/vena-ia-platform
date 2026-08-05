@@ -279,7 +279,7 @@ def _postgres_manifest(path: Path) -> Path:
         application_version="1.3.0-dev",
         database="vena_ia",
         database_server_version="17",
-        migration_head="f42a1b7c9d30",
+        migration_head="test-migration-head",
         format="custom",
         backup_file=dump.name,
         size_bytes=dump.stat().st_size,

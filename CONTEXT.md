@@ -27,10 +27,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1 — Foundation ✅ → v0.2 — Core ✅ → v0.3 — IA Base ✅ → v0.4.0 — Upload ✅ → v0.4.1 — Security Gate ✅ → v0.5 — RAG ✅ → v0.6 — CAD ✅ → v0.7 — CAM ✅ → v0.8 — CNC ✅ → v0.9 — Pesquisa ✅ → v1.0 — MVP ✅ → v1.1.0 — Stabilization ✅ → v1.2.0 — Security and Data Protection ✅ → v1.3 — Backup and Recovery Packages 1–3 prontos para revisão do CTO.
+* **Fase:** v0.1–v1.3 concluídas e publicadas; v1.4 — Observability and Auditability Packages 1–3 implementados na Draft PR #15, aguardando revisão.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
-* **Backend:** `apps/api` v1.3.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `f42a1b7c9d30` adiciona auditoria persistente e `auth_version`.
+* **Backend:** `apps/api` v1.4.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `a63d2f8c1b04` adiciona correlação persistente à auditoria.
 * **AI Layer:** `packages/ai` fornece contratos tipados, factory, service e provider OpenAI. Os endpoints de chat, embeddings e completion exigem usuário autenticado.
 * **Documents/RAG:** upload e catálogo no MinIO continuam protegidos por proprietário/papel e restritos a PDFs validados. A v0.5 extrai texto por página com `pypdf`, cria chunks configuráveis, gera embeddings via AI Layer, persiste vetores em pgvector, recupera contexto por similaridade e produz respostas fundamentadas com rastreabilidade até documento, página e chunk.
 * **CAD Inicial:** STEP Part 21 possui allowlist de extensão/MIME/assinatura e análise autenticada. O parser extrai metadados, entidades, pontos, unidade e envelope preliminar; volume permanece indisponível sem kernel geométrico, conforme ADR-0011.
@@ -83,6 +83,36 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   [GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.3.0)
   foi publicada sem deploy. A validação direta aprovou health/runtime 1.3.0,
   49 paths OpenAPI e 40 testes de operações/health (4 integrações locais omitidas).
+* **v1.4 Observability Package 1:** branch `codex/v1.4-observability-auditability`
+  adiciona eventos estruturados allowlisted, request/correlation IDs, respostas
+  de erro correlacionadas e readiness preliminar de PostgreSQL, Redis e MinIO.
+  Nenhum conteúdo de usuário/IA, credencial ou telemetria externa é coletado.
+* **v1.4 Observability Package 2:** a mesma Draft PR #15 adiciona métricas locais
+  agregadas `vena-ia.metrics/v1`, endpoint admin desabilitado por padrão,
+  correlação persistente da auditoria, alertas no-op/local com cooldown e tracing
+  interno substituível. Labels dinâmicas/PII são proibidas; nenhum SaaS, webhook,
+  transporte ou exportador externo foi introduzido.
+  O primeiro Backend CI aprovou lint, mypy, migrations e 214 testes de API, mas
+  revelou dois asserts operacionais presos ao head histórico `f42a1b7c9d30`.
+  A correção deriva o head único do grafo Alembic, compara-o ao manifesto e exige
+  que o restore preserve esse valor, sem enfraquecer checksum ou integridade.
+  O Backend CI final aprovou 214 testes de API, 46 testes operacionais, o ciclo
+  Alembic completo e integrações reais PostgreSQL/Redis/MinIO. O round trip
+  criptografado descartável mediu backup 0,397 s, restore 0,404 s e RPO técnico
+  1,248 s para 1 objeto/27 bytes; não são SLOs de produção.
+* **v1.4 Observability Package 3:** o drill controlado cobre indisponibilidade e
+  recuperação de PostgreSQL, Redis e MinIO, provedor de IA, readiness, rate limit,
+  autenticação, processamento, backup, restore e erro interno. O contrato
+  `vena-ia.incident-drill/v1` gera JSON determinístico e checksum fora do
+  repositório, sem logs brutos, segredos, IDs de domínio ou conteúdo. Limiares são
+  explícitos, validados e calibrados apenas com cenários sintéticos. Auditoria
+  sensível continua persistente no PostgreSQL por política de 90 dias; métricas e
+  tracing continuam efêmeros por processo, sem SaaS, backend externo ou transporte
+  real de alertas. R-010 é mitigado; R-032 e R-033 permanecem residuais/monitorados.
+  O Backend CI no head `22f224b` aprovou Ruff, mypy, o ciclo Alembic completo,
+  216 testes de API e 52 testes operacionais com PostgreSQL/pgvector, Redis e
+  MinIO reais. O round trip criptografado descartável mediu backup 0,426 s,
+  restore 0,418 s e RPO técnico 1,247 s para 1 objeto/27 bytes, sem SLO produtivo.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

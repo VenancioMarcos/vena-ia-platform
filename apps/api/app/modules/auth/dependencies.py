@@ -100,6 +100,7 @@ def get_current_user(
             actor_user_id=identity.user_id if user is not None else None,
         )
         raise _authentication_error("Invalid authentication token")
+    request.state.authenticated_user_id = user.id
     return user
 
 

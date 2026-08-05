@@ -54,3 +54,16 @@ The first retention command is the mandatory dry-run. `backup_job` reads databas
 MinIO and AES-256-GCM key settings exclusively from the environment, requires a
 quiesced consistency window, uses a lock and removes plaintext staging. See the
 backup, retention and recovery runbooks before enabling an OS scheduler.
+
+Controlled incident evidence is generated outside the repository and contains only
+allowlisted summaries, never raw logs or user data:
+
+```bash
+python -m scripts.incident_drill \
+  --output-directory /secure/vena-ia-incident-evidence \
+  --application-version 1.4.0-dev \
+  --environment controlled-test
+```
+
+The command refuses overwrite, repository-local paths, traversal and symlinks. It
+writes deterministic `vena-ia.incident-drill/v1` JSON plus a SHA-256 sidecar.
