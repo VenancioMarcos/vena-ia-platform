@@ -138,6 +138,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   gates locais aprovaram Ruff, mypy, 251 testes de API, 46 operacionais, frontend,
   Compose, runtime/OpenAPI 1.5.0-dev/55 paths e Alembic head único. O daemon Docker
   local está ausente; integrações reais permanecem como gate do Backend CI.
+  O Backend CI do Package 2 no head `2086399` aprovou Ruff, mypy, ciclo Alembic,
+  253 testes de API (incluindo Redis real) e 52 operacionais com PostgreSQL/pgvector,
+  MinIO e round trip criptografado; Frontend CI/build também passou.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

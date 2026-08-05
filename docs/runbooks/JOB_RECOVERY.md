@@ -66,3 +66,8 @@ p50 0,0032 ms, p95 0,0293 ms e p99 0,0445 ms. Corpus de extração: 500 páginas
 sintéticas geradas por double, sem arquivo real. Esses números detectam regressão
 algorítmica apenas; não representam Redis/PostgreSQL/MinIO, concorrência produtiva,
 capacidade, SLA ou SLO.
+
+Backend CI `31051848806` (2026-08-05) aprovou 253 testes de API, incluindo os
+cenários Redis reais de dois consumidores/recoverers, e 52 testes operacionais.
+O round trip descartável de 1 objeto/27 bytes registrou backup 0,425 s, restore
+0,408 s e RPO técnico 1,382 s; continua sem representar compromisso produtivo.

@@ -287,3 +287,10 @@ mypy, 251 testes de API, 46 operacionais, frontend e Compose passaram. A avalia�
 OCR decidiu B — adiado, sem instalação ou envio externo. O daemon Docker local
 estava ausente; PostgreSQL/Redis/MinIO reais e os dois recoverers permanecem como
 gate obrigatório do Backend CI antes do status terminal.
+
+O Backend CI final `31051848806` concluiu em 1m57s: Ruff, mypy, Alembic
+upgrade/downgrade/upgrade, 253 testes de API e 52 operacionais passaram com
+PostgreSQL/pgvector, Redis e MinIO reais. Dois consumidores e dois recoverers
+validaram exclusividade/idempotência no Redis. O round trip descartável registrou
+backup 0,425 s, restore 0,408 s e RPO técnico 1,382 s para 1 objeto/27 bytes, sem
+SLO produtivo. Frontend CI `31051848820` também passou. A PR #16 permanece Draft.
