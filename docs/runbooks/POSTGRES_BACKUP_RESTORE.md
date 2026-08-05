@@ -55,6 +55,12 @@ invalid, or its checksum/size differs. `pg_restore` runs without `--clean`, so i
 cannot silently replace existing objects. After restore, Alembic head must match
 the manifest.
 
+Operational tests derive the repository's single official head from the Alembic
+revision graph. A backup must capture that value in its manifest; the restored
+database must then match the manifest exactly. Tests never pin a historical
+revision literal, so adding a valid migration advances the expectation without
+weakening the proof that the captured schema was restored.
+
 ## Verification and recovery objectives
 
 The CI drill backs up a test database, restores it to a fresh database, verifies

@@ -92,6 +92,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   correlação persistente da auditoria, alertas no-op/local com cooldown e tracing
   interno substituível. Labels dinâmicas/PII são proibidas; nenhum SaaS, webhook,
   transporte ou exportador externo foi introduzido.
+  O primeiro Backend CI aprovou lint, mypy, migrations e 214 testes de API, mas
+  revelou dois asserts operacionais presos ao head histórico `f42a1b7c9d30`.
+  A correção deriva o head único do grafo Alembic, compara-o ao manifesto e exige
+  que o restore preserve esse valor, sem enfraquecer checksum ou integridade.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

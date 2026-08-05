@@ -30,6 +30,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 ### Segurança
 * Labels de alta cardinalidade e dados sensíveis são recusadas nas métricas;
   alertas e spans não aceitam conteúdo de usuário, credenciais ou IDs de domínio.
+
+### Corrigido
+* Testes reais de backup/restore deixam de fixar um Alembic head histórico:
+  derivam o head único do grafo oficial, exigem que o manifesto o capture e
+  confirmam que o banco restaurado preserva exatamente o schema manifestado.
 * Redaction e allowlist proíbem Authorization, Cookie, JWT, senha, segredo,
   conteúdo documental, prompts, respostas e embeddings nos eventos.
 

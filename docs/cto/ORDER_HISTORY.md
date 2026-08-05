@@ -212,3 +212,10 @@ de redaction/cardinalidade. Os gates locais aprovaram Ruff, mypy, 212 testes de
 API, 39 testes operacionais condicionais, frontend, Compose e OpenAPI com 51
 paths. O daemon Docker local não respondeu; integrações reais e ciclo PostgreSQL
 da migration permanecem como gates explícitos do Backend CI.
+
+O primeiro Backend CI do Package 2 aprovou Ruff, mypy, o ciclo completo da nova
+migration e 214 testes de API. Dois round trips falharam somente porque os testes
+comparavam o banco restaurado a um head histórico fixo. A correção `2ce8f54`
+passa a derivar o head único do grafo oficial, exige que o manifesto o registre e
+compara o restore ao manifesto; um teste com grafo temporário prova que a
+expectativa avança automaticamente quando uma migration sucessora é adicionada.

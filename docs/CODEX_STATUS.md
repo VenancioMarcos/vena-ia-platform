@@ -5,7 +5,7 @@ PROJECT=VENA_IA_PLATFORM
 ROLE=AUTONOMOUS_EXECUTOR
 STATE=VENA_IA_V1_4_PACKAGE_2_IN_VALIDATION
 LAST_MISSION=TASK_V14_002
-LAST_RESULT=PACKAGE_2_LOCAL_GATES_PASS_CI_PENDING
+LAST_RESULT=PACKAGE_2_ALEMBIC_HEAD_FIX_LOCAL_GATES_PASS_CI_PENDING
 ACTIVE_BRANCH=codex/v1.4-observability-auditability
 V1_2_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.2.0
 V1_3_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.3.0
@@ -21,7 +21,7 @@ PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 
 ```text
 STATE=v1.4 Package 2 implementado na Draft PR #15 e em validação final.
-DONE=metrics/v1, auditoria correlacionada, alert contracts, tracing local e gates locais.
+DONE=metrics/v1, auditoria correlacionada, alert/tracing local e Alembic head derivado.
 NEXT=push, CI e atualização das evidências terminais; merge/tag/release permanecem proibidos.
 ERROR=NONE.
 ```
