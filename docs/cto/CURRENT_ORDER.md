@@ -1,21 +1,21 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V14_004
-TITLE=V1_4_RELEASE_AND_V1_5_PACKAGE_1_ASYNC_JOB_FOUNDATION
-BRANCH=codex/v1.4-observability-auditability
-START_HEAD=310b85d389c76f043e6b7cd8aa60cd68e6315849
-EXPECTED_STATE=VENA_IA_V1_4_RELEASED_AND_V1_5_PACKAGE_1_READY_FOR_CTO_REVIEW
-PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/15
-PULL_REQUEST_DRAFT=REMOVE_AUTHORIZED
-MERGE=AUTHORIZED_PR_15
-TAG_RELEASE=AUTHORIZED_V1_4_0
+MISSION=TASK_V15_003
+TITLE=FINALIZATION_AND_RELEASE_V1_5_0
+BRANCH=codex/v1.5-asynchronous-processing
+START_HEAD=bd4908b54e5169d4e0c373cee1d6a70fe2e7bd67
+EXPECTED_STATE=VENA_IA_V1_5_RELEASED_READY_FOR_CTO_REVIEW
+PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/16
+PULL_REQUEST_DRAFT=REMOVE_AFTER_GREEN_CI
+MERGE=SQUASH_AUTHORIZED
+TAG_RELEASE=V1_5_0_AUTHORIZED
 DEPLOY=PROHIBITED
-V1_4_PACKAGE_3=APPROVED_BY_CTO
-V1_4_RELEASE=AUTHORIZED
-V1_5_PACKAGE_1=AUTHORIZED_AFTER_V1_4_RELEASE
-V1_5_EXTERNAL_TELEMETRY_SAAS_WEBHOOK_REAL_DATA=PROHIBITED
+V1_5_PACKAGES_1_2=APPROVED_BY_CTO
+OCR_IMPLEMENTATION=PROHIBITED
+V1_6=PROHIBITED
 ```
 
-Escopo: versionar, integrar, publicar e validar v1.4.0; depois iniciar somente a
-fundação assíncrona Package 1 da v1.5 em branch e Draft PR próprias.
+Escopo: finalizar versões e documentação, validar, retirar a PR #16 de Draft,
+realizar Squash Merge, publicar a tag anotada e a GitHub Release v1.5.0 e validar
+diretamente a tag. Não existe Package 3 e a v1.6 não pode ser iniciada.

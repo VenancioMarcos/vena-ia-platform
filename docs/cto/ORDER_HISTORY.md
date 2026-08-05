@@ -254,3 +254,51 @@ O CTO aprovou formalmente a `TASK-V14-003` e emitiu `TASK-V14-004`, autorizando
 retirar a PR #15 de Draft, realizar Squash Merge, publicar/validar `v1.4.0` e,
 somente após a release, iniciar a fundação de jobs assíncronos da v1.5 em branch
 e Draft PR próprias. Merge da v1.5, OCR, deploy, SaaS e v1.6 permanecem proibidos.
+
+A PR #15 foi retirada de Draft e integrada por Squash Merge em `1380156`. Main e
+tag anotada `v1.4.0` foram validadas por Ruff, mypy, 215 testes de API, 46 testes
+operacionais, frontend e Compose. A GitHub Release “Vena_IA Platform v1.4.0 —
+Observability and Auditability” foi publicada sem deploy.
+
+Na branch `codex/v1.5-asynchronous-processing`, o Package 1 implementou o contrato
+durável `vena-ia.job/v1`, migration `b18e4c7d2a91`, fila Redis com lease/heartbeat,
+worker allowlisted, processamento/indexação PDF, API autenticada e frontend mínimo.
+Os gates locais aprovaram Ruff, mypy, 236 testes de API, 46 operacionais, frontend,
+Compose e OpenAPI 1.5.0-dev/55 paths. A Draft PR #16 foi aberta; integrações reais
+PostgreSQL/Redis/MinIO permanecem como gate do CI antes da revisão do CTO.
+
+O Backend CI no head `0f57c57` concluiu em 2m04s: Ruff, mypy, ciclo Alembic,
+238 testes de API e 52 operacionais passaram, incluindo Redis real, readiness do
+worker e os round trips PostgreSQL/pgvector e MinIO. Frontend CI/build também
+passou. A PR #16 permanece Draft, limpa e mergeável, sem merge ou deploy.
+
+## 2026-08-05 — v1.5 Asynchronous Processing Package 2
+
+O CTO aprovou a `TASK-V14-004`/Package 1 e emitiu `TASK-V15-002` para continuar
+exclusivamente na branch `codex/v1.5-asynchronous-processing` e Draft PR #16.
+O escopo cobre recovery/restart, concorrência, leases, efeitos parciais, PDFs
+sintéticos extensos, falhas de dependências e avaliação formal de OCR. Merge, tag,
+Release, deploy, OCR, motor OCR, serviço externo, GPU, nova PR e v1.6 permanecem
+proibidos.
+
+O Package 2 comprovou localmente recovery PostgreSQL→Redis, lease renovável,
+concorrência/idempotência, efeitos parciais seguros e corpus de 500 páginas. Ruff,
+mypy, 251 testes de API, 46 operacionais, frontend e Compose passaram. A avaliação
+OCR decidiu B — adiado, sem instalação ou envio externo. O daemon Docker local
+estava ausente; PostgreSQL/Redis/MinIO reais e os dois recoverers permanecem como
+gate obrigatório do Backend CI antes do status terminal.
+
+O Backend CI final `31051848806` concluiu em 1m57s: Ruff, mypy, Alembic
+upgrade/downgrade/upgrade, 253 testes de API e 52 operacionais passaram com
+PostgreSQL/pgvector, Redis e MinIO reais. Dois consumidores e dois recoverers
+validaram exclusividade/idempotência no Redis. O round trip descartável registrou
+backup 0,425 s, restore 0,408 s e RPO técnico 1,382 s para 1 objeto/27 bytes, sem
+SLO produtivo. Frontend CI `31051848820` também passou. A PR #16 permanece Draft.
+
+## 2026-08-05 — finalização e Release v1.5.0
+
+O proprietário aprovou diretamente os Packages 1 e 2 e emitiu a `TASK-V15-003`.
+A ordem encerra a v1.5 sem Package 3 e autoriza preparar a versão final 1.5.0,
+revalidar integralmente, retirar a PR #16 de Draft, realizar Squash Merge, publicar
+a tag anotada e a GitHub Release e validar diretamente a tag. Deploy, OCR, novos
+tipos de job, microserviço, serviços externos e início da v1.6 permanecem proibidos.

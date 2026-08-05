@@ -43,6 +43,10 @@ _ALLOWED_FIELDS = {
     "error_type",
     "dependency",
     "dependency_status",
+    "job_id",
+    "job_type",
+    "job_status",
+    "progress",
 }
 
 
@@ -102,6 +106,8 @@ def structured_event(event: str, level: str = "INFO", **fields: Any) -> dict[str
     }
     base.update(fields)
     redacted = redact_sensitive(base)
+    if "job_id" in redacted:
+        redacted["job_id"] = _safe_identifier(redacted["job_id"])
     return {name: value for name, value in redacted.items() if name in _ALLOWED_FIELDS}
 
 

@@ -32,6 +32,7 @@ class KnowledgeService:
         embedding_model: str,
         chat_model: str,
         embedding_dimensions: int,
+        allow_processing: bool = False,
     ) -> None:
         self._document_service = document_service
         self._authorization = authorization
@@ -41,13 +42,15 @@ class KnowledgeService:
         self._embedding_model = embedding_model
         self._chat_model = chat_model
         self._embedding_dimensions = embedding_dimensions
+        self._allow_processing = allow_processing
 
     def index_document(self, document_id: str) -> EmbeddingUpdateResult:
         document = self._document_service.get(document_id)
-        if document.status != DocumentStatus.READY.value:
-            raise DocumentNotReadyForIndexError(
-                "Document must be READY before semantic indexing"
-            )
+        allowed = {DocumentStatus.READY.value}
+        if self._allow_processing:
+            allowed.add(DocumentStatus.PROCESSING.value)
+        if document.status not in allowed:
+            raise DocumentNotReadyForIndexError("Document must be READY before semantic indexing")
         chunks = self._chunk_repository.list_for_document(document_id)
         if not chunks:
             raise KnowledgeIndexError("Document does not contain chunks")
@@ -142,6 +145,4 @@ class KnowledgeService:
         if len(embeddings) != expected_count:
             raise KnowledgeIndexError("AI provider returned an invalid embedding count")
         if any(len(embedding) != self._embedding_dimensions for embedding in embeddings):
-            raise KnowledgeIndexError(
-                "AI provider returned an invalid embedding dimension"
-            )
+            raise KnowledgeIndexError("AI provider returned an invalid embedding dimension")

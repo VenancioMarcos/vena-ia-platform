@@ -94,7 +94,7 @@ def create_backup(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-directory", type=Path)
-    parser.add_argument("--application-version", default="1.2.0")
+    parser.add_argument("--application-version", default="1.5.0")
     parser.add_argument("--pg-dump-bin", default="pg_dump")
     parser.add_argument("--psql-bin", default="psql")
     args = parser.parse_args()

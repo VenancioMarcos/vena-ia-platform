@@ -8,6 +8,44 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.5.0] — 2026-08-05 — Asynchronous Processing
+
+### Adicionado — Package 2
+* Reconciliador automático reconstrói o transporte Redis a partir dos jobs não
+  terminais no PostgreSQL e recupera `RUNNING` sem lease, retry vencido,
+  cancelamento pendente e fila perdida após reinício.
+* Enqueue, recuperação de lease e acknowledge passam a ser atômicos/idempotentes;
+  renovação periódica mantém o lease durante bibliotecas síncronas longas.
+* Extração PDF reporta progresso por página e admite cancelamento cooperativo entre
+  páginas. O documento só fica `READY` depois da persistência e indexação completas.
+* Códigos seguros distinguem PDF criptografado, sem texto ou inválido, recurso
+  removido, dependência indisponível, timeout, cancelamento, lease perdido e retry
+  esgotado, sem stack, caminho, conteúdo ou detalhe de infraestrutura.
+* Drills e testes sintéticos cobrem reinício, concorrência, duplicação, efeitos
+  parciais, 500 páginas, Redis real e falhas controladas de dependências.
+* Avaliação formal de OCR classifica a tecnologia como adiada; nenhum motor,
+  serviço, dependência, GPU ou envio externo foi introduzido.
+
+### Adicionado — Package 1
+* Contrato durável `vena-ia.job/v1` com proprietário, projeto, recurso, progresso,
+  tentativas, timeout, idempotência derivada, correlação, erros seguros e estados
+  terminais protegidos por transições atômicas.
+* Migration `b18e4c7d2a91` cria jobs e índices bounded para autorização, operação,
+  disponibilidade e unicidade idempotente no PostgreSQL.
+* Fila Redis com claim exclusivo, ack, delayed retry/backoff, lease, recuperação de
+  abandono e heartbeat; o modo em memória é exclusivo de desenvolvimento/teste.
+* Worker do Modular Monolith para extração/chunking PDF allowlisted, com progresso,
+  cancelamento cooperativo, timeout, graceful shutdown e falha segura.
+* Endpoints autenticados para iniciar processamento assíncrono, consultar, cancelar
+  e repetir jobs; a interface mostra estado, progresso e controles mínimos.
+* Logs correlacionados, métricas de cardinalidade fechada, alertas, spans, auditoria
+  persistente e readiness do worker sem conteúdo ou IDs de domínio em labels.
+
+### Segurança
+* A fila não transporta documento, prompt, resposta, embedding, segredo ou código;
+  `X-User-ID` permanece sem função de identidade e acesso cruzado retorna `404`.
+* OCR continua ausente. PDFs sem texto falham explicitamente, sem resposta inventada.
+
 ## [1.4.0] — 2026-08-04 — Observability and Auditability
 
 ### Adicionado

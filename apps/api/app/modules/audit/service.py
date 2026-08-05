@@ -35,6 +35,29 @@ def record_security_event(
     return event
 
 
+def record_system_security_event(
+    db: Session,
+    event_type: str,
+    *,
+    outcome: str,
+    reason: str | None = None,
+    actor_user_id: str | None = None,
+) -> SecurityAuditEvent:
+    event = SecurityAuditEvent(
+        event_type=event_type,
+        actor_user_id=actor_user_id,
+        outcome=outcome,
+        reason=reason,
+        origin="worker",
+        request_id=current_request_id(),
+        correlation_id=current_correlation_id(),
+    )
+    db.add(event)
+    db.commit()
+    db.refresh(event)
+    return event
+
+
 def list_security_events(
     db: Session,
     *,

@@ -10,6 +10,7 @@ from sqlalchemy import text
 
 from app.core.config import Settings
 from app.core.database import engine
+from app.modules.jobs.queue import RedisJobQueue
 
 
 class ReadinessChecker(Protocol):
@@ -35,8 +36,13 @@ class DefaultReadinessChecker:
                 socket_timeout=self.settings.auth_redis_timeout_seconds,
             )
             statuses["redis"] = "ready" if redis.ping() else "unavailable"
+            job_queue = RedisJobQueue(redis, self.settings.jobs_redis_prefix)
+            statuses["worker"] = (
+                "ready" if job_queue.worker_available() else "unavailable"
+            )
         except Exception:
             statuses["redis"] = "unavailable"
+            statuses["worker"] = "unavailable"
         try:
             minio = Minio(
                 self.settings.minio_endpoint,

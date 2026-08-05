@@ -20,6 +20,7 @@ from app.core.config import settings
 from app.core.database import Base, get_db
 from app.main import app
 from app.modules.auth.security_store import MemoryAuthenticationSecurityStore
+from app.modules.jobs.queue import MemoryJobQueue
 from app.modules.users.models import User
 
 TEST_PASSWORD = "correct-horse-battery-staple"
@@ -49,6 +50,7 @@ def _reset_database(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, No
     )
     monkeypatch.setattr(settings, "auth_cookie_secure", False)
     app.state.auth_security_store = MemoryAuthenticationSecurityStore()
+    app.state.job_queue = MemoryJobQueue()
     app.state.audit_session_factory = TestingSessionLocal
     app.state.metric_collector.reset()
     app.state.alert_manager.reset()

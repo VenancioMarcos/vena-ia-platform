@@ -8,6 +8,7 @@ COPY apps/api/pyproject.toml ./apps/api/pyproject.toml
 COPY apps/api/app ./apps/api/app
 COPY apps/api/alembic.ini ./apps/api/alembic.ini
 COPY apps/api/migrations ./apps/api/migrations
+COPY scripts ./scripts
 
 RUN pip install --no-cache-dir -e . \
     && pip install --no-cache-dir -e ./apps/api

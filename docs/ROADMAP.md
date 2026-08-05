@@ -553,6 +553,11 @@ riscos residuais e não bloqueiam a revisão técnica do pacote.
 
 ## v1.5 — Asynchronous Processing
 
+**Estado:** Packages 1 e 2 concluídos e aprovados; release v1.5.0 em preparação
+na PR #16 em 2026-08-05. R-016 está parcialmente mitigado, R-017 permanece aberto
+com OCR adiado, R-033 é residual e R-038 permanece monitorado. A v1.6 não foi
+iniciada.
+
 Objetivo: retirar ingestão, OCR futuro e indexação longa da requisição HTTP.
 
 Entregas: contrato de job, fila/worker reutilizando Redis, estados e progresso,
@@ -572,6 +577,21 @@ Critérios de segurança e aceite: jobs preservam proprietário/projeto, não
 executam conteúdo e nunca criam resposta falsa.
 
 Condição de avanço: processamento longo resiliente e observável fora do ciclo HTTP.
+
+Estado do Package 1: `vena-ia.job/v1`, persistência PostgreSQL, fila Redis com
+lease/heartbeat, worker do Modular Monolith, idempotência, retry/backoff, timeout,
+cancelamento, recuperação e interface mínima foram implementados na branch
+`codex/v1.5-asynchronous-processing`. O primeiro handler executa extração, chunking
+e indexação já existente do PDF; endpoints síncronos permanecem compatíveis. OCR,
+novos tipos de busca, microserviço e deploy continuam fora. PDF sem texto mantém
+  falha explícita.
+
+  Estado do Package 2: recovery automático recompõe o Redis pela fonte durável,
+  renova leases, resolve concorrência/duplicatas e preserva efeitos idempotentes.
+  Drills cobrem reinícios, dependências, cancelamento, timeout e PDFs sintéticos de
+  500 páginas. OCR foi formalmente classificado como adiado (B), sem implementação;
+  R-017 segue aberto e timeout preemptivo/capacidade permanecem gates futuros.
+  A decisão final encerra a v1.5 sem Package 3 e sem implementar OCR.
 
 ---
 

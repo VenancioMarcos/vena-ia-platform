@@ -876,6 +876,64 @@ fora do escopo.
 
 ---
 
+## DEC-025 — Jobs duráveis e worker no mesmo Modular Monolith
+
+**Data:** 2026-08-05
+**Status:** Aprovada
+**Tipo:** Arquitetura / Backend / Infraestrutura / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0024-asynchronous-job-foundation.md`,
+`docs/runbooks/ASYNCHRONOUS_JOBS.md`, `docs/RISK_REGISTER.md`
+
+### Contexto
+
+Processamento PDF longo não deve ocupar o ciclo HTTP nem perder estado em reinícios.
+A arquitetura oficial continua Modular Monolith e não autoriza microserviço.
+
+### Decisão
+
+Persistir `vena-ia.job/v1` no PostgreSQL, coordenar identificadores mínimos por Redis
+e executar handlers allowlisted em processo worker operacional que compartilha os
+módulos, banco, release e ownership da API. Usar transições compare-and-set, lease,
+heartbeat, idempotência derivada, retry limitado, timeout e cancelamento cooperativo.
+
+### Impacto
+
+O fluxo PDF ganha durabilidade e recuperação fora do HTTP sem nova fronteira de
+serviço. Redis/worker passam a integrar readiness. OCR e interrupção forçada de
+bibliotecas síncronas permanecem fora e são riscos explícitos.
+
+---
+
+## DEC-026 — PostgreSQL reconcilia o transporte e OCR permanece adiado
+
+**Data:** 2026-08-05
+**Status:** Aprovada
+**Tipo:** Arquitetura / Backend / Segurança / Operação
+**Documentos relacionados:** `docs/adr/ADR-0025-job-recovery-and-ocr-gate.md`,
+`docs/runbooks/JOB_RECOVERY.md`, `docs/OCR_SAFETY_EVALUATION.md`
+
+### Contexto
+
+Lease expirado podia reenfileirar a mensagem sem retirar o job de `RUNNING`, e
+perda do Redis não reconstruía o transporte. OCR precisava de decisão formal.
+
+### Decisão
+
+Reconciliar jobs não terminais do PostgreSQL em todo ciclo seguro do worker,
+preservando lease válido, cancelando pedido pendente e repondo somente jobs
+recuperáveis no Redis. Tornar enqueue, abandono e acknowledge idempotentes/atômicos.
+Manter documento `PROCESSING` até indexação completa. Adiar OCR (classe B) até
+protótipo isolado, corpus autorizado e limites/qualidade aprovados.
+
+### Impacto
+
+Worker/API/Redis podem reiniciar sem perder a identidade lógica ou deixar lease
+preso. Duplicação não inicia dois handlers e efeito parcial não vira sucesso.
+R-016 avança parcialmente; R-017 continua aberto, R-033 residual e R-038 monitorado.
+Nenhum OCR, microserviço, dependência externa, GPU ou deploy integra a decisão.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

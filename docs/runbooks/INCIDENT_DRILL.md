@@ -20,7 +20,7 @@ Use um diretório novo, protegido e fora do repositório:
 ```bash
 python -m scripts.incident_drill \
   --output-directory /secure/vena-ia-incident-evidence/run-001 \
-  --application-version 1.4.0-dev \
+  --application-version 1.5.0 \
   --environment controlled-test
 ```
 

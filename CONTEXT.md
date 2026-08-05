@@ -27,10 +27,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.3 concluídas e publicadas; v1.4 — Observability and Auditability Packages 1–3 implementados na Draft PR #15, aguardando revisão.
+* **Fase:** v0.1–v1.4 concluídas e publicadas; v1.5 — Asynchronous Processing finalizada tecnicamente e em preparação de release na PR #16.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
-* **Backend:** `apps/api` v1.4.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `a63d2f8c1b04` adiciona correlação persistente à auditoria.
+* **Backend:** `apps/api` v1.5.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.
 * **AI Layer:** `packages/ai` fornece contratos tipados, factory, service e provider OpenAI. Os endpoints de chat, embeddings e completion exigem usuário autenticado.
 * **Documents/RAG:** upload e catálogo no MinIO continuam protegidos por proprietário/papel e restritos a PDFs validados. A v0.5 extrai texto por página com `pypdf`, cria chunks configuráveis, gera embeddings via AI Layer, persiste vetores em pgvector, recupera contexto por similaridade e produz respostas fundamentadas com rastreabilidade até documento, página e chunk.
 * **CAD Inicial:** STEP Part 21 possui allowlist de extensão/MIME/assinatura e análise autenticada. O parser extrai metadados, entidades, pontos, unidade e envelope preliminar; volume permanece indisponível sem kernel geométrico, conforme ADR-0011.
@@ -113,6 +113,34 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   216 testes de API e 52 testes operacionais com PostgreSQL/pgvector, Redis e
   MinIO reais. O round trip criptografado descartável mediu backup 0,426 s,
   restore 0,418 s e RPO técnico 1,247 s para 1 objeto/27 bytes, sem SLO produtivo.
+* **Release v1.4.0:** a PR [#15](https://github.com/VenancioMarcos/vena-ia-platform/pull/15)
+  foi integrada por Squash Merge em `1380156`; a tag anotada e a
+  [GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.4.0)
+  foram publicadas e validadas diretamente, sem deploy.
+* **v1.5 Asynchronous Processing Package 1:** branch
+  `codex/v1.5-asynchronous-processing` e Draft PR
+  [#16](https://github.com/VenancioMarcos/vena-ia-platform/pull/16) adicionam
+  `vena-ia.job/v1`, migration,
+  fila Redis com claim/lease/heartbeat, worker no mesmo Modular Monolith,
+  idempotência, progresso, retry/backoff, timeout, cancelamento e recuperação.
+  O primeiro handler processa e indexa PDF em background; fila e logs não contêm conteúdo,
+  segredos ou IDs de domínio em labels. OCR permanece ausente e PDF sem texto falha.
+  Os gates locais aprovaram Ruff, mypy, 236 testes de API, 46 operacionais,
+  frontend, Compose, OpenAPI 1.5.0/55 paths e Alembic head único.
+  O CI final no head `0f57c57` aprovou 238 testes de API e 52 operacionais com
+  PostgreSQL/pgvector, Redis e MinIO reais; Backend e Frontend CI estão verdes.
+* **v1.5 Asynchronous Processing Package 2:** a mesma Draft PR #16 fortalece
+  recovery após reinício/interrupção, recompõe Redis pela fonte PostgreSQL, renova
+  leases, fecha duplicação concorrente e mantém documento `PROCESSING` até a
+  indexação completa. Testes sintéticos cobrem 500 páginas, cancelamento entre
+  páginas, progresso e erros PDF seguros. OCR foi avaliado e adiado (classe B), sem
+  motor/dependência/serviço externo; R-017 continua aberto e R-038 monitorado. Os
+  gates locais aprovaram Ruff, mypy, 251 testes de API, 46 operacionais, frontend,
+  Compose, runtime/OpenAPI 1.5.0/55 paths e Alembic head único. O daemon Docker
+  local está ausente; integrações reais permanecem como gate do Backend CI.
+  O Backend CI do Package 2 no head `2086399` aprovou Ruff, mypy, ciclo Alembic,
+  253 testes de API (incluindo Redis real) e 52 operacionais com PostgreSQL/pgvector,
+  MinIO e round trip criptografado; Frontend CI/build também passou.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
@@ -125,9 +153,9 @@ PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 ## 4. O que NÃO está implementado ainda
 
 * Gateway externo confiável e fluxo público de recuperação de senha; controles distribuídos internos de autenticação já usam Redis.
-* OCR para PDFs sem camada textual e processamento assíncrono por fila/worker.
+* OCR para PDFs sem camada textual; o Package 1 mantém falha explícita.
 * Kernel geométrico CAD, propriedades topológicas, volume/área robustos, CAM, CNC ou simulação.
-* Backup/restore automatizado, logging estruturado, métricas, tracing e capacidade validada para piloto/produção.
+* Capacidade, timeout preemptivo de bibliotecas síncronas e backend histórico de telemetria validados para piloto/produção.
 * Deploy/CD automatizado; os workflows atuais cobrem CI de backend e frontend, sem publicação automática.
 * `packages/database` como pacote real (os modelos vivem em `apps/api` por decisão deliberada — `DEC-011`).
 

@@ -149,7 +149,7 @@ def _record_scenario(spec: _ScenarioSpec, started_at: datetime) -> IncidentScena
             "ERROR",
             dependency=spec.dependency,
             dependency_status=spec.observed_state,
-            application_version="1.4.0-dev",
+            application_version="1.5.0",
             environment="controlled",
         )
         if spec.metric_name == "readiness_state":
@@ -203,7 +203,7 @@ def _record_scenario(spec: _ScenarioSpec, started_at: datetime) -> IncidentScena
 
 def run_controlled_drill(
     *,
-    application_version: str = "1.4.0-dev",
+    application_version: str = "1.5.0",
     environment: str = "controlled-test",
     now: datetime | None = None,
 ) -> IncidentDrillReport:
@@ -307,7 +307,7 @@ def verify_evidence_bundle(report_path: Path, checksum_path: Path) -> IncidentDr
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-directory", type=Path, required=True)
-    parser.add_argument("--application-version", default="1.4.0-dev")
+    parser.add_argument("--application-version", default="1.5.0")
     parser.add_argument("--environment", default="controlled-test")
     args = parser.parse_args()
     try:

@@ -210,3 +210,23 @@ Login → Dashboard → Projeto → PDF → Processing → Embeddings
 `FAILED` e não persiste resposta falsa. O frontend apenas envia perguntas de
 usuário; mensagens `assistant` vêm da orquestração interna. Decisão formal:
 `docs/adr/ADR-0015-mvp-integration-v1.md`.
+
+---
+
+## 13. Processamento Assíncrono v1.5
+
+```text
+HTTP autenticado
+  → JobService: owner/projeto/recurso + idempotência derivada
+  → PostgreSQL: vena-ia.job/v1 (fonte de verdade)
+  → Redis: somente job_id/tipo/correlação, claim + lease + delayed retry
+  → scripts.worker (mesmos módulos, banco, release e ownership da API)
+  → Documents/RAG: extração, chunks e indexação existentes
+  → progresso/estado atômico + auditoria + métricas/spans locais
+```
+
+O worker é um processo operacional do mesmo Modular Monolith, não um microserviço:
+não possui API, banco, domínio, release ou deploy independentes. Handlers são
+allowlisted e nunca executam payload ou conteúdo do usuário. Heartbeat integra
+readiness; leases abandonados voltam à fila. Decisão formal:
+`docs/adr/ADR-0024-asynchronous-job-foundation.md`.

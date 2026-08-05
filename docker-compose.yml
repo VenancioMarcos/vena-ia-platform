@@ -65,6 +65,23 @@ services:
       minio:
         condition: service_healthy
 
+  worker:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: vena_ia_worker
+    command: ["python", "-m", "scripts.worker"]
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
   web:
     build:
       context: ./apps/web

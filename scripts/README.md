@@ -5,6 +5,15 @@ Scripts operacionais do projeto.
 
 Operational automation is versioned here; generated data is never versioned.
 
+Run the v1.5 asynchronous worker from the repository root:
+
+```bash
+python -m scripts.worker
+```
+
+It consumes only allowlisted `vena-ia.job/v1` identifiers through Redis. See
+`docs/runbooks/ASYNCHRONOUS_JOBS.md`; do not use the memory queue in production.
+
 PostgreSQL backup and restore:
 
 ```bash
@@ -61,7 +70,7 @@ allowlisted summaries, never raw logs or user data:
 ```bash
 python -m scripts.incident_drill \
   --output-directory /secure/vena-ia-incident-evidence \
-  --application-version 1.4.0-dev \
+  --application-version 1.5.0 \
   --environment controlled-test
 ```
 

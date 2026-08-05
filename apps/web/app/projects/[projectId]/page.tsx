@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { use, useCallback, useEffect, useState, type FormEvent } from "react";
+import { use, useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { FileText, Loader2, MessageSquareText, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +14,14 @@ type Document = {
   status: string;
 };
 type DocumentList = { documents: Document[] };
-type DocumentProcessingResponse = { document: Document };
+type Job = {
+  id: string;
+  status: string;
+  progress: number;
+  attempt: number;
+  max_attempts: number;
+  error_message: string | null;
+};
 type Evidence = {
   document_id: string;
   page_number: number;
@@ -63,12 +70,14 @@ export default function ProjectPage({
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [jobs, setJobs] = useState<Record<string, Job>>({});
   const [messages, setMessages] = useState<Message[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [question, setQuestion] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState<string | null>("load");
   const [error, setError] = useState<string | null>(null);
+  const jobControllers = useRef<Record<string, AbortController>>({});
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setError(null);
@@ -115,7 +124,10 @@ export default function ProjectPage({
   useEffect(() => {
     const controller = new AbortController();
     void load(controller.signal);
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      Object.values(jobControllers.current).forEach((item) => item.abort());
+    };
   }, [load]);
 
   async function refreshDocuments() {
@@ -154,18 +166,12 @@ export default function ProjectPage({
     setBusy(document.id);
     setError(null);
     try {
-      if (document.status !== "READY") {
-        const processed = await api<DocumentProcessingResponse>(
-          `/documents/${document.id}/processing`,
-          { method: "POST" }
-        );
-        setDocuments((current) =>
-          current.map((item) =>
-            item.id === processed.document.id ? processed.document : item
-          )
-        );
-      }
-      await api(`/documents/${document.id}/embeddings`, { method: "POST" });
+      const job = await api<Job>(`/documents/${document.id}/jobs/processing`, {
+        method: "POST",
+        body: JSON.stringify({ idempotency_key: crypto.randomUUID() })
+      });
+      setJobs((current) => ({ ...current, [document.id]: job }));
+      await monitorJob(document.id, job.id);
     } catch (reason) {
       const operationError = describeError(reason);
       try {
@@ -176,6 +182,53 @@ export default function ProjectPage({
       }
     } finally {
       setBusy(null);
+    }
+  }
+
+  async function monitorJob(documentId: string, jobId: string) {
+    jobControllers.current[documentId]?.abort();
+    const controller = new AbortController();
+    jobControllers.current[documentId] = controller;
+    try {
+      for (let attempt = 0; attempt < 900; attempt += 1) {
+        const job = await api<Job>(`/jobs/${jobId}`, { signal: controller.signal });
+        setJobs((current) => ({ ...current, [documentId]: job }));
+        if (["SUCCEEDED", "FAILED", "CANCELLED", "TIMED_OUT"].includes(job.status)) {
+          await refreshDocuments();
+          if (job.status !== "SUCCEEDED") {
+            setError(job.error_message ?? `Processamento encerrado: ${job.status}`);
+          }
+          return;
+        }
+        await new Promise((resolve) => window.setTimeout(resolve, 1000));
+      }
+      setError("O processamento continua no servidor; atualize a pÃ¡gina para consultar o estado.");
+    } catch (reason) {
+      if (!controller.signal.aborted) throw reason;
+    } finally {
+      if (jobControllers.current[documentId] === controller) {
+        delete jobControllers.current[documentId];
+      }
+    }
+  }
+
+  async function cancelJob(documentId: string, jobId: string) {
+    try {
+      const job = await api<Job>(`/jobs/${jobId}/cancel`, { method: "POST" });
+      setJobs((current) => ({ ...current, [documentId]: job }));
+    } catch (reason) {
+      setError(describeError(reason));
+    }
+  }
+
+  async function retryJob(documentId: string, jobId: string) {
+    setError(null);
+    try {
+      const job = await api<Job>(`/jobs/${jobId}/retry`, { method: "POST" });
+      setJobs((current) => ({ ...current, [documentId]: job }));
+      await monitorJob(documentId, job.id);
+    } catch (reason) {
+      setError(describeError(reason));
     }
   }
 
@@ -251,7 +304,7 @@ export default function ProjectPage({
             <h1 className="mt-2 text-2xl font-semibold">
               {project?.name ?? "Carregando projeto..."}
             </h1>
-            <p className="text-sm text-steel">Fluxo integrado Vena_IA Platform v1.1</p>
+            <p className="text-sm text-steel">Vena_IA Platform v1.5 â€” processamento assÃ­ncrono</p>
           </div>
         </header>
 
@@ -294,6 +347,12 @@ export default function ProjectPage({
                       </span>
                       <span className="text-xs text-steel">{document.status}</span>
                     </div>
+                    {jobs[document.id] && (
+                      <div className="mt-2 text-xs text-steel" aria-live="polite">
+                        Job {jobs[document.id].status} Â· {jobs[document.id].progress}% Â· tentativa{" "}
+                        {jobs[document.id].attempt}/{jobs[document.id].max_attempts}
+                      </div>
+                    )}
                     {document.status !== "PROCESSING" && (
                       <button
                         type="button"
@@ -301,11 +360,29 @@ export default function ProjectPage({
                         onClick={() => void processDocument(document)}
                         className="mt-3 text-sm text-machine underline disabled:opacity-50"
                       >
-                        {document.status === "READY"
-                          ? "Indexar novamente"
-                          : document.status === "FAILED"
+                        {document.status === "FAILED"
                             ? "Tentar novamente"
-                            : "Processar e indexar"}
+                            : "Processar em segundo plano"}
+                      </button>
+                    )}
+                    {["QUEUED", "RUNNING", "RETRY_SCHEDULED"].includes(
+                      jobs[document.id]?.status ?? "",
+                    ) && (
+                      <button
+                        type="button"
+                        onClick={() => void cancelJob(document.id, jobs[document.id].id)}
+                        className="ml-3 mt-3 text-sm text-red-700 underline"
+                      >
+                        Cancelar
+                      </button>
+                    )}
+                    {["FAILED", "TIMED_OUT"].includes(jobs[document.id]?.status ?? "") && (
+                      <button
+                        type="button"
+                        onClick={() => void retryJob(document.id, jobs[document.id].id)}
+                        className="ml-3 mt-3 text-sm text-machine underline"
+                      >
+                        Repetir job
                       </button>
                     )}
                   </div>

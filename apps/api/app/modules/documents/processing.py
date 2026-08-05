@@ -1,5 +1,7 @@
 """Synchronous PDF ingestion foundation for the v0.5 RAG pipeline."""
 
+from collections.abc import Callable
+
 from app.modules.documents.contracts import (
     ChunkingStrategy,
     ChunkRepositoryContract,
@@ -7,7 +9,7 @@ from app.modules.documents.contracts import (
     ProcessingResult,
     TextExtractor,
 )
-from app.modules.documents.extraction import PdfExtractionError
+from app.modules.documents.extraction import PdfExtractionError, PdfTextExtractor
 from app.modules.documents.models import DocumentChunk
 from app.modules.documents.schemas import DocumentStatus
 from app.modules.documents.service import DocumentService
@@ -40,7 +42,14 @@ class DocumentProcessingService:
         self._chunker = chunker
         self._metric_collector = metric_collector
 
-    def process(self, document_id: str) -> ProcessingResult:
+    def process(
+        self,
+        document_id: str,
+        *,
+        mark_ready: bool = True,
+        page_progress: Callable[[int, int], None] | None = None,
+        cancelled: Callable[[], bool] | None = None,
+    ) -> ProcessingResult:
         document = self._document_service.get(document_id)
         if self._metric_collector is not None:
             safe_metric_call(
@@ -54,25 +63,33 @@ class DocumentProcessingService:
                     "retry_attempts_total",
                     {"operation": "document.processing"},
                 )
-        self._document_service.start_processing(document_id)
+        if document.status != DocumentStatus.PROCESSING.value:
+            self._document_service.start_processing(document_id)
 
         try:
             content = self._storage.download_file(document.storage_path)
-            pages = self._extractor.extract_pages(content)
+            if isinstance(self._extractor, PdfTextExtractor):
+                pages = self._extractor.extract_pages(
+                    content, page_progress=page_progress, cancelled=cancelled
+                )
+            else:
+                pages = self._extractor.extract_pages(content)
             chunks = self._build_chunks(document_id, pages)
             if not chunks:
                 raise PdfExtractionError("PDF does not contain extractable text")
             persisted = self._chunk_repository.replace_for_document(document_id, chunks)
-            ready_document = self._document_service.finish_processing(document_id)
+            processed_document = (
+                self._document_service.finish_processing(document_id)
+                if mark_ready
+                else self._document_service.get(document_id)
+            )
             return ProcessingResult(
-                document=ready_document,
+                document=processed_document,
                 chunk_count=len(persisted),
             )
         except StorageError as exc:
             self._mark_failed(document_id)
-            raise DocumentContentUnavailableError(
-                "Document storage unavailable"
-            ) from exc
+            raise DocumentContentUnavailableError("Document storage unavailable") from exc
         except PdfExtractionError:
             self._mark_failed(document_id)
             raise
