@@ -44,6 +44,12 @@ class Settings(BaseSettings):
     observability_collection_enabled: bool = True
     observability_metrics_endpoint_enabled: bool = False
     observability_alert_cooldown_seconds: float = Field(default=30, ge=0, le=86_400)
+    observability_repeated_auth_failure_threshold: int = Field(default=5, ge=1, le=1_000)
+    observability_rate_limit_threshold: int = Field(default=1, ge=1, le=1_000)
+    observability_processing_failure_threshold: int = Field(default=3, ge=1, le=1_000)
+    observability_readiness_degradation_threshold: int = Field(default=1, ge=1, le=100)
+    observability_dependency_failure_threshold: int = Field(default=1, ge=1, le=100)
+    observability_internal_error_threshold: int = Field(default=1, ge=1, le=100)
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"

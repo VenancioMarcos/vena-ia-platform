@@ -6,6 +6,8 @@ import json
 import logging
 import re
 import time
+from collections.abc import Generator
+from contextlib import contextmanager
 from contextvars import ContextVar, Token
 from datetime import datetime, timezone
 from typing import Any
@@ -59,6 +61,23 @@ def current_request_id() -> str | None:
 
 def current_correlation_id() -> str | None:
     return _correlation_id.get()
+
+
+@contextmanager
+def observability_context(
+    request_id: str | None = None,
+    correlation_id: str | None = None,
+) -> Generator[tuple[str, str], None, None]:
+    """Create the same validated correlation scope used by HTTP middleware."""
+    safe_request_id = _safe_identifier(request_id)
+    safe_correlation_id = _safe_identifier(correlation_id)
+    request_token = _request_id.set(safe_request_id)
+    correlation_token = _correlation_id.set(safe_correlation_id)
+    try:
+        yield safe_request_id, safe_correlation_id
+    finally:
+        _request_id.reset(request_token)
+        _correlation_id.reset(correlation_token)
 
 
 def redact_sensitive(value: Any, *, key: str = "") -> Any:
@@ -203,14 +222,14 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
                     context={"scope": scope},
                     correlation_id=correlation_id,
                 )
-                if scope == "authentication":
-                    self._safe(
-                        self.alert_manager.emit,
-                        "repeated_auth_failure_threshold",
-                        "warning",
-                        context={"scope": scope},
-                        correlation_id=correlation_id,
-                    )
+            if response.status_code == 401 and route_path == "/auth/login":
+                self._safe(
+                    self.alert_manager.emit,
+                    "repeated_auth_failure_threshold",
+                    "warning",
+                    context={"scope": "authentication"},
+                    correlation_id=correlation_id,
+                )
             if response.status_code in {502, 503} and (
                 route_path.startswith("/ai/")
                 or route_path.endswith("/knowledge/ask")

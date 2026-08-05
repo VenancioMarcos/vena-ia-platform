@@ -126,6 +126,24 @@ def test_local_alert_contract_severity_cooldown_and_no_external_delivery() -> No
     )
 
 
+def test_alert_threshold_is_bounded_resettable_and_precedes_cooldown() -> None:
+    provider = LocalAlertProvider()
+    manager = AlertManager(
+        provider,
+        cooldown_seconds=0,
+        thresholds={"processing_failure_threshold": 3},
+    )
+    context = {"operation": "document.processing"}
+    assert not manager.emit("processing_failure_threshold", "warning", context=context)
+    assert not manager.emit("processing_failure_threshold", "warning", context=context)
+    assert manager.emit("processing_failure_threshold", "warning", context=context)
+    assert len(provider.events) == 1
+    manager.reset()
+    assert not manager.emit("processing_failure_threshold", "warning", context=context)
+    with pytest.raises(ValueError, match="thresholds"):
+        AlertManager(provider, thresholds={"unknown": 1})
+
+
 def test_alert_contract_rejects_sensitive_context() -> None:
     manager = AlertManager(NoOpAlertProvider())
     with pytest.raises(ValueError):

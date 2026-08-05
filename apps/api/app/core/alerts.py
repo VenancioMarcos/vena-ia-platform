@@ -60,10 +60,22 @@ class LocalAlertProvider:
 
 
 class AlertManager:
-    def __init__(self, provider: AlertProvider, *, cooldown_seconds: float = 30) -> None:
+    def __init__(
+        self,
+        provider: AlertProvider,
+        *,
+        cooldown_seconds: float = 30,
+        thresholds: dict[str, int] | None = None,
+    ) -> None:
         self._provider = provider
         self._cooldown_seconds = cooldown_seconds
+        self._thresholds = dict(thresholds or {})
+        if set(self._thresholds) - ALERT_EVENT_CODES or any(
+            not isinstance(value, int) or value < 1 for value in self._thresholds.values()
+        ):
+            raise ValueError("Alert thresholds must use known codes and positive integers")
         self._last_sent: dict[tuple[str, tuple[tuple[str, str], ...]], float] = {}
+        self._occurrences: dict[tuple[str, tuple[tuple[str, str], ...]], int] = {}
         self._lock = RLock()
 
     def emit(
@@ -84,10 +96,15 @@ class AlertManager:
         key = (code, tuple(sorted(safe_context.items())))
         now = time.monotonic()
         with self._lock:
+            occurrences = self._occurrences.get(key, 0) + 1
+            self._occurrences[key] = occurrences
+            if occurrences < self._thresholds.get(code, 1):
+                return False
             last = self._last_sent.get(key)
             if last is not None and now - last < self._cooldown_seconds:
                 return False
             self._last_sent[key] = now
+            self._occurrences[key] = 0
         event = AlertEvent(
             severity=severity,
             code=code,
@@ -104,3 +121,4 @@ class AlertManager:
     def reset(self) -> None:
         with self._lock:
             self._last_sent.clear()
+            self._occurrences.clear()

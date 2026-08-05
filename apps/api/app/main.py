@@ -57,6 +57,16 @@ def create_app() -> FastAPI:
     app.state.alert_manager = AlertManager(
         NoOpAlertProvider(),
         cooldown_seconds=settings.observability_alert_cooldown_seconds,
+        thresholds={
+            "repeated_auth_failure_threshold": (
+                settings.observability_repeated_auth_failure_threshold
+            ),
+            "rate_limit_threshold": settings.observability_rate_limit_threshold,
+            "processing_failure_threshold": settings.observability_processing_failure_threshold,
+            "readiness_degraded": settings.observability_readiness_degradation_threshold,
+            "dependency_unavailable": settings.observability_dependency_failure_threshold,
+            "unexpected_internal_error": settings.observability_internal_error_threshold,
+        },
     )
     app.state.tracer = Tracer(NoOpTraceProvider())
 
