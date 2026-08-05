@@ -70,7 +70,7 @@ allowlisted summaries, never raw logs or user data:
 ```bash
 python -m scripts.incident_drill \
   --output-directory /secure/vena-ia-incident-evidence \
-  --application-version 1.4.0-dev \
+  --application-version 1.5.0 \
   --environment controlled-test
 ```
 

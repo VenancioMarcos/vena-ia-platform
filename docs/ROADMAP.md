@@ -553,6 +553,11 @@ riscos residuais e não bloqueiam a revisão técnica do pacote.
 
 ## v1.5 — Asynchronous Processing
 
+**Estado:** Packages 1 e 2 concluídos e aprovados; release v1.5.0 em preparação
+na PR #16 em 2026-08-05. R-016 está parcialmente mitigado, R-017 permanece aberto
+com OCR adiado, R-033 é residual e R-038 permanece monitorado. A v1.6 não foi
+iniciada.
+
 Objetivo: retirar ingestão, OCR futuro e indexação longa da requisição HTTP.
 
 Entregas: contrato de job, fila/worker reutilizando Redis, estados e progresso,
@@ -586,6 +591,7 @@ novos tipos de busca, microserviço e deploy continuam fora. PDF sem texto mant�
   Drills cobrem reinícios, dependências, cancelamento, timeout e PDFs sintéticos de
   500 páginas. OCR foi formalmente classificado como adiado (B), sem implementação;
   R-017 segue aberto e timeout preemptivo/capacidade permanecem gates futuros.
+  A decisão final encerra a v1.5 sem Package 3 e sem implementar OCR.
 
 ---
 

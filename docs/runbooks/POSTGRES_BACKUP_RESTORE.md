@@ -84,7 +84,7 @@ Contents and credentials never enter the manifest.
 python -m scripts.minio_backup \
   --output-directory /secure/vena-ia-backups \
   --bucket vena-ia-files \
-  --application-version 1.4.0-dev \
+  --application-version 1.5.0 \
   --backup-set-id UUID-SHARED-WITH-POSTGRES
 ```
 

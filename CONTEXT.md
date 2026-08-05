@@ -27,10 +27,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.4 concluídas e publicadas; v1.5 — Asynchronous Processing Package 1 em implementação/revisão.
+* **Fase:** v0.1–v1.4 concluídas e publicadas; v1.5 — Asynchronous Processing finalizada tecnicamente e em preparação de release na PR #16.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
-* **Backend:** `apps/api` v1.5.0-dev com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.
+* **Backend:** `apps/api` v1.5.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.
 * **AI Layer:** `packages/ai` fornece contratos tipados, factory, service e provider OpenAI. Os endpoints de chat, embeddings e completion exigem usuário autenticado.
 * **Documents/RAG:** upload e catálogo no MinIO continuam protegidos por proprietário/papel e restritos a PDFs validados. A v0.5 extrai texto por página com `pypdf`, cria chunks configuráveis, gera embeddings via AI Layer, persiste vetores em pgvector, recupera contexto por similaridade e produz respostas fundamentadas com rastreabilidade até documento, página e chunk.
 * **CAD Inicial:** STEP Part 21 possui allowlist de extensão/MIME/assinatura e análise autenticada. O parser extrai metadados, entidades, pontos, unidade e envelope preliminar; volume permanece indisponível sem kernel geométrico, conforme ADR-0011.
@@ -126,7 +126,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   O primeiro handler processa e indexa PDF em background; fila e logs não contêm conteúdo,
   segredos ou IDs de domínio em labels. OCR permanece ausente e PDF sem texto falha.
   Os gates locais aprovaram Ruff, mypy, 236 testes de API, 46 operacionais,
-  frontend, Compose, OpenAPI 1.5.0-dev/55 paths e Alembic head único.
+  frontend, Compose, OpenAPI 1.5.0/55 paths e Alembic head único.
   O CI final no head `0f57c57` aprovou 238 testes de API e 52 operacionais com
   PostgreSQL/pgvector, Redis e MinIO reais; Backend e Frontend CI estão verdes.
 * **v1.5 Asynchronous Processing Package 2:** a mesma Draft PR #16 fortalece
@@ -136,7 +136,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   páginas, progresso e erros PDF seguros. OCR foi avaliado e adiado (classe B), sem
   motor/dependência/serviço externo; R-017 continua aberto e R-038 monitorado. Os
   gates locais aprovaram Ruff, mypy, 251 testes de API, 46 operacionais, frontend,
-  Compose, runtime/OpenAPI 1.5.0-dev/55 paths e Alembic head único. O daemon Docker
+  Compose, runtime/OpenAPI 1.5.0/55 paths e Alembic head único. O daemon Docker
   local está ausente; integrações reais permanecem como gate do Backend CI.
   O Backend CI do Package 2 no head `2086399` aprovou Ruff, mypy, ciclo Alembic,
   253 testes de API (incluindo Redis real) e 52 operacionais com PostgreSQL/pgvector,

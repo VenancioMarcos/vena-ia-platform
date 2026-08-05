@@ -294,3 +294,11 @@ PostgreSQL/pgvector, Redis e MinIO reais. Dois consumidores e dois recoverers
 validaram exclusividade/idempotência no Redis. O round trip descartável registrou
 backup 0,425 s, restore 0,408 s e RPO técnico 1,382 s para 1 objeto/27 bytes, sem
 SLO produtivo. Frontend CI `31051848820` também passou. A PR #16 permanece Draft.
+
+## 2026-08-05 — finalização e Release v1.5.0
+
+O proprietário aprovou diretamente os Packages 1 e 2 e emitiu a `TASK-V15-003`.
+A ordem encerra a v1.5 sem Package 3 e autoriza preparar a versão final 1.5.0,
+revalidar integralmente, retirar a PR #16 de Draft, realizar Squash Merge, publicar
+a tag anotada e a GitHub Release e validar diretamente a tag. Deploy, OCR, novos
+tipos de job, microserviço, serviços externos e início da v1.6 permanecem proibidos.

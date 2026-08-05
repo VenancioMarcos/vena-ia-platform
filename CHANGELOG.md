@@ -8,7 +8,9 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
-### Adicionado — v1.5 Package 2
+## [1.5.0] — 2026-08-05 — Asynchronous Processing
+
+### Adicionado — Package 2
 * Reconciliador automático reconstrói o transporte Redis a partir dos jobs não
   terminais no PostgreSQL e recupera `RUNNING` sem lease, retry vencido,
   cancelamento pendente e fila perdida após reinício.
@@ -24,7 +26,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * Avaliação formal de OCR classifica a tecnologia como adiada; nenhum motor,
   serviço, dependência, GPU ou envio externo foi introduzido.
 
-### Adicionado — v1.5 Package 1
+### Adicionado — Package 1
 * Contrato durável `vena-ia.job/v1` com proprietário, projeto, recurso, progresso,
   tentativas, timeout, idempotência derivada, correlação, erros seguros e estados
   terminais protegidos por transições atômicas.
@@ -39,7 +41,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * Logs correlacionados, métricas de cardinalidade fechada, alertas, spans, auditoria
   persistente e readiness do worker sem conteúdo ou IDs de domínio em labels.
 
-### Segurança — v1.5 Package 1
+### Segurança
 * A fila não transporta documento, prompt, resposta, embedding, segredo ou código;
   `X-User-ID` permanece sem função de identidade e acesso cruzado retorna `404`.
 * OCR continua ausente. PDFs sem texto falham explicitamente, sem resposta inventada.

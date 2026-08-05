@@ -1,6 +1,6 @@
 {
   "name": "vena-ia-web",
-  "version": "1.5.0-dev",
+  "version": "1.5.0",
   "private": true,
   "packageManager": "pnpm@11.9.0",
   "scripts": {
