@@ -5,7 +5,7 @@ from starlette.testclient import TestClient
 from sqlalchemy import select
 
 from app.core.alerts import AlertManager, LocalAlertProvider, NoOpAlertProvider
-from app.core.config import settings
+from app.core.config import Settings, settings
 from app.core.metrics import InMemoryMetricCollector, METRICS_SCHEMA_VERSION
 from app.core.observability import CORRELATION_ID_HEADER, REQUEST_ID_HEADER
 from app.core.tracing import LocalTraceProvider, Tracer, current_span_id
@@ -142,6 +142,13 @@ def test_alert_threshold_is_bounded_resettable_and_precedes_cooldown() -> None:
     assert not manager.emit("processing_failure_threshold", "warning", context=context)
     with pytest.raises(ValueError, match="thresholds"):
         AlertManager(provider, thresholds={"unknown": 1})
+
+
+def test_alert_threshold_configuration_rejects_out_of_range_values() -> None:
+    with pytest.raises(ValueError):
+        Settings(_env_file=None, observability_repeated_auth_failure_threshold=0)
+    with pytest.raises(ValueError):
+        Settings(_env_file=None, observability_internal_error_threshold=101)
 
 
 def test_alert_contract_rejects_sensitive_context() -> None:
