@@ -40,6 +40,18 @@ class Settings(BaseSettings):
         pattern=r"^[A-Za-z0-9][A-Za-z0-9:_-]*$",
     )
     auth_redis_timeout_seconds: float = Field(default=1.0, gt=0, le=30)
+    jobs_queue_provider: Literal["redis", "memory"] = "redis"
+    jobs_redis_prefix: str = Field(
+        default="vena_ia:jobs",
+        min_length=1,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9:_-]*$",
+    )
+    jobs_redis_timeout_seconds: float = Field(default=1.0, gt=0, le=30)
+    jobs_lease_seconds: int = Field(default=60, ge=5, le=3600)
+    jobs_timeout_seconds: int = Field(default=900, ge=1, le=86_400)
+    jobs_max_attempts: int = Field(default=3, ge=1, le=20)
+    jobs_retry_base_seconds: float = Field(default=2.0, ge=0.1, le=3600)
     security_audit_retention_days: int = Field(default=90, ge=1, le=3_650)
     observability_collection_enabled: bool = True
     observability_metrics_endpoint_enabled: bool = False
@@ -62,6 +74,11 @@ class Settings(BaseSettings):
             and self.auth_security_store == "memory"
         ):
             raise ValueError("AUTH_SECURITY_STORE=memory is forbidden in production")
+        if (
+            self.app_env.lower() in {"production", "prod"}
+            and self.jobs_queue_provider == "memory"
+        ):
+            raise ValueError("JOBS_QUEUE_PROVIDER=memory is forbidden in production")
         return self
 
 

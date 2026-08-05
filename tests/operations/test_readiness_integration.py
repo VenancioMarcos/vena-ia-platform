@@ -2,9 +2,11 @@ import os
 
 import pytest
 from minio import Minio
+from redis import Redis
 
 from app.core.config import settings
 from app.core.readiness import DefaultReadinessChecker
+from app.modules.jobs.queue import RedisJobQueue
 
 pytestmark = pytest.mark.skipif(
     os.getenv("RUN_READINESS_INTEGRATION") != "1",
@@ -21,8 +23,11 @@ def test_postgresql_redis_and_minio_are_ready_together() -> None:
     )
     if not minio.bucket_exists(settings.minio_bucket):
         minio.make_bucket(settings.minio_bucket)
+    redis = Redis.from_url(settings.redis_url, decode_responses=True)
+    RedisJobQueue(redis, settings.jobs_redis_prefix).heartbeat("ci-worker", 30)
     assert DefaultReadinessChecker(settings).check() == {
         "postgresql": "ready",
         "redis": "ready",
+        "worker": "ready",
         "minio": "ready",
     }

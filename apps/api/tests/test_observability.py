@@ -137,7 +137,7 @@ def test_readiness_reports_healthy_and_unavailable_dependencies(client: TestClie
         healthy = client.get("/ready")
         assert healthy.status_code == 200
         assert healthy.json()["status"] == "ready"
-        assert healthy.json()["version"] == "1.4.0"
+        assert healthy.json()["version"] == "1.5.0-dev"
 
         app.state.readiness_checker = FakeReadinessChecker(
             {"postgresql": "ready", "redis": "unavailable", "minio": "ready"}

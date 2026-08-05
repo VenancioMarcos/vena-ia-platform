@@ -46,6 +46,19 @@ METRIC_SPECS: dict[str, MetricSpec] = {
     "retry_attempts_total": MetricSpec(
         "retry_attempts_total", "counter", ("operation",), "attempts"
     ),
+    "async_jobs_total": MetricSpec(
+        "async_jobs_total", "counter", ("job_type", "job_status"), "jobs"
+    ),
+    "async_job_duration_ms": MetricSpec(
+        "async_job_duration_ms",
+        "histogram",
+        ("job_type", "job_status"),
+        "milliseconds",
+        (10, 50, 100, 250, 500, 1_000, 5_000, 30_000, 60_000, 300_000),
+    ),
+    "job_queue_recoveries_total": MetricSpec(
+        "job_queue_recoveries_total", "counter", (), "jobs"
+    ),
     "rate_limits_total": MetricSpec(
         "rate_limits_total", "counter", ("scope",), "limits"
     ),
@@ -71,10 +84,23 @@ PROHIBITED_LABELS = frozenset(
 _ALLOWED_LABEL_VALUES = {
     "method": frozenset({"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}),
     "status_class": frozenset({"1xx", "2xx", "3xx", "4xx", "5xx"}),
-    "dependency": frozenset({"postgresql", "redis", "minio"}),
+    "dependency": frozenset({"postgresql", "redis", "minio", "worker"}),
     "operation": frozenset({"ai.request", "document.processing", "backup", "restore"}),
     "outcome": frozenset({"started", "completed", "failed"}),
     "scope": frozenset({"authentication", "api"}),
+    "job_type": frozenset({"document.processing"}),
+    "job_status": frozenset(
+        {
+            "queued",
+            "running",
+            "succeeded",
+            "failed",
+            "retry_scheduled",
+            "cancellation_requested",
+            "cancelled",
+            "timed_out",
+        }
+    ),
 }
 
 

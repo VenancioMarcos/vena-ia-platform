@@ -22,9 +22,14 @@ ALERT_EVENT_CODES = frozenset(
         "ai_provider_unavailable",
         "processing_failure_threshold",
         "unexpected_internal_error",
+        "job_retry_exhausted",
+        "job_timed_out",
+        "job_queue_unavailable",
     }
 )
-_ALLOWED_CONTEXT = frozenset({"dependency", "operation", "route", "status_class", "scope"})
+_ALLOWED_CONTEXT = frozenset(
+    {"dependency", "operation", "route", "status_class", "scope", "job_type"}
+)
 
 
 @dataclass(frozen=True)
