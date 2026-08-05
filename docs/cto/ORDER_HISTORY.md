@@ -266,3 +266,8 @@ worker allowlisted, processamento/indexação PDF, API autenticada e frontend m�
 Os gates locais aprovaram Ruff, mypy, 236 testes de API, 46 operacionais, frontend,
 Compose e OpenAPI 1.5.0-dev/55 paths. A Draft PR #16 foi aberta; integrações reais
 PostgreSQL/Redis/MinIO permanecem como gate do CI antes da revisão do CTO.
+
+O Backend CI no head `0f57c57` concluiu em 2m04s: Ruff, mypy, ciclo Alembic,
+238 testes de API e 52 operacionais passaram, incluindo Redis real, readiness do
+worker e os round trips PostgreSQL/pgvector e MinIO. Frontend CI/build também
+passou. A PR #16 permanece Draft, limpa e mergeável, sem merge ou deploy.

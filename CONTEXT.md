@@ -127,6 +127,8 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   segredos ou IDs de domínio em labels. OCR permanece ausente e PDF sem texto falha.
   Os gates locais aprovaram Ruff, mypy, 236 testes de API, 46 operacionais,
   frontend, Compose, OpenAPI 1.5.0-dev/55 paths e Alembic head único.
+  O CI final no head `0f57c57` aprovou 238 testes de API e 52 operacionais com
+  PostgreSQL/pgvector, Redis e MinIO reais; Backend e Frontend CI estão verdes.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
