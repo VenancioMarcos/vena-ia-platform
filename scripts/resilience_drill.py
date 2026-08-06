@@ -71,14 +71,26 @@ def synthetic_overhead(iterations: int = 10_000) -> dict[str, float | int | str]
     if not 1 <= iterations <= 100_000:
         raise ValueError("Synthetic iteration count is outside safe bounds")
     started = time.perf_counter()
+    samples: list[float] = []
     for _ in range(iterations):
+        sample_started = time.perf_counter()
         run_drill()
+        samples.append((time.perf_counter() - sample_started) * 1_000)
     duration_ms = (time.perf_counter() - started) * 1_000
+    samples.sort()
+
+    def percentile(ratio: float) -> float:
+        index = min(int((len(samples) - 1) * ratio), len(samples) - 1)
+        return round(samples[index], 6)
+
     return {
         "environment": "synthetic-local",
         "operations": iterations,
         "duration_ms": round(duration_ms, 3),
         "average_ms": round(duration_ms / iterations, 6),
+        "p50_ms": percentile(0.50),
+        "p95_ms": percentile(0.95),
+        "p99_ms": percentile(0.99),
     }
 
 

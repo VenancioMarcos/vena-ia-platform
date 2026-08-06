@@ -10,7 +10,7 @@ nunca infinito. Nenhuma operação possui tentativas ou fila ilimitadas.
 | connect/readiness | PostgreSQL | 5/0/5 | 1 | nenhum | leitura; readiness 503 |
 | auth e fila | Redis | 1/1/1 | 1 | nenhum no cliente | falha fechada 503; recovery deriva do PostgreSQL |
 | documento | MinIO | 3/10/13 | 1 | retries SDK desativados | estado não avança sem confirmação |
-| chat/embeddings/completion | OpenAI | 5/30/30 | 3 | exponencial 0,25–2; jitter 20%; Retry-After limitado | somente classes permitidas; 502/503 seguro |
+| chat/embeddings/completion | OpenAI | 5/5/30 | 3 | exponencial 0,25–2; jitter 20%; Retry-After limitado | socket bounded por tentativa e deadline cooperativo global; 502/503 seguro |
 | processamento | worker | cooperativo/900 | 3 | exponencial 2–300; jitter 20% | job/idempotency persistidos; terminal ao esgotar |
 | backup/restore | PostgreSQL+MinIO | subprocesso/3600 | 1 | nenhum | lock exclusivo; falha fechada |
 | lease/heartbeat | Redis | 1/1/1 | 1 por chamada | renovação periódica | lease perdido agenda retry seguro |

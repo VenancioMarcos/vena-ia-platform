@@ -20,6 +20,8 @@ def test_synthetic_overhead_is_bounded_and_not_a_capacity_claim() -> None:
     result = synthetic_overhead(100)
     assert result["operations"] == 100
     assert result["duration_ms"] >= 0
+    assert result["p50_ms"] <= result["p99_ms"]
+    assert result["p95_ms"] <= result["p99_ms"]
     assert result["environment"] == "synthetic-local"
 
 

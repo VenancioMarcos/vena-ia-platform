@@ -46,7 +46,7 @@
     },
     {
       "dependency": "openai", "operation": "chat_embeddings_completion",
-      "connect_timeout_seconds": 5, "read_timeout_seconds": 30,
+      "connect_timeout_seconds": 5, "read_timeout_seconds": 5,
       "total_timeout_seconds": 30, "max_attempts": 3,
       "retry_base_seconds": 0.25, "retry_max_seconds": 2, "jitter_enabled": true,
       "retryable_error_codes": ["connect_timeout", "read_timeout", "resolution", "rate_limit", "temporary_unavailable"],
