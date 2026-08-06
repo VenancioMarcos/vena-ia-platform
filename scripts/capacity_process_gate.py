@@ -294,6 +294,15 @@ class Gate:
             )
             if changed.rowcount != 1:
                 raise RuntimeError("disposable retry fault injection was not isolated")
+        retry_id = retry_job["id"]
+        with self.redis.pipeline(transaction=True) as pipeline:
+            pipeline.lrem("vena_ia:jobs:ready", 0, retry_id)
+            pipeline.zrem("vena_ia:jobs:delayed", retry_id)
+            pipeline.zrem("vena_ia:jobs:leases", retry_id)
+            pipeline.hdel("vena_ia:jobs:workers", retry_id)
+            pipeline.hdel("vena_ia:jobs:payloads", retry_id)
+            pipeline.srem("vena_ia:jobs:scheduled", retry_id)
+            pipeline.execute()
         retried = self.require(
             self.request("POST", f"{self.apis[0]}/jobs/{retry_job['id']}/retry", headers=headers),
             200,
@@ -599,7 +608,7 @@ class Gate:
             "idempotency_cross_instance": True,
             "cancellation_cross_instance": cancelled["status"] == "CANCELLED",
             "retry_cross_instance": retry_observed,
-            "retry_fault_injection": "disposable-postgresql-terminal-state",
+            "retry_fault_injection": "disposable-terminal-state-with-acknowledged-transport",
             "cross_user_status": cross_user,
             "rag_provider": answer["provider"],
             "report_messages_observed": len(report),
