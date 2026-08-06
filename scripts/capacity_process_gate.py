@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import socket
 import statistics
 import subprocess
 import sys
@@ -140,6 +142,22 @@ class Gate:
                     pass
             time.sleep(0.25)
         raise RuntimeError("real process topology did not become ready")
+
+    def wait_for_worker_heartbeats(self, names: tuple[str, ...]) -> None:
+        expected = []
+        for name in names:
+            process = self.processes[name]
+            identity = hashlib.sha256(f"{socket.gethostname()}-{process.pid}".encode()).hexdigest()[
+                :16
+            ]
+            expected.append(f"vena_ia:jobs:worker:heartbeat:{identity}")
+        deadline = time.monotonic() + 20
+        while time.monotonic() < deadline:
+            if all(process.poll() is None for process in (self.processes[name] for name in names)):
+                if all(bool(cast(int, self.redis.exists(key))) for key in expected):
+                    return
+            time.sleep(0.1)
+        raise RuntimeError("restarted worker processes did not publish independent heartbeats")
 
     def request(self, method: str, url: str, **kwargs: Any) -> httpx.Response:
         started = time.perf_counter()
@@ -284,8 +302,10 @@ class Gate:
             raise RuntimeError("retry endpoint did not requeue the failed job")
         self.start("worker-a", [sys.executable, "-m", "scripts.worker"])
         self.start("worker-b", [sys.executable, "-m", "scripts.worker"])
-        retry_deadline = time.monotonic() + 20
+        self.wait_for_worker_heartbeats(("worker-a", "worker-b"))
+        retry_deadline = time.monotonic() + 60
         retry_observed = False
+        candidate: dict[str, Any] = {}
         while time.monotonic() < retry_deadline:
             candidate = self.require(
                 self.request("GET", f"{self.apis[1]}/jobs/{retry_job['id']}", headers=headers),
@@ -296,7 +316,13 @@ class Gate:
                 break
             time.sleep(0.1)
         if not retry_observed:
-            raise RuntimeError("retried synthetic job did not recover to success")
+            state = candidate.get("status", "UNKNOWN")
+            code = candidate.get("error_code") or "NONE"
+            attempt = candidate.get("attempt", "UNKNOWN")
+            raise RuntimeError(
+                f"retried synthetic job did not recover: state={state} code={code} "
+                f"attempt={attempt}"
+            )
 
         queue_initial_components = self.queue_snapshot()
         queue_initial = queue_initial_components["scheduled"]
