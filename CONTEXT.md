@@ -27,10 +27,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.5 concluídas e publicadas; v1.6 Packages 1–2 aprovados e Package 3 R1 em revisão na Draft PR #17, branch `codex/v1.6-reliability-scalability`.
+* **Fase:** v0.1–v1.6 concluídas; a PR #17 foi integrada e a v1.6.0 está em preparação de publicação. A v1.7 ainda não foi iniciada.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
-* **Backend:** `apps/api` v1.5.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.
+* **Backend:** `apps/api` v1.6.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.
 * **AI Layer:** `packages/ai` fornece contratos tipados, factory, service e provider OpenAI. Os endpoints de chat, embeddings e completion exigem usuário autenticado.
 * **Documents/RAG:** upload e catálogo no MinIO continuam protegidos por proprietário/papel e restritos a PDFs validados. A v0.5 extrai texto por página com `pypdf`, cria chunks configuráveis, gera embeddings via AI Layer, persiste vetores em pgvector, recupera contexto por similaridade e produz respostas fundamentadas com rastreabilidade até documento, página e chunk.
 * **CAD Inicial:** STEP Part 21 possui allowlist de extensão/MIME/assinatura e análise autenticada. O parser extrai metadados, entidades, pontos, unidade e envelope preliminar; volume permanece indisponível sem kernel geométrico, conforme ADR-0011.

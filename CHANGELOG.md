@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.6.0] — 2026-08-06 — Reliability and Scalability
+
 ### Corrigido — v1.6 Package 3 R1
 * Evidência anterior reclassificada como `HARNESS_ONLY_BASELINE`; o gate terminal
   agora inicia API A/API B e Worker A/Worker B como processos independentes com
