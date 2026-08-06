@@ -347,3 +347,9 @@ O CTO aprovou a TASK-V16-002 e emitiu `TASK-V16-003` para perfil sintético,
 carga controlada, soak curto, E2E, duas APIs/workers, estado compartilhado,
 backpressure, evidência, gargalos e guardrails na mesma Draft PR #17. Merge, tag,
 Release, deploy, piloto real, SLO/SLA, API paga, dados reais e v1.7 são proibidos.
+
+O head de código `500c94f` aprovou três policies, Ruff, mypy em 140 arquivos, 266
+testes de API, 65 operacionais, frontend e harness local. No CI, Backend
+`31060952153`, Frontend `31060952144`, Runtime Policy `31060952139` e Controlled
+Capacity `31060952197` passaram. A evidence externa/checksummed foi publicada como
+artifact `8952091174`; a PR permanece Draft, sem merge, tag, Release ou deploy.

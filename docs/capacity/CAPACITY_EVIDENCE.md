@@ -24,3 +24,19 @@ Zero violação de isolamento, resposta falsa, estado impossível, duplicação,
 job preso ou fila residual. Falha permitida: zero. p95 do harness: até 500 ms.
 Crescimento no soak curto: até 8 MiB. Recuperação e cleanup são obrigatórios.
 Esses limites são `TECHNICAL_TEST_GUARDRAIL`, não compromisso operacional.
+
+## Evidência final no CI
+
+Controlled Capacity CI `31060952197` passou em 1m03s no head `500c94f`:
+
+* 10 testes de perfil/carga/soak/shared-state/evidence passaram;
+* E2E autenticado e isolamento cross-user passaram;
+* PostgreSQL/pgvector e Redis reais fixados ficaram healthy;
+* evidence SHA-256 `5245b0f6566606ef3345cc8bf6a9a829f30563787a503c3f1954b6a6c11e3414`;
+* artifact `controlled-capacity-evidence`, ID `8952091174`, 808 bytes, retenção 7 dias;
+* containers e runner temp foram limpos pelo workflow.
+
+Backend CI `31060952153` aprovou 268 testes de API e 71 operacionais com MinIO,
+PostgreSQL/pgvector, Redis e backup/restore. Frontend `31060952144` e Runtime Policy
+`31060952139` também passaram. O artifact não contém segredo, dado pessoal,
+conteúdo, prompt, resposta ou identificador de domínio.
