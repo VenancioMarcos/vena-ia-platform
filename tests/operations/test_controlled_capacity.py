@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from scripts.capacity_process_gate import Gate
 from scripts.capacity_harness import (
     EVIDENCE_SCHEMA,
     build_evidence,
@@ -134,6 +135,25 @@ def test_capacity_bundle_cleans_temporary_after_publish_failure(
         write_evidence({"safe": True}, output, ROOT)
     assert not os.path.lexists(output)
     assert list(tmp_path.iterdir()) == []
+
+
+def test_failure_diagnostics_allowlist_only_exception_types(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    gate = object.__new__(Gate)
+    worker_log = (tmp_path / "worker.log").open("w+b")
+    worker_log.write(
+        b"ERROR vena_ia.worker worker pre-claim dependency check failed: OperationalError\n"
+        b"untrusted token=secret job_id=domain-id\n"
+    )
+    gate.logs = {"worker-a": worker_log}
+
+    gate.emit_safe_diagnostics()
+
+    assert capsys.readouterr().out == (
+        "SAFE_WORKER_DIAGNOSTIC name=worker-a error_type=OperationalError\n"
+    )
+    worker_log.close()
 
 
 @pytest.mark.parametrize("operations,concurrency", [(0, 1), (1, 0), (2001, 1), (1, 17)])

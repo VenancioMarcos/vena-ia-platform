@@ -139,7 +139,11 @@ class JobWorker:
                 context={"job_type": "document.processing"},
             )
             return WorkerResult(None, "queue_unavailable")
-        except Exception:
+        except Exception as exc:
+            self._logger.error(
+                "worker pre-claim dependency check failed: %s",
+                type(exc).__name__,
+            )
             safe_metric_call(
                 getattr(self._alerts, "emit", None),
                 "readiness_degraded",

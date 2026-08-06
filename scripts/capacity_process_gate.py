@@ -60,7 +60,7 @@ class Gate:
         self.profile = profile
         self.apis = ["http://127.0.0.1:8101", "http://127.0.0.1:8102"]
         self.processes: dict[str, subprocess.Popen[bytes]] = {}
-        self.logs: list[Any] = []
+        self.logs: dict[str, Any] = {}
         self.client = httpx.Client(timeout=15)
         self.redis = Redis.from_url(os.environ["REDIS_URL"], decode_responses=True)
         self.engine = create_engine(os.environ["DATABASE_URL"])
@@ -77,7 +77,7 @@ class Gate:
 
     def start(self, name: str, command: list[str]) -> None:
         log = tempfile.TemporaryFile()
-        self.logs.append(log)
+        self.logs[name] = log
         self.processes[name] = subprocess.Popen(
             command,
             cwd=self.root,
@@ -633,8 +633,23 @@ class Gate:
             self.stop(name)
         self.client.close()
         self.engine.dispose()
-        for log in self.logs:
+        for log in self.logs.values():
             log.close()
+
+    def emit_safe_diagnostics(self) -> None:
+        """Print only allowlisted worker diagnostics before disposable cleanup."""
+        marker = "worker pre-claim dependency check failed:"
+        for name in ("worker-a", "worker-b"):
+            log = self.logs.get(name)
+            if log is None:
+                continue
+            log.flush()
+            log.seek(0)
+            for raw_line in log.read().decode("utf-8", errors="replace").splitlines():
+                if marker in raw_line:
+                    error_type = raw_line.rsplit(marker, 1)[1].strip().split()[0]
+                    if error_type.replace("_", "").isalnum():
+                        print(f"SAFE_WORKER_DIAGNOSTIC name={name} error_type={error_type}")
 
 
 def main() -> int:
@@ -709,6 +724,9 @@ def main() -> int:
         print(f"CAPACITY_EVIDENCE_SHA256={checksum}")
         print(f"GUARDRAIL_RESULT={evidence['guardrail_result']}")
         return 0 if passed else 1
+    except Exception:
+        gate.emit_safe_diagnostics()
+        raise
     finally:
         gate.cleanup()
 
