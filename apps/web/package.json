@@ -2,6 +2,9 @@
   "name": "vena-ia-web",
   "version": "1.5.0",
   "private": true,
+  "engines": {
+    "node": "22.20.x"
+  },
   "packageManager": "pnpm@11.9.0",
   "scripts": {
     "dev": "next dev",

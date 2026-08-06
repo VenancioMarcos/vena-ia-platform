@@ -10,7 +10,7 @@ Este repositório é desenvolvido com apoio intensivo de múltiplos agentes de I
 
 ## Status Atual
 
-**Fase:** v1.2.0 — Security and Data Protection validada para Release.
+**Fase:** v1.6 — Reliability and Scalability, Package 1 em Draft PR.
 
 Para o estado técnico exato (o que está implementado vs. apenas planejado), ver [`CONTEXT.md`](CONTEXT.md) — leitura obrigatória antes de qualquer contribuição.
 
@@ -33,7 +33,8 @@ Objetivos completos em [`PROJECT.md`](PROJECT.md).
 ## Stack
 
 * **Frontend:** Next.js, React, TypeScript, Tailwind CSS, shadcn/ui
-* **Backend:** Python 3.13, FastAPI, SQLAlchemy, Alembic, Pydantic v2
+* **Backend:** Python 3.13.11, FastAPI, SQLAlchemy, Alembic, Pydantic v2
+* **Frontend runtime:** Node.js 22.20.0 e pnpm 11.9.0
 * **Dados:** PostgreSQL, pgvector, Redis, MinIO
 * **Infraestrutura:** Docker, Docker Compose, GitHub Actions
 * **IA:** OpenAI API, embeddings, RAG, agentes especializados
@@ -71,6 +72,7 @@ docker compose exec api alembic upgrade head
 ```
 
 Instruções completas e testadas: [`docs/INSTALLATION.md`](docs/INSTALLATION.md).
+Matriz oficial: [`docs/RUNTIME_SUPPORT_MATRIX.md`](docs/RUNTIME_SUPPORT_MATRIX.md).
 Fluxo do usuário: [`docs/QUICKSTART.md`](docs/QUICKSTART.md).
 
 ## Rotas Iniciais da API
@@ -121,7 +123,7 @@ Ver [`CONTRIBUTING.md`](CONTRIBUTING.md) para branches, Conventional Commits, ch
 
 ## Roadmap Resumido
 
-v0.1 Foundation ✅ → v0.2 Core ✅ → v0.3 IA Base ✅ → v0.4 Upload ✅ → v0.4.1 Security Gate ✅ → v0.5 RAG ✅ → v0.6 CAD ✅ → v0.7 CAM ✅ → v0.8 CNC ✅ → v0.9 Pesquisa ✅ → v1.0 MVP ✅ → v1.1 Estabilização ✅.
+v0.1 Foundation ✅ → v0.2 Core ✅ → v0.3 IA Base ✅ → v0.4 Upload ✅ → v0.4.1 Security Gate ✅ → v0.5 RAG ✅ → v0.6 CAD ✅ → v0.7 CAM ✅ → v0.8 CNC ✅ → v0.9 Pesquisa ✅ → v1.0–v1.5 ✅ → v1.6 Package 1 em revisão.
 
 Detalhes completos em [`docs/ROADMAP.md`](docs/ROADMAP.md).
 

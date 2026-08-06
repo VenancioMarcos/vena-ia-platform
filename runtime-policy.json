@@ -1,0 +1,39 @@
+{
+  "schema_version": "vena-ia.runtime-policy/v1",
+  "validated_on": "2026-08-05",
+  "python": {
+    "official": "3.13.11",
+    "minimum": "3.13",
+    "experimental": "3.14.6",
+    "ci": "3.13.11",
+    "container": "3.13.11",
+    "local_recommended": "3.13.11",
+    "pip": "26.1.2"
+  },
+  "node": {
+    "official": "22.20.0",
+    "minimum": "22.20.0",
+    "ci": "22.20.0",
+    "container": "22.20.0",
+    "local_recommended": "22.20.0"
+  },
+  "pnpm": {
+    "official": "11.9.0",
+    "ci": "11.9.0",
+    "container": "11.9.0",
+    "local_recommended": "11.9.0"
+  },
+  "migration_head": "b18e4c7d2a91",
+  "images": {
+    "api_base": "python:3.13.11-slim-bookworm@sha256:20080e807bfc404f8450b185cf0fc95d553462673598549613735f70a5b4d5d0",
+    "web_base": "node:22.20.0-alpine3.22@sha256:dbcedd8aeab47fbc0f4dd4bffa55b7c3c729a707875968d467aaaea42d6225af",
+    "postgres_pgvector": "pgvector/pgvector:0.8.1-pg17@sha256:3e8b3adfd27b5707128f60956f62a793c3c9326ea8cfaf0eab7adccb5d700b21",
+    "redis": "redis:7.4.7-alpine@sha256:02f2cc4882f8bf87c79a220ac958f58c700bdec0dfb9b9ea61b62fb0e8f1bfcf",
+    "minio": "minio/minio:RELEASE.2025-09-07T16-13-09Z@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e"
+  },
+  "actions": {
+    "checkout": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+    "setup_python": "actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+    "setup_node": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
+  }
+}

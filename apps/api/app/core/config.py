@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     minio_secret_key: str = "change_me"
     minio_bucket: str = "vena-ia-files"
     minio_secure: bool = False
+    postgresql_connect_timeout_seconds: int = Field(default=5, ge=1, le=30)
+    postgresql_pool_timeout_seconds: int = Field(default=5, ge=1, le=30)
+    minio_connect_timeout_seconds: float = Field(default=3.0, gt=0, le=30)
+    minio_read_timeout_seconds: float = Field(default=10.0, gt=0, le=120)
     document_max_file_size: int = 104_857_600
     rag_chunk_size: int = Field(default=1_000, ge=100, le=10_000)
     rag_chunk_overlap: int = Field(default=150, ge=0, le=2_000)
@@ -23,6 +27,15 @@ class Settings(BaseSettings):
     rag_embedding_dimensions: int = Field(default=1_536, ge=1, le=4_096)
     rag_search_limit: int = Field(default=5, ge=1, le=20)
     openai_api_key: str = ""
+    ai_connect_timeout_seconds: float = Field(default=5.0, gt=0, le=30)
+    ai_total_timeout_seconds: float = Field(default=30.0, gt=0, le=300)
+    ai_max_attempts: int = Field(default=3, ge=1, le=10)
+    ai_retry_base_seconds: float = Field(default=0.25, ge=0, le=30)
+    ai_retry_max_seconds: float = Field(default=2.0, ge=0, le=60)
+    ai_retry_jitter_ratio: float = Field(default=0.2, ge=0, le=1)
+    ai_concurrency_limit: int = Field(default=8, ge=1, le=1_000)
+    ai_queue_timeout_seconds: float = Field(default=0.1, ge=0, le=30)
+    deterministic_ai_delay_seconds: float = Field(default=0.05, ge=0, le=5)
     cors_origins: list[str] = ["http://localhost:3000"]
     auth_secret_key: str = ""
     auth_token_expiration_minutes: int = 30
@@ -52,6 +65,8 @@ class Settings(BaseSettings):
     jobs_timeout_seconds: int = Field(default=900, ge=1, le=86_400)
     jobs_max_attempts: int = Field(default=3, ge=1, le=20)
     jobs_retry_base_seconds: float = Field(default=2.0, ge=0.1, le=3600)
+    jobs_retry_max_seconds: float = Field(default=300.0, ge=0.1, le=3600)
+    jobs_retry_jitter_ratio: float = Field(default=0.2, ge=0, le=1)
     security_audit_retention_days: int = Field(default=90, ge=1, le=3_650)
     observability_collection_enabled: bool = True
     observability_metrics_endpoint_enabled: bool = False
@@ -69,6 +84,12 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def reject_production_memory_security_store(self) -> "Settings":
+        if self.ai_retry_max_seconds < self.ai_retry_base_seconds:
+            raise ValueError("AI retry maximum must be at least the base delay")
+        if self.ai_connect_timeout_seconds > self.ai_total_timeout_seconds:
+            raise ValueError("AI connect timeout cannot exceed the total timeout")
+        if self.jobs_retry_max_seconds < self.jobs_retry_base_seconds:
+            raise ValueError("Job retry maximum must be at least the base delay")
         if (
             self.app_env.lower() in {"production", "prod"}
             and self.auth_security_store == "memory"

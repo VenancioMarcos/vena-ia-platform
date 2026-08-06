@@ -7,6 +7,7 @@ from typing import Protocol
 from minio import Minio
 from redis import Redis
 from sqlalchemy import text
+from urllib3 import PoolManager, Timeout
 
 from app.core.config import Settings
 from app.core.database import engine
@@ -49,6 +50,13 @@ class DefaultReadinessChecker:
                 access_key=self.settings.minio_access_key,
                 secret_key=self.settings.minio_secret_key,
                 secure=self.settings.minio_secure,
+                http_client=PoolManager(
+                    timeout=Timeout(
+                        connect=self.settings.minio_connect_timeout_seconds,
+                        read=self.settings.minio_read_timeout_seconds,
+                    ),
+                    retries=False,
+                ),
             )
             statuses["minio"] = (
                 "ready" if minio.bucket_exists(self.settings.minio_bucket) else "unavailable"

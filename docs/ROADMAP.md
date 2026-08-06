@@ -596,6 +596,11 @@ novos tipos de busca, microserviço e deploy continuam fora. PDF sem texto mant�
 
 ## v1.6 — Reliability and Scalability
 
+**Estado do Package 1:** Runtime and Container Reproducibility implementa matriz
+oficial, manifesto/policy check, Python 3.13.11 oficial com 3.14.6 experimental,
+Node 22.20.0, pnpm 11.9.0, imagens/digests e CI de builds. Budgets, carga,
+capacidade, escalabilidade horizontal e packages posteriores não foram iniciados.
+
 Objetivo: medir e fortalecer a plataforma antes de ampliar funções de engenharia.
 
 Entregas: imagens/runtime fixados, matriz Python suportada, budgets de timeout e
@@ -613,6 +618,22 @@ Critérios de segurança e aceite: limites medidos, falha segura, sem resposta
 fabricada e sem dependência de estado apenas em processo.
 
 Condição de avanço: capacidade e gargalos documentados para um piloto definido.
+
+O Package 1 não satisfaz essa condição de avanço: ele reduz deriva de runtime e
+imagens, mas não mede capacidade nem altera R-034.
+
+**Estado do Package 2:** budgets e degradação implementam o contrato
+`vena-ia.resilience-policy/v1`, classificação de falhas, retries limitados,
+backoff/jitter, deadline global, backpressure de IA por processo, budgets de
+PostgreSQL/Redis/MinIO/worker, observabilidade bounded e drill sintético. Não mede
+carga/capacidade, não resolve timeout preemptivo e não satisfaz a condição de avanço.
+
+**Estado do Package 3 R1:** o baseline em processo foi reclassificado como
+`HARNESS_ONLY_BASELINE`. O gate corrigido inicia API A/API B e Worker A/Worker B,
+PostgreSQL/pgvector, Redis e MinIO descartáveis; usa HTTP real, providers Redis,
+claims/leases, recuperação de worker/MinIO, backpressure e soak integrado de 30 s.
+O resultado continua sendo guardrail de CI, não capacidade produtiva. A conclusão
+da v1.6 depende da revisão do CTO e não autoriza piloto/deploy.
 
 ---
 

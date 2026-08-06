@@ -62,6 +62,54 @@ METRIC_SPECS: dict[str, MetricSpec] = {
     "rate_limits_total": MetricSpec(
         "rate_limits_total", "counter", ("scope",), "limits"
     ),
+    "resilience_attempts_total": MetricSpec(
+        "resilience_attempts_total", "counter", ("operation", "attempt_class"), "attempts"
+    ),
+    "resilience_failures_total": MetricSpec(
+        "resilience_failures_total", "counter", ("dependency", "error_class"), "failures"
+    ),
+    "backpressure_rejections_total": MetricSpec(
+        "backpressure_rejections_total", "counter", ("operation",), "rejections"
+    ),
+    "concurrency_in_use": MetricSpec(
+        "concurrency_in_use", "gauge", ("operation",), "operations"
+    ),
+    "concurrency_limit": MetricSpec(
+        "concurrency_limit", "gauge", ("operation",), "operations"
+    ),
+    "resilience_operation_duration_ms": MetricSpec(
+        "resilience_operation_duration_ms",
+        "histogram",
+        ("operation", "outcome"),
+        "milliseconds",
+        (1, 5, 10, 25, 50, 100, 250, 500, 1_000, 5_000, 30_000),
+    ),
+    "requests_in_flight": MetricSpec(
+        "requests_in_flight", "gauge", ("operation",), "requests"
+    ),
+    "requests_rejected_total": MetricSpec(
+        "requests_rejected_total", "counter", ("operation",), "requests"
+    ),
+    "queue_depth": MetricSpec("queue_depth", "gauge", ("operation",), "jobs"),
+    "jobs_in_flight": MetricSpec(
+        "jobs_in_flight", "gauge", ("job_type",), "jobs"
+    ),
+    "worker_utilization": MetricSpec(
+        "worker_utilization", "gauge", ("job_type",), "ratio"
+    ),
+    "dependency_concurrency": MetricSpec(
+        "dependency_concurrency", "gauge", ("dependency", "operation"), "operations"
+    ),
+    "recovery_after_saturation_total": MetricSpec(
+        "recovery_after_saturation_total", "counter", ("operation",), "recoveries"
+    ),
+    "e2e_duration_ms": MetricSpec(
+        "e2e_duration_ms", "histogram", ("outcome",), "milliseconds",
+        (100, 250, 500, 1_000, 2_500, 5_000, 10_000, 30_000),
+    ),
+    "soak_errors_total": MetricSpec(
+        "soak_errors_total", "counter", ("operation",), "errors"
+    ),
 }
 
 PROHIBITED_LABELS = frozenset(
@@ -84,9 +132,18 @@ PROHIBITED_LABELS = frozenset(
 _ALLOWED_LABEL_VALUES = {
     "method": frozenset({"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}),
     "status_class": frozenset({"1xx", "2xx", "3xx", "4xx", "5xx"}),
-    "dependency": frozenset({"postgresql", "redis", "minio", "worker"}),
+    "dependency": frozenset({"postgresql", "redis", "minio", "worker", "openai", "api"}),
     "operation": frozenset({"ai.request", "document.processing", "backup", "restore"}),
     "outcome": frozenset({"started", "completed", "failed"}),
+    "attempt_class": frozenset({"initial", "retry", "recovered", "exhausted"}),
+    "error_class": frozenset(
+        {
+            "connect_timeout", "read_timeout", "total_timeout", "connection_refused",
+            "resolution", "authentication", "authorization", "rate_limit",
+            "temporary_unavailable", "permanent", "invalid_payload", "invalid_response",
+            "conflict", "not_found", "cancelled", "exhausted", "internal",
+        }
+    ),
     "scope": frozenset({"authentication", "api"}),
     "job_type": frozenset({"document.processing"}),
     "job_status": frozenset(

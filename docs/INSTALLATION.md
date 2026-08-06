@@ -1,11 +1,12 @@
-# Instalação local — Vena_IA Platform v1.1
+# Instalação local — Vena_IA Platform v1.6 Package 1
 
 ## Requisitos
 
 * Git;
 * Docker Desktop com Docker Compose;
-* Python 3.13 para execução/testes locais da API;
-* Node.js 22 e pnpm 11 para execução local do frontend.
+* Python 3.13.11 para execução/testes locais da API;
+* Node.js 22.20.0 e pnpm 11.9.0 para o frontend;
+* versões e imagens conforme `docs/RUNTIME_SUPPORT_MATRIX.md`.
 
 ## Configuração
 
@@ -47,6 +48,7 @@ python -m pip install -e "apps/api[dev]"
 python -m ruff check .
 python -m mypy packages/ai
 python -m pytest apps/api
+python scripts/runtime_policy.py
 
 pnpm --dir apps/web install --frozen-lockfile
 pnpm --dir apps/web typecheck
@@ -56,6 +58,10 @@ pnpm --dir apps/web build
 Para API local fora do Docker, ajuste hosts de PostgreSQL/Redis/MinIO para
 `localhost`, aplique `alembic upgrade head` dentro de `apps/api` e execute
 `uvicorn app.main:app --reload`.
+
+Python 3.14.6 é experimental: pode ser usado para diagnóstico, mas não é runtime
+oficial e não substitui o gate 3.13.11. Não altere digests ou arquivos de versão
+isoladamente; siga `docs/runbooks/RUNTIME_AND_IMAGE_UPDATES.md`.
 
 ## Parada e diagnóstico
 

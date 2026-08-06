@@ -934,6 +934,110 @@ Nenhum OCR, microserviço, dependência externa, GPU ou deploy integra a decisã
 
 ---
 
+## DEC-027 — Manifesto executável de runtimes e imagens imutáveis
+
+**Data:** 2026-08-05
+**Status:** Aprovada
+**Tipo:** Arquitetura / Infraestrutura / Segurança / Operação
+**Documentos relacionados:** `docs/adr/ADR-0026-runtime-and-container-reproducibility.md`,
+`docs/RUNTIME_SUPPORT_MATRIX.md`, `runtime-policy.json`
+
+### Contexto
+
+Runtimes por major/minor, imagens flutuantes e divergência npm/pnpm permitiam que
+CI e containers resolvessem artefatos diferentes sem mudança no Git.
+
+### Decisão
+
+Python 3.13.11 é oficial e 3.14.6 experimental; Node 22.20.0, pnpm 11.9.0 e pip
+26.1.2 são explícitos. Imagens externas exigem tag e digest, Actions exigem commit
+SHA, frontend exige lockfile frozen. `runtime-policy.json` é validado em CI e o
+procedimento de atualização sempre requer branch, regressão, revisão e rollback.
+
+### Impacto
+
+R-008 e R-009 são mitigados no Package 1. R-018/R-033/R-034/R-038 não são
+reduzidos. Ausência de lock transitive Python e scanner dedicado permanece
+limitação explícita. Não existe migration, deploy ou mudança de arquitetura.
+
+---
+
+## DEC-028 — Contrato executável de resiliência por operação
+
+**Data:** 2026-08-05
+**Status:** Aprovada
+**Tipo:** Arquitetura / IA / Operação / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0027-resilience-budgets-and-degradation.md`,
+`resilience-policy.json`, `docs/RESILIENCE_BUDGET_INVENTORY.md`
+
+### Contexto
+
+Timeouts/retries dispersos não distinguiam conexão, leitura, deadline total,
+idempotência ou falhas permanentes. IA e jobs precisavam de limites observáveis.
+
+### Decisão
+
+Adotar policy por operação com attempts, deadline, backoff/teto/jitter,
+classificação e concorrência limitados. Retry exige classe e operação allowlisted;
+falha permanente, resposta inválida e efeito incerto não são repetidos. Estado
+compartilhado continua em PostgreSQL/Redis; nenhum segundo provider é introduzido.
+
+### Impacto
+
+R-018 recebe mitigação adicional. R-033 e R-038 permanecem residuais; R-034 não
+muda. Concorrência de IA é por processo e o pacote não declara capacidade/SLO.
+
+---
+
+## DEC-029 — Perfil sintético pequeno e evidência de capacidade
+
+**Data:** 2026-08-06
+**Status:** Aprovada como baseline; gate terminal substituído por DEC-030
+**Tipo:** Operação / Arquitetura / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0028-controlled-capacity-profile.md`,
+`capacity-profile.json`, `docs/capacity/CAPACITY_EVIDENCE.md`
+
+### Decisão
+
+Adotar perfil bounded e baseline unitário determinístico. Após revisão, APIs/workers
+lógicos e soak de hash foram reclassificados como `HARNESS_ONLY_BASELINE`; DEC-030
+define a evidência terminal com processos e dependências reais.
+
+### Impacto
+
+R-034 avança parcialmente. Não existe afirmação de capacidade produtiva, SLA/SLO,
+piloto, deploy ou escalabilidade horizontal completa.
+
+---
+
+## DEC-030 — Gate de capacidade com processos e dependências reais
+
+**Data:** 2026-08-06
+**Status:** Aprovada
+**Tipo:** Operação / Arquitetura / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0028-controlled-capacity-profile.md`,
+`scripts/capacity_process_gate.py`, `docs/capacity/CAPACITY_EVIDENCE.md`
+
+### Contexto
+
+O baseline do DEC-029 representava a topologia em um processo e não comprovava os
+serviços compartilhados descritos.
+
+### Decisão
+
+Reclassificar o resultado anterior como `HARNESS_ONLY_BASELINE` e exigir no gate
+terminal API A/API B, Worker A/Worker B, PostgreSQL, Redis e MinIO reais e
+descartáveis. Providers memory são proibidos nesse cenário. A jornada alterna
+instâncias, mede soak HTTP de 30 segundos e publica evidência atômica allowlisted.
+
+### Impacto
+
+R-034 permanece parcialmente mitigado/monitorar. O gate aumenta a confiança em
+processos compartilhados, mas não mede ambiente produtivo, não cria SLA/SLO e não
+autoriza piloto ou deploy.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

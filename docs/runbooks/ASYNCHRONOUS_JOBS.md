@@ -65,3 +65,8 @@ deploy independente ou garantia de capacidade. PDF sem camada textual falha de
   request/correlation IDs, proprietário, projeto e recurso.
 
 Procedimento detalhado e matriz dos vinte drills: `docs/runbooks/JOB_RECOVERY.md`.
+## Guardrail de capacidade sintética
+
+O perfil `vena-ia.capacity-profile/v1` usa dois workers controlados. Claims devem
+ser únicos, fila final zero, nenhum job não terminal e recuperação após saturação.
+Isso não autoriza aumentar workers em produção nem altera lease/heartbeat/recovery.

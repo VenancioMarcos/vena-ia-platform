@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException
 from app.modules.ai.dependencies import AIServiceDependency
 from app.modules.auth.dependencies import CurrentUserDependency
 from packages.ai.core import (
+    AIBackpressureError,
     AIExecutionError,
     ChatRequest,
     ChatResult,
@@ -28,6 +29,12 @@ ResultT = TypeVar("ResultT")
 def _execute(operation: Callable[[], ResultT]) -> ResultT:
     try:
         return operation()
+    except AIBackpressureError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=str(exc),
+            headers={"Retry-After": "1"},
+        ) from exc
     except ProviderNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ProviderCapabilityError as exc:

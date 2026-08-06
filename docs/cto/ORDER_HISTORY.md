@@ -311,3 +311,55 @@ aponta ao commit deste registro de release e a GitHub Release foi publicada em
 `https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.5.0`, sem deploy.
 A validação direta da tag repetiu os gates locais; PostgreSQL/Redis/MinIO reais
 permanecem comprovados pelo CI final. A v1.6 não foi iniciada.
+
+## 2026-08-05 — v1.6 Package 1 Runtime and Container Reproducibility
+
+O CTO aprovou a Release v1.5.0 e emitiu `TASK-V16-001`, exclusivamente para
+eliminar deriva de runtimes, imagens, Dockerfiles, Compose e CI. A branch
+`codex/v1.6-reliability-scalability` parte de `f6b6399`. O escopo autoriza matriz,
+manifesto/policy, pins, builds, testes, documentação, commits, push e Draft PR.
+Merge, tag, Release, deploy, carga, capacidade, escalabilidade e packages seguintes
+permanecem proibidos.
+
+A entrega foi concluída na Draft PR #17. O head `84c219a` passou no Backend CI
+`31057602795` (Ruff, mypy em 135 arquivos, ciclo Alembic, 253 testes de API e 55
+operacionais), Frontend CI `31057602796` e Runtime Policy CI `31057602808`. As
+imagens fixadas da API e Web foram construídas no CI; a PR permanece Draft,
+mergeável e sem merge, tag, Release ou deploy.
+
+## 2026-08-05 — v1.6 Package 2 Resilience Budgets
+
+O CTO aprovou a TASK-V16-001 e emitiu `TASK-V16-002` para continuar exclusivamente
+na branch e Draft PR #17. O escopo cobre inventário/policy de budgets, classificação,
+timeouts, retries, backoff/jitter, IA/embeddings, concorrência, backpressure,
+degradação, readiness, observabilidade e drill. Merge, tag, Release, deploy,
+capacidade formal, v1.7 e packages posteriores permanecem proibidos.
+
+O head de código `1905884` aprovou localmente duas policies, Ruff, mypy em 138
+arquivos, 266 testes de API, 55 operacionais, frontend, Compose e Alembic. O CI
+aprovou Backend `31059513786` (268 API, 61 operacionais e serviços reais), Frontend
+`31059513849` e Runtime Policy `31059513794` com builds API/Web. A PR #17 permanece
+Draft, mergeável e sem merge, tag, Release, deploy ou teste formal de capacidade.
+
+## 2026-08-06 — v1.6 Package 3 Controlled Capacity
+
+O CTO aprovou a TASK-V16-002 e emitiu `TASK-V16-003` para perfil sintético,
+carga controlada, soak curto, E2E, duas APIs/workers, estado compartilhado,
+backpressure, evidência, gargalos e guardrails na mesma Draft PR #17. Merge, tag,
+Release, deploy, piloto real, SLO/SLA, API paga, dados reais e v1.7 são proibidos.
+
+O head de código `500c94f` aprovou três policies, Ruff, mypy em 140 arquivos, 266
+testes de API, 65 operacionais, frontend e harness local. No CI, Backend
+`31060952153`, Frontend `31060952144`, Runtime Policy `31060952139` e Controlled
+Capacity `31060952197` passaram. A evidence externa/checksummed foi publicada como
+artifact `8952091174`; a PR permanece Draft, sem merge, tag, Release ou deploy.
+
+## 2026-08-06 — v1.6 Package 3 R1 worker recovery correction
+
+O gate real R1 revelou workers com heartbeat, mas sem claim. Diagnóstico allowlisted
+confirmou `InvalidRequestError` na primeira consulta do reconciliador: o entrypoint
+do worker não registrava todos os modelos ORM carregados pela API. O head `4c35100`
+importa o registro oficial e adiciona regressão em subprocesso limpo. Backend
+`31131271003`, Frontend `31131271784`, Runtime Policy `31131271162` e Controlled
+Capacity `31131271390` passaram no mesmo head. A PR #17 segue Draft e mergeável;
+merge, tag, Release e deploy não foram realizados.

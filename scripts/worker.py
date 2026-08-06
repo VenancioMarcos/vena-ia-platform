@@ -9,6 +9,7 @@ import socket
 import time
 from collections.abc import Callable
 
+from app.core import models_registry  # noqa: F401  (registers ORM models in worker process)
 from app.core.alerts import AlertManager, NoOpAlertProvider
 from app.core.config import settings
 from app.core.database import SessionLocal
@@ -159,6 +160,8 @@ def main() -> int:
         worker_id=f"{socket.gethostname()}-{os.getpid()}",
         lease_seconds=settings.jobs_lease_seconds,
         retry_base_seconds=settings.jobs_retry_base_seconds,
+        retry_max_seconds=settings.jobs_retry_max_seconds,
+        retry_jitter_ratio=settings.jobs_retry_jitter_ratio,
         metric_collector=(
             InMemoryMetricCollector()
             if settings.observability_collection_enabled

@@ -17,7 +17,9 @@ from packages.ai.core import (
     ProviderCapability,
     ProviderConfigurationError,
     ProviderInfo,
+    BoundedConcurrencyGate,
 )
+from packages.ai.providers import DeterministicProvider
 from packages.ai.services import ProviderFactory
 
 
@@ -178,3 +180,18 @@ def test_dependency_override_is_cleaned() -> None:
         app.dependency_overrides.update(original_overrides)
 
     assert get_provider_factory not in app.dependency_overrides
+
+
+def test_disposable_deterministic_provider_is_repeatable_and_local() -> None:
+    provider = DeterministicProvider(
+        dimensions=4,
+        delay_seconds=0,
+        concurrency_gate=BoundedConcurrencyGate(1, 0),
+    )
+    request = EmbeddingsRequest(input=["synthetic", "synthetic"])
+
+    result = provider.embeddings(request)
+
+    assert result.provider == "deterministic"
+    assert result.embeddings[0] == result.embeddings[1]
+    assert len(result.embeddings[0]) == 4

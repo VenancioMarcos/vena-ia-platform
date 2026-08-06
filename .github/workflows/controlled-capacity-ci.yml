@@ -1,0 +1,109 @@
+name: Controlled Capacity CI
+
+on:
+  pull_request:
+    paths:
+      - "capacity-profile.json"
+      - "scripts/capacity_*.py"
+      - "scripts/worker.py"
+      - "apps/api/app/modules/jobs/**"
+      - "tests/operations/test_controlled_capacity.py"
+      - "apps/api/tests/test_mvp_e2e.py"
+      - ".github/workflows/controlled-capacity-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  controlled-capacity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.1-pg17@sha256:3e8b3adfd27b5707128f60956f62a793c3c9326ea8cfaf0eab7adccb5d700b21
+        env:
+          POSTGRES_DB: vena_ia_test
+          POSTGRES_USER: vena_ia
+          POSTGRES_PASSWORD: test-only-password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U vena_ia -d vena_ia_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7.4.7-alpine@sha256:02f2cc4882f8bf87c79a220ac958f58c700bdec0dfb9b9ea61b62fb0e8f1bfcf
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://vena_ia:test-only-password@localhost:5432/vena_ia_test
+      REDIS_URL: redis://localhost:6379/0
+      MINIO_ENDPOINT: localhost:9000
+      MINIO_ACCESS_KEY: capacity-ci-access
+      MINIO_SECRET_KEY: capacity-ci-secret-only
+      MINIO_BUCKET: vena-ia-capacity-ci
+      APP_ENV: capacity-ci
+      AUTH_SECRET_KEY: capacity-ci-auth-secret-at-least-thirty-two-bytes
+      AUTH_SECURITY_STORE: redis
+      JOBS_QUEUE_PROVIDER: redis
+      JOBS_LEASE_SECONDS: 5
+      JOBS_TIMEOUT_SECONDS: 60
+      JOBS_MAX_ATTEMPTS: 5
+      JOBS_RETRY_BASE_SECONDS: 1
+      JOBS_RETRY_MAX_SECONDS: 2
+      RAG_AI_PROVIDER: deterministic
+      AI_CONCURRENCY_LIMIT: 1
+      AI_QUEUE_TIMEOUT_SECONDS: 0.02
+      DETERMINISTIC_AI_DELAY_SECONDS: 1
+      CAPACITY_MINIO_CONTAINER: vena-capacity-minio
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.13.11"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            apps/api/pyproject.toml
+      - name: Install dependencies
+        run: |
+          python -m pip install --disable-pip-version-check pip==26.1.2
+          pip install -e .
+          pip install -e "apps/api[dev]"
+      - name: Validate capacity profile
+        run: python scripts/capacity_policy.py
+      - name: Run capacity contract tests
+        run: python -m pytest tests/operations/test_controlled_capacity.py
+      - name: Start pinned disposable MinIO
+        run: |
+          docker run --detach --name vena-capacity-minio \
+            --publish 9000:9000 \
+            --env MINIO_ROOT_USER="$MINIO_ACCESS_KEY" \
+            --env MINIO_ROOT_PASSWORD="$MINIO_SECRET_KEY" \
+            minio/minio:RELEASE.2025-09-07T16-13-09Z@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e \
+            server /data
+          for attempt in {1..30}; do
+            curl --fail --silent http://localhost:9000/minio/health/live && exit 0
+            sleep 1
+          done
+          docker logs vena-capacity-minio
+          exit 1
+      - name: Apply Alembic head
+        working-directory: apps/api
+        run: alembic upgrade head
+      - name: Run real process integration, load and soak
+        run: python scripts/capacity_process_gate.py --output "${{ runner.temp }}/capacity-evidence.json" --commit "$GITHUB_SHA"
+      - name: Stop disposable MinIO
+        if: always()
+        run: docker rm --force vena-capacity-minio || true
+      - name: Upload safe evidence
+        if: success()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
+        with:
+          name: controlled-capacity-evidence
+          path: ${{ runner.temp }}/capacity-evidence.json
+          if-no-files-found: error
+          retention-days: 7

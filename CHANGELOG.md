@@ -8,6 +8,68 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Corrigido — v1.6 Package 3 R1
+* Evidência anterior reclassificada como `HARNESS_ONLY_BASELINE`; o gate terminal
+  agora inicia API A/API B e Worker A/Worker B como processos independentes com
+  PostgreSQL/pgvector, Redis e MinIO compartilhados.
+* Controlled Capacity CI proíbe providers memory, aplica Alembic e comprova por HTTP
+  auth/revogação/rate limit/idempotência, jobs/claims/leases, MinIO, RAG,
+  cancelamento/retry, isolamento, backpressure e soak integrado de 30 segundos.
+* Bundle de evidência recebe criação exclusiva/atômica, recusa de overwrite,
+  proteção contra symlink/traversal, flush/fsync, checksum e cleanup em falha.
+* O entrypoint independente do worker agora registra todos os modelos ORM antes do
+  reconciliador. Isso elimina o `InvalidRequestError` que permitia heartbeat, mas
+  bloqueava a primeira consulta PostgreSQL e, consequentemente, todos os claims.
+  O CI preserva diagnóstico allowlisted e só publica evidence PASS após sucesso.
+* O Controlled Capacity CI passa a observar mudanças no worker/jobs; Backend,
+  Frontend e Runtime Policy recebem disparo manual para revalidação explícita de um
+  mesmo HEAD sem alterar os gates executados.
+
+### Adicionado — v1.6 Package 3
+* Perfil `vena-ia.capacity-profile/v1`, harness bounded e evidência
+  `vena-ia.capacity-evidence/v1` checksummed fora do repositório.
+* Controlled Capacity CI executa carga/soak curtos, E2E determinístico e guardrails
+  com dados sintéticos, provider local e serviços fixados.
+* Relatório de gargalos documenta worker unitário, limite IA por processo, serviços
+  compartilhados, telemetria efêmera e timeout cooperativo sem alegação produtiva.
+
+### Adicionado — v1.6 Package 2
+* Contrato executável `vena-ia.resilience-policy/v1`, inventário e policy check
+  fail-closed para budgets de API, PostgreSQL, Redis, MinIO, IA, worker e backup.
+* Classificação reutilizável de falhas, deadline global, attempts limitados,
+  backoff exponencial com teto/jitter e suporte bounded a `Retry-After`.
+* Limite de concorrência de IA por processo sem fila ilimitada, resposta 503 segura
+  e drill determinístico com vinte cenários de falha, saturação e recuperação.
+
+### Alterado — v1.6 Package 2
+* Provider OpenAI valida resposta vazia/malformada e vetores não finitos; somente
+  falhas temporárias allowlisted recebem retry e nenhum provider alternativo é usado.
+* PostgreSQL e MinIO recebem budgets explícitos; jobs ganham teto de backoff e jitter.
+  O timeout do worker continua cooperativo e a migração permanece inalterada.
+
+### Adicionado — v1.6 Package 1
+* Manifesto executável `vena-ia.runtime-policy/v1`, matriz oficial e policy check
+  fail-closed alinham Python, Node, pnpm, Dockerfiles, Compose, CI e lockfile.
+* Runtime Policy CI valida configuração e constrói API/Web a partir de imagens-base
+  fixadas por versão e digest imutável.
+* Runbook versionado define revisão, proveniência, licença, compatibilidade de dados
+  e rollback sem merge ou atualização automática.
+
+### Alterado — v1.6 Package 1
+* Python 3.13.11 é oficial; Python 3.14.6 permanece experimental após regressão
+  local. Node 22.20.0, pnpm 11.9.0 e pip 26.1.2 passam a ser explícitos.
+* PostgreSQL/pgvector, Redis, MinIO, Python e Node deixam de usar referências
+  flutuantes; GitHub Actions são fixadas por commit.
+* Dockerfile Web usa pnpm frozen e build/start de produção; API/Web executam como
+  usuários não privilegiados, com healthchecks, e o worker reutiliza a imagem API.
+
+### Segurança — v1.6 Package 1
+* `latest` é proibido por teste; `.env`/segredos não entram em contextos ou
+  evidências. A ausência de scanner/SBOM e lock Python transitive permanece
+  documentada, sem alegação de ausência completa de vulnerabilidades.
+* Scripts de instalação frontend ficam bloqueados por padrão; somente `sharp` e
+  `unrs-resolver`, exigidos pelo build validado, integram a allowlist pnpm.
+
 ## [1.5.0] — 2026-08-05 — Asynchronous Processing
 
 ### Adicionado — Package 2

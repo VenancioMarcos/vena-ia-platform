@@ -1,25 +1,23 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V15_003
-TITLE=FINALIZATION_AND_RELEASE_V1_5_0
-BRANCH=codex/v1.5-asynchronous-processing
-START_HEAD=bd4908b54e5169d4e0c373cee1d6a70fe2e7bd67
-EXPECTED_STATE=VENA_IA_V1_5_RELEASED_READY_FOR_CTO_REVIEW
-PULL_REQUEST=https://github.com/VenancioMarcos/vena-ia-platform/pull/16
-PULL_REQUEST_DRAFT=REMOVE_AFTER_GREEN_CI
-MERGE=SQUASH_AUTHORIZED
-TAG_RELEASE=V1_5_0_AUTHORIZED
+MISSION=TASK_V16_003_R1
+TITLE=REAL_PROCESS_INTEGRATION_AND_CAPACITY_EVIDENCE
+BRANCH=codex/v1.6-reliability-scalability
+START_HEAD=69dc0916cf0cac58efbc1092b17f6ffa56ee5e93
+EXPECTED_STATE=VENA_IA_V1_6_PACKAGE_3_REMEDIATION_READY_FOR_CTO_REVIEW
+PULL_REQUEST=17
+PULL_REQUEST_DRAFT=KEEP_DRAFT
+MERGE=PROHIBITED
+TAG_RELEASE=PROHIBITED
 DEPLOY=PROHIBITED
-V1_5_PACKAGES_1_2=APPROVED_BY_CTO
-OCR_IMPLEMENTATION=PROHIBITED
-V1_6=PROHIBITED
-STATE=COMPLETED
-MERGE_COMMIT=a3c2f6befa11cdfe8a8678a6cc9212ea17a975be
-TAG=v1.5.0
-RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.5.0
+V1_6_PACKAGE_1=APPROVED_BY_CTO
+V1_6_PACKAGE_2=APPROVED_BY_CTO
+V1_6_PACKAGE_3=PARTIALLY_APPROVED_REMEDIATION_REQUIRED
+STATE=READY_FOR_CTO_REVIEW
 ```
 
-Escopo: finalizar versões e documentação, validar, retirar a PR #16 de Draft,
-realizar Squash Merge, publicar a tag anotada e a GitHub Release v1.5.0 e validar
-diretamente a tag. Não existe Package 3 e a v1.6 não pode ser iniciada.
+Escopo: reclassificar o baseline anterior, iniciar APIs/workers independentes com
+PostgreSQL/Redis/MinIO compartilhados, executar HTTP/E2E/claims/recovery/backpressure,
+soak integrado e bundle atômico. Sem merge, tag, Release, deploy, piloto, SLA/SLO,
+API paga ou v1.7.
