@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, cast
 
-import httpx
+import httpx2 as httpx
 from minio import Minio
 from redis import Redis
 from sqlalchemy import create_engine, text
