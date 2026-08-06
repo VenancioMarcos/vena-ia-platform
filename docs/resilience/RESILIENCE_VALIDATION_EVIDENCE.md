@@ -1,7 +1,7 @@
 # Evidência de validação — v1.6 Package 2
 
-**Data:** 2026-08-05/06  
-**Contrato:** `vena-ia.resilience-policy/v1`  
+**Data:** 2026-08-05/06
+**Contrato:** `vena-ia.resilience-policy/v1`
 **Head de código:** `1905884359d2e298c6d2f3f6113586e47c1c69fb`
 
 ## Local controlado
