@@ -1,23 +1,24 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V16_001
-TITLE=RUNTIME_AND_CONTAINER_REPRODUCIBILITY
+MISSION=TASK_V16_002
+TITLE=RESILIENCE_BUDGETS_AND_DEPENDENCY_DEGRADATION
 BRANCH=codex/v1.6-reliability-scalability
-START_HEAD=f6b63992d9d0ac5e5d29656e092eba1b364ff55a
-EXPECTED_STATE=VENA_IA_V1_6_PACKAGE_1_READY_FOR_CTO_REVIEW
+START_HEAD=2f5d427d6cecd4094cc96754c80d98954b1187c0
+EXPECTED_STATE=VENA_IA_V1_6_PACKAGE_2_READY_FOR_CTO_REVIEW
 PULL_REQUEST=DRAFT_REQUIRED
 PULL_REQUEST_DRAFT=KEEP_DRAFT
 MERGE=PROHIBITED
 TAG_RELEASE=PROHIBITED
 DEPLOY=PROHIBITED
 V1_5_RELEASE=APPROVED_BY_CTO
-V1_6_PACKAGE_1=AUTHORIZED
-V1_6_LATER_PACKAGES=PROHIBITED
-LOAD_CAPACITY_SCALING=PROHIBITED
+V1_6_PACKAGE_1=APPROVED_BY_CTO
+V1_6_PACKAGE_2=AUTHORIZED
+V1_6_PACKAGE_3_AND_LATER=PROHIBITED
+FORMAL_LOAD_CAPACITY_SCALING=PROHIBITED
 STATE=IN_PROGRESS
 ```
 
-Escopo: matriz oficial, pins de runtime/imagens/Actions, Dockerfiles/Compose/CI,
-policy check, compatibilidade, proveniência e rollback. Nenhum merge, tag, Release,
-deploy, carga, capacidade ou escalabilidade integra esta ordem.
+Escopo: inventário, policy, budgets, classificação, retry/backoff/jitter,
+concorrência/backpressure, degradação, readiness, observabilidade e drill. Nenhum
+merge, tag, Release, deploy, carga/capacidade formal ou pacote posterior integra a ordem.

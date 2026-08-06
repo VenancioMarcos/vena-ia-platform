@@ -8,6 +8,20 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.6 Package 2
+* Contrato executável `vena-ia.resilience-policy/v1`, inventário e policy check
+  fail-closed para budgets de API, PostgreSQL, Redis, MinIO, IA, worker e backup.
+* Classificação reutilizável de falhas, deadline global, attempts limitados,
+  backoff exponencial com teto/jitter e suporte bounded a `Retry-After`.
+* Limite de concorrência de IA por processo sem fila ilimitada, resposta 503 segura
+  e drill determinístico com vinte cenários de falha, saturação e recuperação.
+
+### Alterado — v1.6 Package 2
+* Provider OpenAI valida resposta vazia/malformada e vetores não finitos; somente
+  falhas temporárias allowlisted recebem retry e nenhum provider alternativo é usado.
+* PostgreSQL e MinIO recebem budgets explícitos; jobs ganham teto de backoff e jitter.
+  O timeout do worker continua cooperativo e a migração permanece inalterada.
+
 ### Adicionado — v1.6 Package 1
 * Manifesto executável `vena-ia.runtime-policy/v1`, matriz oficial e policy check
   fail-closed alinham Python, Node, pnpm, Dockerfiles, Compose, CI e lockfile.

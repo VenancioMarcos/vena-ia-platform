@@ -622,6 +622,12 @@ Condição de avanço: capacidade e gargalos documentados para um piloto definid
 O Package 1 não satisfaz essa condição de avanço: ele reduz deriva de runtime e
 imagens, mas não mede capacidade nem altera R-034.
 
+**Estado do Package 2:** budgets e degradação implementam o contrato
+`vena-ia.resilience-policy/v1`, classificação de falhas, retries limitados,
+backoff/jitter, deadline global, backpressure de IA por processo, budgets de
+PostgreSQL/Redis/MinIO/worker, observabilidade bounded e drill sintético. Não mede
+carga/capacidade, não resolve timeout preemptivo e não satisfaz a condição de avanço.
+
 ---
 
 ## v1.7 — Engineering Catalogs and CAM

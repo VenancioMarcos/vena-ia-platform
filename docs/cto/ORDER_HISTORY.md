@@ -326,3 +326,11 @@ A entrega foi concluída na Draft PR #17. O head `84c219a` passou no Backend CI
 operacionais), Frontend CI `31057602796` e Runtime Policy CI `31057602808`. As
 imagens fixadas da API e Web foram construídas no CI; a PR permanece Draft,
 mergeável e sem merge, tag, Release ou deploy.
+
+## 2026-08-05 — v1.6 Package 2 Resilience Budgets
+
+O CTO aprovou a TASK-V16-001 e emitiu `TASK-V16-002` para continuar exclusivamente
+na branch e Draft PR #17. O escopo cobre inventário/policy de budgets, classificação,
+timeouts, retries, backoff/jitter, IA/embeddings, concorrência, backpressure,
+degradação, readiness, observabilidade e drill. Merge, tag, Release, deploy,
+capacidade formal, v1.7 e packages posteriores permanecem proibidos.

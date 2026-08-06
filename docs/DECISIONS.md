@@ -962,6 +962,33 @@ limitação explícita. Não existe migration, deploy ou mudança de arquitetura
 
 ---
 
+## DEC-028 — Contrato executável de resiliência por operação
+
+**Data:** 2026-08-05
+**Status:** Aprovada
+**Tipo:** Arquitetura / IA / Operação / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0027-resilience-budgets-and-degradation.md`,
+`resilience-policy.json`, `docs/RESILIENCE_BUDGET_INVENTORY.md`
+
+### Contexto
+
+Timeouts/retries dispersos não distinguiam conexão, leitura, deadline total,
+idempotência ou falhas permanentes. IA e jobs precisavam de limites observáveis.
+
+### Decisão
+
+Adotar policy por operação com attempts, deadline, backoff/teto/jitter,
+classificação e concorrência limitados. Retry exige classe e operação allowlisted;
+falha permanente, resposta inválida e efeito incerto não são repetidos. Estado
+compartilhado continua em PostgreSQL/Redis; nenhum segundo provider é introduzido.
+
+### Impacto
+
+R-018 recebe mitigação adicional. R-033 e R-038 permanecem residuais; R-034 não
+muda. Concorrência de IA é por processo e o pacote não declara capacidade/SLO.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

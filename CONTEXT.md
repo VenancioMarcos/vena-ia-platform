@@ -154,6 +154,13 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   Actions. Python 3.14.6 é experimental. Bases API/Web, PostgreSQL/pgvector, Redis
   e MinIO usam tag explícita + digest; CI aplica policy e builds. Não há migration,
   mudança de dados, capacidade medida, deploy ou início dos packages seguintes.
+* **v1.6 Reliability Package 2:** `resilience-policy.json` centraliza budgets
+  operacionais e o policy check detecta deriva entre manifesto, settings, ambiente,
+  código e runbooks. IA aplica classificação, deadline global, retry/backoff/jitter
+  bounded e concorrência por processo sem fila ilimitada. PostgreSQL/MinIO e jobs
+  recebem budgets explícitos; o drill cobre vinte cenários sintéticos. R-018 recebe
+  mitigação adicional, R-033/R-038 permanecem residuais e R-034 não muda. Não há
+  migration, carga/capacidade, merge, tag, Release ou deploy.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
