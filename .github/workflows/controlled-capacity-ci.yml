@@ -5,6 +5,8 @@ on:
     paths:
       - "capacity-profile.json"
       - "scripts/capacity_*.py"
+      - "scripts/worker.py"
+      - "apps/api/app/modules/jobs/**"
       - "tests/operations/test_controlled_capacity.py"
       - "apps/api/tests/test_mvp_e2e.py"
       - ".github/workflows/controlled-capacity-ci.yml"

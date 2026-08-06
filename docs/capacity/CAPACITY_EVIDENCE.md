@@ -2,6 +2,16 @@
 
 Contratos: `vena-ia.capacity-profile/v1` e `vena-ia.capacity-evidence/v1`.
 
+## Correção do gate real
+
+O primeiro run R1 mostrou workers vivos por heartbeat, porém sem claims. A causa não
+estava na fila Redis: o entrypoint independente do worker não carregava o registro
+completo de modelos ORM e a primeira consulta do reconciliador falhava antes do
+claim. `scripts.worker` agora importa o registro oficial, protegido por teste em
+subprocesso limpo. No head `4c35100`, o Controlled Capacity CI oficial
+`31131271390` passou com evidence PASS segura. O resultado continua restrito ao CI
+descartável e não representa capacidade produtiva, SLO ou SLA.
+
 ## Reclassificação obrigatória
 
 A evidência anterior do Package 3 é preservada e reclassificada como

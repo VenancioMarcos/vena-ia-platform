@@ -17,6 +17,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   cancelamento/retry, isolamento, backpressure e soak integrado de 30 segundos.
 * Bundle de evidência recebe criação exclusiva/atômica, recusa de overwrite,
   proteção contra symlink/traversal, flush/fsync, checksum e cleanup em falha.
+* O entrypoint independente do worker agora registra todos os modelos ORM antes do
+  reconciliador. Isso elimina o `InvalidRequestError` que permitia heartbeat, mas
+  bloqueava a primeira consulta PostgreSQL e, consequentemente, todos os claims.
+  O CI preserva diagnóstico allowlisted e só publica evidence PASS após sucesso.
+* O Controlled Capacity CI passa a observar mudanças no worker/jobs; Backend,
+  Frontend e Runtime Policy recebem disparo manual para revalidação explícita de um
+  mesmo HEAD sem alterar os gates executados.
 
 ### Adicionado — v1.6 Package 3
 * Perfil `vena-ia.capacity-profile/v1`, harness bounded e evidência

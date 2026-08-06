@@ -353,3 +353,13 @@ testes de API, 65 operacionais, frontend e harness local. No CI, Backend
 `31060952153`, Frontend `31060952144`, Runtime Policy `31060952139` e Controlled
 Capacity `31060952197` passaram. A evidence externa/checksummed foi publicada como
 artifact `8952091174`; a PR permanece Draft, sem merge, tag, Release ou deploy.
+
+## 2026-08-06 — v1.6 Package 3 R1 worker recovery correction
+
+O gate real R1 revelou workers com heartbeat, mas sem claim. Diagnóstico allowlisted
+confirmou `InvalidRequestError` na primeira consulta do reconciliador: o entrypoint
+do worker não registrava todos os modelos ORM carregados pela API. O head `4c35100`
+importa o registro oficial e adiciona regressão em subprocesso limpo. Backend
+`31131271003`, Frontend `31131271784`, Runtime Policy `31131271162` e Controlled
+Capacity `31131271390` passaram no mesmo head. A PR #17 segue Draft e mergeável;
+merge, tag, Release e deploy não foram realizados.

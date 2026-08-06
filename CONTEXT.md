@@ -168,6 +168,11 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   RAG, isolamento e soak de 30 s. O bundle é atômico/checksummed e marca coleta
   ausente como `NOT_MEASURED`. R-034 permanece parcialmente mitigado/monitorar; não
   há capacidade produtiva, SLO/SLA, piloto, merge, tag, Release ou deploy.
+  A primeira execução real revelou que o entrypoint do worker não registrava todos
+  os modelos ORM: havia heartbeat, mas `list_recoverable()` falhava antes do claim.
+  O import do registro oficial e um teste em subprocesso limpo corrigiram a causa.
+  No head `4c35100`, Backend, Frontend, Runtime Policy e Controlled Capacity CI
+  passaram; a PR #17 permanece Draft e mergeável.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
