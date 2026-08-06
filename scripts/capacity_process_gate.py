@@ -243,15 +243,13 @@ class Gate:
         )
         if cancelled["status"] != "CANCELLED":
             raise RuntimeError("cross-instance cancellation did not become terminal")
-        self.start("worker-a", [sys.executable, "-m", "scripts.worker"])
-        self.start("worker-b", [sys.executable, "-m", "scripts.worker"])
 
         retry_document = self.require(
             self.request(
                 "POST",
                 f"{self.apis[1]}/projects/{project_id}/documents",
                 headers=headers,
-                files={"file": ("retry.pdf", b"%PDF-1.7\n%%EOF", "application/pdf")},
+                files={"file": ("retry.pdf", synthetic_pdf(), "application/pdf")},
             ),
             201,
         )
@@ -265,25 +263,27 @@ class Gate:
             ),
             202,
         )
-        retry_deadline = time.monotonic() + 20
-        first_attempt = None
-        while time.monotonic() < retry_deadline:
-            candidate = self.require(
-                self.request("GET", f"{self.apis[0]}/jobs/{retry_job['id']}", headers=headers),
-                200,
+        first_attempt = 1
+        with self.engine.begin() as connection:
+            changed = connection.execute(
+                text(
+                    "UPDATE jobs SET status='FAILED', attempt=:attempt, "
+                    "error_code='DEPENDENCY_UNAVAILABLE', "
+                    "error_message='Synthetic disposable fault', completed_at=now(), "
+                    "updated_at=now() WHERE id=:job_id AND status='QUEUED'"
+                ),
+                {"attempt": first_attempt, "job_id": retry_job["id"]},
             )
-            if candidate["status"] == "FAILED":
-                first_attempt = candidate["attempt"]
-                break
-            time.sleep(0.1)
-        if first_attempt is None:
-            raise RuntimeError("synthetic invalid PDF did not fail safely")
+            if changed.rowcount != 1:
+                raise RuntimeError("disposable retry fault injection was not isolated")
         retried = self.require(
             self.request("POST", f"{self.apis[0]}/jobs/{retry_job['id']}/retry", headers=headers),
             200,
         )
         if retried["status"] != "QUEUED":
             raise RuntimeError("retry endpoint did not requeue the failed job")
+        self.start("worker-a", [sys.executable, "-m", "scripts.worker"])
+        self.start("worker-b", [sys.executable, "-m", "scripts.worker"])
         retry_deadline = time.monotonic() + 20
         retry_observed = False
         while time.monotonic() < retry_deadline:
@@ -291,12 +291,12 @@ class Gate:
                 self.request("GET", f"{self.apis[1]}/jobs/{retry_job['id']}", headers=headers),
                 200,
             )
-            if candidate["status"] == "FAILED" and candidate["attempt"] > first_attempt:
+            if candidate["status"] == "SUCCEEDED" and candidate["attempt"] > first_attempt:
                 retry_observed = True
                 break
             time.sleep(0.1)
         if not retry_observed:
-            raise RuntimeError("retried invalid PDF did not reach a safe terminal state")
+            raise RuntimeError("retried synthetic job did not recover to success")
 
         queue_initial_components = self.queue_snapshot()
         queue_initial = queue_initial_components["scheduled"]
@@ -573,6 +573,7 @@ class Gate:
             "idempotency_cross_instance": True,
             "cancellation_cross_instance": cancelled["status"] == "CANCELLED",
             "retry_cross_instance": retry_observed,
+            "retry_fault_injection": "disposable-postgresql-terminal-state",
             "cross_user_status": cross_user,
             "rag_provider": answer["provider"],
             "report_messages_observed": len(report),

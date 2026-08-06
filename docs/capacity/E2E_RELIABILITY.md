@@ -1,7 +1,8 @@
 # E2E cross-instance e confiabilidade
 
 O gate R1 usa HTTP real e alterna API A/API B. Cadastro/login, projeto, PDFs
-sintéticos, jobs, polling, cancelamento, retry, RAG determinístico, histórico,
+sintéticos, jobs, polling, cancelamento, retry a partir de falha terminal injetada
+somente no PostgreSQL descartável, RAG determinístico, histórico,
 logout/revogação, rate limit e isolamento cross-user atravessam as duas instâncias.
 
 Worker A e Worker B são processos oficiais independentes. PostgreSQL é a fonte

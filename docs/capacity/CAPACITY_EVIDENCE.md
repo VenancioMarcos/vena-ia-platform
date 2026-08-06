@@ -41,7 +41,8 @@ O gate comprova por operações reais:
 - projeto, documento e job alternados entre instâncias;
 - idempotência, revogação e rate limit compartilhados;
 - quatro PDFs sintéticos em MinIO, processamento por workers e RAG determinístico;
-- cancelamento e retry cruzados;
+- cancelamento cruzado e retry a partir de falha terminal sintética injetada somente
+  no PostgreSQL descartável, seguido por processamento real bem-sucedido;
 - claim único, interrupção de worker, lease recovery e reinício;
 - saturação por instância, `503`, `Retry-After: 1` e recuperação;
 - indisponibilidade controlada do MinIO, falha segura e retorno;
