@@ -175,7 +175,7 @@ class Gate:
         ready = [self.require(self.request("GET", f"{url}/ready"), 200) for url in self.apis]
         credentials = {
             "name": "Capacity Owner",
-            "email": "capacity-owner@example.invalid",
+            "email": "capacity-owner@vena-ia.dev",
             "password": "Capacity-Test-Password-2026!",
         }
         self.require(self.request("POST", f"{self.apis[0]}/auth/register", json=credentials), 201)
@@ -460,7 +460,7 @@ class Gate:
 
         other = {
             "name": "Capacity Other",
-            "email": "capacity-other@example.invalid",
+            "email": "capacity-other@vena-ia.dev",
             "password": credentials["password"],
         }
         self.require(self.request("POST", f"{self.apis[1]}/auth/register", json=other), 201)
@@ -503,7 +503,7 @@ class Gate:
             response = self.request(
                 "POST",
                 f"{self.apis[index % 2]}/auth/login",
-                json={"email": "rate@example.invalid", "password": "invalid-password"},
+                json={"email": "rate@vena-ia.dev", "password": "invalid-password"},
             )
             rate_codes.append(response.status_code)
             if response.status_code == 429:
