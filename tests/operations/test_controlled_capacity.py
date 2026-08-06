@@ -1,5 +1,7 @@
 import json
 import os
+import subprocess
+import sys
 import threading
 from pathlib import Path
 
@@ -157,6 +159,24 @@ def test_failure_diagnostics_allowlist_only_exception_types(
         "SAFE_WORKER_DIAGNOSTIC name=worker-a error_type=OperationalError origin=recovery.py:37\n"
     )
     worker_log.close()
+
+
+def test_worker_entrypoint_registers_all_orm_mappers_in_clean_process() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "from sqlalchemy.orm import configure_mappers; "
+            "import scripts.worker; configure_mappers()",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=20,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
 
 
 @pytest.mark.parametrize("operations,concurrency", [(0, 1), (1, 0), (2001, 1), (1, 17)])

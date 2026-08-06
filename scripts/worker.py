@@ -9,6 +9,7 @@ import socket
 import time
 from collections.abc import Callable
 
+from app.core import models_registry  # noqa: F401  (registers ORM models in worker process)
 from app.core.alerts import AlertManager, NoOpAlertProvider
 from app.core.config import settings
 from app.core.database import SessionLocal
