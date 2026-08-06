@@ -84,6 +84,32 @@ METRIC_SPECS: dict[str, MetricSpec] = {
         "milliseconds",
         (1, 5, 10, 25, 50, 100, 250, 500, 1_000, 5_000, 30_000),
     ),
+    "requests_in_flight": MetricSpec(
+        "requests_in_flight", "gauge", ("operation",), "requests"
+    ),
+    "requests_rejected_total": MetricSpec(
+        "requests_rejected_total", "counter", ("operation",), "requests"
+    ),
+    "queue_depth": MetricSpec("queue_depth", "gauge", ("operation",), "jobs"),
+    "jobs_in_flight": MetricSpec(
+        "jobs_in_flight", "gauge", ("job_type",), "jobs"
+    ),
+    "worker_utilization": MetricSpec(
+        "worker_utilization", "gauge", ("job_type",), "ratio"
+    ),
+    "dependency_concurrency": MetricSpec(
+        "dependency_concurrency", "gauge", ("dependency", "operation"), "operations"
+    ),
+    "recovery_after_saturation_total": MetricSpec(
+        "recovery_after_saturation_total", "counter", ("operation",), "recoveries"
+    ),
+    "e2e_duration_ms": MetricSpec(
+        "e2e_duration_ms", "histogram", ("outcome",), "milliseconds",
+        (100, 250, 500, 1_000, 2_500, 5_000, 10_000, 30_000),
+    ),
+    "soak_errors_total": MetricSpec(
+        "soak_errors_total", "counter", ("operation",), "errors"
+    ),
 }
 
 PROHIBITED_LABELS = frozenset(

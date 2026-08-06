@@ -1,0 +1,34 @@
+{
+  "schema_version": "vena-ia.capacity-profile/v1",
+  "profile": "ci-synthetic-pilot-small",
+  "environment": "disposable-ci-or-local",
+  "runtime_policy": "vena-ia.runtime-policy/v1",
+  "resilience_policy": "vena-ia.resilience-policy/v1",
+  "resources": {"cpu": "runner-provided", "memory": "runner-provided", "network": "local-only"},
+  "topology": {"logical_api_instances": 2, "workers": 2, "postgresql": 1, "redis": 1, "minio": 1},
+  "load": {"operations_per_scenario": 200, "concurrency": 4, "ramp_up_seconds": 0.1, "think_time_seconds": 0},
+  "soak": {"duration_seconds": 3, "concurrency": 2, "global_timeout_seconds": 15},
+  "synthetic_users": 8,
+  "corpus": {"documents": 4, "pages_per_pdf": 4, "characters_per_page": 2000, "contains_real_data": false},
+  "operation_distribution": {
+    "light_read": 40,
+    "authenticated_write": 20,
+    "document_pipeline": 20,
+    "deterministic_rag": 10,
+    "worker": 8,
+    "backup_restore": 2
+  },
+  "ai_provider": "deterministic-local-no-external-call",
+  "technical_test_guardrails": {
+    "max_failure_rate": 0,
+    "max_p95_ms_synthetic_harness": 500,
+    "max_memory_growth_bytes_short_soak": 8388608,
+    "require_recovery_after_saturation": true,
+    "require_cleanup": true
+  },
+  "limitations": [
+    "Not a production profile, SLA, SLO or commercial benchmark.",
+    "Logical API instances exercise shared state without external deployment.",
+    "Runner CPU and memory are not dedicated or guaranteed."
+  ]
+}
