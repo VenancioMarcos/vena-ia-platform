@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     ai_retry_jitter_ratio: float = Field(default=0.2, ge=0, le=1)
     ai_concurrency_limit: int = Field(default=8, ge=1, le=1_000)
     ai_queue_timeout_seconds: float = Field(default=0.1, ge=0, le=30)
+    deterministic_ai_delay_seconds: float = Field(default=0.05, ge=0, le=5)
     cors_origins: list[str] = ["http://localhost:3000"]
     auth_secret_key: str = ""
     auth_token_expiration_minutes: int = 30

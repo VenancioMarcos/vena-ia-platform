@@ -24,7 +24,10 @@ def test_postgresql_redis_and_minio_are_ready_together() -> None:
     if not minio.bucket_exists(settings.minio_bucket):
         minio.make_bucket(settings.minio_bucket)
     redis = Redis.from_url(settings.redis_url, decode_responses=True)
-    RedisJobQueue(redis, settings.jobs_redis_prefix).heartbeat("ci-worker", 30)
+    queue = RedisJobQueue(redis, settings.jobs_redis_prefix)
+    queue.heartbeat("ci-worker-a", 30)
+    queue.heartbeat("ci-worker-b", 30)
+    assert len(list(redis.scan_iter(match=f"{settings.jobs_redis_prefix}:worker:heartbeat:*"))) == 2
     assert DefaultReadinessChecker(settings).check() == {
         "postgresql": "ready",
         "redis": "ready",

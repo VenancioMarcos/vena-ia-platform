@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import argparse
 import json
+import os
 import statistics
 import threading
 import time
@@ -39,10 +40,16 @@ def validate_profile(profile: dict[str, Any]) -> list[str]:
         errors.append("load concurrency outside controlled bounds")
     if not isinstance(soak, dict) or not 1 <= soak.get("duration_seconds", 0) <= 30:
         errors.append("soak duration outside CI bounds")
-    if not isinstance(soak, dict) or soak.get("global_timeout_seconds", 0) <= soak.get("duration_seconds", 0):
+    if not isinstance(soak, dict) or soak.get("global_timeout_seconds", 0) <= soak.get(
+        "duration_seconds", 0
+    ):
         errors.append("soak global timeout must exceed its duration")
-    if not isinstance(topology, dict) or topology.get("logical_api_instances") != 2 or topology.get("workers") != 2:
-        errors.append("profile must exercise two logical APIs and two workers")
+    if (
+        not isinstance(topology, dict)
+        or topology.get("api_processes") != 2
+        or topology.get("workers") != 2
+    ):
+        errors.append("profile must exercise two API processes and two workers")
     distribution = profile.get("operation_distribution")
     if not isinstance(distribution, dict) or sum(distribution.values()) != 100:
         errors.append("operation distribution must total 100")
@@ -195,16 +202,48 @@ def build_evidence(profile: dict[str, Any], commit: str = "WORKTREE") -> dict[st
 
 
 def write_evidence(bundle: dict[str, Any], output: Path, repository: Path) -> str:
-    resolved = output.resolve()
+    output = output.absolute()
+    resolved = output.resolve(strict=False)
     repo = repository.resolve()
-    if resolved == repo or repo in resolved.parents or output.is_symlink():
+    if resolved == repo or repo in resolved.parents:
         raise ValueError("capacity evidence must be outside the repository")
-    if output.exists():
+    current = output.parent
+    while True:
+        if current.is_symlink():
+            raise ValueError("capacity evidence path must not contain symlinks")
+        if current == current.parent:
+            break
+        current = current.parent
+    if os.path.lexists(output):
         raise FileExistsError("capacity evidence overwrite refused")
-    output.parent.mkdir(parents=True, exist_ok=True)
+    if not output.parent.is_dir():
+        raise ValueError("capacity evidence parent must already exist")
     payload = json.dumps(bundle, sort_keys=True, separators=(",", ":")) + "\n"
-    output.write_text(payload, encoding="utf-8")
-    return hashlib.sha256(payload.encode()).hexdigest()
+    encoded = payload.encode("utf-8")
+    temporary = output.parent / f".{output.name}.{os.urandom(12).hex()}.tmp"
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor: int | None = None
+    try:
+        descriptor = os.open(temporary, flags, 0o600)
+        with os.fdopen(descriptor, "wb", closefd=True) as stream:
+            descriptor = None
+            stream.write(encoded)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.link(temporary, output, follow_symlinks=False)
+        if os.name != "nt":
+            directory_descriptor = os.open(output.parent, os.O_RDONLY)
+            try:
+                os.fsync(directory_descriptor)
+            finally:
+                os.close(directory_descriptor)
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        temporary.unlink(missing_ok=True)
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def main() -> int:

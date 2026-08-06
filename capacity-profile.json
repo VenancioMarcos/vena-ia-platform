@@ -5,9 +5,9 @@
   "runtime_policy": "vena-ia.runtime-policy/v1",
   "resilience_policy": "vena-ia.resilience-policy/v1",
   "resources": {"cpu": "runner-provided", "memory": "runner-provided", "network": "local-only"},
-  "topology": {"logical_api_instances": 2, "workers": 2, "postgresql": 1, "redis": 1, "minio": 1},
-  "load": {"operations_per_scenario": 200, "concurrency": 4, "ramp_up_seconds": 0.1, "think_time_seconds": 0},
-  "soak": {"duration_seconds": 3, "concurrency": 2, "global_timeout_seconds": 15},
+  "topology": {"api_processes": 2, "workers": 2, "postgresql": 1, "redis": 1, "minio": 1},
+  "load": {"operations_per_scenario": 40, "concurrency": 4, "ramp_up_seconds": 0.1, "think_time_seconds": 0},
+  "soak": {"duration_seconds": 30, "concurrency": 2, "global_timeout_seconds": 120},
   "synthetic_users": 8,
   "corpus": {"documents": 4, "pages_per_pdf": 4, "characters_per_page": 2000, "contains_real_data": false},
   "operation_distribution": {
@@ -28,7 +28,7 @@
   },
   "limitations": [
     "Not a production profile, SLA, SLO or commercial benchmark.",
-    "Logical API instances exercise shared state without external deployment.",
+    "Independent API and worker processes use disposable shared CI dependencies.",
     "Runner CPU and memory are not dedicated or guaranteed."
   ]
 }

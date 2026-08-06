@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import threading
 import time
 from collections import deque
@@ -356,12 +357,13 @@ class RedisJobQueue:
 
     def heartbeat(self, worker_id: str, ttl_seconds: int) -> None:
         try:
-            self._client.set(self._key("worker:heartbeat"), worker_id, ex=ttl_seconds)
+            identity = hashlib.sha256(worker_id.encode()).hexdigest()[:16]
+            self._client.set(self._key(f"worker:heartbeat:{identity}"), "alive", ex=ttl_seconds)
         except RedisError as exc:
             raise JobQueueUnavailable("Asynchronous queue is unavailable") from exc
 
     def worker_available(self) -> bool:
         try:
-            return bool(self._client.exists(self._key("worker:heartbeat")))
+            return any(self._client.scan_iter(match=self._key("worker:heartbeat:*"), count=10))
         except RedisError:
             return False

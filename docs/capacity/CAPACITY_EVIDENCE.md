@@ -1,42 +1,57 @@
-# Evidência de capacidade sintética controlada — v1.6 Package 3
+# Evidência de capacidade controlada — v1.6 Package 3 R1
 
-Perfil: `vena-ia.capacity-profile/v1` (`ci-synthetic-pilot-small`). Evidência:
-`vena-ia.capacity-evidence/v1`. O teste local usa 200 operações, concorrência 4,
-duas APIs lógicas, dois workers e soak de 3 segundos.
+Contratos: `vena-ia.capacity-profile/v1` e `vena-ia.capacity-evidence/v1`.
 
-## Resultado local inicial
+## Reclassificação obrigatória
 
-| Cenário | Operações | Falhas | p50 | p95 | p99 | Throughput observado |
-|---|---:|---:|---:|---:|---:|---:|
-| harness CPU/hash sintético | 200 | 0 | 0,0011 ms | 0,0031 ms | 0,0156 ms | 28.498/s |
+A evidência anterior do Package 3 é preservada e reclassificada como
+`HARNESS_ONLY_BASELINE`. Ela mediu CPU/hash, `deque`, lock e `tracemalloc` no mesmo
+processo. Não comprovou duas APIs, dois workers, autenticação/fila Redis, MinIO,
+claims, soak ou recuperação da plataforma. Seus números não são capacidade da API.
 
-Soak: 3,000 s, 653.833 operações triviais, zero erro, zero crescimento líquido
-medido pelo `tracemalloc`, pico 116 bytes, fila final zero e cleanup PASS. Estado
-compartilhado sintético: 200 submissions, 200 claims únicos, zero duplicação.
+## Gate integrado R1
 
-Esses números medem apenas overhead do harness no runner local e variam por máquina.
-Não representam API, banco, storage, IA, capacidade produtiva, usuários suportados,
-SLA, SLO, benchmark comercial ou aprovação de piloto/deploy.
+O `Controlled Capacity CI` agora aplica Alembic e inicia, como processos ou serviços
+descartáveis independentes:
 
-## Guardrails técnicos
+- API A em `8101` e API B em `8102`;
+- Worker A e Worker B pelo entrypoint oficial `scripts.worker`;
+- PostgreSQL/pgvector e Redis fixados como services;
+- MinIO fixado por tag e digest em container local do runner.
 
-Zero violação de isolamento, resposta falsa, estado impossível, duplicação, segredo,
-job preso ou fila residual. Falha permitida: zero. p95 do harness: até 500 ms.
-Crescimento no soak curto: até 8 MiB. Recuperação e cleanup são obrigatórios.
-Esses limites são `TECHNICAL_TEST_GUARDRAIL`, não compromisso operacional.
+As duas APIs e os workers compartilham PostgreSQL, Redis e MinIO. O cenário usa
+`AUTH_SECURITY_STORE=redis`, `JOBS_QUEUE_PROVIDER=redis`, credenciais exclusivas do
+CI e provider determinístico local habilitado somente em `APP_ENV=capacity-ci`.
+Nenhuma chamada externa de IA é permitida.
 
-## Evidência final no CI
+## Evidência observada
 
-Controlled Capacity CI `31060952197` passou em 1m03s no head `500c94f`:
+O artefato seguro distingue `harness_unit_baseline`, `process_integration_load`,
+`process_integration_soak`, `e2e_cross_instance`, `worker_claims` e
+`recovery_after_saturation`. Ele registra somente contagens e estados allowlisted:
+processos iniciados, requisições, latências, jobs criados/terminais, claims
+duplicados, fila inicial/pico/final, heartbeats, objetos MinIO, cleanup e campos
+`NOT_MEASURED` quando a coleta não existe. PID, caminho pessoal, credencial, token,
+conteúdo e IDs de domínio não entram no bundle.
 
-* 10 testes de perfil/carga/soak/shared-state/evidence passaram;
-* E2E autenticado e isolamento cross-user passaram;
-* PostgreSQL/pgvector e Redis reais fixados ficaram healthy;
-* evidence SHA-256 `5245b0f6566606ef3345cc8bf6a9a829f30563787a503c3f1954b6a6c11e3414`;
-* artifact `controlled-capacity-evidence`, ID `8952091174`, 808 bytes, retenção 7 dias;
-* containers e runner temp foram limpos pelo workflow.
+O gate comprova por operações reais:
 
-Backend CI `31060952153` aprovou 268 testes de API e 71 operacionais com MinIO,
-PostgreSQL/pgvector, Redis e backup/restore. Frontend `31060952144` e Runtime Policy
-`31060952139` também passaram. O artifact não contém segredo, dado pessoal,
-conteúdo, prompt, resposta ou identificador de domínio.
+- health/readiness das duas APIs;
+- registro/login na API A e autenticação na API B;
+- projeto, documento e job alternados entre instâncias;
+- idempotência, revogação e rate limit compartilhados;
+- quatro PDFs sintéticos em MinIO, processamento por workers e RAG determinístico;
+- cancelamento e retry cruzados;
+- claim único, interrupção de worker, lease recovery e reinício;
+- saturação por instância, `503`, `Retry-After: 1` e recuperação;
+- indisponibilidade controlada do MinIO, falha segura e retorno;
+- soak HTTP integrado mínimo de 30 segundos;
+- isolamento cross-user e cleanup completo.
+
+## Guardrails
+
+O gate falha se houver claim duplicado, job não terminal, fila residual, falha no
+cleanup, erro no soak, ausência de `503`/`Retry-After`, falha de recuperação de
+worker/MinIO, menos de dois heartbeats ou violação cross-instance. R-034 permanece
+parcialmente mitigado. Isto é CI descartável, não benchmark, piloto, deploy, SLA,
+SLO, capacidade produtiva ou aprovação comercial.

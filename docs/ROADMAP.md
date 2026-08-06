@@ -628,10 +628,12 @@ backoff/jitter, deadline global, backpressure de IA por processo, budgets de
 PostgreSQL/Redis/MinIO/worker, observabilidade bounded e drill sintético. Não mede
 carga/capacidade, não resolve timeout preemptivo e não satisfaz a condição de avanço.
 
-**Estado do Package 3:** perfil/evidência versionados executam carga controlada,
-soak curto, E2E determinístico, duas APIs lógicas, dois workers, estado compartilhado,
-backpressure e relatório de gargalos. O resultado é somente um guardrail técnico
-sintético; a conclusão da v1.6 depende da revisão do CTO e não autoriza piloto/deploy.
+**Estado do Package 3 R1:** o baseline em processo foi reclassificado como
+`HARNESS_ONLY_BASELINE`. O gate corrigido inicia API A/API B e Worker A/Worker B,
+PostgreSQL/pgvector, Redis e MinIO descartáveis; usa HTTP real, providers Redis,
+claims/leases, recuperação de worker/MinIO, backpressure e soak integrado de 30 s.
+O resultado continua sendo guardrail de CI, não capacidade produtiva. A conclusão
+da v1.6 depende da revisão do CTO e não autoriza piloto/deploy.
 
 ---
 

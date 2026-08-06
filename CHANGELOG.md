@@ -8,6 +8,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Corrigido — v1.6 Package 3 R1
+* Evidência anterior reclassificada como `HARNESS_ONLY_BASELINE`; o gate terminal
+  agora inicia API A/API B e Worker A/Worker B como processos independentes com
+  PostgreSQL/pgvector, Redis e MinIO compartilhados.
+* Controlled Capacity CI proíbe providers memory, aplica Alembic e comprova por HTTP
+  auth/revogação/rate limit/idempotência, jobs/claims/leases, MinIO, RAG,
+  cancelamento/retry, isolamento, backpressure e soak integrado de 30 segundos.
+* Bundle de evidência recebe criação exclusiva/atômica, recusa de overwrite,
+  proteção contra symlink/traversal, flush/fsync, checksum e cleanup em falha.
+
 ### Adicionado — v1.6 Package 3
 * Perfil `vena-ia.capacity-profile/v1`, harness bounded e evidência
   `vena-ia.capacity-evidence/v1` checksummed fora do repositório.

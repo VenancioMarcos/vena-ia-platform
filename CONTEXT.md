@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.5 concluídas e publicadas; v1.6 Package 1 em implementação/revisão na branch `codex/v1.6-reliability-scalability`.
+* **Fase:** v0.1–v1.5 concluídas e publicadas; v1.6 Packages 1–2 aprovados e Package 3 R1 em revisão na Draft PR #17, branch `codex/v1.6-reliability-scalability`.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.5.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.
@@ -161,12 +161,13 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   recebem budgets explícitos; o drill cobre vinte cenários sintéticos. R-018 recebe
   mitigação adicional, R-033/R-038 permanecem residuais e R-034 não muda. Não há
   migration, carga/capacidade, merge, tag, Release ou deploy.
-* **v1.6 Reliability Package 3:** perfil sintético pequeno versiona duas APIs
-  lógicas, dois workers, concorrência 4, 200 operações e soak de 3 s. Harness e
-  CI geram evidência checksummed sem dados/API paga, executam E2E/isolamento e
-  registram gargalos. O limite IA por processo é suficiente somente para essa
-  topologia. R-034 avança parcialmente, sem capacidade produtiva, SLO/SLA, piloto,
-  merge, tag, Release ou deploy.
+* **v1.6 Reliability Package 3 R1:** a evidência lógica inicial foi preservada como
+  `HARNESS_ONLY_BASELINE`. O gate terminal inicia duas APIs e dois workers reais,
+  PostgreSQL/pgvector, Redis e MinIO descartáveis, usa providers Redis, alterna a
+  jornada HTTP entre instâncias e mede claims/leases, fault recovery, backpressure,
+  RAG, isolamento e soak de 30 s. O bundle é atômico/checksummed e marca coleta
+  ausente como `NOT_MEASURED`. R-034 permanece parcialmente mitigado/monitorar; não
+  há capacidade produtiva, SLO/SLA, piloto, merge, tag, Release ou deploy.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

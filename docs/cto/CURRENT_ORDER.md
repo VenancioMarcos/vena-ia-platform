@@ -1,25 +1,23 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V16_003
-TITLE=CONTROLLED_CAPACITY_SHARED_LIMITS_E2E_RELIABILITY
+MISSION=TASK_V16_003_R1
+TITLE=REAL_PROCESS_INTEGRATION_AND_CAPACITY_EVIDENCE
 BRANCH=codex/v1.6-reliability-scalability
-START_HEAD=fef319b0eff0cebc2d27060488d28d828b73cceb
-EXPECTED_STATE=VENA_IA_V1_6_PACKAGE_3_READY_FOR_CTO_REVIEW
-PULL_REQUEST=DRAFT_REQUIRED
+START_HEAD=69dc0916cf0cac58efbc1092b17f6ffa56ee5e93
+EXPECTED_STATE=VENA_IA_V1_6_PACKAGE_3_REMEDIATION_READY_FOR_CTO_REVIEW
+PULL_REQUEST=17
 PULL_REQUEST_DRAFT=KEEP_DRAFT
 MERGE=PROHIBITED
 TAG_RELEASE=PROHIBITED
 DEPLOY=PROHIBITED
-V1_5_RELEASE=APPROVED_BY_CTO
 V1_6_PACKAGE_1=APPROVED_BY_CTO
 V1_6_PACKAGE_2=APPROVED_BY_CTO
-V1_6_PACKAGE_3=AUTHORIZED
-V1_6_LATER_PACKAGES=PROHIBITED
-SYNTHETIC_CONTROLLED_CAPACITY=AUTHORIZED
+V1_6_PACKAGE_3=PARTIALLY_APPROVED_REMEDIATION_REQUIRED
 STATE=IN_PROGRESS
 ```
 
-Escopo: perfil sintético, carga bounded, soak curto, E2E, duas APIs/workers, estado
-compartilhado, backpressure, evidência, gargalos e guardrails. Nenhum merge, tag,
-Release, deploy, piloto real, SLO/SLA, API paga ou pacote posterior integra a ordem.
+Escopo: reclassificar o baseline anterior, iniciar APIs/workers independentes com
+PostgreSQL/Redis/MinIO compartilhados, executar HTTP/E2E/claims/recovery/backpressure,
+soak integrado e bundle atômico. Sem merge, tag, Release, deploy, piloto, SLA/SLO,
+API paga ou v1.7.

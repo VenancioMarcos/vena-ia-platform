@@ -992,22 +992,49 @@ muda. Concorrência de IA é por processo e o pacote não declara capacidade/SLO
 ## DEC-029 — Perfil sintético pequeno e evidência de capacidade
 
 **Data:** 2026-08-06
-**Status:** Aprovada
+**Status:** Aprovada como baseline; gate terminal substituído por DEC-030
 **Tipo:** Operação / Arquitetura / Segurança
 **Documentos relacionados:** `docs/adr/ADR-0028-controlled-capacity-profile.md`,
 `capacity-profile.json`, `docs/capacity/CAPACITY_EVIDENCE.md`
 
 ### Decisão
 
-Adotar perfil bounded com duas APIs lógicas, dois workers, concorrência 4, provider
-determinístico, carga curta e soak de 3 s. A evidência é JSON determinístico,
-checksummed e externo ao repositório. O limite IA por processo é aceito somente
-para a topologia testada; não criar coordenação distribuída sem saturação observada.
+Adotar perfil bounded e baseline unitário determinístico. Após revisão, APIs/workers
+lógicos e soak de hash foram reclassificados como `HARNESS_ONLY_BASELINE`; DEC-030
+define a evidência terminal com processos e dependências reais.
 
 ### Impacto
 
 R-034 avança parcialmente. Não existe afirmação de capacidade produtiva, SLA/SLO,
 piloto, deploy ou escalabilidade horizontal completa.
+
+---
+
+## DEC-030 — Gate de capacidade com processos e dependências reais
+
+**Data:** 2026-08-06
+**Status:** Aprovada
+**Tipo:** Operação / Arquitetura / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0028-controlled-capacity-profile.md`,
+`scripts/capacity_process_gate.py`, `docs/capacity/CAPACITY_EVIDENCE.md`
+
+### Contexto
+
+O baseline do DEC-029 representava a topologia em um processo e não comprovava os
+serviços compartilhados descritos.
+
+### Decisão
+
+Reclassificar o resultado anterior como `HARNESS_ONLY_BASELINE` e exigir no gate
+terminal API A/API B, Worker A/Worker B, PostgreSQL, Redis e MinIO reais e
+descartáveis. Providers memory são proibidos nesse cenário. A jornada alterna
+instâncias, mede soak HTTP de 30 segundos e publica evidência atômica allowlisted.
+
+### Impacto
+
+R-034 permanece parcialmente mitigado/monitorar. O gate aumenta a confiança em
+processos compartilhados, mas não mede ambiente produtivo, não cria SLA/SLO e não
+autoriza piloto ou deploy.
 
 ---
 

@@ -1,4 +1,6 @@
 import json
+import os
+import threading
 from pathlib import Path
 
 import pytest
@@ -78,6 +80,60 @@ def test_capacity_evidence_is_safe_checksummed_and_refuses_overwrite(tmp_path: P
         write_evidence(bundle, output, ROOT)
     with pytest.raises(ValueError):
         write_evidence(bundle, ROOT / "forbidden.json", ROOT)
+
+
+def test_capacity_bundle_creation_is_atomic_under_concurrency(tmp_path: Path) -> None:
+    output = tmp_path / "capacity.json"
+    outcomes: list[str] = []
+
+    def write() -> None:
+        try:
+            write_evidence({"safe": True}, output, ROOT)
+            outcomes.append("created")
+        except FileExistsError:
+            outcomes.append("refused")
+
+    threads = [threading.Thread(target=write) for _ in range(2)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    assert sorted(outcomes) == ["created", "refused"]
+    assert json.loads(output.read_text(encoding="utf-8")) == {"safe": True}
+    assert not list(tmp_path.glob("*.tmp"))
+
+
+def test_capacity_bundle_rejects_symlink_file_and_parent(tmp_path: Path) -> None:
+    if not hasattr(os, "symlink"):
+        pytest.skip("symlink is unavailable")
+    target = tmp_path / "target"
+    target.mkdir()
+    linked_parent = tmp_path / "linked"
+    try:
+        linked_parent.symlink_to(target, target_is_directory=True)
+        linked_file = tmp_path / "linked.json"
+        linked_file.symlink_to(target / "payload.json")
+    except OSError:
+        pytest.skip("symlink creation is not permitted")
+    with pytest.raises(ValueError):
+        write_evidence({"safe": True}, linked_parent / "payload.json", ROOT)
+    with pytest.raises(FileExistsError):
+        write_evidence({"safe": True}, linked_file, ROOT)
+
+
+def test_capacity_bundle_cleans_temporary_after_publish_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    output = tmp_path / "capacity.json"
+
+    def fail_link(*_args: object, **_kwargs: object) -> None:
+        raise OSError("synthetic publish failure")
+
+    monkeypatch.setattr(os, "link", fail_link)
+    with pytest.raises(OSError, match="synthetic publish failure"):
+        write_evidence({"safe": True}, output, ROOT)
+    assert not os.path.lexists(output)
+    assert list(tmp_path.iterdir()) == []
 
 
 @pytest.mark.parametrize("operations,concurrency", [(0, 1), (1, 0), (2001, 1), (1, 17)])

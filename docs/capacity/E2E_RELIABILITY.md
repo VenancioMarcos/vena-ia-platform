@@ -1,17 +1,20 @@
-# Regressão E2E e confiabilidade
+# E2E cross-instance e confiabilidade
 
-O E2E determinístico existente cria dois usuários, autentica, cria projeto, envia
-PDF sintético, extrai/chunka, indexa com provider local, faz pergunta fundamentada,
-valida fonte, cria/reabre relatório, confirma isolamento cross-user e logout/401.
+O gate R1 usa HTTP real e alterna API A/API B. Cadastro/login, projeto, PDFs
+sintéticos, jobs, polling, cancelamento, retry, RAG determinístico, histórico,
+logout/revogação, rate limit e isolamento cross-user atravessam as duas instâncias.
 
-As suítes de jobs complementam a jornada com enqueue, claim, heartbeat, progresso,
-retry, lease perdido, cancelamento, restart e recovery Redis/PostgreSQL. Drills de
-incidente/resiliência cobrem lentidão, indisponibilidade e retorno das dependências.
+Worker A e Worker B são processos oficiais independentes. PostgreSQL é a fonte
+durável; Redis transporta jobs, claims, leases e heartbeats próprios. Um worker é
+interrompido durante claim real; o lease expira, o outro recupera o job, a fila
+chega a zero e o worker interrompido é reiniciado. Idempotência cruzada deve retornar
+o mesmo job e o gate falha com qualquer claim duplicado ou job não terminal.
 
-O Controlled Capacity CI executa E2E e harness com PostgreSQL/pgvector e Redis reais;
-o Backend CI continua validando também MinIO, backup/restore e round trip criptografado.
-OpenAI real não é chamada e saída determinística nunca é apresentada como externa.
+MinIO armazena e entrega o PDF sintético ao worker. O container é pausado durante o
+cenário: readiness deve falhar com segurança, o serviço retorna, o processamento
+recupera e os objetos descartáveis são removidos. Nenhum documento real é usado.
 
-Limitação: duas APIs são instâncias lógicas no harness, não dois containers/deploys.
-Dois workers exercitam claim compartilhado; a prova Redis real permanece nos testes
-de integração do Backend CI. Isso é suficiente somente para o perfil versionado.
+O soak faz requisições autenticadas reais por pelo menos 30 segundos. Valores não
+coletados, como memória por processo ou total de conexões PostgreSQL, são
+`NOT_MEASURED`; nunca recebem zero inventado. O provider determinístico existe
+somente no ambiente `capacity-ci` e não realiza rede externa.
