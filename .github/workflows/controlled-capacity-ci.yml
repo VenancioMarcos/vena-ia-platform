@@ -64,11 +64,11 @@ jobs:
         working-directory: apps/api
         run: pytest tests/test_mvp_e2e.py
       - name: Generate bounded evidence outside repository
-        run: python scripts/capacity_harness.py --output ../capacity-evidence.json --commit "$GITHUB_SHA"
+        run: python scripts/capacity_harness.py --output "${{ runner.temp }}/capacity-evidence.json" --commit "$GITHUB_SHA"
       - name: Upload safe evidence
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
         with:
           name: controlled-capacity-evidence
-          path: ../capacity-evidence.json
+          path: ${{ runner.temp }}/capacity-evidence.json
           if-no-files-found: error
           retention-days: 7
