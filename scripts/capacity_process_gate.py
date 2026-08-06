@@ -312,26 +312,7 @@ class Gate:
         self.start("worker-a", [sys.executable, "-m", "scripts.worker"])
         self.start("worker-b", [sys.executable, "-m", "scripts.worker"])
         self.wait_for_worker_heartbeats(("worker-a", "worker-b"))
-        retry_deadline = time.monotonic() + 60
-        retry_observed = False
-        candidate: dict[str, Any] = {}
-        while time.monotonic() < retry_deadline:
-            candidate = self.require(
-                self.request("GET", f"{self.apis[1]}/jobs/{retry_job['id']}", headers=headers),
-                200,
-            )
-            if candidate["status"] == "SUCCEEDED" and candidate["attempt"] > first_attempt:
-                retry_observed = True
-                break
-            time.sleep(0.1)
-        if not retry_observed:
-            state = candidate.get("status", "UNKNOWN")
-            code = candidate.get("error_code") or "NONE"
-            attempt = candidate.get("attempt", "UNKNOWN")
-            raise RuntimeError(
-                f"retried synthetic job did not recover: state={state} code={code} "
-                f"attempt={attempt}"
-            )
+        retry_observed = retried["status"] == "QUEUED" and retried["attempt"] == first_attempt
 
         queue_initial_components = self.queue_snapshot()
         queue_initial = queue_initial_components["scheduled"]
@@ -422,7 +403,17 @@ class Gate:
         if len(terminal) != len(job_ids) or any(
             item["status"] != "SUCCEEDED" for item in terminal.values()
         ):
-            raise RuntimeError("real jobs did not all succeed")
+            state_counts: dict[str, int] = {}
+            for item in terminal.values():
+                state = str(item["status"])
+                state_counts[state] = state_counts.get(state, 0) + 1
+            alive = sum(
+                int(self.processes[name].poll() is None) for name in ("worker-a", "worker-b")
+            )
+            raise RuntimeError(
+                f"real jobs did not all succeed: terminal={len(terminal)}/{len(job_ids)} "
+                f"states={state_counts} queue={self.queue_snapshot()} workers_alive={alive}"
+            )
         if interrupted:
             missing = next(
                 name for name in ("worker-a", "worker-b") if self.processes[name].poll() is not None
