@@ -628,6 +628,11 @@ backoff/jitter, deadline global, backpressure de IA por processo, budgets de
 PostgreSQL/Redis/MinIO/worker, observabilidade bounded e drill sintético. Não mede
 carga/capacidade, não resolve timeout preemptivo e não satisfaz a condição de avanço.
 
+**Estado do Package 3:** perfil/evidência versionados executam carga controlada,
+soak curto, E2E determinístico, duas APIs lógicas, dois workers, estado compartilhado,
+backpressure e relatório de gargalos. O resultado é somente um guardrail técnico
+sintético; a conclusão da v1.6 depende da revisão do CTO e não autoriza piloto/deploy.
+
 ---
 
 ## v1.7 — Engineering Catalogs and CAM

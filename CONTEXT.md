@@ -161,6 +161,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   recebem budgets explícitos; o drill cobre vinte cenários sintéticos. R-018 recebe
   mitigação adicional, R-033/R-038 permanecem residuais e R-034 não muda. Não há
   migration, carga/capacidade, merge, tag, Release ou deploy.
+* **v1.6 Reliability Package 3:** perfil sintético pequeno versiona duas APIs
+  lógicas, dois workers, concorrência 4, 200 operações e soak de 3 s. Harness e
+  CI geram evidência checksummed sem dados/API paga, executam E2E/isolamento e
+  registram gargalos. O limite IA por processo é suficiente somente para essa
+  topologia. R-034 avança parcialmente, sem capacidade produtiva, SLO/SLA, piloto,
+  merge, tag, Release ou deploy.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text

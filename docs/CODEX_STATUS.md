@@ -3,9 +3,9 @@
 ```text
 PROJECT=VENA_IA_PLATFORM
 ROLE=AUTONOMOUS_EXECUTOR
-STATE=V1_6_PACKAGE_2_READY_FOR_CTO_REVIEW
-LAST_MISSION=TASK_V16_002
-LAST_RESULT=V1_6_PACKAGE_1_APPROVED_BY_CTO
+STATE=V1_6_PACKAGE_3_IN_PROGRESS
+LAST_MISSION=TASK_V16_003
+LAST_RESULT=V1_6_PACKAGE_2_APPROVED_BY_CTO
 ACTIVE_BRANCH=codex/v1.6-reliability-scalability
 V1_2_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.2.0
 V1_3_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.3.0
@@ -46,7 +46,11 @@ V1_6_PACKAGE_2_CODE_HEAD=1905884359d2e298c6d2f3f6113586e47c1c69fb
 V1_6_PACKAGE_2_LOCAL=POLICIES_RUFF_MYPY_138_266_API_2_SKIP_55_OPERATIONAL_6_SKIP_FRONTEND_COMPOSE_PASS
 V1_6_PACKAGE_2_CI=BACKEND_31059513786_FRONTEND_31059513849_RUNTIME_POLICY_31059513794_SUCCESS
 V1_6_PACKAGE_2_MIGRATION=b18e4c7d2a91_UNCHANGED
-NEXT_AUTHORIZED_ACTION=CTO_REVIEW
+V1_6_PACKAGE_3_START_HEAD=fef319b0eff0cebc2d27060488d28d828b73cceb
+V1_6_CAPACITY_PROFILE=vena-ia.capacity-profile/v1
+V1_6_CAPACITY_EVIDENCE=vena-ia.capacity-evidence/v1
+V1_6_PACKAGE_3_LOCAL=POLICY_10_FOCAL_LOAD_SOAK_SHARED_STATE_EVIDENCE_PASS
+NEXT_AUTHORIZED_ACTION=FULL_REGRESSION_COMMIT_PUSH_CI
 PERMANENT_OPERATIONAL_LIMITS_SOURCE=docs/PERMANENT_OPERATIONAL_LIMITS.md
 PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 ```
@@ -54,9 +58,9 @@ PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 ## Checkpoint
 
 ```text
-STATE=v1.6 Package 2 pronta para revisão do CTO na Draft PR #17.
-DONE=Budgets, retries, backpressure, drill, regressão e CI integral aprovados.
-NEXT=Revisão do CTO; merge/deploy/capacidade/packages seguintes permanecem proibidos.
+STATE=v1.6 Package 3 em execução na Draft PR #17.
+DONE=Perfil, harness, soak, shared-state, evidence e workflow implementados.
+NEXT=Regressão integral, commits, push e CI; merge/deploy/piloto permanecem proibidos.
 ERROR=NONE.
 ```
 

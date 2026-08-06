@@ -1,11 +1,11 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V16_002
-TITLE=RESILIENCE_BUDGETS_AND_DEPENDENCY_DEGRADATION
+MISSION=TASK_V16_003
+TITLE=CONTROLLED_CAPACITY_SHARED_LIMITS_E2E_RELIABILITY
 BRANCH=codex/v1.6-reliability-scalability
-START_HEAD=2f5d427d6cecd4094cc96754c80d98954b1187c0
-EXPECTED_STATE=VENA_IA_V1_6_PACKAGE_2_READY_FOR_CTO_REVIEW
+START_HEAD=fef319b0eff0cebc2d27060488d28d828b73cceb
+EXPECTED_STATE=VENA_IA_V1_6_PACKAGE_3_READY_FOR_CTO_REVIEW
 PULL_REQUEST=DRAFT_REQUIRED
 PULL_REQUEST_DRAFT=KEEP_DRAFT
 MERGE=PROHIBITED
@@ -13,12 +13,13 @@ TAG_RELEASE=PROHIBITED
 DEPLOY=PROHIBITED
 V1_5_RELEASE=APPROVED_BY_CTO
 V1_6_PACKAGE_1=APPROVED_BY_CTO
-V1_6_PACKAGE_2=AUTHORIZED
-V1_6_PACKAGE_3_AND_LATER=PROHIBITED
-FORMAL_LOAD_CAPACITY_SCALING=PROHIBITED
+V1_6_PACKAGE_2=APPROVED_BY_CTO
+V1_6_PACKAGE_3=AUTHORIZED
+V1_6_LATER_PACKAGES=PROHIBITED
+SYNTHETIC_CONTROLLED_CAPACITY=AUTHORIZED
 STATE=IN_PROGRESS
 ```
 
-Escopo: inventário, policy, budgets, classificação, retry/backoff/jitter,
-concorrência/backpressure, degradação, readiness, observabilidade e drill. Nenhum
-merge, tag, Release, deploy, carga/capacidade formal ou pacote posterior integra a ordem.
+Escopo: perfil sintético, carga bounded, soak curto, E2E, duas APIs/workers, estado
+compartilhado, backpressure, evidência, gargalos e guardrails. Nenhum merge, tag,
+Release, deploy, piloto real, SLO/SLA, API paga ou pacote posterior integra a ordem.

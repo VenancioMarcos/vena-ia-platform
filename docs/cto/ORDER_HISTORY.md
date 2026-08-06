@@ -340,3 +340,10 @@ arquivos, 266 testes de API, 55 operacionais, frontend, Compose e Alembic. O CI
 aprovou Backend `31059513786` (268 API, 61 operacionais e serviços reais), Frontend
 `31059513849` e Runtime Policy `31059513794` com builds API/Web. A PR #17 permanece
 Draft, mergeável e sem merge, tag, Release, deploy ou teste formal de capacidade.
+
+## 2026-08-06 — v1.6 Package 3 Controlled Capacity
+
+O CTO aprovou a TASK-V16-002 e emitiu `TASK-V16-003` para perfil sintético,
+carga controlada, soak curto, E2E, duas APIs/workers, estado compartilhado,
+backpressure, evidência, gargalos e guardrails na mesma Draft PR #17. Merge, tag,
+Release, deploy, piloto real, SLO/SLA, API paga, dados reais e v1.7 são proibidos.

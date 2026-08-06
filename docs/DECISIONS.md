@@ -989,6 +989,28 @@ muda. Concorrência de IA é por processo e o pacote não declara capacidade/SLO
 
 ---
 
+## DEC-029 — Perfil sintético pequeno e evidência de capacidade
+
+**Data:** 2026-08-06
+**Status:** Aprovada
+**Tipo:** Operação / Arquitetura / Segurança
+**Documentos relacionados:** `docs/adr/ADR-0028-controlled-capacity-profile.md`,
+`capacity-profile.json`, `docs/capacity/CAPACITY_EVIDENCE.md`
+
+### Decisão
+
+Adotar perfil bounded com duas APIs lógicas, dois workers, concorrência 4, provider
+determinístico, carga curta e soak de 3 s. A evidência é JSON determinístico,
+checksummed e externo ao repositório. O limite IA por processo é aceito somente
+para a topologia testada; não criar coordenação distribuída sem saturação observada.
+
+### Impacto
+
+R-034 avança parcialmente. Não existe afirmação de capacidade produtiva, SLA/SLO,
+piloto, deploy ou escalabilidade horizontal completa.
+
+---
+
 # 6. Template para Novas Decisões
 
 ```markdown

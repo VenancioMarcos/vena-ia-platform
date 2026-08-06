@@ -8,6 +8,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.6 Package 3
+* Perfil `vena-ia.capacity-profile/v1`, harness bounded e evidência
+  `vena-ia.capacity-evidence/v1` checksummed fora do repositório.
+* Controlled Capacity CI executa carga/soak curtos, E2E determinístico e guardrails
+  com dados sintéticos, provider local e serviços fixados.
+* Relatório de gargalos documenta worker unitário, limite IA por processo, serviços
+  compartilhados, telemetria efêmera e timeout cooperativo sem alegação produtiva.
+
 ### Adicionado — v1.6 Package 2
 * Contrato executável `vena-ia.resilience-policy/v1`, inventário e policy check
   fail-closed para budgets de API, PostgreSQL, Redis, MinIO, IA, worker e backup.
