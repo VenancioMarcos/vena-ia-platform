@@ -24,6 +24,7 @@ from app.modules.cnc.api.routes import router as cnc_router
 from app.modules.cad.api.routes import router as cad_router
 from app.modules.documents.api.routes import router as documents_router
 from app.modules.documents.dependencies import initialize_document_storage
+from app.modules.engineering.api.routes import router as engineering_router
 from app.modules.files.api.routes import router as files_router
 from app.modules.jobs.api.routes import router as jobs_router
 from app.modules.jobs.dependencies import build_job_queue
@@ -148,6 +149,7 @@ def create_app() -> FastAPI:
     app.include_router(ai_router)
     app.include_router(audit_router)
     app.include_router(documents_router)
+    app.include_router(engineering_router)
     app.include_router(jobs_router)
     app.include_router(cad_router)
     app.include_router(manufacturing_router)
