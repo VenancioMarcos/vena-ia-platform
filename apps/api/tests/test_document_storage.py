@@ -86,11 +86,18 @@ def test_minio_secure_configuration(monkeypatch, secure: bool) -> None:
 
     get_document_storage()
 
-    client_factory.assert_called_once_with(
-        settings.minio_endpoint,
-        access_key=settings.minio_access_key,
-        secret_key=settings.minio_secret_key,
-        secure=secure,
+    client_factory.assert_called_once()
+    call = client_factory.call_args
+    assert call.args == (settings.minio_endpoint,)
+    assert call.kwargs["access_key"] == settings.minio_access_key
+    assert call.kwargs["secret_key"] == settings.minio_secret_key
+    assert call.kwargs["secure"] is secure
+    http_client = call.kwargs["http_client"]
+    assert http_client.connection_pool_kw["timeout"].connect_timeout == (
+        settings.minio_connect_timeout_seconds
+    )
+    assert http_client.connection_pool_kw["timeout"].read_timeout == (
+        settings.minio_read_timeout_seconds
     )
 
 

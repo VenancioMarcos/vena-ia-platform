@@ -12,7 +12,17 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.core.config import settings
 
-engine = create_engine(settings.database_url, pool_pre_ping=True)
+_postgres_connect_args = (
+    {"connect_timeout": settings.postgresql_connect_timeout_seconds}
+    if settings.database_url.startswith("postgresql")
+    else {}
+)
+engine = create_engine(
+    settings.database_url,
+    pool_pre_ping=True,
+    pool_timeout=settings.postgresql_pool_timeout_seconds,
+    connect_args=_postgres_connect_args,
+)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

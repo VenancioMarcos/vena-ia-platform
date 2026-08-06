@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import threading
 import time
+import random
 from collections.abc import Callable
 from dataclasses import dataclass
 
@@ -83,6 +84,9 @@ class JobWorker:
         worker_id: str,
         lease_seconds: int,
         retry_base_seconds: float,
+        retry_max_seconds: float = 3600,
+        retry_jitter_ratio: float = 0.0,
+        random_unit: Callable[[], float] = random.random,
         monotonic: Callable[[], float] = time.monotonic,
         logger: logging.Logger | None = None,
         metric_collector: object | None = None,
@@ -95,6 +99,9 @@ class JobWorker:
         self._worker_id = worker_id
         self._lease_seconds = lease_seconds
         self._retry_base = retry_base_seconds
+        self._retry_max = retry_max_seconds
+        self._retry_jitter_ratio = retry_jitter_ratio
+        self._random_unit = random_unit
         self._monotonic = monotonic
         self._logger = logger or logging.getLogger("vena_ia.worker")
         self._metrics = metric_collector or NoOpMetricCollector()
@@ -280,7 +287,14 @@ class JobWorker:
                 with observability_context(message.request_id, message.correlation_id):
                     self._observe(failed_job, "cancelled", session, "job.cancelled")
                 return WorkerResult(failed_job.id, "cancelled")
-            delay = self._retry_base * (2 ** max(failed_job.attempt - 1, 0))
+            base_delay = min(
+                self._retry_base * (2 ** max(failed_job.attempt - 1, 0)),
+                self._retry_max,
+            )
+            jitter = base_delay * self._retry_jitter_ratio * (
+                (2 * self._random_unit()) - 1
+            )
+            delay = max(0.0, min(base_delay + jitter, self._retry_max))
             safe_error = exc if isinstance(exc, SafeJobExecutionError) else None
             error_code = safe_error.code if safe_error else "INTERNAL_PROCESSING_ERROR"
             error_message = (

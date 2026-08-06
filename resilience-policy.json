@@ -1,0 +1,86 @@
+{
+  "schema_version": "vena-ia.resilience-policy/v1",
+  "scope": "v1.6-package-2",
+  "failure_classes": [
+    "connect_timeout", "read_timeout", "total_timeout", "connection_refused",
+    "resolution", "authentication", "authorization", "rate_limit",
+    "temporary_unavailable", "permanent", "invalid_payload", "invalid_response",
+    "conflict", "not_found", "cancelled", "exhausted", "internal"
+  ],
+  "operations": [
+    {
+      "dependency": "api", "operation": "frontend.request",
+      "connect_timeout_seconds": 30, "read_timeout_seconds": 30,
+      "total_timeout_seconds": 30, "max_attempts": 1,
+      "retry_base_seconds": 0, "retry_max_seconds": 0, "jitter_enabled": false,
+      "retryable_error_codes": [], "concurrency_limit": 0, "queue_limit": 0,
+      "recovery_probe_interval_seconds": 0, "failure_mode": "explicit_client_error",
+      "evidence_reference": "apps/web/lib/api.ts"
+    },
+    {
+      "dependency": "postgresql", "operation": "connect",
+      "connect_timeout_seconds": 5, "read_timeout_seconds": 0,
+      "total_timeout_seconds": 5, "max_attempts": 1,
+      "retry_base_seconds": 0, "retry_max_seconds": 0, "jitter_enabled": false,
+      "retryable_error_codes": [], "concurrency_limit": 0, "queue_limit": 0,
+      "recovery_probe_interval_seconds": 0, "failure_mode": "fail_closed",
+      "evidence_reference": "apps/api/app/core/database.py"
+    },
+    {
+      "dependency": "redis", "operation": "auth_and_jobs",
+      "connect_timeout_seconds": 1, "read_timeout_seconds": 1,
+      "total_timeout_seconds": 1, "max_attempts": 1,
+      "retry_base_seconds": 0, "retry_max_seconds": 0, "jitter_enabled": false,
+      "retryable_error_codes": [], "concurrency_limit": 0, "queue_limit": 0,
+      "recovery_probe_interval_seconds": 0, "failure_mode": "fail_closed",
+      "evidence_reference": "apps/api/app/modules/jobs/dependencies.py"
+    },
+    {
+      "dependency": "minio", "operation": "document_storage",
+      "connect_timeout_seconds": 3, "read_timeout_seconds": 10,
+      "total_timeout_seconds": 13, "max_attempts": 1,
+      "retry_base_seconds": 0, "retry_max_seconds": 0, "jitter_enabled": false,
+      "retryable_error_codes": [], "concurrency_limit": 0, "queue_limit": 0,
+      "recovery_probe_interval_seconds": 0, "failure_mode": "fail_closed",
+      "evidence_reference": "apps/api/app/modules/documents/dependencies.py"
+    },
+    {
+      "dependency": "openai", "operation": "chat_embeddings_completion",
+      "connect_timeout_seconds": 5, "read_timeout_seconds": 30,
+      "total_timeout_seconds": 30, "max_attempts": 3,
+      "retry_base_seconds": 0.25, "retry_max_seconds": 2, "jitter_enabled": true,
+      "retryable_error_codes": ["connect_timeout", "read_timeout", "resolution", "rate_limit", "temporary_unavailable"],
+      "concurrency_limit": 8, "queue_limit": 0,
+      "recovery_probe_interval_seconds": 0, "failure_mode": "explicit_502_or_503",
+      "evidence_reference": "packages/ai/providers/openai.py"
+    },
+    {
+      "dependency": "worker", "operation": "document_processing",
+      "connect_timeout_seconds": 0, "read_timeout_seconds": 0,
+      "total_timeout_seconds": 900, "max_attempts": 3,
+      "retry_base_seconds": 2, "retry_max_seconds": 300, "jitter_enabled": true,
+      "retryable_error_codes": ["dependency_unavailable", "lease_lost", "internal"],
+      "concurrency_limit": 1, "queue_limit": 0,
+      "recovery_probe_interval_seconds": 0, "failure_mode": "durable_retry_or_terminal_failure",
+      "evidence_reference": "apps/api/app/modules/jobs/worker.py"
+    },
+    {
+      "dependency": "backup", "operation": "encrypted_backup_restore",
+      "connect_timeout_seconds": 0, "read_timeout_seconds": 0,
+      "total_timeout_seconds": 3600, "max_attempts": 1,
+      "retry_base_seconds": 0, "retry_max_seconds": 0, "jitter_enabled": false,
+      "retryable_error_codes": [], "concurrency_limit": 1, "queue_limit": 0,
+      "recovery_probe_interval_seconds": 0, "failure_mode": "exclusive_lock_fail_closed",
+      "evidence_reference": "scripts/backup_job.py"
+    }
+  ],
+  "prohibited_fields": [
+    "url", "token", "cookie", "password", "secret", "user_id", "project_id",
+    "document_id", "job_id", "prompt", "response", "embedding", "content"
+  ],
+  "limitations": [
+    "AI concurrency is per process.",
+    "Worker timeout remains cooperative rather than preemptive.",
+    "This policy is not a capacity, SLA or SLO claim."
+  ]
+}

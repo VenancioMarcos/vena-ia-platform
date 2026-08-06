@@ -4,7 +4,8 @@ const API_TIMEOUT_MS = 30_000;
 export class ApiError extends Error {
   constructor(
     message: string,
-    readonly status: number
+    readonly status: number,
+    readonly retryAfterSeconds: number | null = null
   ) {
     super(message);
   }
@@ -45,9 +46,14 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   }
   if (!response.ok) {
     const body: unknown = await response.json().catch(() => null);
+    const rawRetryAfter = response.headers.get("Retry-After");
+    const retryAfter = rawRetryAfter === null ? null : Number.parseInt(rawRetryAfter, 10);
     throw new ApiError(
       apiErrorDetail(body) ?? `Request failed (${response.status})`,
-      response.status
+      response.status,
+      retryAfter !== null && Number.isFinite(retryAfter) && retryAfter >= 0
+        ? retryAfter
+        : null
     );
   }
   if (response.status === 204) {

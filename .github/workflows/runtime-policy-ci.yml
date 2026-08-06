@@ -10,10 +10,14 @@ on:
       - "apps/web/pnpm-workspace.yaml"
       - "docker-compose.yml"
       - "runtime-policy.json"
+      - "resilience-policy.json"
       - ".python-version"
       - ".node-version"
       - "scripts/runtime_policy.py"
+      - "scripts/resilience_policy.py"
       - "tests/operations/test_runtime_policy.py"
+      - "tests/operations/test_resilience_policy.py"
+      - "docs/runbooks/**"
       - ".github/workflows/**"
   push:
     branches:
@@ -26,10 +30,14 @@ on:
       - "apps/web/pnpm-workspace.yaml"
       - "docker-compose.yml"
       - "runtime-policy.json"
+      - "resilience-policy.json"
       - ".python-version"
       - ".node-version"
       - "scripts/runtime_policy.py"
+      - "scripts/resilience_policy.py"
       - "tests/operations/test_runtime_policy.py"
+      - "tests/operations/test_resilience_policy.py"
+      - "docs/runbooks/**"
       - ".github/workflows/**"
 
 permissions:
@@ -49,6 +57,9 @@ jobs:
 
       - name: Validate runtime policy
         run: python scripts/runtime_policy.py
+
+      - name: Validate resilience policy
+        run: python scripts/resilience_policy.py
 
       - name: Validate Compose
         run: |

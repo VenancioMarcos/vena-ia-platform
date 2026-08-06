@@ -159,6 +159,8 @@ def main() -> int:
         worker_id=f"{socket.gethostname()}-{os.getpid()}",
         lease_seconds=settings.jobs_lease_seconds,
         retry_base_seconds=settings.jobs_retry_base_seconds,
+        retry_max_seconds=settings.jobs_retry_max_seconds,
+        retry_jitter_ratio=settings.jobs_retry_jitter_ratio,
         metric_collector=(
             InMemoryMetricCollector()
             if settings.observability_collection_enabled

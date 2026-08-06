@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 from minio import Minio
+from urllib3 import PoolManager, Timeout
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -52,11 +53,19 @@ DocumentPipelineDependency = Annotated[DocumentPipeline, Depends(get_document_pi
 
 
 def get_document_storage() -> DocumentStorage:
+    http_client = PoolManager(
+        timeout=Timeout(
+            connect=settings.minio_connect_timeout_seconds,
+            read=settings.minio_read_timeout_seconds,
+        ),
+        retries=False,
+    )
     client = Minio(
         settings.minio_endpoint,
         access_key=settings.minio_access_key,
         secret_key=settings.minio_secret_key,
         secure=settings.minio_secure,
+        http_client=http_client,
     )
     return MinIOStorage(client, settings.minio_bucket)
 
