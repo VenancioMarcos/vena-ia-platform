@@ -4,8 +4,10 @@ import logging
 import threading
 import time
 import random
+import traceback
 from collections.abc import Callable
 from dataclasses import dataclass
+from pathlib import Path
 
 from sqlalchemy.orm import Session
 
@@ -140,9 +142,19 @@ class JobWorker:
             )
             return WorkerResult(None, "queue_unavailable")
         except Exception as exc:
+            project_frames = [
+                frame
+                for frame in traceback.extract_tb(exc.__traceback__)
+                if "app/modules/jobs" in frame.filename.replace("\\", "/")
+            ]
+            origin = project_frames[-1] if project_frames else None
+            origin_label = (
+                f"{Path(origin.filename).name}:{origin.lineno}" if origin else "unknown:0"
+            )
             self._logger.error(
-                "worker pre-claim dependency check failed: %s",
+                "worker pre-claim dependency check failed: %s origin=%s",
                 type(exc).__name__,
+                origin_label,
             )
             safe_metric_call(
                 getattr(self._alerts, "emit", None),
@@ -295,9 +307,7 @@ class JobWorker:
                 self._retry_base * (2 ** max(failed_job.attempt - 1, 0)),
                 self._retry_max,
             )
-            jitter = base_delay * self._retry_jitter_ratio * (
-                (2 * self._random_unit()) - 1
-            )
+            jitter = base_delay * self._retry_jitter_ratio * ((2 * self._random_unit()) - 1)
             delay = max(0.0, min(base_delay + jitter, self._retry_max))
             safe_error = exc if isinstance(exc, SafeJobExecutionError) else None
             error_code = safe_error.code if safe_error else "INTERNAL_PROCESSING_ERROR"

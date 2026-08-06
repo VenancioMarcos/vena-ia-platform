@@ -143,7 +143,10 @@ def test_failure_diagnostics_allowlist_only_exception_types(
     gate = object.__new__(Gate)
     worker_log = (tmp_path / "worker.log").open("w+b")
     worker_log.write(
-        b"ERROR vena_ia.worker worker pre-claim dependency check failed: OperationalError\n"
+        b"ERROR vena_ia.worker worker pre-claim dependency check failed: OperationalError "
+        b"origin=recovery.py:37\n"
+        b"ERROR vena_ia.worker worker pre-claim dependency check failed: OperationalError "
+        b"origin=recovery.py:37\n"
         b"untrusted token=secret job_id=domain-id\n"
     )
     gate.logs = {"worker-a": worker_log}
@@ -151,7 +154,7 @@ def test_failure_diagnostics_allowlist_only_exception_types(
     gate.emit_safe_diagnostics()
 
     assert capsys.readouterr().out == (
-        "SAFE_WORKER_DIAGNOSTIC name=worker-a error_type=OperationalError\n"
+        "SAFE_WORKER_DIAGNOSTIC name=worker-a error_type=OperationalError origin=recovery.py:37\n"
     )
     worker_log.close()
 

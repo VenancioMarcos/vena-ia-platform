@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import socket
 import statistics
 import subprocess
@@ -645,11 +646,25 @@ class Gate:
                 continue
             log.flush()
             log.seek(0)
+            observed: set[tuple[str, str, str]] = set()
             for raw_line in log.read().decode("utf-8", errors="replace").splitlines():
-                if marker in raw_line:
-                    error_type = raw_line.rsplit(marker, 1)[1].strip().split()[0]
-                    if error_type.replace("_", "").isalnum():
-                        print(f"SAFE_WORKER_DIAGNOSTIC name={name} error_type={error_type}")
+                if marker not in raw_line:
+                    continue
+                match = re.search(
+                    rf"{re.escape(marker)}\s+([A-Za-z0-9_]+) "
+                    r"origin=([A-Za-z0-9_.-]+):(\d+)",
+                    raw_line,
+                )
+                if match is None:
+                    continue
+                diagnostic = (match.group(1), match.group(2), match.group(3))
+                if diagnostic in observed:
+                    continue
+                observed.add(diagnostic)
+                print(
+                    f"SAFE_WORKER_DIAGNOSTIC name={name} error_type={diagnostic[0]} "
+                    f"origin={diagnostic[1]}:{diagnostic[2]}"
+                )
 
 
 def main() -> int:
