@@ -334,3 +334,9 @@ na branch e Draft PR #17. O escopo cobre inventário/policy de budgets, classifi
 timeouts, retries, backoff/jitter, IA/embeddings, concorrência, backpressure,
 degradação, readiness, observabilidade e drill. Merge, tag, Release, deploy,
 capacidade formal, v1.7 e packages posteriores permanecem proibidos.
+
+O head de código `1905884` aprovou localmente duas policies, Ruff, mypy em 138
+arquivos, 266 testes de API, 55 operacionais, frontend, Compose e Alembic. O CI
+aprovou Backend `31059513786` (268 API, 61 operacionais e serviços reais), Frontend
+`31059513849` e Runtime Policy `31059513794` com builds API/Web. A PR #17 permanece
+Draft, mergeável e sem merge, tag, Release, deploy ou teste formal de capacidade.
