@@ -21,6 +21,7 @@ class CADAnalysisResponse(BaseModel):
     volume_status: str
     report: str
     geometry: "GeometryAnalysisContract"
+    features: "GeometryFeaturesContract"
 
 
 class GeometryValue(BaseModel):
@@ -57,3 +58,41 @@ class GeometryKernelDecision(BaseModel):
     experimental_python: str
     contract_schema: str
     limitations: list[str]
+
+
+class FeatureDimensionResponse(BaseModel):
+    name: str
+    value: float | None
+    unit: str
+    source: str
+    status: str
+
+
+class GeometryFeatureResponse(BaseModel):
+    feature_id: str
+    feature_type: str
+    confidence_class: str
+    geometry_evidence: list[str]
+    dimensions: list[FeatureDimensionResponse]
+    units: list[str]
+    topology_refs: list[str]
+    assumptions: list[str]
+    limitations: list[str]
+    review_status: str
+
+
+class GeometryFeaturesContract(BaseModel):
+    schema_version: str = "vena-ia.geometry-features/v1"
+    status: str
+    source_format: str = "STEP_PART_21"
+    kernel: str
+    kernel_version: str | None
+    shape_class: str | None
+    feature_rule_version: str
+    feature_count: int
+    features: list[GeometryFeatureResponse]
+    warnings: list[str]
+    limitations: list[str]
+    traceability: list[str]
+    uncertainty: str
+    tolerance: GeometryValue

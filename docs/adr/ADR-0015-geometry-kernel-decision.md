@@ -20,3 +20,11 @@ for CPython 3.13/3.14 and Windows/Linux. It is pinned and imported lazily behind
 `OpenCascadeGeometryKernel`. OCCT is LGPL-2.1 with exception; the binding is
 Apache-2.0. Native crash/preemptive timeout and 130+ MB transitive wheel footprint
 remain restrictions. Tolerance exposed by this package is never manufacturing tolerance.
+
+## Package 3 recognition boundary
+
+Rule `1.0.0` consumes the shape already loaded by the adapter and emits
+`vena-ia.geometry-features/v1`. Plane and cylinder are geometric primitives. A
+through hole requires an inward-oriented cylindrical boundary and strict axial
+envelope traversal. Blind holes and slots are deferred rather than heuristically
+classified. All topology references are local and all features require human review.

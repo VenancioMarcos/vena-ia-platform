@@ -9,6 +9,9 @@ from app.modules.cad.schemas import (
     CADAnalysisResponse,
     GeometryKernelDecision,
     GeometryAnalysisContract,
+    GeometryFeatureResponse,
+    GeometryFeaturesContract,
+    FeatureDimensionResponse,
     GeometryValue,
 )
 from app.modules.cad.service import CADContentUnavailableError
@@ -30,13 +33,13 @@ def geometry_kernel_decision(
         decision="B_APPROVED_WITH_RESTRICTIONS",
         candidate="OpenCascade Technology",
         license="LGPL-2.1-with-exception",
-        integration_status="NOT_INSTALLED_PACKAGE_1_DECISION_ONLY",
+        integration_status="CONTROLLED_INTEGRATION_ACTIVE",
         official_python="3.13.11",
         experimental_python="3.14.6",
         contract_schema="vena-ia.geometry-analysis/v1",
         limitations=[
             "Binary/package compatibility must pass Windows, Linux and Docker gates.",
-            "No topology, area or volume claim is made before controlled integration.",
+            "Feature recognition is limited to validated synthetic corpus rules.",
             "Analysis never establishes manufacturability or machine safety.",
         ],
     )
@@ -112,6 +115,68 @@ def analyze_step_document(
             "Kernel tolerance is not manufacturing tolerance.",
         ],
     )
+    feature_result = result.features
+    feature_contract = GeometryFeaturesContract(
+        status=(
+            feature_result.status
+            if feature_result is not None
+            else ("KERNEL_UNAVAILABLE" if geometry is None else "NOT_RECOGNIZED")
+        ),
+        kernel=OpenCascadeGeometryKernel.name,
+        kernel_version=OpenCascadeGeometryKernel.version if geometry is not None else None,
+        shape_class=None if geometry is None else geometry.shape_type,
+        feature_rule_version="1.0.0",
+        feature_count=0 if feature_result is None else len(feature_result.features),
+        features=[]
+        if feature_result is None
+        else [
+            GeometryFeatureResponse(
+                feature_id=f"feature-{index:04d}",
+                feature_type=feature.feature_type,
+                confidence_class=feature.confidence_class,
+                geometry_evidence=list(feature.geometry_evidence),
+                dimensions=[
+                    FeatureDimensionResponse(
+                        name=dimension.name,
+                        value=dimension.value,
+                        unit=dimension.unit,
+                        source=dimension.source,
+                        status=dimension.status,
+                    )
+                    for dimension in feature.dimensions
+                ],
+                units=sorted({dimension.unit for dimension in feature.dimensions}),
+                topology_refs=list(feature.topology_refs),
+                assumptions=list(feature.assumptions),
+                limitations=list(feature.limitations),
+                review_status=feature.review_status,
+            )
+            for index, feature in enumerate(feature_result.features, start=1)
+        ],
+        warnings=(
+            ([] if result.feature_warning is None else [result.feature_warning])
+            if feature_result is None
+            else list(feature_result.warnings)
+        ),
+        limitations=(
+            ["Feature recognition requires available, valid kernel topology."]
+            if feature_result is None
+            else list(feature_result.limitations)
+        ),
+        traceability=[
+            f"document:{result.document_id}",
+            f"kernel:{OpenCascadeGeometryKernel.version}",
+            "feature-rule:1.0.0",
+        ],
+        uncertainty=(
+            "UNKNOWN" if feature_result is None else feature_result.uncertainty
+        ),
+        tolerance=GeometryValue(
+            value=None if feature_result is None else feature_result.tolerance,
+            unit=analysis.length_unit,
+            status="NOT_AVAILABLE" if feature_result is None else "AVAILABLE",
+        ),
+    )
     return CADAnalysisResponse(
         document_id=result.document_id,
         source_filename=result.source_filename,
@@ -126,4 +191,5 @@ def analyze_step_document(
         volume_status=analysis.volume_status,
         report=result.report,
         geometry=geometry_contract,
+        features=feature_contract,
     )

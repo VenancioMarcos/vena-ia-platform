@@ -8,6 +8,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.8 Package 3
+* Contrato `vena-ia.geometry-features/v1` e recognizer OCCT rule `1.0.0`
+  distinguem primitivas planares/cilíndricas de furo cilíndrico passante estrito.
+* Corpus sintético reproduzível valida dimensões, determinismo, falsos positivos,
+  falso negativo suportado, topologia inválida e erro seguro, sempre com revisão humana.
+* Furo cego, slot, CAM, toolpath, G-code e inferência de manufaturabilidade permanecem adiados.
+
 ### Adicionado — v1.8 Package 2
 * Gate `GO_CONTROLLED_INTEGRATION` fixa cadquery-ocp 7.9.3.1.1/OCCT 7.9.3,
   com import lazy, limites, erros seguros e autoridade geométrica separada do parser textual.

@@ -380,3 +380,13 @@ importa o registro oficial e adiciona regressão em subprocesso limpo. Backend
 `31131271003`, Frontend `31131271784`, Runtime Policy `31131271162` e Controlled
 Capacity `31131271390` passaram no mesmo head. A PR #17 segue Draft e mergeável;
 merge, tag, Release e deploy não foram realizados.
+
+## 2026-08-06 — TASK-V18-003
+
+O CTO aprovou a TASK-V18-002 no head técnico `54f353c` e preservou o commit de
+política `1148f85`. A ordem autoriza reconhecimento inicial, conservador,
+determinístico e rastreável de features na branch
+`codex/v1.8-cad-interoperability` e Draft PR #19. Proíbe merge, tag, Release,
+deploy, v1.9, CAM, toolpath, G-code e transmissão CNC. Package 3 implementa apenas
+faces planares/cilíndricas e furo passante sob evidência estrita; closed hole e
+slot permanecem adiados.

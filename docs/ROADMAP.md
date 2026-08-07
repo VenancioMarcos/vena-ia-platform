@@ -687,6 +687,11 @@ topologia e tolerância permanecem `NOT_AVAILABLE` até gates controlados.
 cadquery-ocp 7.9.3.1.1/OCCT 7.9.3 em adapter lazy. Box analítico valida envelope,
 área, volume e topologia; tolerância de fabricação e feature recognition continuam fora.
 
+**Estado do Package 3:** contrato `vena-ia.geometry-features/v1` e rule `1.0.0`
+reconhecem faces planares/cilíndricas e furo passante estrito sobre corpus sintético.
+Furo cego e slot foram adiados por evidência insuficiente; revisão humana permanece
+obrigatória e nenhuma integração de produção com engineering/CAM foi ativada.
+
 Objetivo: evoluir do parser textual para geometria validada e formatos previstos.
 
 Entregas: ADR de kernel/licença/portabilidade; STEP topológico com unidade,

@@ -1111,3 +1111,16 @@ As recomendações v1.7 Package 2 são determinísticas e não persistidas. Some
 dados catalogados com fonte/versão participam; ausência resulta em `NOT_AVAILABLE`.
 O catálogo permanece global autenticado nesta etapa, sem mudança implícita de
 ownership. Toda saída exige revisão humana e não contém comando CNC executável.
+
+## DEC-032 — Reconhecimento conservador separa primitiva de feature
+
+**Data:** 2026-08-06
+**Status:** Aprovada
+**Tipo:** Arquitetura | Engenharia | Segurança
+
+O recognizer v1.8 rule `1.0.0` consome a topologia OCCT já carregada e trata face
+plana e cilíndrica como primitivas geométricas. `THROUGH_CYLINDRICAL_HOLE` somente
+existe com boundary interno e atravessamento axial estrito do envelope. Furo cego
+e slot ficam adiados. IDs topológicos são locais, confiança representa apenas
+evidência geométrica, e revisão humana é obrigatória. Nenhum resultado ativa
+engineering produtivo, CAM, toolpath, G-code ou afirma manufaturabilidade.

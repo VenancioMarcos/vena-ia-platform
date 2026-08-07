@@ -224,3 +224,12 @@ indisponibilidade sem bypass e contratos/autorização preservados.
 ### Próximo passo
 
 Revisão do CTO na Draft PR #13; nenhuma ação posterior foi iniciada.
+
+## 2026-08-06 — TASK-V18-003 Package 3 local terminal
+
+`FeatureRecognizer` rule `1.0.0` consome a mesma shape OCCT do adapter e expõe
+`vena-ia.geometry-features/v1`. O corpus sintético aprovou primitivas planares e
+cilíndricas, um e dois furos passantes, rejeição de cilindro externo/furo cego,
+topologia inválida, malformed e determinismo. Closed hole e slot foram adiados.
+Ruff, mypy em 151 arquivos e pytest integral (`358 passed, 9 skipped`) passaram;
+OpenAPI 3.1.0 mantém 60 paths. Não houve migration, merge, tag, Release ou deploy.

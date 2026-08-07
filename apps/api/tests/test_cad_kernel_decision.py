@@ -13,7 +13,7 @@ def test_kernel_decision_is_restricted_and_versioned(client: TestClient, make_ac
     assert response.status_code == 200
     body = response.json()
     assert body["decision"] == "B_APPROVED_WITH_RESTRICTIONS"
-    assert body["integration_status"] == "NOT_INSTALLED_PACKAGE_1_DECISION_ONLY"
+    assert body["integration_status"] == "CONTROLLED_INTEGRATION_ACTIVE"
     assert body["contract_schema"] == "vena-ia.geometry-analysis/v1"
 
 

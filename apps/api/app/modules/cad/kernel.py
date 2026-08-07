@@ -1,7 +1,13 @@
+from __future__ import annotations
+
 import math
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.modules.cad.features import FeatureRecognitionResult, FeatureRecognizer
 
 
 class GeometryKernelError(Exception):
@@ -23,6 +29,15 @@ class OpenCascadeGeometryKernel:
     binding = "cadquery-ocp==7.9.3.1.1"
 
     def analyze_step(self, content: bytes) -> KernelGeometry:
+        geometry, _features = self.analyze_step_with_features(content)
+        return geometry
+
+    def analyze_step_with_features(
+        self,
+        content: bytes,
+        recognizer: FeatureRecognizer | None = None,
+        unit: str = "mm",
+    ) -> tuple[KernelGeometry, FeatureRecognitionResult | None]:
         if len(content) > 50 * 1024 * 1024:
             raise GeometryKernelError("STEP resource limit exceeded")
         if not content.lstrip().startswith(b"ISO-10303-21;"):
@@ -67,13 +82,15 @@ class OpenCascadeGeometryKernel:
             values = (xmin, ymin, zmin, xmax, ymax, zmax, area, raw_volume)
             if not all(math.isfinite(value) for value in values):
                 raise GeometryKernelError("Non-finite geometry result")
-            return KernelGeometry(
+            geometry = KernelGeometry(
                 bounding_box=((xmin, ymin, zmin), (xmax, ymax, zmax)),
                 surface_area=area,
                 volume=volume,
                 topology_valid=valid,
                 shape_type=shape_type,
             )
+            features = None if recognizer is None else recognizer.recognize(shape, geometry, unit)
+            return geometry, features
         except GeometryKernelError:
             raise
         except Exception as exc:
