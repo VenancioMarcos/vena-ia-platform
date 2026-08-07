@@ -394,3 +394,9 @@ limites DOE/ANOVA, prompt injection como dado e output validation CNC/científic
 R-046 e R-047 avançam somente para mitigação parcial/monitoramento. Focal
 AI/RAG/Research/Package 1: 98 testes aprovados. Sem persistence, migration, frontend,
 deploy, Package 3 ou CNC executável.
+
+Gate terminal Package 2: Ruff PASS; mypy 168 arquivos; pytest integral `416 passed,
+9 skipped`; focal AI/RAG/Research/Package 1 `98 passed`; OpenAPI 78 paths; Alembic
+`d39a7b2c5e11`; Compose config e secret scan PASS. Backend CI run `31179888094`,
+head `04cf56a`, aprovou lint, mypy, ciclo Alembic, 349 testes API e 76 operacionais.
+Frontend/Runtime Policy não foram impactados e não foram disparados.

@@ -22,6 +22,7 @@ GOVERNANCE_BYPASS=PROHIBITED
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
 DRAFT_PR=23
 BACKEND_CI=PASS_RUN_31177827093
+PACKAGE_2_BACKEND_CI=PASS_RUN_31179888094
 ```
 
 Escopo executado: Package 2 adiciona assistência specialized bounded e Research
@@ -33,4 +34,6 @@ PR funcional, deploy ou qualquer saída CNC executável.
 Gate terminal: Ruff PASS; mypy 165 arquivos; pytest local 408 passed/9 skipped;
 OpenAPI 77 paths; Alembic `d39a7b2c5e11`; Compose e secret scan PASS. Backend CI
 run `31177827093` aprovou lint, mypy, ciclo Alembic, 341 testes API e 76 operacionais.
-O gate terminal do Package 2 será registrado no fechamento desta TASK.
+Gate terminal Package 2: Ruff PASS; mypy 168; pytest 416 passed/9 skipped; focal
+AI/RAG/Research/Package 1 98 passed; OpenAPI 78 paths; Alembic `d39a7b2c5e11`;
+Compose/secret scan PASS. Backend CI run `31179888094`: 349 API e 76 operations PASS.

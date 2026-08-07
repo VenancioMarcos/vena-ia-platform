@@ -66,8 +66,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   `AIService`, Documents/RAG e Research existentes; contexto é minimizado, citações
   preservam documento/página/chunk/método, ausência falha fechado e output do modelo
   não pode mutar fatos ou produzir CNC executável. R-046/R-047 estão mitigados
-  parcialmente/monitorados. Sem persistence, migration ou frontend; Package 3
-  permanece `NOT_STARTED` e v2.0 não está encerrada.
+  parcialmente/monitorados. O Backend CI do head `04cf56a` aprovou lint, mypy em
+  168 arquivos, ciclo Alembic, 349 testes API e 76 operacionais. Sem persistence,
+  migration ou frontend; Package 3 permanece `NOT_STARTED` e v2.0 não está encerrada.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.
