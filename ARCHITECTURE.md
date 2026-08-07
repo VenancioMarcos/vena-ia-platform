@@ -272,3 +272,19 @@ rules, recommendation, planning ou CNC. O deterministic input trace cobre profil
 workflow, evidence e template, sem exigir resposta byte-a-byte. Grounding ausente e
 provider failure preservam o workflow. Não há nova persistência, migration, fila,
 provider, vector store ou frontend. Detalhes: `docs/SPECIALIZED_ASSISTANCE.md`.
+
+---
+
+## 16. Operational Dashboard v2.0 Package 3
+
+O componente `EngineeringWorkspace` é camada de presentation/orchestration dentro da
+página de projeto e usa o cliente HTTP único. Tipos explícitos refletem os contratos
+`integrated-engineering-workflow/v1`, `cnc-neutral-plan/v1`,
+`specialized-assistance/v1` e `grounded-research-assistance/v1`.
+
+O frontend não calcula status global, recommendation, planning, validação CNC ou
+autoridade científica. Ele apresenta `workflow_status`, estados por estágio,
+evidence/citations, limitações e revisão humana retornados pelo backend. O
+acknowledgement é somente view state local. Não há nova persistência, migration,
+cliente HTTP, ledger ou subsistema operacional. Detalhes:
+`docs/OPERATIONAL_ENGINEERING_DASHBOARD.md`.

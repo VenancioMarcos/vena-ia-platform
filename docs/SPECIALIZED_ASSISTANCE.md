@@ -33,11 +33,17 @@ Output vazio, claim de autoridade produtiva/científica ou linha com sintaxe pot
 G/M-code é bloqueado. Todo contrato fixa `NON_PRODUCTION`,
 `REQUIRES_HUMAN_REVIEW`, `simulation_only=true` e `executable_output=false`.
 
+## Apresentação Package 3
+
+O dashboard mantém `AI ASSISTANCE` separada do resultado determinístico e apresenta
+profile, status, resposta, evidence, citations, missing evidence, warnings,
+limitations, review status e input trace. Erro do provider e output bloqueado ficam
+visíveis; nenhum texto da IA altera o snapshot fonte.
+
 ## Limites
 
 Não há toolpath, coordenadas, postprocessor, G/M-code, NC/DNC, transmissão, machine
-control, produção, conformidade, certificação ou decisão científica. Package 3 e UI
-não fazem parte desta entrega.
+control, produção, conformidade, certificação ou decisão científica.
 
 ## Registro de Entrega
 
@@ -66,4 +72,4 @@ failure seguro, limites científicos e ausência de CNC executável.
 
 ### Próximos passos
 
-Revisão do CTO. Package 3 permanece `NOT_STARTED` até ordem específica.
+Package 3 está implementado/ready for CTO review na mesma Draft PR #23.

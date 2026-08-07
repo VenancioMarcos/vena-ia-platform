@@ -988,6 +988,9 @@ com sintaxe CNC ou claim de autoridade é bloqueado. Nenhuma migration ou UI foi
 
 #### Package 3 — Operational Dashboard, Evidence and v2.0 Consolidation
 
+Estado: `IMPLEMENTED / READY_FOR_CTO_REVIEW` na Draft PR #23. Packages 1 e 2 estão
+`APPROVED`; v2.0 está `FUNCTIONALLY_COMPLETE / RELEASE_CANDIDATE_PENDING_CTO_REVIEW`.
+
 Objetivo: expor o workflow já aprovado e fechar evidence/E2E/release sem criar lógica
 de domínio no frontend.
 
@@ -1010,7 +1013,8 @@ cadeia E2E determinística, partial/failure, ownership/isolation e neutralidade 
 Package 2 cobre grounding, citações, prompt injection, ausência de evidence,
 não sobrescrita de rules e limites DOE/ANOVA; Package 3 cobre acessibilidade,
 frontend/API E2E, restore, observability, resilience, carga sintética e regressão
-integral. Nenhum desses testes é executado nesta TASK documental.
+integral. O Package 3 executa esses gates sem nova migration e prepara
+`docs/RELEASE_NOTES_v2.0.0.md`; publicação depende de ordem posterior.
 
 #### Riscos e limites absolutos
 

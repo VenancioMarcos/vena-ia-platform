@@ -69,6 +69,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   parcialmente/monitorados. O Backend CI do head `04cf56a` aprovou lint, mypy em
   168 arquivos, ciclo Alembic, 349 testes API e 76 operacionais. Sem persistence,
   migration ou frontend; Package 3 permanece `NOT_STARTED` e v2.0 não está encerrada.
+* **v2.0 Package 3 implementado:** a mesma Draft PR #23 adiciona dashboard
+  operacional tipado para workflow/assistance/Research, estados explícitos, evidence,
+  citações e checklist humano sem autoridade produtiva. Playwright cobre desktop e
+  largura reduzida, caminho integrado e falhas controladas. Versões API/FastAPI/
+  health/OpenAPI/frontend estão em `2.0.0`; Alembic permanece `d39a7b2c5e11`.
+  Packages 1–2 estão aprovados, Package 3 está `READY_FOR_CTO_REVIEW` e a v2.0 está
+  `FUNCTIONALLY_COMPLETE / RELEASE_CANDIDATE_PENDING_CTO_REVIEW`. PR #23 segue Draft;
+  merge, tag, Release e deploy não foram realizados.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

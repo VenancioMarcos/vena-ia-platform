@@ -54,6 +54,14 @@ dos campos determinísticos e não pode promover status, alterar recommendation/
 planning/CNC ou preencher missing input. Research grounding e citações são definidos
 em `docs/GROUNDED_RESEARCH_ASSISTANCE.md`.
 
+## Dashboard e consolidação Package 3
+
+A página de projeto expõe a cadeia completa, preserva estados por domínio e usa o
+`workflow_status` do backend. O frontend não recalcula facts, status ou readiness.
+Evidence, missing inputs, limitações, CNC neutro, assistência e revisão humana são
+apresentados sem transformar o resultado em aprovação produtiva. Detalhes em
+`docs/OPERATIONAL_ENGINEERING_DASHBOARD.md`.
+
 ## Registro de Entrega
 
 ### Objetivo
@@ -81,4 +89,4 @@ revisão humana obrigatória e ausência de output CNC executável.
 
 ### Próximos passos
 
-Revisão do CTO. Package 2 permanece `NOT_STARTED` até ordem oficial específica.
+Packages 1–2 estão aprovados e Package 3 está implementado/ready for CTO review.

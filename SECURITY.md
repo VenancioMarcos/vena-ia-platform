@@ -160,6 +160,17 @@ produtiva/científica. Todos os outputs fixam revisão humana, não produção,
 `simulation_only=true` e `executable_output=false`. Não existem tools de escrita,
 execução, transmissão CNC ou persistência adicional de prompts/respostas.
 
+## 7.3 Dashboard operacional v2.0
+
+O navegador não envia identidade, papel, Organization ou Team como autoridade. A
+visão integrada usa somente contratos autorizados do backend e mantém status de cada
+domínio sem promoção cruzada. Resultado determinístico e assistência de IA são
+separados; erro, ausência e bloqueio permanecem visíveis.
+
+Não existem controles de produção, machine-send, download NC, postprocessor,
+toolpath ou G/M-code. `REVIEW ACKNOWLEDGED` é somente confirmação visual local e não
+constitui aprovação, assinatura, certificação ou autorização de fabricação.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

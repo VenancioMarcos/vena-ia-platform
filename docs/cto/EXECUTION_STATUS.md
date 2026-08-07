@@ -400,3 +400,20 @@ Gate terminal Package 2: Ruff PASS; mypy 168 arquivos; pytest integral `416 pass
 `d39a7b2c5e11`; Compose config e secret scan PASS. Backend CI run `31179888094`,
 head `04cf56a`, aprovou lint, mypy, ciclo Alembic, 349 testes API e 76 operacionais.
 Frontend/Runtime Policy não foram impactados e não foram disparados.
+
+## 2026-08-07 — TASK-V20-003 Package 3 implementado
+
+O CTO aprovou o Package 2 e autorizou dashboard/evidence/E2E/consolidação na mesma
+Draft PR #23. O commit funcional `34a4347` adiciona uma camada frontend estritamente
+de presentation/orchestration, tipos explícitos para os quatro contratos v2.0,
+estados por estágio, CNC neutro, assistência/Research/citations e human review local
+sem autoridade produtiva. Não há nova persistência ou migration.
+
+Gate local: Ruff PASS; mypy 168 arquivos; pytest integral `416 passed, 9 skipped`;
+operations `69 passed, 7 skipped`; frontend typecheck/build PASS; Playwright `8
+passed` em desktop/largura reduzida; Runtime, resilience e capacity policies PASS;
+OpenAPI `2.0.0` com 78 paths e quatro contratos presentes; Alembic
+`d39a7b2c5e11`; Compose config e secret scan PASS. Packages 1–2 estão aprovados,
+Package 3 está implemented/ready for CTO review e v2.0 está functionally complete
+com Release Candidate pendente. PR #23 permanece Draft; merge/tag/Release/deploy
+não foram realizados.

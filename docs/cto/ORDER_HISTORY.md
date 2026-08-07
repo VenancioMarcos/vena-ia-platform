@@ -488,3 +488,11 @@ A ordem limita a assistência a quatro modos bounded sobre `AIService`, exige
 autoridade determinística imutável, Research grounded/citations, limites científicos,
 prompt injection como dado, falha segura e ausência de CNC executável. Package 3,
 frontend, persistence, migration, merge e deploy permanecem fora.
+
+## 2026-08-07 — TASK-V20-003
+
+O CTO aprovou o Package 2 e autorizou o Package 3 na mesma Draft PR #23. A ordem
+exige dashboard operacional como presentation/orchestration, estados/evidence/revisão
+humana, E2E principal e de falhas, acessibilidade, regressão integral e preparação do
+Release Candidate v2.0.0. Migration, merge, tag, Release, deploy, piloto real,
+publicação comercial e CNC executável permanecem proibidos.

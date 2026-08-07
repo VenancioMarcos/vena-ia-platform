@@ -17,3 +17,7 @@ somente input preliminar e não coordenada de toolpath. O contrato não contém 
 de controlador, cutter-location data, pós-processador, G-code, M-code, NC/DNC,
 destino de transmissão ou controle CNC. Nenhum resultado afirma compatibilidade
 física, segurança, manufaturabilidade ou prontidão produtiva.
+
+No Package 3, a UI mostra apenas os campos neutros permitidos e as invariantes de
+segurança. Não existe editor, viewer de código/toolpath, download NC, botão de envio
+ou controle de máquina; testes E2E verificam essas ausências.

@@ -1,39 +1,30 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V20_002
-TITLE=V2_0_PACKAGE_2_SPECIALIZED_ASSISTANCE_AND_GROUNDED_RESEARCH
+MISSION=TASK_V20_003
+TITLE=V2_0_PACKAGE_3_OPERATIONAL_DASHBOARD_EVIDENCE_CONSOLIDATION
 BASE=main
-START_HEAD=b90bd39d9a6e14dc65a035dd2f71b0c6f95fd7ef
+START_HEAD=64132fdf0b97154758576a90e1d3c512fdae0f03
 BRANCH=codex/v2.0-integrated-engineering-platform
-EXPECTED_STATE=VENA_IA_V2_0_PACKAGE_2_READY_FOR_CTO_REVIEW
-V1_9_RELEASED=TRUE
-V2_0_FUNCTIONAL=PACKAGES_1_2_IMPLEMENTED_READY_FOR_CTO_REVIEW
-DECISION=DEC_035_APPROVED_CTO
+EXPECTED_STATE=VENA_IA_V2_0_PACKAGE_3_READY_FOR_CTO_REVIEW
 PACKAGE_1=APPROVED
-PACKAGE_2=IMPLEMENTED_READY_FOR_CTO_REVIEW
-PACKAGE_3=NOT_STARTED
-FUNCTIONAL_IMPLEMENTATION=PACKAGE_2_COMPLETE
-MIGRATION=PROHIBITED
+PACKAGE_2=APPROVED
+PACKAGE_3=IMPLEMENTED_READY_FOR_CTO_REVIEW
+V2_0=FUNCTIONALLY_COMPLETE_RELEASE_CANDIDATE_PENDING_CTO_REVIEW
+MIGRATION=NONE
+ALEMBIC_HEAD=d39a7b2c5e11
+MERGE=PROHIBITED
+TAG=PROHIBITED
+RELEASE=PROHIBITED
 DEPLOY=PROHIBITED
 EXECUTABLE_CNC=PROHIBITED
 TODAY_TARGET=V3_0
 GOVERNANCE_BYPASS=PROHIBITED
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
 DRAFT_PR=23
-BACKEND_CI=PASS_RUN_31177827093
-PACKAGE_2_BACKEND_CI=PASS_RUN_31179888094
 ```
 
-Escopo executado: Package 2 adiciona assistência specialized bounded e Research
-grounded sobre o snapshot determinístico aprovado. Quatro profiles allowlisted
-reutilizam AIService/Documents/RAG/Research; não há sistema de agentes, provider,
-persistência ou migration novos. Package 3 permanece fora. Não realizar merge da
-PR funcional, deploy ou qualquer saída CNC executável.
-
-Gate terminal: Ruff PASS; mypy 165 arquivos; pytest local 408 passed/9 skipped;
-OpenAPI 77 paths; Alembic `d39a7b2c5e11`; Compose e secret scan PASS. Backend CI
-run `31177827093` aprovou lint, mypy, ciclo Alembic, 341 testes API e 76 operacionais.
-Gate terminal Package 2: Ruff PASS; mypy 168; pytest 416 passed/9 skipped; focal
-AI/RAG/Research/Package 1 98 passed; OpenAPI 78 paths; Alembic `d39a7b2c5e11`;
-Compose/secret scan PASS. Backend CI run `31179888094`: 349 API e 76 operations PASS.
+Escopo executado: dashboard operacional, workflow view, assistance/Research/evidence,
+human review, estados de falha, acessibilidade focal, E2E em dois viewports,
+alinhamento v2.0.0 e preparação das notas de release. O frontend permanece somente
+presentation/orchestration. Não realizar merge, tag, Release ou deploy.

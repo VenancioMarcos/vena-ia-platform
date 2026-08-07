@@ -24,3 +24,7 @@ dado e gera warning; nunca é instrução.
 O bridge pode incluir snapshots allowlisted de DOE, ANOVA e report já autorizados,
 mas não recalcula estatística nem persiste prompts/respostas. Auth/ownership existentes
 protegem projeto/documento; cross-user/cross-org falha fechado como 404.
+
+O Package 3 apresenta cada citation com documento, página, chunk, método, qualidade e
+limitações, mantendo visíveis `DOE = PRELIMINARY` e `ANOVA = DESCRIPTIVE ONLY`.
+Ausência de evidence permanece `BLOCKED_MISSING_EVIDENCE`, sem resposta substituta.

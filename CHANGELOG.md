@@ -8,6 +8,21 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v2.0 Package 3
+* Dashboard operacional no projeto apresenta a cadeia CAD→Features→Engineering→
+  Planning→CNC Neutral→Report usando exclusivamente estados do backend.
+* Tipos frontend explícitos cobrem os quatro contratos públicos v2.0; assistência
+  generativa permanece visualmente separada do resultado determinístico.
+* Human review, missing inputs, warnings, limitações, evidence e citações estruturadas
+  são visíveis; CNC permanece `SIMULATION_ONLY` e não executável.
+* Playwright valida desktop/largura reduzida, teclado/labels/headings, caminho feliz,
+  bloqueios, missing evidence, falha de provider e autorização fail-closed.
+* API/FastAPI/health/OpenAPI/frontend foram alinhados em `2.0.0`; não há migration.
+
+### Limites — v2.0 Package 3
+* A PR #23 permanece Draft. Não houve merge, tag, Release, deploy, piloto real,
+  publicação comercial, toolpath, postprocessor, G/M-code ou controle CNC.
+
 ### Adicionado — v2.0 Package 1
 * `POST /engineering/workflows` expõe o contrato aditivo
   `vena-ia.integrated-engineering-workflow/v1` e compõe uma única análise STEP em
