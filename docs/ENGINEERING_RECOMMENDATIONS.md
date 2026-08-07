@@ -14,3 +14,8 @@ Arredondamento: parâmetros em duas casas, tempo em três e custo em duas.
 
 Toda resposta contém `PRELIMINARY_ENGINEERING_REQUIRES_HUMAN_REVIEW`. Não há
 coordenadas, offsets, G-code, M-code, toolpath, transmissão ou controle CNC.
+
+`POST /engineering/reports/preliminary` reutiliza integralmente a recomendação e
+gera JSON versionado com conclusão segura, itens indisponíveis, rastreabilidade,
+incerteza baseada somente na completude dos dados e checklist humano nunca
+preenchido automaticamente. A incerteza não representa segurança física.

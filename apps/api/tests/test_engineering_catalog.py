@@ -150,3 +150,66 @@ def test_recommendation_reports_not_available_without_properties(
 
 def test_recommendation_requires_authentication(client: TestClient) -> None:
     assert client.post("/engineering/recommendations/preliminary", json={}).status_code == 401
+
+
+def test_review_report_is_reproducible_and_never_authorizes_cnc(
+    client: TestClient, make_account
+) -> None:
+    account = make_account(email="reviewer@vena-ia.dev")
+    material = _create(
+        client,
+        account.headers,
+        "MATERIAL",
+        "TI-6AL4V",
+        {"cutting_speed_m_min": 60, "feed_per_tooth_mm": 0.03},
+    )
+    machine = _create(
+        client,
+        account.headers,
+        "MACHINE",
+        "MILL-003",
+        {"operations": ["milling"], "max_rpm": 10000, "max_feed_mm_min": 3000},
+    )
+    tool = _create(
+        client,
+        account.headers,
+        "TOOL",
+        "EM-6-4F",
+        {"operations": ["milling"], "diameter_mm": 6, "teeth": 4},
+    )
+    payload = {
+        "material_id": material["id"],
+        "machine_id": machine["id"],
+        "tool_id": tool["id"],
+        "operation": "milling",
+        "cutting_length_mm": 500,
+    }
+    first = client.post("/engineering/reports/preliminary", headers=account.headers, json=payload)
+    second = client.post("/engineering/reports/preliminary", headers=account.headers, json=payload)
+    assert first.status_code == second.status_code == 200
+    left, right = first.json(), second.json()
+    left.pop("generated_at")
+    right.pop("generated_at")
+    assert left == right
+    assert left["schema_version"] == "vena-ia.engineering-review-report/v1"
+    assert left["status"] == "PRELIMINARY_ENGINEERING_REQUIRES_HUMAN_REVIEW"
+    assert left["conclusion"] == "INSUFFICIENT_DATA"
+    assert left["uncertainty"] in {
+        "LOW_INFORMATION_CONFIDENCE",
+        "MEDIUM_INFORMATION_CONFIDENCE",
+        "HIGH_INFORMATION_CONFIDENCE",
+    }
+    assert all(item["status"] == "REQUIRED" for item in left["review_checklist"])
+    assert "toolpath" in left["unavailable_items"]
+    forbidden = {
+        "APPROVED_FOR_PRODUCTION",
+        "SAFE_TO_MACHINE",
+        "CNC_READY",
+        "RELEASED",
+        "VALIDATED_FOR_MACHINE",
+    }
+    assert not forbidden.intersection(str(left))
+
+
+def test_review_report_requires_authentication(client: TestClient) -> None:
+    assert client.post("/engineering/reports/preliminary", json={}).status_code == 401

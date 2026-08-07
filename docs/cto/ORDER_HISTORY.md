@@ -1,5 +1,10 @@
 # Histórico de ordens do CTO
 
+## 2026-08-06 — TASK-V17-003
+
+O CTO aprovou a TASK-V17-002 e ordenou concluir a v1.7 na mesma PR #18 com
+relatório técnico reproduzível, rastreabilidade, incerteza e revisão humana.
+
 ## 2026-08-06 — TASK-V17-002
 
 O CTO aprovou a TASK-V16-004 e ordenou continuar na mesma branch/PR #18 com regras

@@ -89,3 +89,35 @@ class EngineeringRecommendation(BaseModel):
     cost_estimate: AvailabilityValue
     cost_components: dict[str, float]
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class ReviewChecklistItem(BaseModel):
+    item: str
+    status: str
+
+
+class EngineeringReviewReport(BaseModel):
+    schema_version: str = "vena-ia.engineering-review-report/v1"
+    status: str = REVIEW_STATUS
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    recommendation_schema_version: str
+    operation: str
+    material: CatalogItemRead
+    machine: CatalogItemRead
+    tool: CatalogItemRead
+    compatibility: str
+    preliminary_parameters: dict[str, AvailabilityValue]
+    formulas: list[str]
+    units: dict[str, str]
+    assumptions: list[str]
+    limitations: list[str]
+    unavailable_items: list[str]
+    time_estimate: AvailabilityValue
+    cost_estimate: AvailabilityValue
+    traceability: list[str]
+    sources: list[str]
+    data_versions: dict[str, str]
+    rule_version: str
+    uncertainty: str
+    review_checklist: list[ReviewChecklistItem]
+    conclusion: str

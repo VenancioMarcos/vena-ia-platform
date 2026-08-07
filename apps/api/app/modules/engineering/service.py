@@ -10,10 +10,12 @@ from app.modules.engineering.schemas import (
     CatalogItemRead,
     CatalogKind,
     EngineeringRecommendation,
+    EngineeringReviewReport,
     AvailabilityValue,
     PreliminarySelection,
     SelectionRequest,
     RecommendationRequest,
+    ReviewChecklistItem,
 )
 
 
@@ -187,4 +189,104 @@ class EngineeringCatalogService:
             total_estimated_time=total,
             cost_estimate=cost,
             cost_components=components,
+        )
+
+    def report(self, payload: RecommendationRequest) -> EngineeringReviewReport:
+        recommendation = self.recommend(payload)
+        unavailable = [
+            name
+            for name, value in {
+                **recommendation.preliminary_parameters,
+                "machining_time": recommendation.machining_time_estimate,
+                "setup_time": recommendation.setup_time_estimate,
+                "total_time": recommendation.total_estimated_time,
+                "cost": recommendation.cost_estimate,
+            }.items()
+            if value.status == "NOT_AVAILABLE"
+        ]
+        unavailable.extend(
+            [
+                "geometry",
+                "fixture",
+                "coolant",
+                "tolerance",
+                "surface_finish",
+                "toolpath",
+                "postprocessor",
+            ]
+        )
+        if recommendation.compatibility.endswith("INCOMPATIBLE"):
+            conclusion = "PRELIMINARY_INCOMPATIBLE"
+        elif unavailable:
+            conclusion = "INSUFFICIENT_DATA"
+        else:
+            conclusion = "PRELIMINARY_COMPATIBLE"
+        completeness = 1 - min(len(unavailable), 10) / 10
+        uncertainty = (
+            "HIGH_INFORMATION_CONFIDENCE"
+            if completeness >= 0.8
+            else "MEDIUM_INFORMATION_CONFIDENCE"
+            if completeness >= 0.5
+            else "LOW_INFORMATION_CONFIDENCE"
+        )
+        checklist = [
+            "material_real_confirmed",
+            "material_condition",
+            "machine_real_confirmed",
+            "machine_capacity",
+            "tool_real_confirmed",
+            "tool_condition",
+            "fixture",
+            "rigidity",
+            "coolant",
+            "accessibility",
+            "collision",
+            "tolerance",
+            "surface_finish",
+            "stability",
+            "safety",
+            "manufacturer_parameters",
+            "cam_program",
+            "simulation",
+            "postprocessor",
+            "work_zero",
+            "offsets",
+            "inspection",
+            "final_human_approval",
+        ]
+        return EngineeringReviewReport(
+            recommendation_schema_version=recommendation.schema_version,
+            operation=recommendation.operation,
+            material=recommendation.material,
+            machine=recommendation.machine,
+            tool=recommendation.tool,
+            compatibility=recommendation.compatibility,
+            preliminary_parameters=recommendation.preliminary_parameters,
+            formulas=recommendation.formulas,
+            units=recommendation.units,
+            assumptions=recommendation.assumptions,
+            limitations=recommendation.limitations
+            + ["This report is not process release and does not authorize a machine."],
+            unavailable_items=sorted(set(unavailable)),
+            time_estimate=recommendation.total_estimated_time,
+            cost_estimate=recommendation.cost_estimate,
+            traceability=recommendation.traceability,
+            sources=[
+                recommendation.source,
+                *(
+                    item.source
+                    for item in (
+                        recommendation.material,
+                        recommendation.machine,
+                        recommendation.tool,
+                    )
+                ),
+            ],
+            data_versions=recommendation.data_versions,
+            rule_version=recommendation.rule_version,
+            uncertainty=uncertainty,
+            review_checklist=[
+                ReviewChecklistItem(item=item, status="REQUIRED") for item in checklist
+            ],
+            conclusion=conclusion,
         )

@@ -10,6 +10,7 @@ from app.modules.engineering.schemas import (
     CatalogItemRead,
     CatalogKind,
     EngineeringRecommendation,
+    EngineeringReviewReport,
     PreliminarySelection,
     RecommendationRequest,
     SelectionRequest,
@@ -51,3 +52,12 @@ def recommend_preliminary(
     db: Session = Depends(get_db),
 ) -> EngineeringRecommendation:
     return EngineeringCatalogService(EngineeringCatalogRepository(db)).recommend(payload)
+
+
+@router.post("/reports/preliminary", response_model=EngineeringReviewReport)
+def report_preliminary(
+    payload: RecommendationRequest,
+    _current_user: CurrentUserDependency,
+    db: Session = Depends(get_db),
+) -> EngineeringReviewReport:
+    return EngineeringCatalogService(EngineeringCatalogRepository(db)).report(payload)

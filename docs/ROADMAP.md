@@ -653,6 +653,10 @@ compatibilidade preliminar, parâmetros, tempo/custo opcionais e contrato versio
 foram adicionados à mesma Draft PR #18. Ausência de dados é explícita; nenhuma
 saída executável ou liberação de processo foi introduzida.
 
+**Estado do Package 3:** relatório técnico reproduzível, checklist humano,
+incerteza informacional e consolidação de itens indisponíveis concluem a fundação
+v1.7 na mesma Draft PR #18, sem persistência automática ou saída CNC.
+
 Objetivo: concluir a base CAM prevista com dados de engenharia rastreáveis.
 
 Entregas: catálogos persistentes de materiais, máquinas e ferramentas; versão e

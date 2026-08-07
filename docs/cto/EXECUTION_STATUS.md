@@ -1,5 +1,8 @@
 # Estado de execução CTO
 
+TASK-V17-003: relatório versionado, conclusão segura, checklist, incerteza,
+ausências e rastreabilidade implementados; validação terminal em andamento.
+
 ```text
 MISSION=TASK_V17_002
 STATE=V1_7_PACKAGE_2_VALIDATION_IN_PROGRESS

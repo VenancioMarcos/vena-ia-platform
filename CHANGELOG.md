@@ -8,6 +8,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.7 Package 3
+* Relatório `vena-ia.engineering-review-report/v1` reutiliza a recomendação do
+  Package 2 e consolida conclusão fechada, incerteza informacional, ausências,
+  rastreabilidade e checklist humano sem autorizar processo ou máquina.
+
 ### Adicionado — v1.7 Package 2
 * Contrato `vena-ia.engineering-recommendation/v1` e rota autenticada para regras
   determinísticas allowlisted de milling, drilling e turning.
