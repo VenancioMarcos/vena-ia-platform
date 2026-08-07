@@ -68,5 +68,5 @@ limites científicos e ausência de CNC executável.
 
 ### Próximos passos
 
-Revisão do CTO e Owner Release Gate posterior; merge/tag/Release não fazem parte
-desta entrega.
+Os três Packages foram aprovados pelo CTO. O Release Candidate aguarda Owner Release
+Gate direto; merge/tag/Release não fazem parte desta entrega.

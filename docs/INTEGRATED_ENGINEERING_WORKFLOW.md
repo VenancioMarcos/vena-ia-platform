@@ -89,4 +89,4 @@ revisão humana obrigatória e ausência de output CNC executável.
 
 ### Próximos passos
 
-Packages 1–2 estão aprovados e Package 3 está implementado/ready for CTO review.
+Packages 1–3 estão aprovados; v2.0 está em Release Candidate.

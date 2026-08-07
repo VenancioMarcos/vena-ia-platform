@@ -1251,6 +1251,6 @@ A `TASK-V20-003` aprova o Package 2 e implementa o Package 3 como camada de
 presentation/orchestration na mesma Draft PR #23. O dashboard usa o status do backend,
 separa determinismo de IA e não cria authority, ledger, persistência ou migration.
 Playwright valida caminho integrado, falhas, Research/CNC e acessibilidade em dois
-viewports. Packages 1–2 estão aprovados; Package 3 está ready for CTO review; v2.0
-está funcionalmente completa com Release Candidate pendente. R-044–R-047 permanecem
-mitigados parcialmente/monitorados.
+viewports. A `TASK-V20-004` aprova os três Packages, confirma que não existe Package
+4 e classifica v2.0 como `RELEASE_CANDIDATE`. R-044–R-047 permanecem mitigados
+parcialmente/monitorados; publicação depende de Owner Release Gate direto.

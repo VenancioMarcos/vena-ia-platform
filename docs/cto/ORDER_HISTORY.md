@@ -496,3 +496,11 @@ exige dashboard operacional como presentation/orchestration, estados/evidence/re
 humana, E2E principal e de falhas, acessibilidade, regressão integral e preparação do
 Release Candidate v2.0.0. Migration, merge, tag, Release, deploy, piloto real,
 publicação comercial e CNC executável permanecem proibidos.
+
+## 2026-08-07 — TASK-V20-004
+
+O CTO aprovou os Packages 1–3, declarou v2.0 funcionalmente completa e autorizou
+somente a validação final do Release Candidate v2.0.0. Não existe Package 4. A ordem
+manda reutilizar gates verdes sem repetição, manter PR #23 Draft e parar em
+`BLOCKED_REAL_OWNER_ACTION_REQUIRED` antes de retirada de Draft, merge, tag ou
+Release. Após eventual release, somente extensão documental do roadmap até v3.0.

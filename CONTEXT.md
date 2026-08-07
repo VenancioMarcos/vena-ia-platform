@@ -74,8 +74,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   citações e checklist humano sem autoridade produtiva. Playwright cobre desktop e
   largura reduzida, caminho integrado e falhas controladas. Versões API/FastAPI/
   health/OpenAPI/frontend estão em `2.0.0`; Alembic permanece `d39a7b2c5e11`.
-  Packages 1–2 estão aprovados, Package 3 está `READY_FOR_CTO_REVIEW` e a v2.0 está
-  `FUNCTIONALLY_COMPLETE / RELEASE_CANDIDATE_PENDING_CTO_REVIEW`. PR #23 segue Draft;
+  Packages 1–3 estão aprovados e a v2.0 está `RELEASE_CANDIDATE`. PR #23 segue Draft;
   merge, tag, Release e deploy não foram realizados.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel

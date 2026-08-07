@@ -72,4 +72,4 @@ failure seguro, limites científicos e ausência de CNC executável.
 
 ### Próximos passos
 
-Package 3 está implementado/ready for CTO review na mesma Draft PR #23.
+Packages 1–3 estão aprovados; v2.0 está em Release Candidate na Draft PR #23.

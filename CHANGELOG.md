@@ -8,6 +8,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Release Candidate — v2.0.0
+* Packages 1–3 aprovados pelo CTO; não existe Package 4.
+* Versões e contratos públicos foram consolidados, notas de release validadas e os
+  riscos R-044–R-047 mantidos como parcialmente mitigados/monitorados.
+* A publicação aguarda Owner Release Gate direto. PR #23 permanece Draft; merge,
+  tag, Release e deploy não foram realizados.
+
 ### Adicionado — v2.0 Package 3
 * Dashboard operacional no projeto apresenta a cadeia CAD→Features→Engineering→
   Planning→CNC Neutral→Report usando exclusivamente estados do backend.

@@ -18,6 +18,7 @@ acessibilidade e largura reduzida.
 - não há toolpath, postprocessor, G-code, M-code, NC/DNC ou controle de máquina;
 - Research exige documento/página/chunk e bloqueia ausência de evidência;
 - DOE é preliminar e ANOVA é somente descritiva;
+- não existe decisão ou validação científica autônoma;
 - catálogos Engineering seguem globais autenticados, não organization-scoped;
 - R-044 a R-047 permanecem parcialmente mitigados e monitorados.
 
@@ -30,6 +31,6 @@ microserviço, provider, persistência ou migration foi criado; Alembic permanec
 
 ## Estado de publicação
 
-Estas notas preparam o Release Candidate. PR #23 permanece Draft. Não houve merge,
+Estas notas descrevem o Release Candidate aprovado. PR #23 permanece Draft. Não houve merge,
 tag, GitHub Release, deploy, piloto real nem publicação comercial. O material descreve
 capacidades técnicas e limites; não oferece preço, SLA ou promessa produtiva.

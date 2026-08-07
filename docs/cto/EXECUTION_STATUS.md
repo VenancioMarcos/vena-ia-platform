@@ -417,3 +417,17 @@ OpenAPI `2.0.0` com 78 paths e quatro contratos presentes; Alembic
 Package 3 está implemented/ready for CTO review e v2.0 está functionally complete
 com Release Candidate pendente. PR #23 permanece Draft; merge/tag/Release/deploy
 não foram realizados.
+
+## 2026-08-07 — TASK-V20-004 Release Candidate
+
+O CTO aprovou os Packages 1–3 e confirmou que não existe Package 4. A validação final
+reutiliza os gates verdes do HEAD funcional `255f7db`: Backend CI `31186291937`,
+Frontend CI `31186291980` e Runtime Policy CI `31186292010`, todos SUCCESS. Versões
+API/FastAPI/health/OpenAPI/frontend são `2.0.0`; OpenAPI possui 78 paths e os quatro
+contratos v2.0; Alembic permanece `d39a7b2c5e11`.
+
+R-044–R-047 e catalog tenancy permanecem residuais/monitorados. Release Notes e
+documentação registram ausência de deploy, decisão científica autônoma e CNC
+executável. Estado: `V2_0_RELEASE_CANDIDATE_READY=TRUE` e
+`BLOCKED_REAL_OWNER_ACTION_REQUIRED`. PR #23 continua Draft; merge/tag/Release não
+foram realizados.
