@@ -269,6 +269,12 @@ class ResearchSynthesisService:
                 document_id=match.chunk.document_id,
                 page_number=match.chunk.page_number,
                 chunk_index=match.chunk.chunk_index,
+                chunk_id=getattr(match.chunk, "id", None),
+                evidence_reference=(
+                    None
+                    if getattr(match.chunk, "id", None) is None
+                    else f"chunk:{match.chunk.id}"
+                ),
                 score=match.score,
                 excerpt=match.chunk.content[:1_000],
             )
