@@ -147,6 +147,19 @@ Evidence incompleta, falha, indisponível, com checksum divergente, rollback fal
 validação CNC inválida bloqueia prontidão. Todo material permanece sintético e não
 produtivo, com revisão humana obrigatória.
 
+## 7.2 Assistência especializada e Research grounded
+
+A assistência v2.0 Package 2 usa somente perfis allowlisted e contexto minimizado.
+O snapshot determinístico é imutável e vive separado da resposta generativa; o
+provider não recebe credenciais, tokens, logs internos, authority fields ou targets
+de máquina. Documentos/chunks recuperados são dados não confiáveis e nunca instruções.
+
+Ausência de grounding bloqueia geração. Falha do provider preserva o workflow.
+Validação de saída rejeita sintaxe potencial de G/M-code e claims de aprovação
+produtiva/científica. Todos os outputs fixam revisão humana, não produção,
+`simulation_only=true` e `executable_output=false`. Não existem tools de escrita,
+execução, transmissão CNC ou persistência adicional de prompts/respostas.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

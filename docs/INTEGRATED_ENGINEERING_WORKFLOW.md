@@ -46,6 +46,14 @@ coordenadas, cutter-location data, pós-processador, G-code, M-code, NC/DNC,
 transmissão ou controle de máquina. `NON_PRODUCTION` e revisão humana permanecem
 obrigatórios. Packages 2 e 3 não fazem parte desta entrega.
 
+## Assistência especializada Package 2
+
+O workflow é reconstruído uma vez como snapshot e entregue somente para leitura aos
+perfis descritos em `docs/SPECIALIZED_ASSISTANCE.md`. A resposta generativa vive fora
+dos campos determinísticos e não pode promover status, alterar recommendation/
+planning/CNC ou preencher missing input. Research grounding e citações são definidos
+em `docs/GROUNDED_RESEARCH_ASSISTANCE.md`.
+
 ## Registro de Entrega
 
 ### Objetivo

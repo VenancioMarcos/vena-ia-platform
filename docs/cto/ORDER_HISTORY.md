@@ -480,3 +480,11 @@ A PR #22 foi integrada em `22ddf9f`. O Package 1 foi implementado sem migration 
 branch funcional; sua entrega permanece em Draft PR para revisão do CTO. R-044 está
 mitigado parcialmente/monitorado, R-045 permanece aberto/gate e a tenancy global dos
 catálogos Engineering continua registrada sem alteração silenciosa.
+
+## 2026-08-07 — TASK-V20-002
+
+O CTO aprovou tecnicamente o Package 1 e autorizou Package 2 na mesma Draft PR #23.
+A ordem limita a assistência a quatro modos bounded sobre `AIService`, exige
+autoridade determinística imutável, Research grounded/citations, limites científicos,
+prompt injection como dado, falha segura e ausência de CNC executável. Package 3,
+frontend, persistence, migration, merge e deploy permanecem fora.

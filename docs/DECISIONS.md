@@ -1238,3 +1238,11 @@ report builder existentes; o plano CNC neutro é uma extensão aditiva do previe
 R-044 avança para mitigação parcial/monitoramento e R-045 continua aberto/gate.
 Catálogos Engineering permanecem globais autenticados, sem correção silenciosa de
 tenancy; Packages 2 e 3 continuam `NOT_STARTED`.
+
+A `TASK-V20-002` aprova o Package 1 e implementa o Package 2 na mesma Draft PR.
+Perfis bounded reutilizam `AIService` sem tools, provider ou sistema de agentes novo;
+o snapshot `integrated-engineering-workflow/v1` permanece autoridade imutável. O
+bridge `grounded-research-assistance/v1` versiona apenas a fronteira comum necessária,
+com citações e limites científicos explícitos. Não há persistência ou migration.
+R-046 e R-047 avançam somente para mitigação parcial/monitoramento. Package 3 segue
+`NOT_STARTED`.

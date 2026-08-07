@@ -60,6 +60,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   continuam globais autenticados. A Draft PR #23 está aberta; o Backend CI do head
   funcional/documental `394786e` aprovou lint, mypy, ciclo Alembic, 341 testes da
   API e 76 testes operacionais reais. Packages 2 e 3 permanecem `NOT_STARTED`.
+* **v2.0 Package 2 implementado:** a mesma branch/PR #23 adiciona assistência
+  especializada bounded sobre o snapshot imutável do Package 1 e bridge Research
+  `vena-ia.grounded-research-assistance/v1`. Quatro perfis allowlisted usam
+  `AIService`, Documents/RAG e Research existentes; contexto é minimizado, citações
+  preservam documento/página/chunk/método, ausência falha fechado e output do modelo
+  não pode mutar fatos ou produzir CNC executável. R-046/R-047 estão mitigados
+  parcialmente/monitorados. Sem persistence, migration ou frontend; Package 3
+  permanece `NOT_STARTED` e v2.0 não está encerrada.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

@@ -252,3 +252,23 @@ missing input, incompatibilidade e feature não suportada não são promovidos. 
 neutral plan estende o preview existente, sempre simulation-only, não executável e
 sob revisão humana. Detalhes: `docs/INTEGRATED_ENGINEERING_WORKFLOW.md` e
 `docs/CNC_NEUTRAL_PLAN.md`.
+
+---
+
+## 15. Specialized Assistance v2.0 Package 2
+
+```text
+Inputs reproduzíveis + auth
+  → IntegratedEngineeringWorkflowService (snapshot autoridade)
+  → context builder allowlisted por profile
+  → Documents/RAG + Research autorizados quando profile=RESEARCH
+  → AIService existente (texto explicativo sem tools)
+  → output validation fail-closed
+  → specialized-assistance/v1 + grounded-research-assistance/v1
+```
+
+O texto generativo é separado do snapshot determinístico e nunca volta como input de
+rules, recommendation, planning ou CNC. O deterministic input trace cobre profile,
+workflow, evidence e template, sem exigir resposta byte-a-byte. Grounding ausente e
+provider failure preservam o workflow. Não há nova persistência, migration, fila,
+provider, vector store ou frontend. Detalhes: `docs/SPECIALIZED_ASSISTANCE.md`.

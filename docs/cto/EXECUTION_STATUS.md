@@ -383,3 +383,14 @@ Compose config e secret scan. O Backend CI run `31177827093`, no head `394786e`,
 aprovou lint, mypy, upgrade/downgrade/upgrade PostgreSQL, 341 testes API e 76 testes
 operacionais com PostgreSQL/MinIO. Frontend CI e Runtime Policy não foram disparados
 porque os respectivos domínios não foram alterados.
+
+## 2026-08-07 — TASK-V20-002 Package 2 implementado
+
+O CTO aprovou o Package 1 e autorizou exclusivamente Specialized Assistance and
+Grounded Research Integration na mesma branch/PR #23. O commit funcional `7b123ba`
+adiciona quatro profiles allowlisted, snapshot determinístico imutável, context
+builder minimizado, bridge Research versionado, citations documento/página/chunk,
+limites DOE/ANOVA, prompt injection como dado e output validation CNC/científica.
+R-046 e R-047 avançam somente para mitigação parcial/monitoramento. Focal
+AI/RAG/Research/Package 1: 98 testes aprovados. Sem persistence, migration, frontend,
+deploy, Package 3 ou CNC executável.

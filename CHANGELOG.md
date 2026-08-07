@@ -20,10 +20,27 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * Auth/ownership existentes falham fechado para cross-user/cross-org. Catálogos
   Engineering continuam globais autenticados, com o impacto explicitamente registrado.
 
+### Adicionado — v2.0 Package 2
+* `POST /engineering/workflow-assistance` adiciona quatro perfis bounded e
+  allowlisted: CAD analysis, manufacturing/engineering, Research e documentation.
+* `vena-ia.specialized-assistance/v1` preserva o snapshot determinístico imutável,
+  separa input trace de resposta generativa e falha seguro quando o provider falha.
+* `vena-ia.grounded-research-assistance/v1` formaliza citações por documento,
+  página, chunk, método e qualidade/limitação da fonte; ausência bloqueia geração.
+* Context builder minimizado, tratamento de prompt injection como dado não confiável
+  e validação de output bloqueiam sintaxe CNC e claims produtivos/científicos.
+* DOE continua preliminar; ANOVA continua descritiva sem F-test/p-value; referências
+  heurísticas não são elevadas a bibliografia validada ou revisão sistemática.
+
 ### Limites — v2.0 Package 1
 * Package 2, Package 3, agentes especializados, Research bridge e dashboard não
   foram iniciados. Não há deploy, toolpath, coordenadas, pós-processador, G/M-code,
   NC/DNC, transmissão, controle de máquina ou aprovação para produção.
+
+### Limites — v2.0 Package 2
+* Os perfis não são agentes autônomos, não recebem tools de escrita/execução e não
+  alteram workflow, recommendation, planning, catálogo ou CNC plan. Não há nova
+  persistência, migration, provider, RAG/vector store, frontend ou Package 3.
 
 ## [1.9.0] — 2026-08-07 — Controlled Pilot Readiness
 

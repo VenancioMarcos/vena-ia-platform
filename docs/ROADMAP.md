@@ -955,6 +955,9 @@ monitorado; R-045 permanece aberto/gate.
 
 #### Package 2 — Specialized Assistance and Grounded Research Integration
 
+**Estado:** `IMPLEMENTED / READY_FOR_CTO_REVIEW` na Draft PR #23. Package 1 está
+`APPROVED`; Package 3 permanece `NOT_STARTED`.
+
 Objetivo: acrescentar assistência especializada somente sobre o núcleo determinístico
 aprovado e conectar pesquisa fundamentada sem permitir que IA substitua regra ou
 revisão humana.
@@ -967,14 +970,21 @@ permanecer sugestão revisável.
 
 Research reutiliza Documents/RAG, chunks, evidência documento/página/chunk,
 referências heurísticas, síntese grounded, DOE preliminar, ANOVA apenas descritiva e
-Research Report. Lacunas: contratos Research ainda não possuem uma versão pública
-comum, não existe bridge rastreável ao workflow de engenharia e não há validação
-científica autônoma. O Package deve falhar fechado quando grounding for insuficiente
-e nunca produzir decisão científica.
+Research Report. O Package 2 resolve de forma aditiva a versão pública comum e o
+bridge rastreável ao workflow. Validação científica autônoma continua inexistente;
+grounding insuficiente falha fechado e nunca produz decisão científica.
 
 Gate de saída: agentes não alteram resultados determinísticos, fontes continuam
 autorizadas/rastreáveis, prompt injection permanece tratado como dado não confiável
 e overclaim científico é bloqueado.
+
+Evidência Package 2: `vena-ia.specialized-assistance/v1` expõe quatro perfis
+allowlisted que somente explicam um snapshot determinístico reconstruído; o input
+trace é separado da resposta generativa. O bridge
+`vena-ia.grounded-research-assistance/v1` adiciona citations estruturadas e mapeia
+aditivamente synthesis/evidence, DOE preliminar, ANOVA descritiva e Research Report.
+Prompt injection é dado não confiável; provider failure preserva o workflow; output
+com sintaxe CNC ou claim de autoridade é bloqueado. Nenhuma migration ou UI foi criada.
 
 #### Package 3 — Operational Dashboard, Evidence and v2.0 Consolidation
 

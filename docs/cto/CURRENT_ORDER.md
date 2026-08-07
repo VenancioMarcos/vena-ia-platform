@@ -1,19 +1,19 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V20_001
-TITLE=V2_0_PACKAGE_1_INTEGRATED_ENGINEERING_WORKFLOW_FOUNDATION
+MISSION=TASK_V20_002
+TITLE=V2_0_PACKAGE_2_SPECIALIZED_ASSISTANCE_AND_GROUNDED_RESEARCH
 BASE=main
-START_HEAD=22ddf9f30af23575514b462f2c65ff8f3884e4cb
+START_HEAD=b90bd39d9a6e14dc65a035dd2f71b0c6f95fd7ef
 BRANCH=codex/v2.0-integrated-engineering-platform
-EXPECTED_STATE=VENA_IA_V2_0_PACKAGE_1_READY_FOR_CTO_REVIEW
+EXPECTED_STATE=VENA_IA_V2_0_PACKAGE_2_READY_FOR_CTO_REVIEW
 V1_9_RELEASED=TRUE
-V2_0_FUNCTIONAL=PACKAGE_1_IMPLEMENTED_READY_FOR_CTO_REVIEW
+V2_0_FUNCTIONAL=PACKAGES_1_2_IMPLEMENTED_READY_FOR_CTO_REVIEW
 DECISION=DEC_035_APPROVED_CTO
-PACKAGE_1=APPROVED_FOR_IMPLEMENTATION
-PACKAGE_2=NOT_STARTED
+PACKAGE_1=APPROVED
+PACKAGE_2=IMPLEMENTED_READY_FOR_CTO_REVIEW
 PACKAGE_3=NOT_STARTED
-FUNCTIONAL_IMPLEMENTATION=PACKAGE_1_COMPLETE
+FUNCTIONAL_IMPLEMENTATION=PACKAGE_2_COMPLETE
 MIGRATION=PROHIBITED
 DEPLOY=PROHIBITED
 EXECUTABLE_CNC=PROHIBITED
@@ -24,12 +24,13 @@ DRAFT_PR=23
 BACKEND_CI=PASS_RUN_31177827093
 ```
 
-Escopo executado: a PR documental #22 foi integrada em `22ddf9f`; o Package 1 na branch
-`codex/v2.0-integrated-engineering-platform`, compondo CAD→features→Engineering→
-process planning→plano CNC neutro→relatório sem duplicar engines. Packages 2 e 3
-permanecem fora. CAM preliminar não inclui toolpath, coordenadas, pós-processador,
-G/M-code ou NC/DNC. Não realizar merge da PR funcional, migration ou deploy.
+Escopo executado: Package 2 adiciona assistência specialized bounded e Research
+grounded sobre o snapshot determinístico aprovado. Quatro profiles allowlisted
+reutilizam AIService/Documents/RAG/Research; não há sistema de agentes, provider,
+persistência ou migration novos. Package 3 permanece fora. Não realizar merge da
+PR funcional, deploy ou qualquer saída CNC executável.
 
 Gate terminal: Ruff PASS; mypy 165 arquivos; pytest local 408 passed/9 skipped;
 OpenAPI 77 paths; Alembic `d39a7b2c5e11`; Compose e secret scan PASS. Backend CI
 run `31177827093` aprovou lint, mypy, ciclo Alembic, 341 testes API e 76 operacionais.
+O gate terminal do Package 2 será registrado no fechamento desta TASK.
