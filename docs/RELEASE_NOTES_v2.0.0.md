@@ -1,6 +1,6 @@
 # Vena_IA Platform v2.0.0 — Integrated Engineering Platform
 
-## Release Candidate
+## Release v2.0.0
 
 A v2.0.0 integra uma cadeia preliminar rastreável de documento STEP até relatório:
 CAD/geometry, features conservadoras, recommendation, process planning, plano CNC
@@ -31,6 +31,8 @@ microserviço, provider, persistência ou migration foi criado; Alembic permanec
 
 ## Estado de publicação
 
-Estas notas descrevem o Release Candidate aprovado. PR #23 permanece Draft. Não houve merge,
-tag, GitHub Release, deploy, piloto real nem publicação comercial. O material descreve
-capacidades técnicas e limites; não oferece preço, SLA ou promessa produtiva.
+Estas notas descrevem a versão publicada após aprovação do Owner Release Gate e
+Squash Merge da PR #23. A tag anotada e a GitHub Release `v2.0.0` apontam para o
+commit final de fechamento. Não houve deploy, piloto real nem publicação comercial.
+O material descreve capacidades técnicas e limites; não oferece preço, SLA ou
+promessa produtiva.

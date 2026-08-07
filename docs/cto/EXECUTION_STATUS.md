@@ -431,3 +431,13 @@ documentação registram ausência de deploy, decisão científica autônoma e C
 executável. Estado: `V2_0_RELEASE_CANDIDATE_READY=TRUE` e
 `BLOCKED_REAL_OWNER_ACTION_REQUIRED`. PR #23 continua Draft; merge/tag/Release não
 foram realizados.
+
+## 2026-08-07 — Release v2.0.0
+
+O proprietário aprovou diretamente `OWNER_RELEASE_GATE_V2_0`. A PR #23 saiu de
+Draft e foi integrada por Squash Merge em `67714d4`, preservando o RC HEAD
+`9f34e70`. Os três gates do RC permaneceram verdes e foram reutilizados sem regressão
+redundante. A tag anotada e a GitHub Release `v2.0.0` publicam a Integrated
+Engineering Platform sem deploy, piloto real ou CNC executável. R-044–R-047 e
+catalog tenancy permanecem residuais/monitorados. Próximo estágio: somente extensão
+documental do roadmap até v3.0, aguardando ordem formal do CTO.

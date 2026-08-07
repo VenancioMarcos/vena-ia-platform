@@ -1254,3 +1254,11 @@ Playwright valida caminho integrado, falhas, Research/CNC e acessibilidade em do
 viewports. A `TASK-V20-004` aprova os três Packages, confirma que não existe Package
 4 e classifica v2.0 como `RELEASE_CANDIDATE`. R-044–R-047 permanecem mitigados
 parcialmente/monitorados; publicação depende de Owner Release Gate direto.
+
+### DEC-036 — Publicação da v2.0.0 e próximo gate exclusivamente documental
+
+O Owner Release Gate direto autorizou a integração da PR #23, a tag anotada e a
+GitHub Release `v2.0.0`. Os três Packages ficam `COMPLETE / RELEASED`; não existe
+Package 4. R-044–R-047 e catalog tenancy continuam residuais/monitorados. Não houve
+deploy e nenhuma implementação pós-v2.0 está autorizada. O próximo estágio é somente
+a extensão documental do roadmap até v3.0, dependente de nova ordem formal do CTO.

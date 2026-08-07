@@ -1,30 +1,31 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V20_004
-TITLE=FINAL_RELEASE_CANDIDATE_VALIDATION_V2_0_0
-START_HEAD=255f7dbda33790149a5d169a2b2825eac10a327f
-BRANCH=codex/v2.0-integrated-engineering-platform
-PACKAGE_1=APPROVED
-PACKAGE_2=APPROVED
-PACKAGE_3=APPROVED
+MISSION=RELEASE_V2_0_0
+TITLE=OWNER_RELEASE_GATE_V2_0_0
+RC_HEAD=9f34e70fc40983605f71a7e1f6c488695d3c4d5a
+MERGE_SHA=67714d40280109a979fc8de10bc35f289bb50164
+BRANCH=main
+PACKAGE_1=COMPLETE
+PACKAGE_2=COMPLETE
+PACKAGE_3=COMPLETE
 PACKAGE_4=DOES_NOT_EXIST
-V2_0=RELEASE_CANDIDATE
+V2_0=RELEASED
 V2_0_RELEASE_CANDIDATE_READY=TRUE
 ALEMBIC_HEAD=d39a7b2c5e11
-PR=23_OPEN_DRAFT_MERGEABLE
-MERGE=PROHIBITED_PENDING_OWNER_GATE
-TAG=PROHIBITED_PENDING_OWNER_GATE
-RELEASE=PROHIBITED_PENDING_OWNER_GATE
+PR=23_MERGED
+MERGE=COMPLETE
+TAG=v2.0.0
+RELEASE=v2.0.0
 DEPLOY=PROHIBITED
 EXECUTABLE_CNC=PROHIBITED
 TODAY_TARGET=V3_0
 NEXT_AFTER_RELEASE=ROADMAP_EXTENSION_TO_V3_0_DOCUMENTAL
-BLOCKER=BLOCKED_REAL_OWNER_ACTION_REQUIRED
+NEXT_IMPLEMENTATION=PROHIBITED_PENDING_CTO_ORDER
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
 ```
 
-O CTO aprovou os três Packages e autorizou somente o fechamento do Release Candidate.
-Os gates verdes do HEAD `255f7db` são reutilizados porque não houve mudança funcional.
-PR #23 permanece Draft; retirada de Draft, merge, tag e Release exigem autorização
-direta e específica do proprietário.
+O proprietário aprovou diretamente o Owner Release Gate. A PR #23 foi integrada por
+Squash Merge. A tag anotada e a GitHub Release `v2.0.0` fecham a versão sem deploy.
+O próximo estágio permitido é somente a extensão documental do roadmap até v3.0,
+após ordem formal do CTO.

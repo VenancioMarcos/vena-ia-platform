@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.3
-**Última atualização:** 2026-08-06
+**Versão:** 2.4
+**Última atualização:** 2026-08-07
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -27,8 +27,8 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.9 concluídas e publicadas. Os dois Packages oficiais da v1.9
-  foram aprovados, integrados e publicados como v1.9.0 após o Owner Release Gate.
+* **Fase:** v0.1–v2.0 concluídas e publicadas. Os três Packages oficiais da v2.0
+  foram aprovados, integrados e publicados como v2.0.0 após o Owner Release Gate.
 * **v1.9 Package 1 implementado:** branch
   `codex/v1.9-controlled-pilot-readiness` adiciona Organization/Team,
   memberships `OWNER`/`ADMIN`/`MEMBER`, bootstrap owner transacional, revogação,
@@ -74,8 +74,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   citações e checklist humano sem autoridade produtiva. Playwright cobre desktop e
   largura reduzida, caminho integrado e falhas controladas. Versões API/FastAPI/
   health/OpenAPI/frontend estão em `2.0.0`; Alembic permanece `d39a7b2c5e11`.
-  Packages 1–3 estão aprovados e a v2.0 está `RELEASE_CANDIDATE`. PR #23 segue Draft;
-  merge, tag, Release e deploy não foram realizados.
+  Packages 1–3 estão aprovados. A PR #23 foi integrada por Squash Merge em
+  `67714d4`; a tag anotada e a GitHub Release `v2.0.0` registram a versão como
+  `RELEASED`. Deploy não foi realizado.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

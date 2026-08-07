@@ -504,3 +504,11 @@ somente a validação final do Release Candidate v2.0.0. Não existe Package 4. 
 manda reutilizar gates verdes sem repetição, manter PR #23 Draft e parar em
 `BLOCKED_REAL_OWNER_ACTION_REQUIRED` antes de retirada de Draft, merge, tag ou
 Release. Após eventual release, somente extensão documental do roadmap até v3.0.
+
+## 2026-08-07 — OWNER_RELEASE_GATE_V2_0
+
+O proprietário autorizou diretamente retirada de Draft, Squash Merge da PR #23,
+sincronização/validação da main, tag anotada `v2.0.0` e GitHub Release. A autorização
+não inclui deploy, piloto real, publicação comercial ou código pós-v2.0. Após a
+publicação, somente a auditoria/extensão documental do roadmap até v3.0 pode ser
+iniciada mediante ordem formal do CTO.

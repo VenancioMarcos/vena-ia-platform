@@ -921,7 +921,7 @@ toolpath, pós-processador, G-code, M-code, NC/DNC ou execução.
 
 #### Package 1 — Integrated Engineering Workflow Foundation
 
-**Estado:** `APPROVED` na branch `codex/v2.0-integrated-engineering-platform`.
+**Estado:** `COMPLETE / RELEASED v2.0.0`.
 
 Objetivo: compor o núcleo determinístico CAD → features → engineering → CAM
 preliminar → plano CNC neutro → relatório, reutilizando serviços e regras existentes.
@@ -953,7 +953,7 @@ monitorado; R-045 permanece aberto/gate.
 
 #### Package 2 — Specialized Assistance and Grounded Research Integration
 
-**Estado:** `APPROVED` na Draft PR #23. Package 1 também está `APPROVED`.
+**Estado:** `COMPLETE / RELEASED v2.0.0`. Package 1 também está `COMPLETE`.
 
 Objetivo: acrescentar assistência especializada somente sobre o núcleo determinístico
 aprovado e conectar pesquisa fundamentada sem permitir que IA substitua regra ou
@@ -985,8 +985,8 @@ com sintaxe CNC ou claim de autoridade é bloqueado. Nenhuma migration ou UI foi
 
 #### Package 3 — Operational Dashboard, Evidence and v2.0 Consolidation
 
-Estado: `APPROVED` na Draft PR #23. Packages 1–3 estão `APPROVED`; v2.0 está
-`RELEASE_CANDIDATE`. Não existe Package 4.
+Estado: `COMPLETE / RELEASED v2.0.0`. Packages 1–3 estão `COMPLETE`; não existe
+Package 4.
 
 Objetivo: expor o workflow já aprovado e fechar evidence/E2E/release sem criar lógica
 de domínio no frontend.

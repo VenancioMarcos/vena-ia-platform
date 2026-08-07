@@ -8,12 +8,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
-### Release Candidate — v2.0.0
+## [2.0.0] — 2026-08-07 — Integrated Engineering Platform
+
+### Publicado
 * Packages 1–3 aprovados pelo CTO; não existe Package 4.
 * Versões e contratos públicos foram consolidados, notas de release validadas e os
   riscos R-044–R-047 mantidos como parcialmente mitigados/monitorados.
-* A publicação aguarda Owner Release Gate direto. PR #23 permanece Draft; merge,
-  tag, Release e deploy não foram realizados.
+* A PR #23 foi integrada por Squash Merge após Owner Release Gate direto; a tag
+  anotada e a GitHub Release `v2.0.0` registram o fechamento. Deploy não foi realizado.
 
 ### Adicionado — v2.0 Package 3
 * Dashboard operacional no projeto apresenta a cadeia CAD→Features→Engineering→
@@ -27,8 +29,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * API/FastAPI/health/OpenAPI/frontend foram alinhados em `2.0.0`; não há migration.
 
 ### Limites — v2.0 Package 3
-* A PR #23 permanece Draft. Não houve merge, tag, Release, deploy, piloto real,
-  publicação comercial, toolpath, postprocessor, G/M-code ou controle CNC.
+* Não houve deploy, piloto real, publicação comercial, toolpath, postprocessor,
+  G/M-code ou controle CNC.
 
 ### Adicionado — v2.0 Package 1
 * `POST /engineering/workflows` expõe o contrato aditivo
