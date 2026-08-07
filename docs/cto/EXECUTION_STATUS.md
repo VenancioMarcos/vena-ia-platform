@@ -450,3 +450,5 @@ v3.0 para Manufacturing Intelligence & Digital Thread. `DEC-037` permanece propo
 pendente do CTO; R-048–R-050 registram riscos distintos de tenancy, falsa confiança
 em simulação e escalada de autoridade. Entrega exclusivamente documental, sem código,
 migration, deploy ou CNC executável.
+Draft PR #24 aberta para revisão do CTO; nenhuma implementação é autorizada pela
+proposta.
