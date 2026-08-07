@@ -1,6 +1,6 @@
 # Governança de preparação para piloto controlado
 
-**Status:** v1.9 Release Candidate — somente contexto sintético
+**Status:** v1.9.0 publicada — somente contexto sintético
 
 ## Limite
 

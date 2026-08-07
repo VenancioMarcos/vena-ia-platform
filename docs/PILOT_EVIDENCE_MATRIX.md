@@ -1,6 +1,6 @@
 # Matriz de evidência do ensaio sintético v1.9
 
-**Estado:** v1.9 Release Candidate — revisão humana obrigatória; não produção
+**Estado:** v1.9.0 publicada — revisão humana obrigatória; não produção
 
 | Gate | Runbook existente | Evidence source/contract | Owner | Rollback | Falha / impacto em readiness |
 |---|---|---|---|---|---|

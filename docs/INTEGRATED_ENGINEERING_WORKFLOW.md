@@ -89,4 +89,5 @@ revisão humana obrigatória e ausência de output CNC executável.
 
 ### Próximos passos
 
-Packages 1–3 estão aprovados; v2.0 está em Release Candidate.
+Packages 1–3 foram publicados em `v2.0.0`. Evolução depende da aprovação do roadmap
+até v3.0; produção e CNC executável permanecem fora.

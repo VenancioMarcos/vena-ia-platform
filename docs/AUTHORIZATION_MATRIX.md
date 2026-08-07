@@ -68,7 +68,7 @@
 Essas quebras removem vulnerabilidades críticas e são registradas também em
 `CHANGELOG.md` e `CONTEXT.md`.
 
-## Fronteira organizacional v1.9 Release Candidate
+## Fronteira organizacional v1.9.0
 
 Os papéis abaixo são memberships persistidas e não substituem o papel global legado.
 Toda operação exige JWT válido e usuário do banco; `X-User-ID`, body, query e headers

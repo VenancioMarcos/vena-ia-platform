@@ -1262,3 +1262,48 @@ GitHub Release `v2.0.0`. Os três Packages ficam `COMPLETE / RELEASED`; não exi
 Package 4. R-044–R-047 e catalog tenancy continuam residuais/monitorados. Não houve
 deploy e nenhuma implementação pós-v2.0 está autorizada. O próximo estágio é somente
 a extensão documental do roadmap até v3.0, dependente de nova ordem formal do CTO.
+
+## DEC-037 — Extensão do roadmap da Vena_IA Platform de v2.0 até v3.0
+
+**Data:** 2026-08-07
+**Status:** APROVADA — CTO
+**Tipo:** Arquitetura / Engenharia / Dados / IA / Pesquisa / Segurança
+
+### Contexto
+
+A v2.0.0 consolidou a Integrated Engineering Platform, mas catálogos globais,
+cobertura geométrica/planning limitada, ausência de simulation evidence e de digital
+thread impedem evolução segura. Produção, CNC executável e decisão científica
+autônoma permanecem limites intencionais, não backlog implícito.
+
+### Alternativas consideradas
+
+1. Salto direto v2.0→v3.0: rejeitado por misturar migration de tenancy, expansão
+   determinística e consolidação arquitetural em um único gate.
+2. v2.1/v2.2/v2.3/v3.0: rejeitado por separar simulation/digital thread antes de
+   existir volume técnico suficiente, criando versionamento cosmético.
+3. v2.1/v2.2/v3.0: proposta como menor sequência com dependências reais.
+
+### Decisão proposta
+
+Usar v2.1 para Enterprise Engineering Governance, v2.2 para Advanced Engineering
+Planning & Verification e v3.0 para Manufacturing Intelligence & Digital Thread.
+Cada versão tem dois Packages dependentes. IA continua bounded e separada de
+deterministic authority; simulation continua evidence não produtiva; execução CNC
+permanece fora.
+
+### Trade-offs e riscos
+
+A sequência adiciona dois gates antes da v3.0, mas isola a migration de segurança e
+impede que planejamento/simulação cresçam sobre ownership ambíguo. R-048 cobre
+vazamento de catálogos/dados Engineering entre organizações; R-049, falsa confiança
+em simulação; R-050, escalada de autoridade em orchestration futura. R-044–R-047
+continuam residuais e não são renomeados.
+
+### Impacto arquitetural e limites
+
+O Modular Monolith, contratos aditivos, auth, audit, jobs e evidence existentes são
+reutilizados. Nenhum microserviço, migration, código, deploy, piloto real, toolpath,
+postprocessor, G/M-code, machine connectivity ou agente autônomo é autorizado por
+esta proposta. Implementação depende de aprovação explícita posterior do CTO e gates
+reservados continuam dependentes do proprietário.

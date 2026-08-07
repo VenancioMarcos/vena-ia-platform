@@ -68,5 +68,5 @@ limites científicos e ausência de CNC executável.
 
 ### Próximos passos
 
-Os três Packages foram aprovados pelo CTO. O Release Candidate aguarda Owner Release
-Gate direto; merge/tag/Release não fazem parte desta entrega.
+Os três Packages foram publicados em `v2.0.0`. O dashboard continua não produtivo;
+qualquer evolução depende da aprovação do roadmap até v3.0.

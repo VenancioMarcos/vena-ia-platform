@@ -512,3 +512,18 @@ sincronização/validação da main, tag anotada `v2.0.0` e GitHub Release. A au
 não inclui deploy, piloto real, publicação comercial ou código pós-v2.0. Após a
 publicação, somente a auditoria/extensão documental do roadmap até v3.0 pode ser
 iniciada mediante ordem formal do CTO.
+
+## 2026-08-07 — TASK-V30-000
+
+Após validar a release v2.0.0, o CTO autorizou somente auditoria e extensão documental
+do roadmap até v3.0. A ordem exige menor quantidade sustentável de versões, Packages
+dependentes, matriz de riscos/gates, decisão proposta, branch documental e Draft PR.
+Código, migration, frontend/backend, runtime contract, deploy e CNC executável são
+proibidos nesta missão.
+
+## 2026-08-07 — TASK-V21-001
+
+O CTO aprovou a TASK-V30-000 e autorizou a integração da PR documental #24 seguida
+somente da implementação de v2.1 Package 1. O escopo resolve ownership organizacional
+e compatibilidade dos catálogos Engineering com migration reversível se comprovada.
+Package 2, v2.2, v3.0, deploy, produção e CNC executável permanecem fora.
