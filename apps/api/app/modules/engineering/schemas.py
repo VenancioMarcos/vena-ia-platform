@@ -19,6 +19,28 @@ class CatalogScope(StrEnum):
     LEGACY_UNSCOPED = "LEGACY_UNSCOPED"
 
 
+class CatalogLifecycle(StrEnum):
+    ACTIVE = "ACTIVE"
+    SYSTEM_READ_ONLY = "SYSTEM_READ_ONLY"
+
+
+class CatalogRetentionStatus(StrEnum):
+    RETAINED_FOR_TRACEABILITY_NO_TEMPORAL_POLICY = (
+        "RETAINED_FOR_TRACEABILITY_NO_TEMPORAL_POLICY"
+    )
+    SYSTEM_MANAGED_NO_TENANT_POLICY = "SYSTEM_MANAGED_NO_TENANT_POLICY"
+
+
+class CatalogDeletionStatus(StrEnum):
+    DELETE_NOT_EXPOSED = "DELETE_NOT_EXPOSED"
+    SYSTEM_MUTATION_NOT_EXPOSED = "SYSTEM_MUTATION_NOT_EXPOSED"
+
+
+class CatalogReconciliationStatus(StrEnum):
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+    SYSTEM_REFERENCE_NOT_RECONCILABLE = "SYSTEM_REFERENCE_NOT_RECONCILABLE"
+
+
 class CatalogItemCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
     kind: CatalogKind
@@ -37,6 +59,34 @@ class CatalogItemRead(CatalogItemCreate):
     organization_id: str | None
     created_by: str
     created_at: datetime
+
+
+class CatalogGovernanceReference(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id: str
+    kind: CatalogKind
+    code: str
+    data_version: str
+
+
+class CatalogGovernanceEvidence(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    schema_version: str = "vena-ia.engineering-governance-evidence/v1"
+    catalog_reference: CatalogGovernanceReference
+    scope_type: CatalogScope
+    organization_reference: str | None
+    provenance: str
+    created_at: datetime
+    created_by: str
+    lifecycle_status: CatalogLifecycle
+    audit_references: list[str]
+    retention_status: CatalogRetentionStatus
+    deletion_status: CatalogDeletionStatus
+    reconciliation_status: CatalogReconciliationStatus
+    limitations: list[str]
+    warnings: list[str]
+    review_status: str = "GOVERNANCE_EVIDENCE_REQUIRES_HUMAN_REVIEW"
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class SelectionRequest(BaseModel):

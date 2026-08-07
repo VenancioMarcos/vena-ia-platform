@@ -183,6 +183,12 @@ são `LEGACY_UNSCOPED` e ficam invisíveis até reconciliação por evidência c
 nunca são atribuídos à primeira, atual ou default Organization. A FK usa `RESTRICT`,
 sem cascade destrutivo.
 
+O Package 2 expõe somente evidence de um catálogo já autorizado. Não retorna lista de
+memberships, roles de terceiros, tokens, raw logs ou payloads. O JSON individual não é
+bulk export nem production readiness. Legacy segue `404`; membership revogada perde
+acesso na próxima autorização do banco. Retenção temporal e exclusão não foram
+inventadas. Checksum não é usado porque não há artefato persistido a verificar.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

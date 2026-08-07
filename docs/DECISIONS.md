@@ -1323,3 +1323,10 @@ A unicidade é por Organization para owned e global para system references. Sche
 recebem campos aditivos; exigir `organization_id` na criação elimina escrita global.
 O downgrade preserva dados e não restaura constraint global incompatível com duplicatas
 legítimas entre organizações. ADR-0030 registra consequências e limites.
+
+### Extensão Package 2 — governance evidence
+
+DEC-038 também adota read model efêmero/versionado por catálogo autorizado. Audit,
+Organization e ownership existentes continuam autoridade. Reconciliation mutável,
+delete/archive, retenção temporal e bulk export foram rejeitados nesta entrega por não
+haver evidência segura ou requisito aprovado. R-048 segue parcialmente mitigado.

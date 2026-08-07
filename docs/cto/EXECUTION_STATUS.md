@@ -474,3 +474,17 @@ operations `69 passed, 7 skipped`; focais Engineering/workflow `43 passed`; Open
 Compose config, diff/check e Alembic single head `e61c4f8a2b90` PASS. O Docker daemon
 local está ausente; upgrade/downgrade/upgrade PostgreSQL permanece gate obrigatório do
 Backend CI da Draft PR.
+
+## 2026-08-07 — TASK-V21-002 Package 2 implementado
+
+O CTO aprovou Package 1 e autorizou Governance Evidence. A mesma branch/PR #25 agora
+expõe read model v1 individual e autorizado, sem ledger, persistence ou migration.
+Lifecycle, ownership, system/legacy, audit class, retention/deletion/reconciliation e
+limites de export ficam explícitos. Cross-org e revoked falham `404`; Package 1 segue
+protegido. v2.1 está funcionalmente completa e aguarda revisão/Release Candidate;
+v2.2/v3.0 continuam `NOT_STARTED`.
+
+Gate local Package 2: Ruff PASS; mypy 168 arquivos; API `357 passed, 2 skipped`;
+Engineering focal `18 passed`; conjunto Engineering/workflow `47 passed`; operations
+`69 passed, 7 skipped`; OpenAPI 79 paths com governance v1; Compose, secret scan,
+diff/check e Alembic head `e61c4f8a2b90` PASS. Frontend/runtime não impactados.

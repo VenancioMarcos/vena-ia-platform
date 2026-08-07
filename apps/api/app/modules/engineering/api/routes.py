@@ -19,6 +19,7 @@ from app.modules.engineering.repository import EngineeringCatalogRepository
 from app.modules.engineering.schemas import (
     CatalogItemCreate,
     CatalogItemRead,
+    CatalogGovernanceEvidence,
     CatalogKind,
     EngineeringRecommendation,
     EngineeringReviewReport,
@@ -61,6 +62,18 @@ def list_catalog_items(
     db: Session = Depends(get_db),
 ) -> list[EngineeringCatalogItem]:
     return _catalog_service(db, current_user).list(organization_id=organization_id, kind=kind)
+
+
+@router.get(
+    "/catalogs/{catalog_id}/governance",
+    response_model=CatalogGovernanceEvidence,
+)
+def get_catalog_governance(
+    catalog_id: str,
+    current_user: CurrentUserDependency,
+    db: Session = Depends(get_db),
+) -> CatalogGovernanceEvidence:
+    return _catalog_service(db, current_user).governance(catalog_id)
 
 
 @router.post("/selections/preliminary", response_model=PreliminarySelection)

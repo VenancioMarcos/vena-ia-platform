@@ -28,3 +28,11 @@ schemas rejeitam authority fields. Consumers downstream aplicam a mesma polític
 - Downgrade preserva linhas e não restaura unicidade global incompatível.
 - Update/delete, export e retention pertencem ao Package 2.
 - R-048 é parcialmente mitigado; deploy e fronteira CNC não mudam.
+
+## Extensão Package 2 — evidence
+
+Governance evidence é composto em leitura por recurso autorizado no contrato
+`vena-ia.engineering-governance-evidence/v1`. Nenhuma tabela/migration é adicionada.
+Lifecycle reflete estados reais; delete, retenção e reconciliation registram limites.
+Audit reference identifica a classe do evento, pois o schema atual não possui resource
+ID e não deve gerar correlação falsa.

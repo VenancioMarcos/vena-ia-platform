@@ -108,6 +108,9 @@ Gate terminal: `TOKEN + DATABASE = AUTHORITY`. Request body, query, `X-User-ID`,
 | Referência de sistema — READ | Permitido | Permitido | Permitido | Permitido autenticado | `401` |
 | Referência de sistema — mutação | Sem endpoint público | Sem endpoint público | Negado | Negado | Negado |
 | Legado sem owner — qualquer acesso | Negado/oculto | Negado/oculto | Negado/oculto | Negado/oculto | Negado |
+| Governance evidence da organização — READ | Permitido | Permitido | Permitido | `404` | `401` |
+| Governance evidence de system reference — READ | Permitido | Permitido | Permitido | Permitido autenticado | `401` |
+| Governance evidence — mutação/bulk export | Não exposto | Não exposto | Não exposto | Não exposto | Não exposto |
 
 Body fields de escopo/owner/role são rejeitados. `X-User-ID`/`X-Role` não alteram a
 decisão. Misturar itens de organizações distintas falha como `404`.

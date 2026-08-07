@@ -31,6 +31,10 @@ Sem organização, a listagem retorna somente `SYSTEM_REFERENCE` autenticada.
 fechado. Código/versão iguais podem existir em organizações distintas; referências de
 sistema preservam unicidade global.
 
+Governance evidence pode ser consultada individualmente em
+`GET /engineering/catalogs/{catalog_id}/governance`; a mesma autorização vale antes
+da composição. Limites: `docs/ENGINEERING_GOVERNANCE_EVIDENCE.md`.
+
 ## Uso no workflow integrado v2.0 Package 1
 
 O `IntegratedEngineeringWorkflowService` reutiliza `recommend()` uma única vez e

@@ -23,6 +23,15 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * O downgrade não restaura unicidade global incompatível com duplicatas legítimas
   entre organizações. Package 2, v2.2, v3.0, deploy e CNC executável não foram iniciados.
 
+### Adicionado — v2.1 Package 2
+* `GET /engineering/catalogs/{catalog_id}/governance` fornece o read model fechado
+  `vena-ia.engineering-governance-evidence/v1` para um catálogo autorizado.
+* Evidence explicita ownership, provenance, lifecycle, classe de auditoria, retenção,
+  exclusão e reconciliação sem ledger, persistência, migration ou bulk export.
+* Organization-owned exige membership ativa; system reference é read-only; legacy
+  permanece invisível. Revogação e cross-org falham imediatamente como `404`.
+* Não há update/delete/reconciliation, retenção temporal, checksum ou frontend.
+
 ## [2.0.0] — 2026-08-07 — Integrated Engineering Platform
 
 ### Publicado

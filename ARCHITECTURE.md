@@ -306,3 +306,10 @@ O ownership referencia Organization; Team não foi adicionado por falta de requi
 `ORGANIZATION_OWNED`, `SYSTEM_REFERENCE` read-only e `LEGACY_UNSCOPED` bloqueado
 separam proveniência. A auditoria existente registra mutações, sem ledger paralelo.
 Decisão formal: `docs/adr/ADR-0030-engineering-catalog-ownership.md`.
+
+### Governance evidence — Package 2
+
+`CatalogGovernanceEvidence` é um read model efêmero gerado depois da autorização do
+mesmo service. Não possui tabela, repository, ledger ou migration. A rota GET por
+recurso evita agregação cross-tenant. Audit evidence referencia a classe de evento
+existente, sem fabricar correlação por resource ID ausente no schema de auditoria.

@@ -38,6 +38,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   membership ativa lê e OWNER/ADMIN cria. `SYSTEM_REFERENCE` é read-only e dados
   preexistentes viram `LEGACY_UNSCOPED` oculto, sem atribuição arbitrária. A migration
   head é `e61c4f8a2b90`; Package 2, v2.2 e v3.0 permanecem `NOT_STARTED`.
+* **v2.1 Package 2 implementado:** governance evidence read-only compõe metadados
+  autorizados e políticas técnicas de lifecycle/retention/deletion/reconciliation.
+  Sem ledger, persistência, migration, bulk export ou frontend. v2.1 está funcionalmente
+  completa, pendente de revisão/Release Candidate; v2.2 e v3.0 seguem `NOT_STARTED`.
 * **v1.9 Package 1 implementado:** branch
   `codex/v1.9-controlled-pilot-readiness` adiciona Organization/Team,
   memberships `OWNER`/`ADMIN`/`MEMBER`, bootstrap owner transacional, revogação,
