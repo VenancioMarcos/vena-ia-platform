@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.8.0] — 2026-08-06 — CAD Interoperability and Feature Recognition
+
 ### Adicionado — v1.8 Package 4
 * Ponte `vena-ia.feature-planning/v1` rule `1.0.0` transforma somente furo
   cilíndrico passante validado em `DRILLING_CANDIDATE` não executável.

@@ -398,3 +398,10 @@ O CTO aprovou o Package 3 no head `43bda36` e autorizou ponte contratual entre
 candidates não executáveis, catálogos explícitos, missing inputs, rastreabilidade,
 falsos positivos de planning e revisão humana. Merge, tag, Release, deploy, v1.9,
 CAM, toolpath, G-code, M-code, pós-processador e transmissão CNC são proibidos.
+
+## 2026-08-06 — TASK-V18-005
+
+O CTO aprovou o Package 4 no head `4189875`, declarou o gate do roadmap satisfeito
+e proibiu Package 5 funcional. A ordem prepara e valida o release candidate 1.8.0,
+mantendo a PR #19 Draft. Squash Merge, tag, GitHub Release, deploy e v1.9 exigem
+autorização direta posterior do proprietário; o estado terminal esperado é o Owner Gate.

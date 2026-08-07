@@ -1,19 +1,19 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V18_004
-TITLE=FEATURE_TO_ENGINEERING_PLANNING_BRIDGE
+MISSION=TASK_V18_005
+TITLE=FINAL_RELEASE_CANDIDATE_VALIDATION_AND_OWNER_GATE
 BRANCH=codex/v1.8-cad-interoperability
-START_HEAD=43bda36ebca9c7f37f747d1105883cb1d3f9a5a2
-EXPECTED_STATE=VENA_IA_V1_8_PACKAGE_4_READY_FOR_CTO_REVIEW
+START_HEAD=418987574582191f6cf766cf98497ea14d29b019
+EXPECTED_STATE=BLOCKED_REAL_OWNER_ACTION_REQUIRED
 PULL_REQUEST=19
 PULL_REQUEST_DRAFT=KEEP_DRAFT
 MERGE=PROHIBITED
 TAG_RELEASE=PROHIBITED
 DEPLOY=PROHIBITED
-PACKAGE_3=AUTHORIZED
+RELEASE_CANDIDATE=AUTHORIZED
 TOOLPATH_GCODE_CNC=PROHIBITED
 ```
 
-Escopo: ponte contratual de feature validada a planning candidate preliminar,
-reutilização da recommendation v1.7 e revisão humana obrigatória, sem CAM executável.
+Escopo: preparar e validar o release candidate v1.8.0. PR permanece Draft; merge,
+tag, Release, deploy e v1.9 aguardam autorização direta posterior do proprietário.

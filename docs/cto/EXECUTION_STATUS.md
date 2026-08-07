@@ -243,3 +243,13 @@ reutilizam a recommendation v1.7; ausências permanecem `REQUIRED_INPUT`.
 Ruff, mypy em 152 arquivos e pytest integral (`370 passed, 9 skipped`) passaram;
 OpenAPI 3.1.0 possui 61 paths. O gate de roadmap está `SATISFIED` sem CAM,
 toolpath, G-code, merge, tag, Release ou deploy.
+
+## 2026-08-06 — TASK-V18-005 release candidate local gate
+
+Versões API/FastAPI/health/OpenAPI e frontend foram alinhadas em `1.8.0`; migration
+head permanece `c27f6d9e4a10`. Corpus CAD/features/planning focal aprovou 54 testes.
+Ruff, mypy em 152 arquivos e regressão integral (`370 passed, 9 skipped`) passaram.
+Frontend typecheck/build, runtime policy, Compose config e secret scan passaram.
+O wrapper pnpm local estava em Node 24/pnpm 11.16 e tentou registry; os scripts
+instalados passaram diretamente, enquanto Node 22.20/pnpm 11.9 permanece gate do CI.
+PR #19 continua Draft; merge, tag, Release, deploy e v1.9 não estão autorizados.
