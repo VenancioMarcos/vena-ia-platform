@@ -29,11 +29,12 @@ from app.modules.files.api.routes import router as files_router
 from app.modules.jobs.api.routes import router as jobs_router
 from app.modules.jobs.dependencies import build_job_queue
 from app.modules.manufacturing.api.routes import router as manufacturing_router
+from app.modules.organizations.api.routes import router as organizations_router
 from app.modules.projects.api.routes import router as projects_router
 from app.modules.research.api.routes import router as research_router
 from app.modules.users.api.routes import router as users_router
 
-API_VERSION = "1.8.0"
+API_VERSION = "1.9.0"
 
 
 @asynccontextmanager
@@ -153,6 +154,7 @@ def create_app() -> FastAPI:
     app.include_router(jobs_router)
     app.include_router(cad_router)
     app.include_router(manufacturing_router)
+    app.include_router(organizations_router)
     app.include_router(cnc_router)
     app.include_router(research_router)
 

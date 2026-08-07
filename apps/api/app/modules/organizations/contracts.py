@@ -1,0 +1,15 @@
+"""Public, versioned contracts for controlled pilot readiness."""
+
+ORGANIZATION_SCHEMA_VERSION = "vena-ia.organization/v1"
+TEAM_SCHEMA_VERSION = "vena-ia.team/v1"
+MEMBERSHIP_SCHEMA_VERSION = "vena-ia.membership/v1"
+PILOT_CONTEXT_SCHEMA_VERSION = "vena-ia.pilot-context/v1"
+PILOT_READINESS_SCHEMA_VERSION = "vena-ia.pilot-readiness-checklist/v1"
+
+SCHEMA_VERSIONS = {
+    ORGANIZATION_SCHEMA_VERSION,
+    TEAM_SCHEMA_VERSION,
+    MEMBERSHIP_SCHEMA_VERSION,
+    PILOT_CONTEXT_SCHEMA_VERSION,
+    PILOT_READINESS_SCHEMA_VERSION,
+}
