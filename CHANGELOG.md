@@ -8,6 +8,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Release Candidate — v2.1.0
+* Packages 1–2 foram aprovados pelo CTO; não existe Package 3 da v2.1.
+* API, FastAPI, health, OpenAPI e frontend foram alinhados em `2.1.0`; Alembic
+  permanece no single head `e61c4f8a2b90`.
+* Release notes foram preparadas sem tag, GitHub Release, merge ou deploy. Publicação
+  permanece bloqueada no Owner Release Gate.
+
 ### Adicionado — v2.1 Package 1
 * Catálogos Engineering distinguem `ORGANIZATION_OWNED`, `SYSTEM_REFERENCE` e
   `LEGACY_UNSCOPED`, com ownership persistido e índices únicos por organização.

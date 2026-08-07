@@ -40,6 +40,10 @@ Desde v2.1 Package 1, catálogos Engineering são `ORGANIZATION_OWNED` ou refer�
 por membership, impede mistura cross-org e preserva escopo na traceability sem aceitar
 authority fields no payload.
 
+Na candidata v2.1.0, essa compatibilidade permanece no contrato v1: governance
+evidence é um read model adicional e não altera o snapshot determinístico nem concede
+autoridade de escrita aos consumers downstream.
+
 ## Limites absolutos
 
 CAM preliminar significa somente process planning: operation candidates, assumptions,

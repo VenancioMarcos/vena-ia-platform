@@ -35,6 +35,9 @@ Governance evidence pode ser consultada individualmente em
 `GET /engineering/catalogs/{catalog_id}/governance`; a mesma autorização vale antes
 da composição. Limites: `docs/ENGINEERING_GOVERNANCE_EVIDENCE.md`.
 
+No RC v2.1.0, selection, recommendation e review report preservam schemas v1;
+nenhum scope legado ou cross-org é promovido por compatibilidade.
+
 ## Uso no workflow integrado v2.0 Package 1
 
 O `IntegratedEngineeringWorkflowService` reutiliza `recommend()` uma única vez e

@@ -189,6 +189,10 @@ bulk export nem production readiness. Legacy segue `404`; membership revogada pe
 acesso na próxima autorização do banco. Retenção temporal e exclusão não foram
 inventadas. Checksum não é usado porque não há artefato persistido a verificar.
 
+No Release Candidate v2.1.0, os mesmos controles foram revalidados sem novo papel,
+endpoint de mutação ou authority client-side. Enterprise governance continua
+`NON_PRODUCTION`; publicação e deploy permanecem gates separados.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

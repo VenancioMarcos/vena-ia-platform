@@ -30,6 +30,10 @@ proveniência allowlisted `ORGANIZATION_OWNED` ou `SYSTEM_REFERENCE`; legados se
 não chegam ao contexto. A resposta não recebe authority de escrita. Falha de provider
 retorna `FAILED`, sem mutar o workflow.
 
+Na candidata v2.1.0, governance evidence v1 permanece separado do prompt e do output
+generativo. Ele comprova os limites do catálogo autorizado sem expor memberships,
+logs brutos ou dados de outra Organization.
+
 Output vazio, claim de autoridade produtiva/científica ou linha com sintaxe potencial
 G/M-code é bloqueado. Todo contrato fixa `NON_PRODUCTION`,
 `REQUIRES_HUMAN_REVIEW`, `simulation_only=true` e `executable_output=false`.

@@ -68,7 +68,7 @@
 | v1.8 CAD Interoperability | R-019 | kernel decidido por ADR e propriedades validadas contra corpus conhecido |
 | v1.9 Controlled Pilot Readiness | R-021 a R-029 | isolamento, restore, SLOs e simulação controlada; nenhuma transmissão CNC |
 | v2.0 Integrated Engineering Platform | R-044 a R-047 | versão publicada; riscos permanecem residuais/monitorados e deploy continua separado |
-| v2.1 Enterprise Engineering Governance | R-042, R-048 | ownership, migration/backfill, autorização e auditoria organization-scoped aprovados |
+| v2.1 Enterprise Engineering Governance — RC | R-042, R-048 | ownership, migration/backfill, autorização e governance evidence organization-scoped aprovados; riscos permanecem residuais/monitorados |
 | v2.2 Advanced Engineering Planning & Verification | R-019, R-039 a R-045, R-049 | corpus/planning/simulation evidence aprovados sem execução ou falsa validação física |
 | v3.0 Manufacturing Intelligence & Digital Thread | R-044, R-046, R-047, R-050 | provenance integral e inteligência bounded sem autoridade produtiva/científica autônoma |
 

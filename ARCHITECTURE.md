@@ -313,3 +313,5 @@ Decisão formal: `docs/adr/ADR-0030-engineering-catalog-ownership.md`.
 mesmo service. Não possui tabela, repository, ledger ou migration. A rota GET por
 recurso evita agregação cross-tenant. Audit evidence referencia a classe de evento
 existente, sem fabricar correlação por resource ID ausente no schema de auditoria.
+O Release Candidate v2.1.0 fecha exatamente Packages 1–2 sem Package 3 e sem nova
+fronteira arquitetural. Contratos de domínio v1 e Alembic `e61c4f8a2b90` permanecem.

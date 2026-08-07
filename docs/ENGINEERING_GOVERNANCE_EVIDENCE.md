@@ -35,3 +35,8 @@ Membership ativa lê o próprio catálogo; revoked/cross-org falha `404`. System
 é legível por autenticado e nunca aparece como tenant-owned. Legacy não chega a
 selection, recommendation, planning, workflow, assistance ou governance evidence.
 Todos os resultados permanecem não produtivos e sob revisão humana; CNC não mudou.
+
+## Release Candidate v2.1.0
+
+Packages 1–2 são o escopo completo da v2.1; não existe Package 3. O contrato segue
+v1, Alembic permanece `e61c4f8a2b90` e publicação depende do Owner Release Gate.

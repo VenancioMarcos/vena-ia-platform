@@ -488,3 +488,25 @@ Gate local Package 2: Ruff PASS; mypy 168 arquivos; API `357 passed, 2 skipped`;
 Engineering focal `18 passed`; conjunto Engineering/workflow `47 passed`; operations
 `69 passed, 7 skipped`; OpenAPI 79 paths com governance v1; Compose, secret scan,
 diff/check e Alembic head `e61c4f8a2b90` PASS. Frontend/runtime não impactados.
+
+## 2026-08-07 — TASK-V21-003 Release Candidate v2.1.0
+
+O CTO aprovou os Packages 1 e 2 e confirmou que não existe Package 3. A candidata
+`Vena_IA Platform v2.1.0 — Enterprise Engineering Governance` alinha
+API/FastAPI/health/OpenAPI/frontend em `2.1.0`, preserva os contratos Engineering v1
+e governance evidence v1 e mantém Alembic em `e61c4f8a2b90`, sem nova migration.
+
+Release Notes consolidam ownership por Organization, referências de sistema
+read-only, bloqueio de legados sem owner, autorização fail-closed downstream,
+auditabilidade, lifecycle, retenção, deletion e reconciliation. R-042 e R-048
+permanecem residuais/monitorados; R-049 e R-050 continuam gates futuros. Não houve
+deploy, merge, tag, Release, produção ou CNC executável. A PR #25 permanece Draft e
+a publicação depende de autorização direta do proprietário.
+
+Gate terminal da candidata: Ruff PASS; mypy 168 arquivos; API `357 passed, 2
+skipped`; operations `69 passed, 7 skipped`; focais de versão/governança `70 passed`;
+OpenAPI `2.1.0` com 79 paths e governance evidence v1; Alembic single head
+`e61c4f8a2b90`; Compose config, secret scan e diff/check PASS. O runtime frontend
+local disponível é Node 24/pnpm 11.16, divergente da política Node 22.20/pnpm 11.9;
+por isso typecheck/build/E2E e o ciclo PostgreSQL real permanecem gates obrigatórios
+dos CI oficiais no HEAD final.

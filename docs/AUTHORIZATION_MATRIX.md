@@ -114,3 +114,6 @@ Gate terminal: `TOKEN + DATABASE = AUTHORITY`. Request body, query, `X-User-ID`,
 
 Body fields de escopo/owner/role são rejeitados. `X-User-ID`/`X-Role` não alteram a
 decisão. Misturar itens de organizações distintas falha como `404`.
+
+Release Candidate v2.1.0: matriz revalidada sem novos papéis ou mutações públicas;
+`TOKEN + DATABASE = AUTHORITY` permanece o gate terminal.

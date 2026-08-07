@@ -1,6 +1,6 @@
 # ADR-0030 — Ownership organizacional de catálogos Engineering
 
-**Status:** Aceita para implementação; revisão CTO pendente
+**Status:** Aceita; Packages 1–2 aprovados
 **Data:** 2026-08-07
 **Decisão relacionada:** `DEC-038`
 
