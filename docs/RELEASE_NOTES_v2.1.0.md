@@ -1,10 +1,10 @@
 # Vena_IA Platform v2.1.0 — Enterprise Engineering Governance
 
-## Release Candidate
+## Release
 
 A v2.1.0 introduz ownership por Organization nos catálogos Engineering e evidence
-de governança read-only. Estas notas descrevem uma candidata ainda não publicada:
-não existe tag, GitHub Release ou deploy.
+de governança read-only. A tag anotada e a GitHub Release publicam esta versão sem
+deploy, piloto real ou autorização de produção.
 
 ## Ownership e compatibilidade
 

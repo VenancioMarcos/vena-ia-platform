@@ -1311,7 +1311,7 @@ reservados continuam dependentes do proprietário.
 ## DEC-038 — Ownership organizacional de catálogos Engineering
 
 **Data:** 2026-08-07
-**Status:** APROVADA — RELEASE CANDIDATE v2.1.0
+**Status:** APROVADA — RELEASED v2.1.0
 **Tipo:** Arquitetura / Dados / Segurança / Compatibilidade
 
 Catalog items graváveis pertencem a uma Organization, sem Team scope. Membership
@@ -1331,9 +1331,9 @@ Organization e ownership existentes continuam autoridade. Reconciliation mutáve
 delete/archive, retenção temporal e bulk export foram rejeitados nesta entrega por não
 haver evidência segura ou requisito aprovado. R-048 segue parcialmente mitigado.
 
-### Release Candidate v2.1.0
+### Release v2.1.0
 
-O CTO aprovou Packages 1–2 e confirmou que não existe Package 3. A candidata alinha
+O CTO aprovou Packages 1–2 e confirmou que não existe Package 3. A release alinha
 API/FastAPI/health/OpenAPI/frontend em `2.1.0`, preserva Alembic `e61c4f8a2b90` e
-contratos v1. Merge, tag, Release e deploy dependem do Owner Release Gate; v2.2 segue
-`NOT_STARTED`.
+contratos v1. O Owner Release Gate direto autorizou o Squash Merge da PR #25, a tag
+anotada e a GitHub Release. Não houve deploy; v2.2 segue `NOT_STARTED`.

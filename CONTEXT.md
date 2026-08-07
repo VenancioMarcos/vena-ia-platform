@@ -42,10 +42,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   autorizados e políticas técnicas de lifecycle/retention/deletion/reconciliation.
   Sem ledger, persistência, migration, bulk export ou frontend. v2.1 está funcionalmente
   completa, pendente de revisão/Release Candidate; v2.2 e v3.0 seguem `NOT_STARTED`.
-* **v2.1 Release Candidate:** Packages 1–2 aprovados; não existe Package 3. Versões
+* **Release v2.1.0:** Packages 1–2 aprovados; não existe Package 3. Versões
   API/FastAPI/health/OpenAPI/frontend estão alinhadas em `2.1.0`, migration permanece
-  `e61c4f8a2b90` e release notes estão prontas. PR #25 continua Draft; merge, tag,
-  Release, deploy e v2.2 dependem de gates posteriores.
+  `e61c4f8a2b90` e release notes estão publicadas. A PR #25 foi integrada por Squash
+  Merge em `f5d6775`; tag e GitHub Release `v2.1.0` encerram a versão sem deploy.
+  A v2.2 permanece `NOT_STARTED` até nova ordem formal do CTO.
+* **Fluxo operacional:** `AUTONOMOUS_CTO_CODEX_OPERATION = ACTIVE` para operações
+  técnicas rotineiras formalmente aprovadas pelo CTO. Ações materialmente não
+  delegáveis e limites permanentes continuam exigindo o gate aplicável.
 * **v1.9 Package 1 implementado:** branch
   `codex/v1.9-controlled-pilot-readiness` adiciona Organization/Team,
   memberships `OWNER`/`ADMIN`/`MEMBER`, bootstrap owner transacional, revogação,

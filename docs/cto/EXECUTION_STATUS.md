@@ -2,6 +2,7 @@
 
 ```text
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
+AUTONOMOUS_CTO_CODEX_OPERATION=ACTIVE
 FLOW_RECOVERY_APPLIED=TRUE
 LAST_TERMINAL_TASK=TASK-V18-002
 LAST_TERMINAL_HEAD=54f353c9b7cd04245e404cabf8c7adf220593d49
@@ -510,3 +511,13 @@ OpenAPI `2.1.0` com 79 paths e governance evidence v1; Alembic single head
 local disponível é Node 24/pnpm 11.16, divergente da política Node 22.20/pnpm 11.9;
 por isso typecheck/build/E2E e o ciclo PostgreSQL real permanecem gates obrigatórios
 dos CI oficiais no HEAD final.
+
+## 2026-08-07 — Owner Release Gate v2.1.0
+
+O proprietário autorizou diretamente `OWNER_RELEASE_GATE_V2_1`. A PR #25 saiu de
+Draft e foi integrada por Squash Merge em `f5d6775`, preservando o RC HEAD `691a378`.
+Os CI Backend `31227031882`, Frontend `31227031864` e Runtime Policy `31227031866`
+permanecem verdes. A validação focal pós-merge aprovou 70 testes, versões 2.1.0,
+OpenAPI com 79 paths, oito contratos Engineering/governance e Alembic
+`e61c4f8a2b90`. O fechamento documental prepara tag e GitHub Release v2.1.0; não há
+deploy, produção, CNC executável ou início da v2.2.

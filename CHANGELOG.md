@@ -8,12 +8,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
-### Release Candidate — v2.1.0
+## [2.1.0] — 2026-08-07 — Enterprise Engineering Governance
+
+### Publicado
 * Packages 1–2 foram aprovados pelo CTO; não existe Package 3 da v2.1.
 * API, FastAPI, health, OpenAPI e frontend foram alinhados em `2.1.0`; Alembic
   permanece no single head `e61c4f8a2b90`.
-* Release notes foram preparadas sem tag, GitHub Release, merge ou deploy. Publicação
-  permanece bloqueada no Owner Release Gate.
+* A PR #25 foi integrada por Squash Merge após Owner Release Gate direto. A tag
+  anotada e a GitHub Release `v2.1.0` registram a publicação sem deploy.
 
 ### Adicionado — v2.1 Package 1
 * Catálogos Engineering distinguem `ORGANIZATION_OWNED`, `SYSTEM_REFERENCE` e
