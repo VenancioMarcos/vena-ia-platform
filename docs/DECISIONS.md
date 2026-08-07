@@ -1185,3 +1185,47 @@ que a v1.9 possui exatamente dois Packages. A Release v1.9.0 preserva R-042 e R-
 como riscos residuais/monitorados e não autoriza piloto real, deploy, publicação
 comercial ou saída CNC executável. Qualquer progressão além da v2.0 exige extensão
 formal do roadmap e aprovação do CTO; a meta operacional v3.0 não altera esse gate.
+
+---
+
+## DEC-035 — Decomposição da v2.0 Integrated Engineering Platform
+
+**Data:** 2026-08-07
+**Status:** PROPOSTA — AGUARDA APROVAÇÃO DO CTO
+**Tipo:** Arquitetura / Engenharia / IA / Pesquisa / Produto / Segurança
+**Documentos relacionados:** `docs/ROADMAP.md`, `docs/RISK_REGISTER.md`,
+`docs/PERMANENT_OPERATIONAL_LIMITS.md`, `PROJECT.md`
+
+### Contexto
+
+As v1.2–v1.9 entregaram segurança distribuída, recuperação, observabilidade, jobs,
+resiliência/capacidade, catálogos/regras, CAD/features e piloto sintético. Os módulos
+existem, mas CAD, planning, CNC neutro, Research e dashboard ainda não formam uma
+cadeia única rastreável. O roadmap v2.0 não possuía Packages.
+
+### Decisão proposta
+
+Usar três Packages dependentes: (1) workflow determinístico integrado CAD→relatório;
+(2) assistência especializada e Research grounded sobre o núcleo aprovado; (3)
+dashboard/evidence/E2E e consolidação do release. CAM preliminar significa somente
+operation candidates, setup assumptions, compatibilidade e estimativas; nunca
+toolpath ou código CNC.
+
+O Package 1 deve reutilizar os contratos v1.x e propor apenas um aggregate aditivo
+`vena-ia.integrated-engineering-workflow/v1` mais a formalização versionada do plano
+CNC neutro já esperado pela validação v1.9. IA não pode alterar regras
+determinísticas. Nenhum Package está autorizado para implementação nesta decisão.
+
+### Justificativa
+
+As três fronteiras correspondem a dependências reais: núcleo determinístico,
+assistência/grounding e experiência/evidência terminal. Unificá-las impediria revisão
+segura; fragmentá-las mais duplicaria componentes existentes.
+
+### Impacto
+
+R-044–R-047 permanecem abertos/gate. Auth, Organization/Team, audit, backup,
+observability, jobs, resilience, capacity e pilot evidence são reutilizados. Não há
+migration presumida, deploy, piloto real, decisão científica autônoma, toolpath,
+pós-processador, G/M-code, NC/DNC, transmissão ou controle CNC. Após v2.0, extensão
+formal do roadmap até v3.0 exige aprovação antes de qualquer implementação.

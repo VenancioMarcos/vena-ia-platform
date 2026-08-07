@@ -1,34 +1,32 @@
 # Ordem CTO atual
 
 ```text
-MISSION=RELEASE_V1_9_0
-TITLE=PUBLISH_AND_VERIFY_CONTROLLED_PILOT_READINESS
-BRANCH=main
-START_HEAD=b149ac182e81b3f7a39091ef0d640ff0ef549980
-PULL_REQUEST=21
-PACKAGE_1=APPROVED_COMPLETE
-PACKAGE_2=APPROVED_COMPLETE
-OWNER_RELEASE_GATE_V1_9=APPROVED_DIRECTLY
-EXPECTED_STATE=VENA_IA_V1_9_RELEASED_AND_VERIFIED
-V1_9_RELEASE_CANDIDATE_READY=TRUE
+MISSION=TASK_V20_000
+TITLE=V2_0_ROADMAP_DECOMPOSITION_AND_PACKAGE_FORMALIZATION
+BASE=main
+START_HEAD=d30793baca42e662adbc1530b320093abd64f952
+BRANCH=codex/v2.0-roadmap-decomposition
+EXPECTED_STATE=VENA_IA_V2_0_ROADMAP_DECOMPOSED_AND_PACKAGE_1_READY_FOR_CTO_APPROVAL
 V1_9_RELEASED=TRUE
-MERGE_SHA=b149ac182e81b3f7a39091ef0d640ff0ef549980
-RELEASE_COMMIT=1d3c383c9f8e0472d4d1d9b98dd47f1124857c4e
-TAG_OBJECT=377fc2d7876ced24cf41f021aa4827e879952d05
-TAG_TARGET=1d3c383c9f8e0472d4d1d9b98dd47f1124857c4e
-RELEASE_URL=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.9.0
+V2_0_FUNCTIONAL=NOT_STARTED
+DECISION=DEC_035_PROPOSED_AWAITING_CTO
+PACKAGE_1=PROPOSED_NOT_AUTHORIZED
+PACKAGE_2=PROPOSED_NOT_AUTHORIZED
+PACKAGE_3=PROPOSED_NOT_AUTHORIZED
+FUNCTIONAL_IMPLEMENTATION=PROHIBITED
+MIGRATION=PROHIBITED
+DEPLOY=PROHIBITED
+EXECUTABLE_CNC=PROHIBITED
 TODAY_TARGET=V3_0
-TARGET_PRIORITY=HIGH
 GOVERNANCE_BYPASS=PROHIBITED
-MERGE_TAG_RELEASE=AUTHORIZED_FOR_V1_9_0
-DEPLOY=PILOT_REAL_EXECUTABLE_CNC=PROHIBITED
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
 ```
 
-Escopo exclusivo: integrar a PR #21, publicar e validar tag/Release v1.9.0 e
-registrar o fechamento. Não existe Package 3 e nenhuma funcionalidade nova pode
-ser adicionada.
+Escopo exclusivo: auditar contratos/módulos v1.2–v1.9 e formalizar a menor
+decomposição sustentável da v2.0. A proposta usa três Packages dependentes:
+workflow determinístico integrado; assistência/Research grounded; dashboard,
+evidence, E2E e consolidação.
 
-O Owner Release Gate foi concedido diretamente e a publicação foi validada. Enviar
-o status ao CTO e aguardar a ordem completa para o próximo estágio oficial. A meta
-v3.0 não autoriza inventar roadmap além da v2.0.
+Nenhum Package pode ser implementado até o CTO aprovar DEC-035 e emitir ordem
+funcional completa. CAM preliminar não inclui toolpath, coordenadas, pós-processador,
+G/M-code ou NC/DNC. A extensão além da v2.0 também exige roadmap formal aprovado.

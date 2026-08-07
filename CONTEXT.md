@@ -45,6 +45,11 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   registram Packages 1–2 completos, versões
   API/FastAPI/health/OpenAPI/frontend `1.9.0` e Alembic `d39a7b2c5e11`. R-042 e
   R-043 continuam residuais/monitorados; nenhum deploy ou piloto real foi realizado.
+* **v2.0 TASK-V20-000:** a branch documental `codex/v2.0-roadmap-decomposition`
+  audita a cadeia real e propõe três Packages mínimos: workflow determinístico
+  integrado, assistência especializada/Research grounded e dashboard/evidence/E2E.
+  DEC-035 permanece proposta; nenhum código, migration, deploy ou branch funcional
+  v2.0 está autorizado antes da aprovação do CTO.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

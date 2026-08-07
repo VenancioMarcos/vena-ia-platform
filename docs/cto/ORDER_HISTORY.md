@@ -460,3 +460,10 @@ O proprietário aprovou diretamente o `OWNER_RELEASE_GATE_V1_9`. A PR #21 foi
 retirada de Draft e integrada por Squash Merge em `b149ac1`. A autorização cobre
 somente o fechamento documental, tag anotada, GitHub Release e validação direta;
 deploy, piloto real, implementação v2.0 e CNC executável permanecem fora do escopo.
+
+## 2026-08-07 — TASK-V20-000
+
+Após validar a Release v1.9.0, o CTO autorizou somente auditoria e decomposição da
+v2.0. A ordem exige mapear CAD→report, definir CAM preliminar sem toolpath, avaliar
+agentes/Research/dashboard, criar a decisão proposta e abrir Draft PR documental.
+Implementação, migration, deploy e CNC executável permanecem proibidos até aprovação.
