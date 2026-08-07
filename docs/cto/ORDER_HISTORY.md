@@ -412,3 +412,10 @@ O proprietário autorizou retirar a PR #19 de Draft, Squash Merge, sincronizaç�
 validação da main, tag anotada, GitHub Release e validação direta. Após a Release,
 autoriza iniciar exclusivamente o primeiro Package da v1.9 conforme ROADMAP vigente.
 Deploy, piloto externo, serviço pago, produção/toolpath/G-code/CNC permanecem proibidos.
+
+## 2026-08-06 — TASK-V19-000
+
+Após receber o status da Release v1.8.0, o CTO confirmou que o ROADMAP não tinha
+decomposição v1.9 e proibiu inventar Package 1 funcional. Autorizou somente consulta,
+proposta de menor número de Packages, DEC/risco e branch/PR exclusivamente documental.
+Implementação, migration, deploy, piloto real e branch funcional permanecem proibidos.

@@ -1136,3 +1136,41 @@ Through hole permite `DRILLING_CANDIDATE`; outras primitivas não permitem infer
 Catálogos material/máquina/ferramenta devem ser explicitamente selecionados para
 reutilizar a recommendation v1.7. Candidate e recommendation permanecem sob revisão
 humana, sem saída executável, manufaturabilidade, CAM, toolpath ou código CNC.
+
+## DEC-034 — Decomposição proposta da v1.9 em fundação e ensaio controlado
+
+**Data:** 2026-08-06
+**Status:** Proposta — aguarda aprovação do CTO
+**Tipo:** Arquitetura | Segurança | Operação | Produto
+**Documentos relacionados:** `docs/ROADMAP.md`, `docs/RISK_REGISTER.md`,
+`docs/PERMANENT_OPERATIONAL_LIMITS.md`, `docs/AUTHORIZATION_MATRIX.md`
+
+### Contexto
+
+O roadmap define Controlled Pilot Readiness e suas entregas, mas não definia
+Packages. Iniciar código sem decomposição inventaria escopo e colocaria validação de
+piloto antes da identidade organizacional, isolamento e governança necessários.
+
+### Decisão proposta
+
+Usar dois Packages. Package 1 formaliza Organization/Team, membership/papéis,
+ownership, onboarding, contexto e checklist de piloto sob isolamento fail-closed.
+Package 2 compõe runbooks, restore/incidente, proposta SLO, capacidade descartável,
+privacidade, suporte, jornada E2E e validação virtual de plano CNC neutro. Package 3
+não é criado porque não há dependência independente que justifique fragmentação.
+
+O Package 1 é apenas `READY_FOR_CTO_APPROVAL`: esta decisão não autoriza implementação,
+migration, branch funcional, piloto ou deploy.
+
+### Justificativa
+
+Separar governança de ensaio respeita a ordem das dependências e permite testar
+isolamento antes de produzir evidência de piloto. Reutilizar contratos v1.2–v1.8
+evita nova plataforma, microserviço, provider ou duplicação operacional.
+
+### Impacto
+
+Uma implementação futura do Package 1 provavelmente exigirá entidades persistentes
+e migration, mas isso depende de aprovação e ADR técnico específico. R-042 passa a
+registrar isolamento organizacional. Dados reais, convite externo, billing, SSO,
+SLO produtivo, deploy, CAM/toolpath/G-code e máquina continuam fora.
