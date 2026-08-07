@@ -358,3 +358,11 @@ reutilizáveis para todo o fluxo, porém nenhuma orquestração CAD→report, ne
 de agentes/Research e nenhuma visão frontend de CAD/Engineering/readiness/evidence.
 DEC-035 propõe três Packages mínimos e R-044–R-047 como gates abertos. Esta entrega é
 exclusivamente documental; não há código, migration, deploy ou CNC executável.
+
+## 2026-08-07 — TASK-V20-001 aprovada
+
+O CTO aprovou a DEC-035 e a decomposição oficial em três Packages. Package 1 está
+`APPROVED_FOR_IMPLEMENTATION`; Packages 2 e 3 permanecem `NOT_STARTED`. A PR #22
+deve ser integrada como docs-only antes da criação da branch funcional. O escopo
+funcional autorizado limita-se ao workflow integrado determinístico e ao contrato
+CNC neutro aditivo, sem migration, deploy ou saída CNC executável.

@@ -877,11 +877,11 @@ humana preservada e nenhuma ação irreversível automática.
 Condição de conclusão: release v2.0 validada e decisão de deploy tratada como
 missão externa separada com autorização do proprietário.
 
-### Decomposição proposta — TASK-V20-000
+### Decomposição oficial — TASK-V20-001
 
-**Estado:** `PROPOSTA — AGUARDA APROVAÇÃO DO CTO`. A v2.0 não começou
-funcionalmente. A menor decomposição sustentada pelas dependências reais possui três
-Packages sequenciais; nenhum pode pular o aceite do anterior.
+**Estado:** `APROVADA — CTO`. A menor decomposição sustentada pelas dependências
+reais possui três Packages sequenciais; nenhum pode pular o aceite do anterior.
+Package 1 está `APPROVED_FOR_IMPLEMENTATION`; Packages 2 e 3 estão `NOT_STARTED`.
 
 #### Dependências reutilizáveis v1.2–v1.9
 
@@ -924,7 +924,7 @@ toolpath, pós-processador, G-code, M-code, NC/DNC ou execução.
 Objetivo: compor o núcleo determinístico CAD → features → engineering → CAM
 preliminar → plano CNC neutro → relatório, reutilizando serviços e regras existentes.
 
-Escopo proposto:
+Escopo aprovado:
 
 * contrato aditivo `vena-ia.integrated-engineering-workflow/v1`, com referências às
   versões upstream, inputs/outputs, assumptions, limitations, uncertainty,
