@@ -287,3 +287,22 @@ avança o head para `d39a7b2c5e11`. O gate local aprovou Ruff, mypy (161 arquivo
 frontend typecheck/build, runtime policy, Compose config e OpenAPI 1.9.0/72 paths.
 O ciclo focal Alembic upgrade/downgrade/upgrade passou; PostgreSQL real fica para o
 Backend CI. R-042 está mitigado parcialmente/monitorado; Package 2 não foi iniciado.
+
+## 2026-08-06 — TASK-V19-002 planned pause
+
+Estado `PAUSED_PLANNED_CONTINUATION_REQUIRED`. HEAD inicial `43a1907`; bloco funcional
+salvo em `41ddb8b`. Foram concluídos os contratos `vena-ia.pilot-evidence/v1` e
+`vena-ia.virtual-cnc-plan-validation/v1`, a composição de evidence allowlisted sem
+nova persistência/migration, gate de contexto/checklist/privacy, SLO/capacity apenas
+sintéticos, checksum determinístico, validação CNC `SIMULATION_ONLY` com
+`executable_output=false`, auditoria existente e testes negativos G/M-code.
+
+Testes de pausa: Ruff focal PASS; mypy focal (10 arquivos) PASS; 23 testes focais
+PASS; `git diff --check` PASS. O CI vigente anterior no HEAD `43a1907` permanece
+verde (Backend 31141708737, Frontend 31141708745, Runtime 31141708735); nenhum CI
+novo foi disparado. Docker local continua sem daemon. Nenhum bloqueador técnico.
+Próximo passo: fechar as lacunas focais registradas em `CURRENT_ORDER.md`, documentar
+a matriz de evidência e somente então executar regressão/OpenAPI/CI finais.
+
+`PLANNED_PAUSE = ACTIVE`
+`CONTINUOUS_CTO_CODEX_FLOW_POLICY = TEMPORARILY_SUSPENDED`

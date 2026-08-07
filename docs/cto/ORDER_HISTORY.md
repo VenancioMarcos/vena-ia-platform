@@ -431,3 +431,11 @@ A PR #20 foi integrada em `3776fc4`. O Package 1 foi implementado na branch
 `codex/v1.9-controlled-pilot-readiness` com migration `d39a7b2c5e11`, contratos
 versionados e testes fail-closed. A entrega funcional deve permanecer em Draft PR;
 Package 2 segue `NOT_STARTED` até nova ordem específica do CTO.
+
+## 2026-08-06 — TASK-V19-002 e pausa planejada
+
+O CTO aprovou o Package 1 e autorizou Package 2 na mesma branch/PR #21, sem merge,
+release ou deploy. Durante o primeiro bloco foram implementados contratos e
+orquestração sintética/virtual fail-closed. Antes de iniciar novos itens, o
+proprietário ordenou pausa controlada. O bloco focal validado foi salvo em `41ddb8b`;
+o estado é `PAUSED_PLANNED_CONTINUATION_REQUIRED`, com retomada somente sob nova ordem.
