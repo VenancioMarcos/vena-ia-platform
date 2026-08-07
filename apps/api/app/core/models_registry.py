@@ -7,6 +7,7 @@ set of tables is needed: application startup, Alembic migrations and tests.
 from app.modules.chats.models import Chat, Message  # noqa: F401
 from app.modules.audit.models import SecurityAuditEvent  # noqa: F401
 from app.modules.documents.models import Document, DocumentChunk  # noqa: F401
+from app.modules.engineering.models import EngineeringCatalogItem  # noqa: F401
 from app.modules.files.models import FileAsset  # noqa: F401
 from app.modules.jobs.models import Job  # noqa: F401
 from app.modules.projects.models import Project  # noqa: F401

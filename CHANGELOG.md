@@ -8,6 +8,28 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.7.0] — 2026-08-06 — Engineering Catalogs and CAM
+
+### Adicionado — v1.7 Package 3
+* Relatório `vena-ia.engineering-review-report/v1` reutiliza a recomendação do
+  Package 2 e consolida conclusão fechada, incerteza informacional, ausências,
+  rastreabilidade e checklist humano sem autorizar processo ou máquina.
+
+### Adicionado — v1.7 Package 2
+* Contrato `vena-ia.engineering-recommendation/v1` e rota autenticada para regras
+  determinísticas allowlisted de milling, drilling e turning.
+* Compatibilidade preliminar, RPM/feed, tempo e custo retornam fonte, versões,
+  fórmulas, unidades, hipóteses, limitações e `NOT_AVAILABLE` quando faltam dados.
+* Nenhuma recomendação contém toolpath, coordenadas, G-code, M-code ou comando CNC.
+
+### Adicionado — v1.7 Package 1
+* Contratos versionados `vena-ia.engineering-catalog/v1` e
+  `vena-ia.engineering-selection/v1` para materiais, máquinas e ferramentas.
+* Catálogo persistente com fonte, versão e propriedades rastreáveis, repository,
+  service e APIs autenticadas de cadastro, consulta e seleção preliminar.
+* Toda seleção usa `PRELIMINARY_ENGINEERING_REQUIRES_HUMAN_REVIEW`; não há
+  toolpath, G-code executável, envio ou controle de máquina.
+
 ## [1.6.0] — 2026-08-06 — Reliability and Scalability
 
 ### Corrigido — v1.6 Package 3 R1

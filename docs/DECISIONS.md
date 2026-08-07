@@ -1105,3 +1105,9 @@ Criar o Documento 05 — Plano de Criação do Repositório GitHub e Estrutura I
 ---
 
 **Fim do Documento 04 — Registro de Decisões Vena_IA v1.0**
+## DEC-031 — Recomendações de engenharia calculadas sob demanda
+
+As recomendações v1.7 Package 2 são determinísticas e não persistidas. Somente
+dados catalogados com fonte/versão participam; ausência resulta em `NOT_AVAILABLE`.
+O catálogo permanece global autenticado nesta etapa, sem mudança implícita de
+ownership. Toda saída exige revisão humana e não contém comando CNC executável.
