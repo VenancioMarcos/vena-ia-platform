@@ -1,34 +1,29 @@
 # Ordem CTO atual
 
 ```text
-MISSION=RELEASE_V1_9_0
-TITLE=PUBLISH_AND_VERIFY_CONTROLLED_PILOT_READINESS
-BRANCH=main
-START_HEAD=b149ac182e81b3f7a39091ef0d640ff0ef549980
-PULL_REQUEST=21
-PACKAGE_1=APPROVED_COMPLETE
-PACKAGE_2=APPROVED_COMPLETE
-OWNER_RELEASE_GATE_V1_9=APPROVED_DIRECTLY
-EXPECTED_STATE=VENA_IA_V1_9_RELEASED_AND_VERIFIED
-V1_9_RELEASE_CANDIDATE_READY=TRUE
+MISSION=TASK_V20_001
+TITLE=V2_0_PACKAGE_1_INTEGRATED_ENGINEERING_WORKFLOW_FOUNDATION
+BASE=main
+START_HEAD=d30793baca42e662adbc1530b320093abd64f952
+BRANCH=codex/v2.0-roadmap-decomposition
+EXPECTED_STATE=VENA_IA_V2_0_PACKAGE_1_READY_FOR_CTO_REVIEW
 V1_9_RELEASED=TRUE
-MERGE_SHA=b149ac182e81b3f7a39091ef0d640ff0ef549980
-RELEASE_COMMIT=1d3c383c9f8e0472d4d1d9b98dd47f1124857c4e
-TAG_OBJECT=377fc2d7876ced24cf41f021aa4827e879952d05
-TAG_TARGET=1d3c383c9f8e0472d4d1d9b98dd47f1124857c4e
-RELEASE_URL=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.9.0
+V2_0_FUNCTIONAL=NOT_STARTED
+DECISION=DEC_035_APPROVED_CTO
+PACKAGE_1=APPROVED_FOR_IMPLEMENTATION
+PACKAGE_2=NOT_STARTED
+PACKAGE_3=NOT_STARTED
+FUNCTIONAL_IMPLEMENTATION=PACKAGE_1_ONLY
+MIGRATION=PROHIBITED
+DEPLOY=PROHIBITED
+EXECUTABLE_CNC=PROHIBITED
 TODAY_TARGET=V3_0
-TARGET_PRIORITY=HIGH
 GOVERNANCE_BYPASS=PROHIBITED
-MERGE_TAG_RELEASE=AUTHORIZED_FOR_V1_9_0
-DEPLOY=PILOT_REAL_EXECUTABLE_CNC=PROHIBITED
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
 ```
 
-Escopo exclusivo: integrar a PR #21, publicar e validar tag/Release v1.9.0 e
-registrar o fechamento. Não existe Package 3 e nenhuma funcionalidade nova pode
-ser adicionada.
-
-O Owner Release Gate foi concedido diretamente e a publicação foi validada. Enviar
-o status ao CTO e aguardar a ordem completa para o próximo estágio oficial. A meta
-v3.0 não autoriza inventar roadmap além da v2.0.
+Escopo exclusivo: integrar a PR documental #22 e implementar o Package 1 na branch
+`codex/v2.0-integrated-engineering-platform`, compondo CAD→features→Engineering→
+process planning→plano CNC neutro→relatório sem duplicar engines. Packages 2 e 3
+permanecem fora. CAM preliminar não inclui toolpath, coordenadas, pós-processador,
+G/M-code ou NC/DNC. Não realizar merge da PR funcional, migration ou deploy.

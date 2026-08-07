@@ -350,3 +350,19 @@ foi publicada e validada diretamente: versões `1.9.0`, 76 paths, Alembic
 `d39a7b2c5e11`, Runtime Policy e 54 testes focais aprovados (1 skip). Deploy, piloto
 real e saída CNC executável permanecem proibidos. O próximo estágio documental é a
 decomposição formal da v2.0; implementação aguarda ordem completa do CTO.
+
+## 2026-08-07 — TASK-V20-000 decomposição v2.0
+
+Main `d30793b` e Release v1.9.0 foram verificadas. A auditoria encontrou módulos
+reutilizáveis para todo o fluxo, porém nenhuma orquestração CAD→report, nenhum bridge
+de agentes/Research e nenhuma visão frontend de CAD/Engineering/readiness/evidence.
+DEC-035 propõe três Packages mínimos e R-044–R-047 como gates abertos. Esta entrega é
+exclusivamente documental; não há código, migration, deploy ou CNC executável.
+
+## 2026-08-07 — TASK-V20-001 aprovada
+
+O CTO aprovou a DEC-035 e a decomposição oficial em três Packages. Package 1 está
+`APPROVED_FOR_IMPLEMENTATION`; Packages 2 e 3 permanecem `NOT_STARTED`. A PR #22
+deve ser integrada como docs-only antes da criação da branch funcional. O escopo
+funcional autorizado limita-se ao workflow integrado determinístico e ao contrato
+CNC neutro aditivo, sem migration, deploy ou saída CNC executável.

@@ -877,6 +877,140 @@ humana preservada e nenhuma ação irreversível automática.
 Condição de conclusão: release v2.0 validada e decisão de deploy tratada como
 missão externa separada com autorização do proprietário.
 
+### Decomposição oficial — TASK-V20-001
+
+**Estado:** `APROVADA — CTO`. A menor decomposição sustentada pelas dependências
+reais possui três Packages sequenciais; nenhum pode pular o aceite do anterior.
+Package 1 está `APPROVED_FOR_IMPLEMENTATION`; Packages 2 e 3 estão `NOT_STARTED`.
+
+#### Dependências reutilizáveis v1.2–v1.9
+
+| Versão | Evidência real reutilizada na v2.0 | Lacuna que não deve gerar duplicação |
+|---|---|---|
+| v1.2 | auth, Redis security store, revogação/rate limit e audit events | manter token+banco como autoridade; não criar auth paralela |
+| v1.3 | contratos PostgreSQL/MinIO/backup-set/encrypted set, restore e retenção | custódia/ambiente produtivo continuam externos |
+| v1.4 | observability/metrics, correlation, audit e incident drill | métricas/tracing seguem locais sem backend externo aprovado |
+| v1.5 | `vena-ia.job/v1`, worker/recovery/idempotência | novos trabalhos longos devem reutilizar jobs; OCR continua adiado |
+| v1.6 | runtime/resilience/capacity policies e evidence descartável | capacidade não é SLO/SLA produtivo |
+| v1.7 | catalogs, selection, recommendation e engineering review report | regras são preliminares e não selecionam processo produtivo |
+| v1.8 | geometry analysis/features e feature planning | corpus/cobertura conservadores; nenhum intent/manufaturabilidade implícitos |
+| v1.9 | Organization/Team, readiness, pilot evidence/integrity/rollback e CNC virtual validation | isolamento/evidence continuam sintéticos e R-042/R-043 monitorados |
+
+Inconsistências registradas para tratamento no Package aplicável: o
+`CNCPlanPreview` existente ainda não expõe `schema_version`/traceability enquanto a
+validação v1.9 referencia `vena-ia.cnc-neutral-plan/v1`; schemas Research não têm uma
+versão pública comum; catálogos Engineering continuam globais autenticados; e alguns
+títulos documentais de v1.9 ainda dizem “Release Candidate” apesar da Release já
+publicada. Nenhuma dessas lacunas autoriza correção funcional nesta TASK.
+
+#### Auditoria do fluxo integrado
+
+| Elo | Contrato/implementação existente | Entrada → saída e revisão | Lacuna real para v2.0 |
+|---|---|---|---|
+| CAD | `vena-ia.geometry-analysis/v1`; análise STEP autenticada com parser textual + OCCT controlado | documento STEP autorizado → geometria, rastreabilidade, limitações; revisão humana | resultado existe isoladamente, sem execução integrada persistida/composta |
+| Feature recognition | `vena-ia.geometry-features/v1`; rule `1.0.0` | topologia válida → primitivas e through hole estrito; revisão humana | cobertura conservadora é limitada e o resultado ainda precisa ser encadeado sem inferir intenção |
+| Engineering recommendation | `vena-ia.engineering-catalog/v1`, `engineering-selection/v1`, `engineering-recommendation/v1` | material/máquina/ferramenta versionados → compatibilidade, parâmetros, tempo/custo preliminares; revisão humana | catálogos são globais autenticados e a recomendação não representa processo liberado |
+| CAM preliminar / process planning | `vena-ia.feature-planning/v1`; `FeaturePlanningBridge` | feature suportada + catálogos explícitos → `DRILLING_CANDIDATE`, assumptions, missing inputs e recommendation opcional | somente through hole; não há orquestração E2E nem contrato agregado de workflow; setup/fixture/tolerância permanecem ausentes |
+| Plano CNC neutro | preview `/cnc/plan/preview`; validação `vena-ia.virtual-cnc-plan-validation/v1` espera `vena-ia.cnc-neutral-plan/v1` | parâmetros allowlisted → preview `SIMULATION_ONLY_REQUIRES_HUMAN_REVIEW`, `executable_output=false` | preview não possui schema version/rastreabilidade upstream e não é conectado ao planning/recommendation |
+| Relatório | `vena-ia.engineering-review-report/v1` e Research Report separado | recommendation ou síntese RAG → conclusão limitada, evidências/checklist e revisão humana | nenhum relatório único referencia CAD, feature, planning, CNC neutro e evidência científica como uma cadeia |
+
+**CAM preliminar na v2.0** significa exclusivamente process planning: candidatos de
+operação, assumptions de setup, compatibilidade material–máquina–ferramenta,
+parâmetros determinísticos e estimativas de tempo/custo. Não contém coordenadas,
+toolpath, pós-processador, G-code, M-code, NC/DNC ou execução.
+
+#### Package 1 — Integrated Engineering Workflow Foundation
+
+Objetivo: compor o núcleo determinístico CAD → features → engineering → CAM
+preliminar → plano CNC neutro → relatório, reutilizando serviços e regras existentes.
+
+Escopo aprovado:
+
+* contrato aditivo `vena-ia.integrated-engineering-workflow/v1`, com referências às
+  versões upstream, inputs/outputs, assumptions, limitations, uncertainty,
+  traceability e review status;
+* formalização aditiva de `vena-ia.cnc-neutral-plan/v1` sobre o preview existente,
+  sempre `SIMULATION_ONLY`, `executable_output=false` e human review;
+* orquestração no Modular Monolith, sem duplicar parser, feature recognizer,
+  catálogo, rules, fórmulas, CNC preview ou report builder;
+* falha explícita/partial quando feature, catálogo, tolerância, fixture, setup ou
+  evidence necessária estiver ausente;
+* nenhuma persistência/migration presumida; qualquer necessidade deve ser provada na
+  ordem funcional e registrada antes da implementação.
+
+Gate de saída: cadeia rastreável e determinística, isolamento/autorização preservados,
+relatório integrado não executável e nenhum salto de lacuna como sucesso.
+
+#### Package 2 — Specialized Assistance and Grounded Research Integration
+
+Objetivo: acrescentar assistência especializada somente sobre o núcleo determinístico
+aprovado e conectar pesquisa fundamentada sem permitir que IA substitua regra ou
+revisão humana.
+
+Perfis conceituais mínimos: CAD analysis, manufacturing/engineering, research e
+documentation/reporting. São perfis allowlisted sobre `AIService` e contratos
+existentes, não processos autônomos, swarm, novo provider ou microserviços. Toda
+saída deve citar o contrato determinístico/evidence consumido, expor limitações e
+permanecer sugestão revisável.
+
+Research reutiliza Documents/RAG, chunks, evidência documento/página/chunk,
+referências heurísticas, síntese grounded, DOE preliminar, ANOVA apenas descritiva e
+Research Report. Lacunas: contratos Research ainda não possuem uma versão pública
+comum, não existe bridge rastreável ao workflow de engenharia e não há validação
+científica autônoma. O Package deve falhar fechado quando grounding for insuficiente
+e nunca produzir decisão científica.
+
+Gate de saída: agentes não alteram resultados determinísticos, fontes continuam
+autorizadas/rastreáveis, prompt injection permanece tratado como dado não confiável
+e overclaim científico é bloqueado.
+
+#### Package 3 — Operational Dashboard, Evidence and v2.0 Consolidation
+
+Objetivo: expor o workflow já aprovado e fechar evidence/E2E/release sem criar lógica
+de domínio no frontend.
+
+O frontend atual cobre projeto, documentos, jobs, chat RAG e relatórios. Faltam
+visões integradas de CAD/features, catálogo/recommendation/planning, plano CNC neutro,
+Organization/readiness e pilot evidence/status. O Package propõe somente essas
+lacunas funcionais, estados de falha/partial, revisão humana, acessibilidade e E2E;
+redesign cosmético não é escopo.
+
+Reutilizar auth, Organization/Team, audit, backup/recovery, observability, async jobs,
+resilience, capacity e pilot evidence. Não criar subsistema operacional paralelo.
+
+Gate de saída: regressão integral; E2E engineering; isolation/security;
+restore/observability/resilience/load; validação científica; simulação controlada;
+documentação técnica/científica/comercial e Release Candidate v2.0. Deploy continua
+missão externa separada.
+
+Estratégia de testes futura por gate: Package 1 cobre contratos, compatibilidade,
+cadeia E2E determinística, partial/failure, ownership/isolation e neutralidade CNC;
+Package 2 cobre grounding, citações, prompt injection, ausência de evidence,
+não sobrescrita de rules e limites DOE/ANOVA; Package 3 cobre acessibilidade,
+frontend/API E2E, restore, observability, resilience, carga sintética e regressão
+integral. Nenhum desses testes é executado nesta TASK documental.
+
+#### Riscos e limites absolutos
+
+R-044–R-047 são gates abertos de integração, produção aparente, autoridade de agente
+e overclaim científico. `base operacional pronta para decisão de produção` significa
+somente evidência técnica organizada para decisão humana futura; nunca
+`PRODUCTION_APPROVED`.
+
+```text
+NO_EXECUTABLE_GCODE
+NO_EXECUTABLE_MCODE
+NO_TOOLPATH
+NO_POSTPROCESSOR
+NO_NC_FILE
+NO_DNC
+NO_CNC_TRANSMISSION
+NO_MACHINE_CONTROL
+```
+
+Após a Release v2.0, qualquer trabalho v2.x→v3.0 exige extensão formal do roadmap e
+aprovação do CTO antes de código. `TODAY_TARGET=V3_0` não substitui esse gate.
+
 ---
 
 # 4. Fases Operacionais

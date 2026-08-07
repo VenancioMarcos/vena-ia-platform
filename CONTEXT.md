@@ -45,6 +45,11 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   registram Packages 1–2 completos, versões
   API/FastAPI/health/OpenAPI/frontend `1.9.0` e Alembic `d39a7b2c5e11`. R-042 e
   R-043 continuam residuais/monitorados; nenhum deploy ou piloto real foi realizado.
+* **v2.0 TASK-V20-001:** o CTO aprovou a decomposição em três Packages e a DEC-035.
+  O Package 1, workflow determinístico integrado, está `APPROVED_FOR_IMPLEMENTATION`;
+  assistência especializada/Research grounded e dashboard/evidence/E2E permanecem
+  `NOT_STARTED`. A PR documental #22 deve ser integrada antes da branch funcional.
+  Migration, deploy e CNC executável não estão autorizados.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

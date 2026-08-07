@@ -460,3 +460,18 @@ O proprietário aprovou diretamente o `OWNER_RELEASE_GATE_V1_9`. A PR #21 foi
 retirada de Draft e integrada por Squash Merge em `b149ac1`. A autorização cobre
 somente o fechamento documental, tag anotada, GitHub Release e validação direta;
 deploy, piloto real, implementação v2.0 e CNC executável permanecem fora do escopo.
+
+## 2026-08-07 — TASK-V20-000
+
+Após validar a Release v1.9.0, o CTO autorizou somente auditoria e decomposição da
+v2.0. A ordem exige mapear CAD→report, definir CAM preliminar sem toolpath, avaliar
+agentes/Research/dashboard, criar a decisão proposta e abrir Draft PR documental.
+Implementação, migration, deploy e CNC executável permanecem proibidos até aprovação.
+
+## 2026-08-07 — TASK-V20-001
+
+O CTO aprovou a TASK-V20-000, formalizou a DEC-035 e autorizou integrar a PR
+documental #22. Após a integração, autorizou criar a branch
+`codex/v2.0-integrated-engineering-platform` e implementar exclusivamente o Package
+1: workflow determinístico CAD→features→Engineering→process planning→plano CNC
+neutro→relatório. Packages 2 e 3, migration, deploy e CNC executável permanecem fora.
