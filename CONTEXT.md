@@ -27,8 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.7 concluídas e publicadas; v1.8 Packages 1–4 concluídos na
-  Draft PR #19 e release candidate 1.8.0 em validação, sem merge/tag/Release.
+* **Fase:** v0.1–v1.8 concluídas e publicadas; a v1.9 ainda não foi iniciada.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.
@@ -41,6 +40,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   usuário a candidato preliminar. Apenas through hole produz
   `DRILLING_CANDIDATE`; demais primitivas falham fechadas. Material/máquina/ferramenta
   explícitos reutilizam a recommendation v1.7, ainda não executável e sob revisão humana.
+* **Release v1.8.0:** a PR [#19](https://github.com/VenancioMarcos/vena-ia-platform/pull/19)
+  foi integrada por Squash Merge em `a066c1c`. A tag anotada e a
+  [GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.8.0)
+  foram publicadas sem deploy. O release preserva revisão humana e não contém saída CNC executável.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.8.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head oficial é `c27f6d9e4a10`.

@@ -698,9 +698,9 @@ explícitos reutilizam Engineering v1.7; missing inputs falham fechados. O gate
 “features alimentam planejamento sem remover revisão humana” está `SATISFIED` por evidência,
 sem antecipar encerramento da v1.8, CAM ou liberação CNC.
 
-**Release candidate 1.8.0:** Packages 1–4 funcionalmente fechados. Versões e notas
-estão preparadas na Draft PR #19; merge, tag, GitHub Release, deploy e v1.9 permanecem
-no gate de autorização direta do proprietário.
+**Release v1.8.0:** Packages 1–4 foram integrados pela PR #19 e publicados por tag
+anotada/GitHub Release após autorização direta do proprietário. Validação final
+preservou revisão humana e ausência de saída CNC executável; nenhum deploy foi realizado.
 
 Objetivo: evoluir do parser textual para geometria validada e formatos previstos.
 

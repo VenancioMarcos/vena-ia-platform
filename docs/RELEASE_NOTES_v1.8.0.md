@@ -1,6 +1,6 @@
 # Vena_IA Platform v1.8.0 — CAD Interoperability and Feature Recognition
 
-**Status:** release candidate; not published
+**Status:** published; no deploy
 
 ## Highlights
 
@@ -33,7 +33,8 @@ Contracts preserve kernel, feature-rule, planning-rule, Engineering-rule and cat
 traceability. The release candidate gate requires Ruff, mypy, pytest, frontend,
 OpenAPI, Alembic head `c27f6d9e4a10`, runtime policy, Compose and all applicable CI.
 
-## Publication gate
+## Publication
 
-PR #19 remains Draft. Squash Merge, tag `v1.8.0`, GitHub Release, deploy and v1.9
-require a later direct authorization from the owner.
+PR #19 was integrated by Squash Merge after direct owner authorization. The annotated
+tag `v1.8.0` and GitHub Release were published. No deploy or CNC production action
+was performed; v1.9 starts only from its documented Package 1 scope.

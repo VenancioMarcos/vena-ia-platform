@@ -253,3 +253,11 @@ Frontend typecheck/build, runtime policy, Compose config e secret scan passaram.
 O wrapper pnpm local estava em Node 24/pnpm 11.16 e tentou registry; os scripts
 instalados passaram diretamente, enquanto Node 22.20/pnpm 11.9 permanece gate do CI.
 PR #19 continua Draft; merge, tag, Release, deploy e v1.9 não estão autorizados.
+
+## 2026-08-06 — Release v1.8.0 authorized finalization
+
+O proprietário autorizou diretamente retirar Draft, Squash Merge, tag e GitHub
+Release. A PR #19 foi integrada em `a066c1c`; a árvore da main é idêntica ao RC
+validado. O gate pós-merge aprovou 43 testes focais, Alembic `c27f6d9e4a10`, runtime
+policy e Compose. A tag/Release `v1.8.0` são publicadas sem deploy; v1.9 somente pode
+iniciar no Package 1 oficial após consulta a ROADMAP/DECISIONS.

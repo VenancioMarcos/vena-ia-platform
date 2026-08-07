@@ -405,3 +405,10 @@ O CTO aprovou o Package 4 no head `4189875`, declarou o gate do roadmap satisfei
 e proibiu Package 5 funcional. A ordem prepara e valida o release candidate 1.8.0,
 mantendo a PR #19 Draft. Squash Merge, tag, GitHub Release, deploy e v1.9 exigem
 autorização direta posterior do proprietário; o estado terminal esperado é o Owner Gate.
+
+## 2026-08-06 — autorização direta Release v1.8.0
+
+O proprietário autorizou retirar a PR #19 de Draft, Squash Merge, sincronização e
+validação da main, tag anotada, GitHub Release e validação direta. Após a Release,
+autoriza iniciar exclusivamente o primeiro Package da v1.9 conforme ROADMAP vigente.
+Deploy, piloto externo, serviço pago, produção/toolpath/G-code/CNC permanecem proibidos.
