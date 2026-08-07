@@ -746,6 +746,107 @@ testados e zero saída liberada para máquina.
 
 Condição de avanço: aceite humano do piloto e riscos de produção tratados.
 
+### Decomposição oficial — TASK-V19-001
+
+Estado: `APPROVED_FOR_IMPLEMENTATION`. O CTO aprovou a baseline de dois Packages e
+autorizou exclusivamente a implementação funcional do Package 1. Package 2 permanece
+`NOT_STARTED` e exige autorização específica posterior.
+
+#### Package 1 — Controlled Pilot Governance and Organizational Foundation
+
+Objetivo: criar a fronteira mínima de organização/equipe, papéis e contexto de
+piloto necessária para que qualquer ensaio posterior possua dono, escopo,
+isolamento e aceite rastreáveis.
+
+Escopo: organization e team mínimos no Modular Monolith; membership/papéis
+allowlisted; ownership organizacional sem substituir a identidade JWT; onboarding
+controlado; contexto de piloto com estado e responsável; checklist de readiness e
+privacidade; autorização e isolamento cross-organization/cross-team.
+
+Dependências: v1.2 autenticação/Redis; matriz de autorização; v1.3 recovery; v1.4
+auditoria/observabilidade; v1.6 runtime/resiliência/capacidade; v1.7–v1.8 contratos
+Engineering/CAD; `SECURITY.md` e limites operacionais permanentes.
+
+Entregáveis: decisão/ADR de tenancy mínima; modelos/repositories/services/API
+autenticada; contratos versionados de organization, membership, pilot context e
+readiness checklist; migration única quando comprovadamente necessária; onboarding
+sem convite externo automático; matriz de autorização atualizada; evidência sintética.
+
+Contratos propostos: `vena-ia.organization/v1`, `vena-ia.membership/v1`,
+`vena-ia.pilot-context/v1` e `vena-ia.pilot-readiness-checklist/v1`. Mudança
+semântica futura exige nova versão.
+
+Dados: somente IDs técnicos, nomes operacionais mínimos, papel allowlisted, estado,
+responsável, timestamps e evidência/checklist categorizada. Não coletar dados de
+cliente real, documento pessoal, credencial, conteúdo CAD/PDF/IA ou dado sensível
+desnecessário. Retenção/exclusão de contexto de piloto deve ser decidida antes de uso real.
+
+Riscos: R-001–R-004/R-013/R-014/R-030 de identidade e autorização, R-028 de
+isolamento, R-031/R-034 residuais e R-042 de isolamento organizacional. Nenhum risco
+é considerado resolvido por criar o contrato.
+
+Testes previstos: contrato/migration; auth; matriz completa de papéis; membership;
+owner/admin/member; cross-organization e cross-team 404; mass assignment; papel
+forjado por body/header; `X-User-ID`; onboarding/revogação; estados/checklist;
+privacidade e logs; concorrência/idempotência; regressão dos recursos próprios existentes.
+
+Critérios de aceite: nenhuma identidade fora do token/banco; isolamento fail-closed;
+papéis de menor privilégio; onboarding reversível e auditável; checklist não pode
+declarar piloto aprovado; dados allowlisted; zero deploy, piloto real ou saída CNC.
+
+Condição de avanço: modelo organizacional e contexto sintético aprovados no CI,
+matriz/risco/documentação revisados e autorização específica do CTO para Package 2.
+
+Fora do escopo: empresa/cliente real, convite por e-mail, billing, SSO/SCIM, domínio,
+integração externa, deploy, SLO produtivo, piloto real, dado pessoal, CAM executável,
+toolpath, G-code ou máquina CNC.
+
+#### Package 2 — Controlled Operational Rehearsal and Virtual Pilot Evidence
+
+Objetivo: compor, somente sobre o contexto sintético autorizado do Package 1, a
+jornada piloto reversível e as evidências operacionais já existentes.
+
+Escopo: onboarding walkthrough; runbooks integrados; restore/incident drills;
+objetivos SLO propostos com janela/fonte/dono (não compromisso produtivo); aceite do
+perfil de capacidade descartável; checklist de privacidade; suporte/escalonamento;
+jornada E2E e validação virtual de plano CNC neutro sem execução.
+
+Dependências: Package 1 aprovado; contratos de backup/restore, observabilidade,
+incidente, runtime, resiliência e capacidade; planos CNC neutros v0.8; riscos
+R-021–R-041 e autorização específica para qualquer ambiente externo.
+
+Entregáveis: contrato versionado de evidence bundle do piloto; matriz runbook/gate;
+restore e incident evidence sintéticas; proposta SLO explicitamente não produtiva;
+capacity acceptance; checklist de privacidade/suporte; jornada E2E; relatório de
+validação virtual com `SIMULATION_ONLY`/revisão humana.
+
+Contratos propostos: `vena-ia.pilot-evidence/v1` e
+`vena-ia.virtual-cnc-plan-validation/v1`, reutilizando os contratos existentes sem
+duplicar backup, observabilidade, capacidade, Engineering, CAD ou CNC.
+
+Dados: exclusivamente fixtures sintéticas e evidência agregada/allowlisted fora do
+repositório quando aplicável; nenhum dado real de cliente ou máquina.
+
+Riscos: R-021–R-029, R-031–R-034, R-038–R-041 e R-042; simulação não elimina
+risco de produção, e métricas descartáveis não constituem SLA/SLO produtivo.
+
+Testes previstos: jornada piloto sintética; isolamento organizacional; restore;
+incidente; readiness/degradação; carga-alvo bounded; acessibilidade; privacidade;
+rollback; evidência/checksum; plano CNC neutro virtual sem G/M-code, transmissão ou máquina.
+
+Critérios de aceite: todos os gates possuem dono/evidência/rollback; falha é explícita;
+zero dado real e zero liberação CNC; aceite humano registrado; nenhuma afirmação de
+capacidade produtiva, deploy, SLA ou segurança de máquina.
+
+Condição de avanço: CTO e proprietário aceitam formalmente a evidência do piloto
+sintético e tratam riscos residuais; qualquer piloto externo/deploy continua missão separada.
+
+Fora do escopo: deploy, empresa/usuário real, publicação comercial, monitoramento
+externo, serviço pago, produção, pós-processador, G-code/M-code, DNC, toolpath ou controle CNC.
+
+Package 3: não proposto. Os dois Packages acima cobrem as entregas oficiais sem
+fragmentação artificial; nova decomposição exige decisão registrada.
+
 ---
 
 ## v2.0 — Integrated Engineering Platform

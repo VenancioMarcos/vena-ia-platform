@@ -1,19 +1,22 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V18_005
-TITLE=FINAL_RELEASE_CANDIDATE_VALIDATION_AND_OWNER_GATE
-BRANCH=codex/v1.8-cad-interoperability
-START_HEAD=418987574582191f6cf766cf98497ea14d29b019
-EXPECTED_STATE=BLOCKED_REAL_OWNER_ACTION_REQUIRED
-PULL_REQUEST=19
-PULL_REQUEST_DRAFT=KEEP_DRAFT
-MERGE=PROHIBITED
+MISSION=TASK_V19_001
+TITLE=CONTROLLED_PILOT_GOVERNANCE_AND_ORGANIZATIONAL_FOUNDATION
+DOCUMENTAL_BRANCH=codex/v1.9-roadmap-decomposition
+FUNCTIONAL_BRANCH=codex/v1.9-controlled-pilot-readiness
+START_HEAD=1384b6c2acce25471f48d2990c07547a2bd6f651
+EXPECTED_STATE=VENA_IA_V1_9_PACKAGE_1_READY_FOR_CTO_REVIEW
+DOCUMENTAL_PULL_REQUEST=20
+FUNCTIONAL_PULL_REQUEST=DRAFT_REQUIRED
+PACKAGE_1=APPROVED_FOR_IMPLEMENTATION
+PACKAGE_2=NOT_STARTED
 TAG_RELEASE=PROHIBITED
 DEPLOY=PROHIBITED
-RELEASE_CANDIDATE=AUTHORIZED
+PILOT_REAL=PROHIBITED
 TOOLPATH_GCODE_CNC=PROHIBITED
 ```
 
-Escopo: preparar e validar o release candidate v1.8.0. PR permanece Draft; merge,
-tag, Release, deploy e v1.9 aguardam autorização direta posterior do proprietário.
+Escopo: integrar a baseline documental aprovada, implementar exclusivamente o
+Package 1 com isolamento fail-closed e manter a PR funcional em Draft. Package 2,
+piloto real, deploy e saídas CNC executáveis são proibidos.

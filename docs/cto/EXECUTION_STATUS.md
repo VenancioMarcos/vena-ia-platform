@@ -261,3 +261,18 @@ Release. A PR #19 foi integrada em `a066c1c`; a árvore da main é idêntica ao 
 validado. O gate pós-merge aprovou 43 testes focais, Alembic `c27f6d9e4a10`, runtime
 policy e Compose. A tag/Release `v1.8.0` são publicadas sem deploy; v1.9 somente pode
 iniciar no Package 1 oficial após consulta a ROADMAP/DECISIONS.
+
+## 2026-08-06 — TASK-V19-000 decomposition
+
+Main `997f0ba`, tag/Release v1.8.0 e Working Tree limpa foram confirmadas; não
+existia branch/PR v1.9. A documentação oficial não possuía Packages. A proposta
+mínima registra Package 1 de governança/organização e Package 2 de ensaio
+operacional/validação virtual; Package 3 não é necessário. DEC-034 permanece
+proposta para aprovação do CTO e R-042 registra isolamento organizacional crítico.
+Nenhuma implementação, migration, deploy, piloto real ou saída CNC foi iniciada.
+
+## 2026-08-06 — TASK-V19-001 aprovação
+
+O CTO aprovou DEC-034 e tornou a decomposição em dois Packages a baseline oficial.
+Package 1 está `APPROVED_FOR_IMPLEMENTATION`; Package 2 permanece `NOT_STARTED`.
+R-042 continua CRÍTICO e ABERTO/GATE, sem redução decorrente da aprovação documental.

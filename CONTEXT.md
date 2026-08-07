@@ -27,7 +27,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.8 concluídas e publicadas; a v1.9 ainda não foi iniciada.
+* **Fase:** v0.1–v1.8 concluídas e publicadas. A TASK-V19-001 aprovou a decomposição
+  oficial da v1.9 em dois Packages e autorizou exclusivamente o Package 1.
+* **v1.9 Package 1 aprovado:** Controlled Pilot Governance and Organizational
+  Foundation formaliza Organization/Team, membership/papéis, ownership, onboarding,
+  pilot context, readiness/privacy e isolamento. Estado `APPROVED_FOR_IMPLEMENTATION`;
+  deploy e piloto real permanecem proibidos.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.
