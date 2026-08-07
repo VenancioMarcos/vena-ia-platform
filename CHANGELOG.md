@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.8 Package 2
+* Gate `GO_CONTROLLED_INTEGRATION` fixa cadquery-ocp 7.9.3.1.1/OCCT 7.9.3,
+  com import lazy, limites, erros seguros e autoridade geométrica separada do parser textual.
+* STEP real passa a fornecer bounding box topológica, área, volume somente sólido,
+  validade e shape básico, validados por corpus analítico; tolerância industrial permanece indisponível.
+
 ### Adicionado — v1.8 Package 1
 * ADR-0015 aprova OpenCascade para integração controlada com restrições, sem
   instalar dependência pesada antes dos gates multiplataforma.

@@ -20,6 +20,7 @@ class CADAnalysisResponse(BaseModel):
     volume: float | None
     volume_status: str
     report: str
+    geometry: "GeometryAnalysisContract"
 
 
 class GeometryValue(BaseModel):

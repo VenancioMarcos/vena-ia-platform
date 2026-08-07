@@ -683,6 +683,10 @@ Condição de avanço: processo preliminar reproduzível sem alegar liberação 
 `vena-ia.geometry-analysis/v1` é validado sem instalar o kernel. Área, volume,
 topologia e tolerância permanecem `NOT_AVAILABLE` até gates controlados.
 
+**Estado do Package 2:** `GO_CONTROLLED_INTEGRATION` comprovado com
+cadquery-ocp 7.9.3.1.1/OCCT 7.9.3 em adapter lazy. Box analítico valida envelope,
+área, volume e topologia; tolerância de fabricação e feature recognition continuam fora.
+
 Objetivo: evoluir do parser textual para geometria validada e formatos previstos.
 
 Entregas: ADR de kernel/licença/portabilidade; STEP topológico com unidade,

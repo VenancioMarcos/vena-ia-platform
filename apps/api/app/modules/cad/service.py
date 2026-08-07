@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from app.modules.cad.parser import StepAnalysis, StepTextParser
+from app.modules.cad.kernel import GeometryKernelError, KernelGeometry, OpenCascadeGeometryKernel
 from app.modules.documents.service import DocumentService, InvalidDocumentError
 from app.modules.documents.storage import DocumentStorage, StorageError
 
@@ -15,6 +16,8 @@ class CADDocumentAnalysis:
     source_filename: str
     analysis: StepAnalysis
     report: str
+    geometry: KernelGeometry | None = None
+    geometry_warning: str | None = None
 
 
 class CADAnalysisService:
@@ -37,6 +40,12 @@ class CADAnalysisService:
         except StorageError as exc:
             raise CADContentUnavailableError("CAD document storage unavailable") from exc
         analysis = self._parser.parse(content)
+        geometry = None
+        geometry_warning = None
+        try:
+            geometry = OpenCascadeGeometryKernel().analyze_step(content)
+        except GeometryKernelError as exc:
+            geometry_warning = str(exc)
         dimensions = (
             "unavailable"
             if analysis.bounding_box is None
@@ -54,4 +63,6 @@ class CADAnalysisService:
             source_filename=document.filename,
             analysis=analysis,
             report=report,
+            geometry=geometry,
+            geometry_warning=geometry_warning,
         )

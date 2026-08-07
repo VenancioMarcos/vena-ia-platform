@@ -18,6 +18,7 @@ dependencies = [
   "pypdf>=6.1.0,<7.0.0",
   "pgvector>=0.4.1,<0.5.0",
   "redis>=5.2.0,<7.0.0",
+  "cadquery-ocp==7.9.3.1.1",
 ]
 
 [project.optional-dependencies]
