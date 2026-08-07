@@ -1,6 +1,6 @@
 [project]
 name = "vena-ia-api"
-version = "1.7.0"
+version = "1.8.0"
 description = "Backend API for Vena_IA Platform"
 requires-python = ">=3.13"
 dependencies = [
@@ -18,6 +18,7 @@ dependencies = [
   "pypdf>=6.1.0,<7.0.0",
   "pgvector>=0.4.1,<0.5.0",
   "redis>=5.2.0,<7.0.0",
+  "cadquery-ocp==7.9.3.1.1",
 ]
 
 [project.optional-dependencies]

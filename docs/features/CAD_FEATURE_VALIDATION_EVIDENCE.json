@@ -1,0 +1,24 @@
+{
+  "schema_version": "vena-ia.feature-validation-evidence/v1",
+  "feature_rule_version": "1.0.0",
+  "kernel": "OpenCascade Technology",
+  "kernel_version": "7.9.3",
+  "binding": "cadquery-ocp==7.9.3.1.1",
+  "source": "synthetic executable corpus; no CAD payload retained",
+  "tolerance": {"value": 0.000001, "unit": "STEP length unit"},
+  "cases": [
+    {"case": "box", "expected": "6 PLANAR_FACE; no manufacturing feature", "result": "PASS", "false_positive": false, "false_negative": false},
+    {"case": "external-cylinder", "expected": "CYLINDRICAL_FACE; no hole", "result": "PASS", "false_positive": false, "false_negative": false},
+    {"case": "box-through-bore", "expected": "1 THROUGH_CYLINDRICAL_HOLE; diameter 4 mm; depth 30 mm", "result": "PASS", "false_positive": false, "false_negative": false},
+    {"case": "box-two-through-bores", "expected": "2 independently referenced THROUGH_CYLINDRICAL_HOLE features", "result": "PASS", "false_positive": false, "false_negative": false},
+    {"case": "box-blind-bore", "expected": "cylindrical primitive only; closed hole deferred", "result": "PASS", "false_positive": false, "false_negative": null},
+    {"case": "invalid-topology", "expected": "INVALID_TOPOLOGY and zero features", "result": "PASS", "false_positive": false, "false_negative": null},
+    {"case": "malformed-step", "expected": "safe kernel/parser error and zero reliable features", "result": "PASS", "false_positive": false, "false_negative": null},
+    {"case": "deterministic-replay", "expected": "same STEP + kernel + rule produces equal ordered result", "result": "PASS", "false_positive": false, "false_negative": false}
+  ],
+  "limitations": [
+    "Only the explicitly documented synthetic corpus boundary is validated.",
+    "Closed holes and slots are deferred.",
+    "No manufacturing intent or manufacturability claim is made."
+  ]
+}

@@ -8,6 +8,35 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.8.0] — 2026-08-06 — CAD Interoperability and Feature Recognition
+
+### Adicionado — v1.8 Package 4
+* Ponte `vena-ia.feature-planning/v1` rule `1.0.0` transforma somente furo
+  cilíndrico passante validado em `DRILLING_CANDIDATE` não executável.
+* Catálogos explicitamente selecionados reutilizam `engineering-recommendation/v1`;
+  ausência permanece `REQUIRED_INPUT` e nenhuma fórmula ou engine foi duplicada.
+* Faces planares/cilíndricas, contexto ambíguo e inválido não geram falsa operação;
+  auth, ownership, revisão humana e ausência de CAM/toolpath/G-code são preservados.
+
+### Adicionado — v1.8 Package 3
+* Contrato `vena-ia.geometry-features/v1` e recognizer OCCT rule `1.0.0`
+  distinguem primitivas planares/cilíndricas de furo cilíndrico passante estrito.
+* Corpus sintético reproduzível valida dimensões, determinismo, falsos positivos,
+  falso negativo suportado, topologia inválida e erro seguro, sempre com revisão humana.
+* Furo cego, slot, CAM, toolpath, G-code e inferência de manufaturabilidade permanecem adiados.
+
+### Adicionado — v1.8 Package 2
+* Gate `GO_CONTROLLED_INTEGRATION` fixa cadquery-ocp 7.9.3.1.1/OCCT 7.9.3,
+  com import lazy, limites, erros seguros e autoridade geométrica separada do parser textual.
+* STEP real passa a fornecer bounding box topológica, área, volume somente sólido,
+  validade e shape básico, validados por corpus analítico; tolerância industrial permanece indisponível.
+
+### Adicionado — v1.8 Package 1
+* ADR-0015 aprova OpenCascade para integração controlada com restrições, sem
+  instalar dependência pesada antes dos gates multiplataforma.
+* Contrato `vena-ia.geometry-analysis/v1` representa resultados indisponíveis
+  explicitamente, sem inventar área, volume, topologia ou tolerância.
+
 ## [1.7.0] — 2026-08-06 — Engineering Catalogs and CAM
 
 ### Adicionado — v1.7 Package 3

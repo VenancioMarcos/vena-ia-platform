@@ -16,8 +16,7 @@ class BoundingBox:
     @property
     def dimensions(self) -> tuple[float, float, float]:
         return tuple(
-            maximum - minimum
-            for minimum, maximum in zip(self.minimum, self.maximum, strict=True)
+            maximum - minimum for minimum, maximum in zip(self.minimum, self.maximum, strict=True)
         )  # type: ignore[return-value]
 
 
@@ -65,9 +64,7 @@ class StepTextParser:
         points: list[tuple[float, float, float]] = []
         for coordinates in self._point.findall(text):
             try:
-                x, y, z = (
-                    float(value.replace("D", "E")) for value in coordinates
-                )
+                x, y, z = (float(value.replace("D", "E")) for value in coordinates)
                 points.append((x, y, z))
             except ValueError as exc:
                 raise StepParseError("STEP contains invalid Cartesian coordinates") from exc

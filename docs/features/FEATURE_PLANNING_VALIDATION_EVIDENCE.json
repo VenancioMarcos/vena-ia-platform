@@ -1,0 +1,19 @@
+{
+  "schema_version": "vena-ia.feature-planning-evidence/v1",
+  "feature_rule_version": "1.0.0",
+  "planning_rule_version": "1.0.0",
+  "engineering_rule_version": "engineering-rule/v1.0.0 when explicitly invoked",
+  "source": "reused synthetic Package 3 corpus; no CAD payload retained",
+  "cases": [
+    {"feature_type": "THROUGH_CYLINDRICAL_HOLE", "planning_candidate": "DRILLING_CANDIDATE", "required_inputs": ["material", "machine", "tool"], "result": "PASS", "review_required": true},
+    {"feature_type": "CYLINDRICAL_FACE", "planning_candidate": null, "result": "PASS_NO_FALSE_DRILLING_OR_TURNING", "review_required": true},
+    {"feature_type": "PLANAR_FACE", "planning_candidate": null, "result": "PASS_NO_APPROVED_MILLING", "review_required": true},
+    {"feature_type": "AMBIGUOUS", "planning_candidate": null, "result": "PASS_FAIL_CLOSED", "review_required": true},
+    {"feature_type": "INVALID", "planning_candidate": null, "result": "PASS_FAIL_CLOSED", "review_required": true},
+    {"feature_type": "THROUGH_CYLINDRICAL_HOLE", "planning_candidate": "DRILLING_CANDIDATE", "missing_inputs": ["material", "machine", "tool"], "result": "PASS_NO_PARAMETERS", "review_required": true},
+    {"feature_type": "THROUGH_CYLINDRICAL_HOLE", "planning_candidate": "DRILLING_CANDIDATE", "catalogs": "explicit synthetic catalog IDs", "result": "PASS_REUSED_ENGINEERING_RECOMMENDATION_V1", "review_required": true},
+    {"feature_type": "THROUGH_CYLINDRICAL_HOLE", "planning_candidate": "DRILLING_CANDIDATE", "result": "PASS_DETERMINISTIC_REPLAY", "review_required": true}
+  ],
+  "forbidden_outputs": ["CAM", "toolpath", "G-code", "M-code", "NC file", "CNC transmission"],
+  "executable_output": false
+}

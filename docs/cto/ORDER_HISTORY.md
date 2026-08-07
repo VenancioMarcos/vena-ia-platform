@@ -1,5 +1,11 @@
 # Histórico de ordens do CTO
 
+## Política permanente — fluxo CTO ↔ Codex
+
+O proprietário ativou execução contínua obrigatória: toda task termina com status
+entregue ao CTO, estado `AWAITING_CTO_NEXT_ORDER`, captura integral da ordem
+seguinte e retomada imediata. Somente `ENCERRAR FLUXO` encerra o ciclo.
+
 ## 2026-08-06 — TASK-V17-003
 
 O CTO aprovou a TASK-V17-002 e ordenou concluir a v1.7 na mesma PR #18 com
@@ -374,3 +380,28 @@ importa o registro oficial e adiciona regressão em subprocesso limpo. Backend
 `31131271003`, Frontend `31131271784`, Runtime Policy `31131271162` e Controlled
 Capacity `31131271390` passaram no mesmo head. A PR #17 segue Draft e mergeável;
 merge, tag, Release e deploy não foram realizados.
+
+## 2026-08-06 — TASK-V18-003
+
+O CTO aprovou a TASK-V18-002 no head técnico `54f353c` e preservou o commit de
+política `1148f85`. A ordem autoriza reconhecimento inicial, conservador,
+determinístico e rastreável de features na branch
+`codex/v1.8-cad-interoperability` e Draft PR #19. Proíbe merge, tag, Release,
+deploy, v1.9, CAM, toolpath, G-code e transmissão CNC. Package 3 implementa apenas
+faces planares/cilíndricas e furo passante sob evidência estrita; closed hole e
+slot permanecem adiados.
+
+## 2026-08-06 — TASK-V18-004
+
+O CTO aprovou o Package 3 no head `43bda36` e autorizou ponte contratual entre
+`geometry-features/v1` e Engineering v1.7 na mesma Draft PR #19. A ordem exige
+candidates não executáveis, catálogos explícitos, missing inputs, rastreabilidade,
+falsos positivos de planning e revisão humana. Merge, tag, Release, deploy, v1.9,
+CAM, toolpath, G-code, M-code, pós-processador e transmissão CNC são proibidos.
+
+## 2026-08-06 — TASK-V18-005
+
+O CTO aprovou o Package 4 no head `4189875`, declarou o gate do roadmap satisfeito
+e proibiu Package 5 funcional. A ordem prepara e valida o release candidate 1.8.0,
+mantendo a PR #19 Draft. Squash Merge, tag, GitHub Release, deploy e v1.9 exigem
+autorização direta posterior do proprietário; o estado terminal esperado é o Owner Gate.

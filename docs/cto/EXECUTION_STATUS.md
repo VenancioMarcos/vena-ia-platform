@@ -1,5 +1,16 @@
 # Estado de execução CTO
 
+```text
+CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
+FLOW_RECOVERY_APPLIED=TRUE
+LAST_TERMINAL_TASK=TASK-V18-002
+LAST_TERMINAL_HEAD=54f353c9b7cd04245e404cabf8c7adf220593d49
+OPERATIONAL_STATE=AWAITING_CTO_NEXT_ORDER
+FLOW_TERMINATION_WITHOUT_EXPLICIT_ORDER=PROHIBITED
+STATUS_BEFORE_WAITING=MANDATORY
+NEXT_ORDER_CAPTURE=MANDATORY
+```
+
 TASK-V17-003: relatório versionado, conclusão segura, checklist, incerteza,
 ausências e rastreabilidade implementados; validação terminal em andamento.
 
@@ -213,3 +224,32 @@ indisponibilidade sem bypass e contratos/autorização preservados.
 ### Próximo passo
 
 Revisão do CTO na Draft PR #13; nenhuma ação posterior foi iniciada.
+
+## 2026-08-06 — TASK-V18-003 Package 3 local terminal
+
+`FeatureRecognizer` rule `1.0.0` consome a mesma shape OCCT do adapter e expõe
+`vena-ia.geometry-features/v1`. O corpus sintético aprovou primitivas planares e
+cilíndricas, um e dois furos passantes, rejeição de cilindro externo/furo cego,
+topologia inválida, malformed e determinismo. Closed hole e slot foram adiados.
+Ruff, mypy em 151 arquivos e pytest integral (`358 passed, 9 skipped`) passaram;
+OpenAPI 3.1.0 mantém 60 paths. Não houve migration, merge, tag, Release ou deploy.
+
+## 2026-08-06 — TASK-V18-004 Package 4 local terminal
+
+`FeaturePlanningBridge` rule `1.0.0` expõe `vena-ia.feature-planning/v1` em rota
+autenticada. Through hole produz somente `DRILLING_CANDIDATE` não executável;
+primitivas e contextos ambíguos não geram candidate. Três catálogos explícitos
+reutilizam a recommendation v1.7; ausências permanecem `REQUIRED_INPUT`.
+Ruff, mypy em 152 arquivos e pytest integral (`370 passed, 9 skipped`) passaram;
+OpenAPI 3.1.0 possui 61 paths. O gate de roadmap está `SATISFIED` sem CAM,
+toolpath, G-code, merge, tag, Release ou deploy.
+
+## 2026-08-06 — TASK-V18-005 release candidate local gate
+
+Versões API/FastAPI/health/OpenAPI e frontend foram alinhadas em `1.8.0`; migration
+head permanece `c27f6d9e4a10`. Corpus CAD/features/planning focal aprovou 54 testes.
+Ruff, mypy em 152 arquivos e regressão integral (`370 passed, 9 skipped`) passaram.
+Frontend typecheck/build, runtime policy, Compose config e secret scan passaram.
+O wrapper pnpm local estava em Node 24/pnpm 11.16 e tentou registry; os scripts
+instalados passaram diretamente, enquanto Node 22.20/pnpm 11.9 permanece gate do CI.
+PR #19 continua Draft; merge, tag, Release, deploy e v1.9 não estão autorizados.

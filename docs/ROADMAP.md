@@ -679,6 +679,29 @@ Condição de avanço: processo preliminar reproduzível sem alegar liberação 
 
 ## v1.8 — CAD Interoperability and Feature Recognition
 
+**Estado do Package 1:** ADR-0015 seleciona OpenCascade com restrições e o contrato
+`vena-ia.geometry-analysis/v1` é validado sem instalar o kernel. Área, volume,
+topologia e tolerância permanecem `NOT_AVAILABLE` até gates controlados.
+
+**Estado do Package 2:** `GO_CONTROLLED_INTEGRATION` comprovado com
+cadquery-ocp 7.9.3.1.1/OCCT 7.9.3 em adapter lazy. Box analítico valida envelope,
+área, volume e topologia; tolerância de fabricação e feature recognition continuam fora.
+
+**Estado do Package 3:** contrato `vena-ia.geometry-features/v1` e rule `1.0.0`
+reconhecem faces planares/cilíndricas e furo passante estrito sobre corpus sintético.
+Furo cego e slot foram adiados por evidência insuficiente; revisão humana permanece
+obrigatória e nenhuma integração de produção com engineering/CAM foi ativada.
+
+**Estado do Package 4:** `vena-ia.feature-planning/v1` rule `1.0.0` comprova a
+ponte rastreável de through hole a `DRILLING_CANDIDATE` não executável. Catálogos
+explícitos reutilizam Engineering v1.7; missing inputs falham fechados. O gate
+“features alimentam planejamento sem remover revisão humana” está `SATISFIED` por evidência,
+sem antecipar encerramento da v1.8, CAM ou liberação CNC.
+
+**Release candidate 1.8.0:** Packages 1–4 funcionalmente fechados. Versões e notas
+estão preparadas na Draft PR #19; merge, tag, GitHub Release, deploy e v1.9 permanecem
+no gate de autorização direta do proprietário.
+
 Objetivo: evoluir do parser textual para geometria validada e formatos previstos.
 
 Entregas: ADR de kernel/licença/portabilidade; STEP topológico com unidade,

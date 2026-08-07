@@ -135,10 +135,10 @@ def validate_repository(root: Path) -> list[str]:
         if action_ref not in workflow_text:
             violations.append(f"workflow action pin is unused: {action_ref}")
 
-    migration = root / "apps/api/migrations/versions" / (
-        f"{policy['migration_head']}_add_asynchronous_jobs.py"
+    migration_matches = list(
+        (root / "apps/api/migrations/versions").glob(f"{policy['migration_head']}_*.py")
     )
-    if not migration.is_file():
+    if len(migration_matches) != 1:
         violations.append("runtime-policy.json: migration_head file is missing")
 
     update_runbook = root / "docs/runbooks/RUNTIME_AND_IMAGE_UPDATES.md"

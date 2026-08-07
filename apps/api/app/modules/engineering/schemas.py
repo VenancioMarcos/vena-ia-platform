@@ -121,3 +121,61 @@ class EngineeringReviewReport(BaseModel):
     uncertainty: str
     review_checklist: list[ReviewChecklistItem]
     conclusion: str
+
+
+class FeaturePlanningRequest(BaseModel):
+    document_id: str = Field(min_length=1, max_length=255)
+    feature_id: str = Field(pattern=r"^feature-[0-9]{4}$")
+    material_id: str | None = Field(default=None, min_length=1, max_length=255)
+    machine_id: str | None = Field(default=None, min_length=1, max_length=255)
+    tool_id: str | None = Field(default=None, min_length=1, max_length=255)
+
+
+class FeaturePlanningDimension(BaseModel):
+    name: str
+    value: float | None
+    unit: str
+    source: str
+    status: str
+
+
+class FeaturePlanningCandidate(BaseModel):
+    candidate_type: str
+    operation: str
+    status: str
+    evidence: list[str]
+    executable_output: bool = False
+
+
+class EngineeringRecommendationReference(BaseModel):
+    schema_version: str
+    status: str
+    compatibility: str
+    operation: str
+    preliminary_parameters: dict[str, AvailabilityValue]
+    limitations: list[str]
+    traceability: list[str]
+    data_versions: dict[str, str]
+    rule_version: str
+
+
+class FeaturePlanningResponse(BaseModel):
+    schema_version: str = "vena-ia.feature-planning/v1"
+    status: str
+    feature_schema_version: str = "vena-ia.geometry-features/v1"
+    engineering_schema_version: str = "vena-ia.engineering-recommendation/v1"
+    feature_id: str
+    feature_type: str
+    feature_dimensions: list[FeaturePlanningDimension]
+    planning_rule_version: str
+    planning_candidates: list[FeaturePlanningCandidate]
+    required_inputs: list[str]
+    unavailable_inputs: list[str]
+    engineering_recommendation: EngineeringRecommendationReference | None
+    planning_context_completeness: str
+    geometric_evidence_confidence: str
+    assumptions: list[str]
+    limitations: list[str]
+    traceability: list[str]
+    uncertainty: str
+    review_status: str = REVIEW_STATUS
