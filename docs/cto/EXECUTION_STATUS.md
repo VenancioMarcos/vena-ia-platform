@@ -521,3 +521,11 @@ permanecem verdes. A validação focal pós-merge aprovou 70 testes, versões 2.
 OpenAPI com 79 paths, oito contratos Engineering/governance e Alembic
 `e61c4f8a2b90`. O fechamento documental prepara tag e GitHub Release v2.1.0; não há
 deploy, produção, CNC executável ou início da v2.2.
+
+A tag anotada `v2.1.0` foi publicada com objeto
+`57462f148773df858ec69a68fbaac7c805c1b6c4` e alvo
+`a086b284f95f586f12509d609a01546d43a92c8d`. A GitHub Release
+`Vena_IA Platform v2.1.0 — Enterprise Engineering Governance` está publicada,
+`draft=false` e `prerelease=false`. Estado terminal:
+`VENA_IA_V2_1_RELEASED_AND_FULLY_VERIFIED`; v2.2 segue `NOT_STARTED` e o fluxo
+retorna a `AWAITING_CTO_NEXT_ORDER`.
