@@ -679,6 +679,10 @@ Condição de avanço: processo preliminar reproduzível sem alegar liberação 
 
 ## v1.8 — CAD Interoperability and Feature Recognition
 
+**Estado do Package 1:** ADR-0015 seleciona OpenCascade com restrições e o contrato
+`vena-ia.geometry-analysis/v1` é validado sem instalar o kernel. Área, volume,
+topologia e tolerância permanecem `NOT_AVAILABLE` até gates controlados.
+
 Objetivo: evoluir do parser textual para geometria validada e formatos previstos.
 
 Entregas: ADR de kernel/licença/portabilidade; STEP topológico com unidade,

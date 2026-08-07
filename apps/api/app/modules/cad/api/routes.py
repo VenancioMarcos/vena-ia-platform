@@ -1,10 +1,12 @@
 from fastapi import APIRouter, HTTPException
 
+from app.modules.auth.dependencies import CurrentUserDependency
 from app.modules.cad.dependencies import CADAnalysisServiceDependency
 from app.modules.cad.parser import StepParseError
 from app.modules.cad.schemas import (
     BoundingBoxResponse,
     CADAnalysisResponse,
+    GeometryKernelDecision,
 )
 from app.modules.cad.service import CADContentUnavailableError
 from app.modules.documents.service import (
@@ -15,6 +17,26 @@ from app.modules.documents.service import (
 )
 
 router = APIRouter(prefix="/cad", tags=["cad"])
+
+
+@router.get("/kernel-decision", response_model=GeometryKernelDecision)
+def geometry_kernel_decision(
+    _current_user: CurrentUserDependency,
+) -> GeometryKernelDecision:
+    return GeometryKernelDecision(
+        decision="B_APPROVED_WITH_RESTRICTIONS",
+        candidate="OpenCascade Technology",
+        license="LGPL-2.1-with-exception",
+        integration_status="NOT_INSTALLED_PACKAGE_1_DECISION_ONLY",
+        official_python="3.13.11",
+        experimental_python="3.14.6",
+        contract_schema="vena-ia.geometry-analysis/v1",
+        limitations=[
+            "Binary/package compatibility must pass Windows, Linux and Docker gates.",
+            "No topology, area or volume claim is made before controlled integration.",
+            "Analysis never establishes manufacturability or machine safety.",
+        ],
+    )
 
 
 @router.post(

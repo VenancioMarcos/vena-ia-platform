@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.8 Package 1
+* ADR-0015 aprova OpenCascade para integração controlada com restrições, sem
+  instalar dependência pesada antes dos gates multiplataforma.
+* Contrato `vena-ia.geometry-analysis/v1` representa resultados indisponíveis
+  explicitamente, sem inventar área, volume, topologia ou tolerância.
+
 ## [1.7.0] — 2026-08-06 — Engineering Catalogs and CAM
 
 ### Adicionado — v1.7 Package 3
