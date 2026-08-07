@@ -1,5 +1,11 @@
 # Histórico de ordens do CTO
 
+## Política permanente — fluxo CTO ↔ Codex
+
+O proprietário ativou execução contínua obrigatória: toda task termina com status
+entregue ao CTO, estado `AWAITING_CTO_NEXT_ORDER`, captura integral da ordem
+seguinte e retomada imediata. Somente `ENCERRAR FLUXO` encerra o ciclo.
+
 ## 2026-08-06 — TASK-V17-003
 
 O CTO aprovou a TASK-V17-002 e ordenou concluir a v1.7 na mesma PR #18 com
