@@ -1,24 +1,25 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V30_000
-TITLE=ROADMAP_EXTENSION_V2_0_TO_V3_0
-BASE_HEAD=20436078bd88a3d92a692f8911a67d04e83ab00c
-BRANCH=codex/v3.0-roadmap-extension
+MISSION=TASK_V21_001
+TITLE=V2_1_PACKAGE_1_OWNERSHIP_AND_COMPATIBILITY
+ROADMAP_PR=24
+ROADMAP_HEAD=fcc0ea8af28190a0609f587af42faa0419cbcd8d
+FUNCTIONAL_BRANCH=codex/v2.1-enterprise-engineering-governance
 V2_0=RELEASED_AND_FULLY_VERIFIED
-ROADMAP_PROPOSAL=v2.1_TO_v2.2_TO_v3.0
-DECISION=DEC-037_PROPOSED_PENDING_CTO
-NEW_RISKS=R-048_R-049_R-050_PROPOSED
-FUNCTIONAL_IMPLEMENTATION=PROHIBITED
-MIGRATION=PROHIBITED
+ROADMAP=v2.1_TO_v2.2_TO_v3.0_APPROVED
+DECISION=DEC-037_APPROVED_CTO
+RISK=R-048_CRITICAL_GATE_V2_1
+PACKAGE_1=APPROVED_FOR_IMPLEMENTATION
+PACKAGE_2=NOT_STARTED
+MIGRATION=ALLOWED_IF_PROVEN_REVERSIBLE
 DEPLOY=PROHIBITED
 EXECUTABLE_CNC=PROHIBITED
 TODAY_TARGET=V3_0
-EXPECTED_STATE=VENA_IA_V3_0_ROADMAP_EXTENSION_READY_FOR_CTO_REVIEW
-DRAFT_PR=24
+EXPECTED_STATE=VENA_IA_V2_1_PACKAGE_1_READY_FOR_CTO_REVIEW
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
 ```
 
-O CTO autorizou exclusivamente auditoria, roadmap, governança e decomposição até
-v3.0. A proposta usa duas versões intermediárias justificadas por dependências reais.
-Nenhum código, migration, deploy ou CNC executável integra esta missão.
+O CTO aprovou o roadmap e autorizou somente v2.1 Package 1. Primeiro integrar a PR
+documental #24; depois implementar ownership/compatibility de catálogos Engineering.
+Package 2, v2.2, v3.0, deploy e CNC executável permanecem proibidos.

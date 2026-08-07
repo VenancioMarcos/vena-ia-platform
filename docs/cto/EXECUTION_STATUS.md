@@ -452,3 +452,10 @@ em simulação e escalada de autoridade. Entrega exclusivamente documental, sem 
 migration, deploy ou CNC executável.
 Draft PR #24 aberta para revisão do CTO; nenhuma implementação é autorizada pela
 proposta.
+
+## 2026-08-07 — TASK-V30-000 aprovada / TASK-V21-001 autorizada
+
+O CTO aprovou `DEC-037`, oficializou a sequência v2.1→v2.2→v3.0 e os riscos
+R-048–R-050. Somente v2.1 Package 1 — Ownership and Compatibility — recebeu
+`APPROVED_FOR_IMPLEMENTATION`; Package 2 e todas as versões posteriores permanecem
+`NOT_STARTED`. A PR documental #24 deve ser integrada antes da branch funcional.

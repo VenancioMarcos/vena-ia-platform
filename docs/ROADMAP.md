@@ -1500,7 +1500,7 @@ v1.3 sem nova ordem oficial.
 
 # 10. Extensão proposta v2.0 → v3.0 — TASK-V30-000
 
-**Estado:** `PROPOSTA — AGUARDA APROVAÇÃO DO CTO`
+**Estado:** `APROVADA — CTO`
 **Baseline:** `v2.0.0 RELEASED_AND_FULLY_VERIFIED`
 **Princípio:** menor quantidade sustentável de versões; nenhum código autorizado.
 
@@ -1538,12 +1538,12 @@ gates cosméticos. Duas versões intermediárias separam dependências reais:
 **Objetivo:** tornar dados e catálogos Engineering organization-scoped sem quebrar
 contratos públicos ou permitir acesso cruzado.
 
-**Package 1 — Ownership and compatibility:** modelo de ownership organizacional,
+**Package 1 — Ownership and compatibility — `APPROVED_FOR_IMPLEMENTATION`:** modelo de ownership organizacional,
 política de leitura/escrita, estratégia de migration/backfill, compatibilidade para
 dados legados, índices e contrato aditivo. Depende da fronteira Organization/Team
 v1.9. Riscos: R-042 e R-048.
 
-**Package 2 — Governance evidence:** autorização fail-closed, auditoria de lifecycle,
+**Package 2 — Governance evidence — `NOT_STARTED`:** autorização fail-closed, auditoria de lifecycle,
 testes cross-org/cross-team, export/retention compatíveis, documentação e gate de
 migration reversível. Depende do Package 1. Não inclui SSO/SCIM, billing, cliente real
 ou deploy.
@@ -1560,12 +1560,12 @@ features, planning ou agentes.
 **Objetivo:** ampliar cobertura determinística e evidence de verificação mantendo
 planning separado de execução.
 
-**Package 1 — Geometry and feature coverage:** corpus e regras versionadas para blind
+**Package 1 — Geometry and feature coverage — `NOT_STARTED`:** corpus e regras versionadas para blind
 holes, slots, pockets e patterns; threads, freeform, PMI/MBD e assemblies entram
 somente após prova de parser/kernel e corpus. Nenhuma primitiva implica intenção ou
 manufaturabilidade. Riscos: R-019, R-039 e R-040.
 
-**Package 2 — Planning and verification evidence:** candidatos de operação, setup,
+**Package 2 — Planning and verification evidence — `NOT_STARTED`:** candidatos de operação, setup,
 tooling, fixture assumptions, sequência e estimativas rastreáveis; contratos para
 collision/stock/kinematic/envelope evidence somente quando houver engine verificável.
 Falha e ausência permanecem explícitas. Não há toolpath, postprocessor, G/M-code,
@@ -1585,11 +1585,11 @@ versionado e auditável que conecta CAD→features→engineering→planning→Re
 verification→review→report, sem promover IA, simulação ou planning a autoridade
 produtiva.
 
-**Package 1 — Versioned Digital Thread:** identidade e provenance de artefatos,
+**Package 1 — Versioned Digital Thread — `NOT_STARTED`:** identidade e provenance de artefatos,
 relações imutáveis/versionadas, lifecycle, retention e replay; ownership organizacional
 herdado da v2.1 e evidence determinística herdada da v2.2.
 
-**Package 2 — Bounded Manufacturing Intelligence:** perfis especializados continuam
+**Package 2 — Bounded Manufacturing Intelligence — `NOT_STARTED`:** perfis especializados continuam
 bounded; eventual orchestration/tool calling é read-only, allowlisted, auditável e
 incapaz de mutar fatos. Research evolui em qualidade de fontes, reprodutibilidade,
 datasets, métodos estatísticos e relatórios sob revisão humana. Stateful agents,
@@ -1628,7 +1628,8 @@ Esta proposta não autoriza código, migration ou criação de runtime contract.
 **Testes:** diff/check, referências, sequências de IDs e consistência documental.
 **Aceite:** duas versões intermediárias justificadas por dependências reais, Packages
 mínimos, limites e gates explícitos.
-**Próximo passo:** revisão do CTO; nenhuma implementação antes da aprovação.
+**Próximo passo:** implementar somente v2.1 Package 1 na branch funcional autorizada;
+todos os Packages posteriores permanecem `NOT_STARTED`.
 
 ---
 

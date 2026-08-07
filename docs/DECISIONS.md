@@ -1266,7 +1266,7 @@ a extensão documental do roadmap até v3.0, dependente de nova ordem formal do 
 ## DEC-037 — Extensão do roadmap da Vena_IA Platform de v2.0 até v3.0
 
 **Data:** 2026-08-07
-**Status:** PROPOSTA — AGUARDA APROVAÇÃO DO CTO
+**Status:** APROVADA — CTO
 **Tipo:** Arquitetura / Engenharia / Dados / IA / Pesquisa / Segurança
 
 ### Contexto

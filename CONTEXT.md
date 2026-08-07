@@ -31,8 +31,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   foram aprovados, integrados e publicados como v2.0.0 após o Owner Release Gate.
 * **Roadmap pós-v2.0:** a `TASK-V30-000` propõe, sem código, a sequência mínima
   v2.1 Enterprise Engineering Governance → v2.2 Advanced Engineering Planning &
-  Verification → v3.0 Manufacturing Intelligence & Digital Thread. `DEC-037` e os
-  riscos R-048–R-050 aguardam aprovação do CTO. Nenhuma implementação está autorizada.
+  Verification → v3.0 Manufacturing Intelligence & Digital Thread. O CTO aprovou
+  `DEC-037` e oficializou R-048–R-050. Somente v2.1 Package 1 está autorizado para
+  implementação; todos os Packages seguintes permanecem `NOT_STARTED`.
 * **v1.9 Package 1 implementado:** branch
   `codex/v1.9-controlled-pilot-readiness` adiciona Organization/Team,
   memberships `OWNER`/`ADMIN`/`MEMBER`, bootstrap owner transacional, revogação,
