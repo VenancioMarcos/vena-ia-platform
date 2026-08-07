@@ -57,7 +57,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   FeaturePlanningBridge, CNC preview e report builder. O fluxo analisa STEP uma vez,
   mantém missing inputs/unsupported/incompatibility explícitos, exige revisão humana
   e nunca produz output executável. Não há nova persistência ou migration; catálogos
-  continuam globais autenticados. Packages 2 e 3 permanecem `NOT_STARTED`.
+  continuam globais autenticados. A Draft PR #23 está aberta; o Backend CI do head
+  funcional/documental `394786e` aprovou lint, mypy, ciclo Alembic, 341 testes da
+  API e 76 testes operacionais reais. Packages 2 e 3 permanecem `NOT_STARTED`.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

@@ -376,3 +376,10 @@ existentes. O STEP é analisado uma única vez; missing input, incompatibilidade
 feature não suportada permanecem estados fechados. Focal CAD/Engineering/planning/
 CNC/workflow: 54 testes aprovados. Não há persistence, async, migration, frontend,
 deploy ou saída CNC executável. Packages 2 e 3 continuam `NOT_STARTED`.
+
+A Draft PR #23 está `OPEN/DRAFT`. O gate local terminal aprovou Ruff, mypy em 165
+arquivos, 408 testes (9 skips), OpenAPI com 77 paths, Alembic `d39a7b2c5e11`,
+Compose config e secret scan. O Backend CI run `31177827093`, no head `394786e`,
+aprovou lint, mypy, upgrade/downgrade/upgrade PostgreSQL, 341 testes API e 76 testes
+operacionais com PostgreSQL/MinIO. Frontend CI e Runtime Policy não foram disparados
+porque os respectivos domínios não foram alterados.

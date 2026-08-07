@@ -20,6 +20,8 @@ EXECUTABLE_CNC=PROHIBITED
 TODAY_TARGET=V3_0
 GOVERNANCE_BYPASS=PROHIBITED
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
+DRAFT_PR=23
+BACKEND_CI=PASS_RUN_31177827093
 ```
 
 Escopo executado: a PR documental #22 foi integrada em `22ddf9f`; o Package 1 na branch
@@ -27,3 +29,7 @@ Escopo executado: a PR documental #22 foi integrada em `22ddf9f`; o Package 1 na
 process planning→plano CNC neutro→relatório sem duplicar engines. Packages 2 e 3
 permanecem fora. CAM preliminar não inclui toolpath, coordenadas, pós-processador,
 G/M-code ou NC/DNC. Não realizar merge da PR funcional, migration ou deploy.
+
+Gate terminal: Ruff PASS; mypy 165 arquivos; pytest local 408 passed/9 skipped;
+OpenAPI 77 paths; Alembic `d39a7b2c5e11`; Compose e secret scan PASS. Backend CI
+run `31177827093` aprovou lint, mypy, ciclo Alembic, 341 testes API e 76 operacionais.
