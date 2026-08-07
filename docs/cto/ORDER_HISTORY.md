@@ -426,3 +426,30 @@ O CTO aprovou a decomposição documental da v1.9 em exatamente dois Packages,
 autorizou integrar a PR #20 e executar exclusivamente o Package 1 na branch
 `codex/v1.9-controlled-pilot-readiness`. Package 2, piloto real, deploy e qualquer
 saída CNC executável permanecem proibidos. R-042 continua CRÍTICO e ABERTO/GATE.
+
+A PR #20 foi integrada em `3776fc4`. O Package 1 foi implementado na branch
+`codex/v1.9-controlled-pilot-readiness` com migration `d39a7b2c5e11`, contratos
+versionados e testes fail-closed. A entrega funcional deve permanecer em Draft PR;
+Package 2 segue `NOT_STARTED` até nova ordem específica do CTO.
+
+## 2026-08-06 — TASK-V19-002 e pausa planejada
+
+O CTO aprovou o Package 1 e autorizou Package 2 na mesma branch/PR #21, sem merge,
+release ou deploy. Durante o primeiro bloco foram implementados contratos e
+orquestração sintética/virtual fail-closed. Antes de iniciar novos itens, o
+proprietário ordenou pausa controlada. O bloco focal validado foi salvo em `41ddb8b`;
+o estado é `PAUSED_PLANNED_CONTINUATION_REQUIRED`, com retomada somente sob nova ordem.
+
+## 2026-08-07 — retomada TASK-V19-002
+
+O CTO encerrou a pausa no HEAD `873156c`, confirmou os três CI verdes e autorizou
+somente as lacunas focais. Package 2 foi completado sem migration, merge, release,
+deploy, piloto real ou saída CNC executável; v1.9 permanece aberta para revisão.
+
+## 2026-08-07 — TASK-V19-003
+
+O CTO aprovou os Packages 1–2, declarou a v1.9 funcionalmente completa e proibiu
+Package 3. A ordem autoriza somente o Release Candidate terminal, mantendo a PR #21
+Draft. Merge, tag e GitHub Release exigem Owner Release Gate posterior; deploy,
+piloto real e CNC executável permanecem proibidos. A meta diária v3.0 não permite
+pular versões nem inventar roadmap além da v2.0.

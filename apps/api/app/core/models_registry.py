@@ -10,6 +10,13 @@ from app.modules.documents.models import Document, DocumentChunk  # noqa: F401
 from app.modules.engineering.models import EngineeringCatalogItem  # noqa: F401
 from app.modules.files.models import FileAsset  # noqa: F401
 from app.modules.jobs.models import Job  # noqa: F401
+from app.modules.organizations.models import (  # noqa: F401
+    Membership,
+    Organization,
+    PilotContext,
+    PilotReadinessChecklist,
+    Team,
+)
 from app.modules.projects.models import Project  # noqa: F401
 from app.modules.research.models import (  # noqa: F401
     ANOVADataset,

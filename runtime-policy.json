@@ -23,7 +23,7 @@
     "container": "11.9.0",
     "local_recommended": "11.9.0"
   },
-  "migration_head": "c27f6d9e4a10",
+  "migration_head": "d39a7b2c5e11",
   "images": {
     "api_base": "python:3.13.11-slim-bookworm@sha256:20080e807bfc404f8450b185cf0fc95d553462673598549613735f70a5b4d5d0",
     "web_base": "node:22.20.0-alpine3.22@sha256:dbcedd8aeab47fbc0f4dd4bffa55b7c3c729a707875968d467aaaea42d6225af",

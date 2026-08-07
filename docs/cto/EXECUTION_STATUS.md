@@ -276,3 +276,66 @@ Nenhuma implementação, migration, deploy, piloto real ou saída CNC foi inicia
 O CTO aprovou DEC-034 e tornou a decomposição em dois Packages a baseline oficial.
 Package 1 está `APPROVED_FOR_IMPLEMENTATION`; Package 2 permanece `NOT_STARTED`.
 R-042 continua CRÍTICO e ABERTO/GATE, sem redução decorrente da aprovação documental.
+
+## 2026-08-06 — TASK-V19-001 Package 1
+
+A PR documental #20 foi integrada em `3776fc4`. Na branch funcional, o Package 1
+implementa Organization/Team/Membership, papéis allowlisted, bootstrap owner,
+revogação, Pilot Context, readiness/privacy e auditoria existente. A migration única
+avança o head para `d39a7b2c5e11`. O gate local aprovou Ruff, mypy (161 arquivos),
+314 testes da API (2 skips), 13 testes focais novos, 12 testes operacionais,
+frontend typecheck/build, runtime policy, Compose config e OpenAPI 1.9.0/72 paths.
+O ciclo focal Alembic upgrade/downgrade/upgrade passou; PostgreSQL real fica para o
+Backend CI. R-042 está mitigado parcialmente/monitorado; Package 2 não foi iniciado.
+
+## 2026-08-06 — TASK-V19-002 planned pause
+
+Estado `PAUSED_PLANNED_CONTINUATION_REQUIRED`. HEAD inicial `43a1907`; bloco funcional
+salvo em `41ddb8b`. Foram concluídos os contratos `vena-ia.pilot-evidence/v1` e
+`vena-ia.virtual-cnc-plan-validation/v1`, a composição de evidence allowlisted sem
+nova persistência/migration, gate de contexto/checklist/privacy, SLO/capacity apenas
+sintéticos, checksum determinístico, validação CNC `SIMULATION_ONLY` com
+`executable_output=false`, auditoria existente e testes negativos G/M-code.
+
+Testes de pausa: Ruff focal PASS; mypy focal (10 arquivos) PASS; 23 testes focais
+PASS; `git diff --check` PASS. O CI vigente anterior no HEAD `43a1907` permanece
+verde (Backend 31141708737, Frontend 31141708745, Runtime 31141708735); nenhum CI
+novo foi disparado. Docker local continua sem daemon. Nenhum bloqueador técnico.
+Próximo passo: fechar as lacunas focais registradas em `CURRENT_ORDER.md`, documentar
+a matriz de evidência e somente então executar regressão/OpenAPI/CI finais.
+
+`PLANNED_PAUSE = ACTIVE`
+`CONTINUOUS_CTO_CODEX_FLOW_POLICY = TEMPORARILY_SUSPENDED`
+
+## 2026-08-07 — TASK-V19-002 retomada
+
+Pausa encerrada no HEAD `873156c`; os três CI do checkpoint estavam verdes. Foram
+fechadas as lacunas ADMIN/MEMBER/cross-team/revocation, rollback, evidence failure,
+false readiness e verificação de integridade/tampering. R-043 registra risco de falsa
+prontidão. Package 2 está implementado/ready for CTO review; v1.9 não está encerrada.
+
+Gate terminal local: Ruff PASS; mypy PASS em 162 arquivos; API `328 passed,
+2 skipped`; subsistema/operations/CNC `99 passed, 7 skipped`; OpenAPI 1.9.0 com
+76 paths; Alembic head `d39a7b2c5e11`; Runtime Policy e Compose config PASS.
+
+`PLANNED_PAUSE = CLOSED`
+`CONTINUOUS_CTO_CODEX_FLOW_POLICY = ACTIVE`
+
+## 2026-08-07 — TASK-V19-003 Release Candidate
+
+O CTO aprovou os dois Packages, confirmou que não existe Package 3 e autorizou uma
+única validação terminal do Release Candidate v1.9.0. A documentação foi fechada
+como `COMPLETE / RELEASE CANDIDATE`; R-042 e R-043 permanecem parcialmente
+mitigados/monitorados. A PR #21 deve continuar Draft e merge/tag/Release dependem
+exclusivamente de autorização direta posterior do proprietário.
+
+`TODAY_TARGET = V3_0`, sem bypass de governança. O roadmap oficial termina em v2.0;
+qualquer implementação posterior exige extensão formal e aprovação do CTO.
+
+Gate local terminal: Ruff PASS; mypy PASS em 162 arquivos; pytest integral
+`397 passed, 9 skipped`; focal auth/organizations/rehearsal/CNC `54 passed,
+1 skipped`; frontend typecheck/build PASS; API/health/OpenAPI `1.9.0` com 76 paths;
+runtime policy, Compose config, secret scan e head Alembic `d39a7b2c5e11` PASS.
+O PostgreSQL local não respondeu dentro de 120 s; o ciclo
+upgrade/downgrade/upgrade permanece comprovado pelo Backend CI verde do HEAD de
+código e será reexecutado no CI terminal do commit documental do RC.
