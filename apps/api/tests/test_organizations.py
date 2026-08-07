@@ -343,6 +343,8 @@ def test_contracts_and_openapi_are_closed(client):
         "vena-ia.membership/v1",
         "vena-ia.pilot-context/v1",
         "vena-ia.pilot-readiness-checklist/v1",
+        "vena-ia.pilot-evidence/v1",
+        "vena-ia.virtual-cnc-plan-validation/v1",
     }
     schema = client.get("/openapi.json").json()
     assert schema["info"]["version"] == "1.9.0"

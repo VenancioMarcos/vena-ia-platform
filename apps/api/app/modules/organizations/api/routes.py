@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, HTTPException, Request, Response
 
 from app.modules.audit.service import record_security_event
 from app.modules.organizations.dependencies import OrganizationServiceDependency
@@ -25,6 +25,14 @@ from app.modules.organizations.schemas import (
     TeamCreate,
     TeamRead,
     TeamUpdate,
+)
+from app.modules.organizations.rehearsal import (
+    NeutralCNCPlan,
+    PilotEvidenceBundle,
+    RehearsalRequest,
+    RehearsalService,
+    VirtualCNCValidation,
+    validate_virtual_cnc,
 )
 
 router = APIRouter(tags=["controlled-pilot"])
@@ -232,7 +240,52 @@ def get_readiness(
     service.require_pilot_context(context_id)
     checklist = service.repository.get_checklist(context_id)
     if checklist is None:
-        from fastapi import HTTPException
-
         raise HTTPException(status_code=404, detail="Readiness checklist not found")
     return checklist
+
+
+@router.post(
+    "/pilot-contexts/{context_id}/virtual-cnc-validation",
+    response_model=VirtualCNCValidation,
+)
+def virtual_cnc_validation(
+    context_id: str,
+    payload: NeutralCNCPlan,
+    request: Request,
+    service: OrganizationServiceDependency,
+) -> VirtualCNCValidation:
+    context = service.require_pilot_context(context_id)
+    service.authorization.require_role(
+        context.organization_id, {OrganizationRole.OWNER, OrganizationRole.ADMIN}
+    )
+    validation = validate_virtual_cnc(payload)
+    _audit(request, service, "VIRTUAL_CNC_VALIDATION_COMPLETED")
+    return validation
+
+
+@router.post(
+    "/pilot-contexts/{context_id}/rehearsals", response_model=PilotEvidenceBundle
+)
+def run_synthetic_rehearsal(
+    context_id: str,
+    payload: RehearsalRequest,
+    request: Request,
+    service: OrganizationServiceDependency,
+) -> PilotEvidenceBundle:
+    context = service.require_pilot_context(context_id)
+    service.authorization.require_role(
+        context.organization_id, {OrganizationRole.OWNER, OrganizationRole.ADMIN}
+    )
+    _audit(request, service, "PILOT_REHEARSAL_STARTED")
+    try:
+        bundle = RehearsalService().build(
+            context, service.repository.get_checklist(context_id), payload
+        )
+    except HTTPException:
+        _audit(request, service, "PILOT_EVIDENCE_FAILED")
+        raise
+    _audit(request, service, "PILOT_EVIDENCE_GENERATED")
+    _audit(request, service, "VIRTUAL_CNC_VALIDATION_COMPLETED")
+    _audit(request, service, "PILOT_REHEARSAL_ROLLBACK_DEFINED")
+    _audit(request, service, "PILOT_REHEARSAL_COMPLETED")
+    return bundle
