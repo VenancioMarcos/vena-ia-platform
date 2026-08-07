@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -10,7 +11,7 @@ class CNCOperationType(StrEnum):
 
 
 class CNCPlanRequest(BaseModel):
-    model_config = ConfigDict(allow_inf_nan=False)
+    model_config = ConfigDict(allow_inf_nan=False, extra="forbid")
 
     operation: CNCOperationType
     tool_number: int = Field(ge=1, le=999)
@@ -33,7 +34,7 @@ class CNCPlanPreview(BaseModel):
     status: str
     warnings: list[str] = Field(default_factory=list)
     traceability: list[str] = Field(default_factory=list)
-    review_status: str = "REQUIRES_HUMAN_REVIEW"
-    simulation_only: bool = True
-    executable_output: bool = False
+    review_status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
+    simulation_only: Literal[True] = True
+    executable_output: Literal[False] = False
     limitations: list[str]
