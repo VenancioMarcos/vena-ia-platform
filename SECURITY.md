@@ -136,6 +136,11 @@ Revogação bloqueia a próxima autorização por membership, sem prometer inval
 além das garantias atuais do JWT registradas em R-013. O contexto de piloto é apenas
 sintético e nunca autoriza deploy, cliente, produção ou CNC.
 
+Evidence de rehearsal não recebe autoridade do payload. Somente OWNER/ADMIN com
+membership ativa pode gerar/verificar/rollback; cross-org/team e membership revogada
+falham como `404`. Validação CNC aceita contrato neutro estrito e não possui campo
+para G/M-code, toolpath, transmissão ou payload executável.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

@@ -22,6 +22,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * Não há piloto real, empresa/cliente real, convite externo, deploy, billing,
   SSO/SCIM, CAM, toolpath, G-code, M-code ou controle CNC.
 
+### Adicionado — v1.9 Package 2
+* `vena-ia.pilot-evidence/v1` compõe evidências operacionais existentes em ensaio
+  sintético fail-closed, com SLO/capacity explicitamente não produtivos.
+* `vena-ia.virtual-cnc-plan-validation/v1` valida somente estrutura neutra,
+  `SIMULATION_ONLY`, `executable_output=false`, rejeitando G/M-code e controle.
+* Rollback auditável possui estados fechados; integridade SHA-256 possui verificação
+  `MATCH/MISMATCH` e não é apresentada como assinatura ou autenticidade.
+
 ## [1.8.0] — 2026-08-06 — CAD Interoperability and Feature Recognition
 
 ### Adicionado — v1.8 Package 4

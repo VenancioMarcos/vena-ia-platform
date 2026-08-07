@@ -86,6 +86,8 @@ arbitrários nunca fornecem identidade, organização, equipe ou papel.
 | Revogação | ADMIN/MEMBER; nunca OWNER | Somente MEMBER | Negado | `404` |
 | Pilot Context | Permitido no escopo autorizado | Permitido no escopo autorizado | Própria Team | `404` |
 | Readiness checklist | Permitido no escopo autorizado | Permitido no escopo autorizado | Própria Team | `404` |
+| Iniciar rehearsal / validar CNC virtual | Permitido | Permitido na própria Organization | Negado (`404`) | `404` |
+| Verificar evidence / executar rollback sintético | Permitido | Permitido na própria Organization | Negado (`404`) | `404` |
 
 Negativas explícitas: não existe transferência de OWNER; `MEMBER` exige `team_id`;
 `ADMIN`/`OWNER` são organizacionais; status sintético nunca equivale a piloto,

@@ -35,3 +35,12 @@ checklist não declara conformidade jurídica ou LGPD.
 - Membership revogada deixa de autorizar na consulta seguinte ao banco.
 - Ownership não pode ser transferido neste Package.
 - Nenhuma saída inclui CAM, toolpath, G-code, M-code ou comando de máquina.
+
+## Evidence, integridade e rollback
+
+Package 2 aceita somente contexto `READY_FOR_SYNTHETIC_REHEARSAL` e checklist
+`READY_FOR_HUMAN_REVIEW`. Evidence `PARTIAL`, `NOT_AVAILABLE` ou `FAILED`, privacy
+incompleta, CNC inválido e checksum `MISMATCH` nunca viram readiness. O checksum
+SHA-256 detecta alteração do payload canônico, não autoria/autenticidade/assinatura.
+Rollback registra cada ação com alvo, resultado fechado, warnings, referência,
+timestamp e ator; falha parcial nunca é declarada sucesso.

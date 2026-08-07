@@ -306,3 +306,17 @@ a matriz de evidência e somente então executar regressão/OpenAPI/CI finais.
 
 `PLANNED_PAUSE = ACTIVE`
 `CONTINUOUS_CTO_CODEX_FLOW_POLICY = TEMPORARILY_SUSPENDED`
+
+## 2026-08-07 — TASK-V19-002 retomada
+
+Pausa encerrada no HEAD `873156c`; os três CI do checkpoint estavam verdes. Foram
+fechadas as lacunas ADMIN/MEMBER/cross-team/revocation, rollback, evidence failure,
+false readiness e verificação de integridade/tampering. R-043 registra risco de falsa
+prontidão. Package 2 está implementado/ready for CTO review; v1.9 não está encerrada.
+
+Gate terminal local: Ruff PASS; mypy PASS em 162 arquivos; API `328 passed,
+2 skipped`; subsistema/operations/CNC `99 passed, 7 skipped`; OpenAPI 1.9.0 com
+76 paths; Alembic head `d39a7b2c5e11`; Runtime Policy e Compose config PASS.
+
+`PLANNED_PAUSE = CLOSED`
+`CONTINUOUS_CTO_CODEX_FLOW_POLICY = ACTIVE`

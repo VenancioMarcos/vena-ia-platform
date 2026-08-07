@@ -439,3 +439,9 @@ release ou deploy. Durante o primeiro bloco foram implementados contratos e
 orquestração sintética/virtual fail-closed. Antes de iniciar novos itens, o
 proprietário ordenou pausa controlada. O bloco focal validado foi salvo em `41ddb8b`;
 o estado é `PAUSED_PLANNED_CONTINUATION_REQUIRED`, com retomada somente sob nova ordem.
+
+## 2026-08-07 — retomada TASK-V19-002
+
+O CTO encerrou a pausa no HEAD `873156c`, confirmou os três CI verdes e autorizou
+somente as lacunas focais. Package 2 foi completado sem migration, merge, release,
+deploy, piloto real ou saída CNC executável; v1.9 permanece aberta para revisão.

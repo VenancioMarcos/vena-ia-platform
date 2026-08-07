@@ -35,6 +35,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   contexto sintético e readiness/privacy. JWT + banco são a única autoridade;
   cross-org/team, mass assignment, papel/body/header forjados e `X-User-ID` falham
   fechados. Migration head `d39a7b2c5e11`; Package 2, deploy e piloto real continuam proibidos.
+* **v1.9 Package 2 implementado:** a mesma Draft PR #21 orquestra evidência
+  sintética allowlisted, false-readiness fail-closed, rollback explícito e validação
+  CNC virtual não executável. Checksum prova somente integridade canônica; Package 2
+  exige revisão humana e não representa piloto, produção, SLA ou deploy.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

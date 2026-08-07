@@ -804,6 +804,9 @@ toolpath, G-code ou máquina CNC.
 
 #### Package 2 — Controlled Operational Rehearsal and Virtual Pilot Evidence
 
+Estado: `IMPLEMENTED / READY_FOR_CTO_REVIEW` na Draft PR #21. A v1.9 global não
+está encerrada e exige revisão CTO, release candidate e gate posterior.
+
 Objetivo: compor, somente sobre o contexto sintético autorizado do Package 1, a
 jornada piloto reversível e as evidências operacionais já existentes.
 
