@@ -8,6 +8,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.8 Package 4
+* Ponte `vena-ia.feature-planning/v1` rule `1.0.0` transforma somente furo
+  cilíndrico passante validado em `DRILLING_CANDIDATE` não executável.
+* Catálogos explicitamente selecionados reutilizam `engineering-recommendation/v1`;
+  ausência permanece `REQUIRED_INPUT` e nenhuma fórmula ou engine foi duplicada.
+* Faces planares/cilíndricas, contexto ambíguo e inválido não geram falsa operação;
+  auth, ownership, revisão humana e ausência de CAM/toolpath/G-code são preservados.
+
 ### Adicionado — v1.8 Package 3
 * Contrato `vena-ia.geometry-features/v1` e recognizer OCCT rule `1.0.0`
   distinguem primitivas planares/cilíndricas de furo cilíndrico passante estrito.

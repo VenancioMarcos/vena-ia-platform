@@ -233,3 +233,13 @@ cilíndricas, um e dois furos passantes, rejeição de cilindro externo/furo ceg
 topologia inválida, malformed e determinismo. Closed hole e slot foram adiados.
 Ruff, mypy em 151 arquivos e pytest integral (`358 passed, 9 skipped`) passaram;
 OpenAPI 3.1.0 mantém 60 paths. Não houve migration, merge, tag, Release ou deploy.
+
+## 2026-08-06 — TASK-V18-004 Package 4 local terminal
+
+`FeaturePlanningBridge` rule `1.0.0` expõe `vena-ia.feature-planning/v1` em rota
+autenticada. Through hole produz somente `DRILLING_CANDIDATE` não executável;
+primitivas e contextos ambíguos não geram candidate. Três catálogos explícitos
+reutilizam a recommendation v1.7; ausências permanecem `REQUIRED_INPUT`.
+Ruff, mypy em 152 arquivos e pytest integral (`370 passed, 9 skipped`) passaram;
+OpenAPI 3.1.0 possui 61 paths. O gate de roadmap está `SATISFIED` sem CAM,
+toolpath, G-code, merge, tag, Release ou deploy.

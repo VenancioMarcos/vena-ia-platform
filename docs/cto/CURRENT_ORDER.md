@@ -1,11 +1,11 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V18_003
-TITLE=TRACEABLE_INITIAL_FEATURE_RECOGNITION
+MISSION=TASK_V18_004
+TITLE=FEATURE_TO_ENGINEERING_PLANNING_BRIDGE
 BRANCH=codex/v1.8-cad-interoperability
-START_HEAD=1148f850c34005d2e4ff1bf79c754fc28301229f
-EXPECTED_STATE=VENA_IA_V1_8_PACKAGE_3_READY_FOR_CTO_REVIEW
+START_HEAD=43bda36ebca9c7f37f747d1105883cb1d3f9a5a2
+EXPECTED_STATE=VENA_IA_V1_8_PACKAGE_4_READY_FOR_CTO_REVIEW
 PULL_REQUEST=19
 PULL_REQUEST_DRAFT=KEEP_DRAFT
 MERGE=PROHIBITED
@@ -15,5 +15,5 @@ PACKAGE_3=AUTHORIZED
 TOOLPATH_GCODE_CNC=PROHIBITED
 ```
 
-Escopo: primitivas geométricas e reconhecimento conservador/rastreável de furo
-passante, corpus sintético, falsos positivos/negativos e revisão humana obrigatória.
+Escopo: ponte contratual de feature validada a planning candidate preliminar,
+reutilização da recommendation v1.7 e revisão humana obrigatória, sem CAM executável.

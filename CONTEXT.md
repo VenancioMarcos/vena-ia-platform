@@ -36,6 +36,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   passante exige boundary interno e atravessamento axial estrito. Furo cego e slot
   foram adiados para evitar falsos positivos. Toda saída exige revisão humana e não
   alimenta seleção de máquina/ferramenta, CAM, toolpath ou G-code.
+* **v1.8 Package 4:** `vena-ia.feature-planning/v1` conecta feature pertencente ao
+  usuário a candidato preliminar. Apenas through hole produz
+  `DRILLING_CANDIDATE`; demais primitivas falham fechadas. Material/máquina/ferramenta
+  explícitos reutilizam a recommendation v1.7, ainda não executável e sob revisão humana.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.6.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.

@@ -1124,3 +1124,15 @@ existe com boundary interno e atravessamento axial estrito do envelope. Furo ceg
 e slot ficam adiados. IDs topológicos são locais, confiança representa apenas
 evidência geométrica, e revisão humana é obrigatória. Nenhum resultado ativa
 engineering produtivo, CAM, toolpath, G-code ou afirma manufaturabilidade.
+
+## DEC-033 — Planning candidate não é seleção de processo
+
+**Data:** 2026-08-06
+**Status:** Aprovada
+**Tipo:** Arquitetura | Engenharia | Segurança
+
+O bridge rule `1.0.0` consome somente feature rastreável de documento autorizado.
+Through hole permite `DRILLING_CANDIDATE`; outras primitivas não permitem inferência.
+Catálogos material/máquina/ferramenta devem ser explicitamente selecionados para
+reutilizar a recommendation v1.7. Candidate e recommendation permanecem sob revisão
+humana, sem saída executável, manufaturabilidade, CAM, toolpath ou código CNC.

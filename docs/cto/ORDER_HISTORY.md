@@ -390,3 +390,11 @@ determinístico e rastreável de features na branch
 deploy, v1.9, CAM, toolpath, G-code e transmissão CNC. Package 3 implementa apenas
 faces planares/cilíndricas e furo passante sob evidência estrita; closed hole e
 slot permanecem adiados.
+
+## 2026-08-06 — TASK-V18-004
+
+O CTO aprovou o Package 3 no head `43bda36` e autorizou ponte contratual entre
+`geometry-features/v1` e Engineering v1.7 na mesma Draft PR #19. A ordem exige
+candidates não executáveis, catálogos explícitos, missing inputs, rastreabilidade,
+falsos positivos de planning e revisão humana. Merge, tag, Release, deploy, v1.9,
+CAM, toolpath, G-code, M-code, pós-processador e transmissão CNC são proibidos.

@@ -692,6 +692,12 @@ reconhecem faces planares/cilíndricas e furo passante estrito sobre corpus sint
 Furo cego e slot foram adiados por evidência insuficiente; revisão humana permanece
 obrigatória e nenhuma integração de produção com engineering/CAM foi ativada.
 
+**Estado do Package 4:** `vena-ia.feature-planning/v1` rule `1.0.0` comprova a
+ponte rastreável de through hole a `DRILLING_CANDIDATE` não executável. Catálogos
+explícitos reutilizam Engineering v1.7; missing inputs falham fechados. O gate
+“features alimentam planejamento sem remover revisão humana” está `SATISFIED` por evidência,
+sem antecipar encerramento da v1.8, CAM ou liberação CNC.
+
 Objetivo: evoluir do parser textual para geometria validada e formatos previstos.
 
 Entregas: ADR de kernel/licença/portabilidade; STEP topológico com unidade,

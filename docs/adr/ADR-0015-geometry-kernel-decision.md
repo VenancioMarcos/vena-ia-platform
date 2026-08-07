@@ -28,3 +28,11 @@ Rule `1.0.0` consumes the shape already loaded by the adapter and emits
 through hole requires an inward-oriented cylindrical boundary and strict axial
 envelope traversal. Blind holes and slots are deferred rather than heuristically
 classified. All topology references are local and all features require human review.
+
+## Package 4 planning boundary
+
+`vena-ia.feature-planning/v1` rule `1.0.0` consumes the validated feature structure.
+Only strict through holes produce a non-executable `DRILLING_CANDIDATE`; geometric
+primitives do not imply operations. Explicit material/machine/tool IDs reuse the
+existing Engineering v1.7 recommendation and never duplicate formulas. Missing
+context fails closed, and every result remains under mandatory human review.
