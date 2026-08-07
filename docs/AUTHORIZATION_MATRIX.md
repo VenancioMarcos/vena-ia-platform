@@ -95,3 +95,25 @@ deploy, produção ou CNC aprovados.
 
 Gate terminal: `TOKEN + DATABASE = AUTHORITY`. Request body, query, `X-User-ID`,
 `X-Role` e demais headers nunca concedem identidade, membership ou papel.
+
+## Catálogos Engineering — v2.1 Package 1
+
+`organization_id` identifica o recurso solicitado, mas não concede autoridade.
+
+| Recurso/ação | OWNER | ADMIN | MEMBER ativo | Sem membership | Não autenticado |
+|---|---|---|---|---|---|
+| Catálogo da organização — READ | Permitido | Permitido | Permitido | `404` | `401` |
+| Catálogo da organização — CREATE | Permitido | Permitido | `404` | `404` | `401` |
+| Catálogo — UPDATE/DELETE | Não exposto | Não exposto | Não exposto | Não exposto | Não exposto |
+| Referência de sistema — READ | Permitido | Permitido | Permitido | Permitido autenticado | `401` |
+| Referência de sistema — mutação | Sem endpoint público | Sem endpoint público | Negado | Negado | Negado |
+| Legado sem owner — qualquer acesso | Negado/oculto | Negado/oculto | Negado/oculto | Negado/oculto | Negado |
+| Governance evidence da organização — READ | Permitido | Permitido | Permitido | `404` | `401` |
+| Governance evidence de system reference — READ | Permitido | Permitido | Permitido | Permitido autenticado | `401` |
+| Governance evidence — mutação/bulk export | Não exposto | Não exposto | Não exposto | Não exposto | Não exposto |
+
+Body fields de escopo/owner/role são rejeitados. `X-User-ID`/`X-Role` não alteram a
+decisão. Misturar itens de organizações distintas falha como `404`.
+
+Release Candidate v2.1.0: matriz revalidada sem novos papéis ou mutações públicas;
+`TOKEN + DATABASE = AUTHORITY` permanece o gate terminal.

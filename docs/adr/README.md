@@ -10,6 +10,7 @@
 | [ADR-0006](ADR-0006-ai-first-development.md) | Desenvolvimento AI-First | Aprovado |
 | [ADR-0007](ADR-0007-zero-knowledge-loss.md) | Política de Zero Perda de Conhecimento | Aprovado |
 | [ADR-0008](ADR-0008-evidence-driven-engineering.md) | Engenharia Orientada a Evidência | Aprovado |
+| [ADR-0030](ADR-0030-engineering-catalog-ownership.md) | Ownership organizacional de catálogos Engineering | Aceita para implementação |
 
 > Nota de numeração: o ADR fundador da arquitetura técnica foi registrado como `ADR-001` (três dígitos) antes da formalização deste índice. Os ADRs seguintes adotam o padrão de quatro dígitos (`ADR-00XX`), mantido a partir daqui.
 

@@ -25,6 +25,8 @@ from app.modules.engineering.repository import EngineeringCatalogRepository
 from app.modules.engineering.service import EngineeringCatalogService
 from app.modules.engineering.workflow import IntegratedEngineeringWorkflowService
 from app.modules.research.dependencies import ResearchServiceDependency
+from app.modules.organizations.repository import OrganizationRepository
+from app.modules.organizations.service import OrganizationAuthorization
 
 router = APIRouter(prefix="/engineering", tags=["engineering-assistance"])
 
@@ -32,7 +34,7 @@ router = APIRouter(prefix="/engineering", tags=["engineering-assistance"])
 @router.post("/workflow-assistance", response_model=SpecializedAssistanceResponse)
 def create_workflow_assistance(
     payload: SpecializedAssistanceRequest,
-    _current_user: CurrentUserDependency,
+    current_user: CurrentUserDependency,
     cad: CADAnalysisServiceDependency,
     knowledge: KnowledgeServiceDependency,
     research: ResearchServiceDependency,
@@ -42,7 +44,10 @@ def create_workflow_assistance(
     try:
         workflow = IntegratedEngineeringWorkflowService(
             cad,
-            EngineeringCatalogService(EngineeringCatalogRepository(db)),
+            EngineeringCatalogService(
+                EngineeringCatalogRepository(db),
+                OrganizationAuthorization(OrganizationRepository(db), current_user),
+            ),
             CNCPlanningService(),
         )
         return SpecializedAssistanceService(

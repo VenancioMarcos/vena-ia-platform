@@ -8,6 +8,37 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Release Candidate — v2.1.0
+* Packages 1–2 foram aprovados pelo CTO; não existe Package 3 da v2.1.
+* API, FastAPI, health, OpenAPI e frontend foram alinhados em `2.1.0`; Alembic
+  permanece no single head `e61c4f8a2b90`.
+* Release notes foram preparadas sem tag, GitHub Release, merge ou deploy. Publicação
+  permanece bloqueada no Owner Release Gate.
+
+### Adicionado — v2.1 Package 1
+* Catálogos Engineering distinguem `ORGANIZATION_OWNED`, `SYSTEM_REFERENCE` e
+  `LEGACY_UNSCOPED`, com ownership persistido e índices únicos por organização.
+* `POST /engineering/catalogs` exige `organization_id` como identificador do recurso;
+  somente OWNER/ADMIN criam e membership ativa lê, sempre por token + banco.
+* Listagem, selection, recommendation, planning, workflow e assistance falham fechado.
+  Referências de sistema são read-only e registros legados sem owner ficam ocultos.
+* Migration `e61c4f8a2b90` preserva legados sem inventar organização e possui downgrade.
+
+### Compatibilidade e limites — v2.1 Package 1
+* Schemas v1 recebem somente `scope_type` e `organization_id` aditivos. Exigir a
+  organização na criação é a quebra necessária para remover escrita global.
+* O downgrade não restaura unicidade global incompatível com duplicatas legítimas
+  entre organizações. Package 2, v2.2, v3.0, deploy e CNC executável não foram iniciados.
+
+### Adicionado — v2.1 Package 2
+* `GET /engineering/catalogs/{catalog_id}/governance` fornece o read model fechado
+  `vena-ia.engineering-governance-evidence/v1` para um catálogo autorizado.
+* Evidence explicita ownership, provenance, lifecycle, classe de auditoria, retenção,
+  exclusão e reconciliação sem ledger, persistência, migration ou bulk export.
+* Organization-owned exige membership ativa; system reference é read-only; legacy
+  permanece invisível. Revogação e cross-org falham imediatamente como `404`.
+* Não há update/delete/reconciliation, retenção temporal, checksum ou frontend.
+
 ## [2.0.0] — 2026-08-07 — Integrated Engineering Platform
 
 ### Publicado

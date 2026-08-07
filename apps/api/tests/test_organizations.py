@@ -347,7 +347,7 @@ def test_contracts_and_openapi_are_closed(client):
         "vena-ia.virtual-cnc-plan-validation/v1",
     }
     schema = client.get("/openapi.json").json()
-    assert schema["info"]["version"] == "2.0.0"
+    assert schema["info"]["version"] == "2.1.0"
     assert "/organizations" in schema["paths"]
     membership = schema["components"]["schemas"]["MembershipCreate"]
     assert membership["additionalProperties"] is False

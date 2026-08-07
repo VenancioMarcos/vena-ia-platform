@@ -171,6 +171,28 @@ Não existem controles de produção, machine-send, download NC, postprocessor,
 toolpath ou G/M-code. `REVIEW ACKNOWLEDGED` é somente confirmação visual local e não
 constitui aprovação, assinatura, certificação ou autorização de fabricação.
 
+## 7.4 Ownership de catálogos Engineering v2.1
+
+Catálogos graváveis pertencem a uma Organization. `organization_id` apenas identifica
+o recurso; autorização deriva de JWT, usuário persistido e membership ativa. OWNER e
+ADMIN escrevem; memberships ativas leem; cross-org falha como `404`. Schemas rejeitam
+campos extras e headers de identidade/papel não concedem autoridade.
+
+`SYSTEM_REFERENCE` não possui owner e é read-only. Registros anteriores à migration
+são `LEGACY_UNSCOPED` e ficam invisíveis até reconciliação por evidência confiável;
+nunca são atribuídos à primeira, atual ou default Organization. A FK usa `RESTRICT`,
+sem cascade destrutivo.
+
+O Package 2 expõe somente evidence de um catálogo já autorizado. Não retorna lista de
+memberships, roles de terceiros, tokens, raw logs ou payloads. O JSON individual não é
+bulk export nem production readiness. Legacy segue `404`; membership revogada perde
+acesso na próxima autorização do banco. Retenção temporal e exclusão não foram
+inventadas. Checksum não é usado porque não há artefato persistido a verificar.
+
+No Release Candidate v2.1.0, os mesmos controles foram revalidados sem novo papel,
+endpoint de mutação ou authority client-side. Enterprise governance continua
+`NON_PRODUCTION`; publicação e deploy permanecem gates separados.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

@@ -1538,15 +1538,23 @@ gates cosméticos. Duas versões intermediárias separam dependências reais:
 **Objetivo:** tornar dados e catálogos Engineering organization-scoped sem quebrar
 contratos públicos ou permitir acesso cruzado.
 
-**Package 1 — Ownership and compatibility — `APPROVED_FOR_IMPLEMENTATION`:** modelo de ownership organizacional,
+**Package 1 — Ownership and compatibility — `APPROVED`:** modelo de ownership organizacional,
 política de leitura/escrita, estratégia de migration/backfill, compatibilidade para
 dados legados, índices e contrato aditivo. Depende da fronteira Organization/Team
 v1.9. Riscos: R-042 e R-048.
 
-**Package 2 — Governance evidence — `NOT_STARTED`:** autorização fail-closed, auditoria de lifecycle,
+**Estado de execução:** `IMPLEMENTED / READY_FOR_CTO_REVIEW`. A implementação usa
+Organization scope (sem Team scope), separa referências de sistema de registros
+legados bloqueados, preserva schemas v1 por adição e introduz a migration reversível
+`e61c4f8a2b90`. Package 2 permanece `NOT_STARTED`.
+
+**Package 2 — Governance evidence — `APPROVED`:** autorização fail-closed, auditoria de lifecycle,
 testes cross-org/cross-team, export/retention compatíveis, documentação e gate de
 migration reversível. Depende do Package 1. Não inclui SSO/SCIM, billing, cliente real
 ou deploy.
+
+O Package 2 usa read model por recurso, sem ledger/persistência/migration/export em
+massa. A v2.1 está `RELEASE_CANDIDATE`; nenhuma Release, v2.2 ou v3.0 foi iniciada.
 
 **Aceite:** zero authority em body/header; isolamento e backward compatibility
 provados; migration upgrade/downgrade testada; catálogos globais legados não vazam

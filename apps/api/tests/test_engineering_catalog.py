@@ -1,4 +1,21 @@
 from starlette.testclient import TestClient
+from sqlalchemy import select
+
+from app.modules.audit.models import SecurityAuditEvent
+from app.modules.engineering.models import EngineeringCatalogItem
+from app.modules.organizations.models import Membership, Team
+
+
+def _organization(client: TestClient, headers: dict[str, str]) -> str:
+    listed = client.get("/organizations", headers=headers)
+    assert listed.status_code == 200, listed.text
+    if listed.json():
+        return str(listed.json()[0]["id"])
+    created = client.post(
+        "/organizations", headers=headers, json={"name": "Engineering test organization"}
+    )
+    assert created.status_code == 201, created.text
+    return str(created.json()["id"])
 
 
 def _create(
@@ -8,8 +25,9 @@ def _create(
     code: str,
     properties: dict[str, object] | None = None,
 ) -> dict[str, object]:
+    organization_id = _organization(client, headers)
     response = client.post(
-        "/engineering/catalogs",
+        f"/engineering/catalogs?organization_id={organization_id}",
         headers=headers,
         json={
             "kind": kind,
@@ -34,7 +52,11 @@ def test_versioned_catalog_and_preliminary_selection(client: TestClient, make_ac
     machine = _create(client, account.headers, "MACHINE", "MILL-001")
     tool = _create(client, account.headers, "TOOL", "EM-10-4F")
 
-    listed = client.get("/engineering/catalogs?kind=MATERIAL", headers=account.headers)
+    organization_id = _organization(client, account.headers)
+    listed = client.get(
+        f"/engineering/catalogs?organization_id={organization_id}&kind=MATERIAL",
+        headers=account.headers,
+    )
     assert listed.status_code == 200
     assert [item["code"] for item in listed.json()] == ["AL-6061-T6"]
     assert listed.json()[0]["schema_version"] == "vena-ia.engineering-catalog/v1"
@@ -213,3 +235,345 @@ def test_review_report_is_reproducible_and_never_authorizes_cnc(
 
 def test_review_report_requires_authentication(client: TestClient) -> None:
     assert client.post("/engineering/reports/preliminary", json={}).status_code == 401
+
+
+def test_catalog_isolated_by_organization_and_allows_same_version(
+    client: TestClient, make_account
+) -> None:
+    first = make_account("catalog-org-a@vena-ia.dev")
+    second = make_account("catalog-org-b@vena-ia.dev")
+    first_item = _create(client, first.headers, "MATERIAL", "SHARED-CODE")
+    second_item = _create(client, second.headers, "MATERIAL", "SHARED-CODE")
+    first_org = _organization(client, first.headers)
+    second_org = _organization(client, second.headers)
+
+    assert first_item["organization_id"] == first_org
+    assert second_item["organization_id"] == second_org
+    assert first_item["scope_type"] == second_item["scope_type"] == "ORGANIZATION_OWNED"
+    assert client.get(
+        f"/engineering/catalogs?organization_id={second_org}", headers=first.headers
+    ).status_code == 404
+    assert client.get(
+        f"/engineering/catalogs/{second_item['id']}/governance", headers=first.headers
+    ).status_code == 404
+    denied = client.post(
+        "/engineering/selections/preliminary",
+        headers=first.headers,
+        json={
+            "material_id": second_item["id"],
+            "machine_id": second_item["id"],
+            "tool_id": second_item["id"],
+            "operation": "MILLING",
+        },
+    )
+    assert denied.status_code == 404
+
+
+def test_catalog_version_is_unique_within_organization(
+    client: TestClient, make_account
+) -> None:
+    account = make_account("catalog-unique@vena-ia.dev")
+    _create(client, account.headers, "MATERIAL", "UNIQUE-IN-ORG")
+    duplicate = client.post(
+        f"/engineering/catalogs?organization_id={_organization(client, account.headers)}",
+        headers=account.headers,
+        json={
+            "kind": "MATERIAL",
+            "code": "UNIQUE-IN-ORG",
+            "name": "Duplicate",
+            "data_version": "2026.08",
+            "source": "Concurrent duplicate fixture",
+            "properties": {},
+        },
+    )
+    assert duplicate.status_code == 409
+
+
+def test_admin_can_create_organization_catalog(client: TestClient, make_account, db_session) -> None:
+    owner = make_account("catalog-admin-owner@vena-ia.dev")
+    admin = make_account("catalog-admin@vena-ia.dev")
+    organization_id = _organization(client, owner.headers)
+    db_session.add(
+        Membership(
+            organization_id=organization_id,
+            user_id=admin.id,
+            team_id=None,
+            role="ADMIN",
+            status="ACTIVE",
+            created_by=owner.id,
+        )
+    )
+    db_session.commit()
+    item = _create(client, admin.headers, "MACHINE", "ADMIN-CREATED")
+    assert item["organization_id"] == organization_id
+
+
+def test_owner_admin_member_cross_org_governance_matrix(
+    client: TestClient, make_account, db_session
+) -> None:
+    owner_a = make_account("matrix-owner-a@vena-ia.dev")
+    admin_a = make_account("matrix-admin-a@vena-ia.dev")
+    member_a = make_account("matrix-member-a@vena-ia.dev")
+    owner_b = make_account("matrix-owner-b@vena-ia.dev")
+    admin_b = make_account("matrix-admin-b@vena-ia.dev")
+    org_a = _organization(client, owner_a.headers)
+    org_b = _organization(client, owner_b.headers)
+    team_a = Team(organization_id=org_a, name="Matrix A")
+    db_session.add(team_a)
+    db_session.flush()
+    db_session.add_all(
+        [
+            Membership(
+                organization_id=org_a,
+                user_id=admin_a.id,
+                team_id=None,
+                role="ADMIN",
+                status="ACTIVE",
+                created_by=owner_a.id,
+            ),
+            Membership(
+                organization_id=org_a,
+                user_id=member_a.id,
+                team_id=team_a.id,
+                role="MEMBER",
+                status="ACTIVE",
+                created_by=owner_a.id,
+            ),
+            Membership(
+                organization_id=org_b,
+                user_id=admin_b.id,
+                team_id=None,
+                role="ADMIN",
+                status="ACTIVE",
+                created_by=owner_b.id,
+            ),
+        ]
+    )
+    db_session.commit()
+    item_b = _create(client, owner_b.headers, "MATERIAL", "MATRIX-B")
+
+    for actor in (owner_a, admin_a, member_a):
+        assert client.get(
+            f"/engineering/catalogs?organization_id={org_b}", headers=actor.headers
+        ).status_code == 404
+        assert client.get(
+            f"/engineering/catalogs/{item_b['id']}/governance", headers=actor.headers
+        ).status_code == 404
+    for actor in (owner_b, admin_b):
+        assert client.get(
+            f"/engineering/catalogs/{item_b['id']}/governance", headers=actor.headers
+        ).status_code == 200
+
+
+def test_catalog_create_and_denial_reuse_security_audit(
+    client: TestClient, make_account, db_session
+) -> None:
+    owner = make_account("catalog-audit-owner@vena-ia.dev")
+    outsider = make_account("catalog-audit-outsider@vena-ia.dev")
+    organization_id = _organization(client, owner.headers)
+    _create(client, owner.headers, "TOOL", "AUDITED-CREATE")
+    denied = client.post(
+        f"/engineering/catalogs?organization_id={organization_id}",
+        headers=outsider.headers,
+        json={
+            "kind": "TOOL",
+            "code": "AUDITED-DENIAL",
+            "name": "Denied",
+            "data_version": "2026.08",
+            "source": "Audit fixture",
+            "properties": {},
+        },
+    )
+    assert denied.status_code == 404
+    events = list(
+        db_session.scalars(
+            select(SecurityAuditEvent)
+            .where(SecurityAuditEvent.event_type == "ENGINEERING_CATALOG_CREATED")
+            .order_by(SecurityAuditEvent.occurred_at)
+        )
+    )
+    assert [event.outcome for event in events[-2:]] == ["ALLOWED", "DENIED"]
+    assert events[-2].actor_user_id == owner.id
+    assert events[-1].actor_user_id == outsider.id
+
+
+def test_member_reads_but_cannot_create_and_revocation_fails_closed(
+    client: TestClient, make_account, db_session
+) -> None:
+    owner = make_account("catalog-owner@vena-ia.dev")
+    member = make_account("catalog-member@vena-ia.dev")
+    organization_id = _organization(client, owner.headers)
+    item = _create(client, owner.headers, "MATERIAL", "MEMBER-VISIBLE")
+    team = Team(organization_id=organization_id, name="Catalog readers")
+    db_session.add(team)
+    db_session.flush()
+    membership = Membership(
+        organization_id=organization_id,
+        user_id=member.id,
+        team_id=team.id,
+        role="MEMBER",
+        status="ACTIVE",
+        created_by=owner.id,
+    )
+    db_session.add(membership)
+    db_session.commit()
+
+    listed = client.get(
+        f"/engineering/catalogs?organization_id={organization_id}", headers=member.headers
+    )
+    assert listed.status_code == 200
+    assert [entry["id"] for entry in listed.json()] == [item["id"]]
+    governance = client.get(
+        f"/engineering/catalogs/{item['id']}/governance", headers=member.headers
+    )
+    assert governance.status_code == 200
+    evidence = governance.json()
+    assert evidence["schema_version"] == "vena-ia.engineering-governance-evidence/v1"
+    assert evidence["lifecycle_status"] == "ACTIVE"
+    assert evidence["organization_reference"] == organization_id
+    assert evidence["audit_references"] == ["event-type:ENGINEERING_CATALOG_CREATED"]
+    assert evidence["deletion_status"] == "DELETE_NOT_EXPOSED"
+    assert evidence["reconciliation_status"] == "NOT_APPLICABLE"
+    create_denied = client.post(
+        f"/engineering/catalogs?organization_id={organization_id}",
+        headers=member.headers,
+        json={
+            "kind": "TOOL",
+            "code": "MEMBER-WRITE",
+            "name": "Denied",
+            "data_version": "2026.08",
+            "source": "Denied fixture",
+            "properties": {},
+        },
+    )
+    assert create_denied.status_code == 404
+
+    membership.status = "REVOKED"
+    db_session.commit()
+    assert client.get(
+        f"/engineering/catalogs?organization_id={organization_id}", headers=member.headers
+    ).status_code == 404
+    assert client.get(
+        f"/engineering/catalogs/{item['id']}/governance", headers=member.headers
+    ).status_code == 404
+
+
+def test_scope_and_identity_cannot_be_mass_assigned(
+    client: TestClient, make_account
+) -> None:
+    owner = make_account("catalog-mass-owner@vena-ia.dev")
+    outsider = make_account("catalog-mass-outsider@vena-ia.dev")
+    organization_id = _organization(client, owner.headers)
+    forged_body = {
+        "kind": "TOOL",
+        "code": "FORGED-SCOPE",
+        "name": "Forged",
+        "data_version": "2026.08",
+        "source": "Untrusted client",
+        "properties": {},
+        "scope_type": "SYSTEM_REFERENCE",
+        "organization_id": organization_id,
+        "created_by": owner.id,
+    }
+    assert client.post(
+        f"/engineering/catalogs?organization_id={organization_id}",
+        headers=owner.headers,
+        json=forged_body,
+    ).status_code == 422
+    assert client.post(
+        f"/engineering/catalogs?organization_id={organization_id}",
+        headers={**outsider.headers, "X-User-ID": owner.id, "X-Role": "OWNER"},
+        json={key: value for key, value in forged_body.items() if key not in {
+            "scope_type", "organization_id", "created_by"
+        }},
+    ).status_code == 404
+
+
+def test_system_references_are_read_only_and_legacy_rows_are_hidden(
+    client: TestClient, make_account, db_session
+) -> None:
+    account = make_account("catalog-reference@vena-ia.dev")
+    system = EngineeringCatalogItem(
+        kind="MATERIAL",
+        code="SYSTEM-REFERENCE",
+        name="System reference",
+        data_version="2026.08",
+        source="Controlled system fixture",
+        properties={},
+        scope_type="SYSTEM_REFERENCE",
+        organization_id=None,
+        created_by=account.id,
+    )
+    legacy = EngineeringCatalogItem(
+        kind="MATERIAL",
+        code="LEGACY-HIDDEN",
+        name="Legacy hidden",
+        data_version="2026.08",
+        source="Pre-scope fixture",
+        properties={},
+        scope_type="LEGACY_UNSCOPED",
+        organization_id=None,
+        created_by=account.id,
+    )
+    db_session.add_all([system, legacy])
+    db_session.commit()
+
+    listed = client.get("/engineering/catalogs", headers=account.headers)
+    assert listed.status_code == 200
+    assert [entry["code"] for entry in listed.json()] == ["SYSTEM-REFERENCE"]
+    assert listed.json()[0]["organization_id"] is None
+    assert listed.json()[0]["scope_type"] == "SYSTEM_REFERENCE"
+    assert "LEGACY-HIDDEN" not in str(listed.json())
+    system_evidence = client.get(
+        f"/engineering/catalogs/{system.id}/governance", headers=account.headers
+    )
+    assert system_evidence.status_code == 200
+    assert system_evidence.json()["lifecycle_status"] == "SYSTEM_READ_ONLY"
+    assert system_evidence.json()["organization_reference"] is None
+    assert system_evidence.json()["audit_references"] == []
+    assert system_evidence.json()["reconciliation_status"] == (
+        "SYSTEM_REFERENCE_NOT_RECONCILABLE"
+    )
+    assert client.get(
+        f"/engineering/catalogs/{legacy.id}/governance", headers=account.headers
+    ).status_code == 404
+
+
+def test_catalog_update_and_delete_are_not_exposed(client: TestClient, make_account) -> None:
+    account = make_account("catalog-no-mutation@vena-ia.dev")
+    item = _create(client, account.headers, "TOOL", "IMMUTABLE-CATALOG")
+    assert client.patch(
+        f"/engineering/catalogs/{item['id']}", headers=account.headers, json={"name": "Changed"}
+    ).status_code == 404
+    assert client.delete(
+        f"/engineering/catalogs/{item['id']}", headers=account.headers
+    ).status_code == 404
+
+
+def test_catalog_openapi_is_additive_and_authority_fields_are_closed(client: TestClient) -> None:
+    schema = client.get("/openapi.json").json()
+    create = schema["paths"]["/engineering/catalogs"]["post"]
+    organization_parameter = next(
+        parameter for parameter in create["parameters"] if parameter["name"] == "organization_id"
+    )
+    assert organization_parameter["in"] == "query"
+    assert organization_parameter["required"] is True
+    create_schema = schema["components"]["schemas"]["CatalogItemCreate"]
+    assert create_schema["additionalProperties"] is False
+    assert not {"organization_id", "scope_type", "created_by", "role"}.intersection(
+        create_schema["properties"]
+    )
+    read_properties = schema["components"]["schemas"]["CatalogItemRead"]["properties"]
+    assert {"scope_type", "organization_id"}.issubset(read_properties)
+    governance_path = schema["paths"]["/engineering/catalogs/{catalog_id}/governance"]
+    assert set(governance_path) == {"get"}
+    governance_schema = schema["components"]["schemas"]["CatalogGovernanceEvidence"]
+    assert governance_schema["additionalProperties"] is False
+    assert not {"membership", "role", "token", "owner_id"}.intersection(
+        governance_schema["properties"]
+    )
+    assert "/engineering/catalogs/{catalog_id}" not in schema["paths"]
+    assert not any(
+        "catalogs" in path and ("export" in path or "reconcile" in path)
+        for path in schema["paths"]
+    )

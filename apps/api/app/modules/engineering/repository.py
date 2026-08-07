@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.modules.engineering.models import EngineeringCatalogItem
@@ -14,10 +14,22 @@ class EngineeringCatalogRepository:
         self.db.refresh(item)
         return item
 
-    def list(self, kind: str | None = None) -> list[EngineeringCatalogItem]:
+    def list_accessible(
+        self, *, organization_id: str | None, kind: str | None = None
+    ) -> list[EngineeringCatalogItem]:
         stmt = select(EngineeringCatalogItem).order_by(
             EngineeringCatalogItem.kind, EngineeringCatalogItem.code
         )
+        visibility = EngineeringCatalogItem.scope_type == "SYSTEM_REFERENCE"
+        if organization_id is not None:
+            visibility = or_(
+                visibility,
+                (
+                    (EngineeringCatalogItem.scope_type == "ORGANIZATION_OWNED")
+                    & (EngineeringCatalogItem.organization_id == organization_id)
+                ),
+            )
+        stmt = stmt.where(visibility)
         if kind is not None:
             stmt = stmt.where(EngineeringCatalogItem.kind == kind)
         return list(self.db.scalars(stmt))

@@ -274,7 +274,16 @@ class SpecializedAssistanceService:
                     "limitations": engineering.limitations,
                     "data_versions": engineering.data_versions,
                     "rule_version": engineering.rule_version,
-                    "catalog_provenance": "GLOBAL_AUTHENTICATED_NOT_ORGANIZATION_SCOPED",
+                    "catalog_provenance": sorted(
+                        {
+                            item.scope_type.value
+                            for item in (
+                                engineering.material,
+                                engineering.machine,
+                                engineering.tool,
+                            )
+                        }
+                    ),
                 },
                 "planning": None
                 if workflow.planning is None

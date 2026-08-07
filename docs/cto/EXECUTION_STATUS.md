@@ -459,3 +459,54 @@ O CTO aprovou `DEC-037`, oficializou a sequência v2.1→v2.2→v3.0 e os riscos
 R-048–R-050. Somente v2.1 Package 1 — Ownership and Compatibility — recebeu
 `APPROVED_FOR_IMPLEMENTATION`; Package 2 e todas as versões posteriores permanecem
 `NOT_STARTED`. A PR documental #24 deve ser integrada antes da branch funcional.
+
+## 2026-08-07 — TASK-V21-001 Package 1 implementado
+
+A PR documental #24 foi integrada em `3134de2`. A branch
+`codex/v2.1-enterprise-engineering-governance` implementa ownership de catálogos por
+Organization. `SYSTEM_REFERENCE` é read-only, `LEGACY_UNSCOPED` fica oculto e
+`TOKEN + DATABASE = AUTHORITY` protege consumers downstream. A migration
+`e61c4f8a2b90` não inventa owner e possui downgrade data-preserving. Package 2, v2.2,
+v3.0, release, deploy e CNC executável permanecem fora.
+
+Gate local: Ruff PASS; mypy em 168 arquivos PASS; API `355 passed, 2 skipped`;
+operations `69 passed, 7 skipped`; focais Engineering/workflow `43 passed`; OpenAPI,
+Compose config, diff/check e Alembic single head `e61c4f8a2b90` PASS. O Docker daemon
+local está ausente; upgrade/downgrade/upgrade PostgreSQL permanece gate obrigatório do
+Backend CI da Draft PR.
+
+## 2026-08-07 — TASK-V21-002 Package 2 implementado
+
+O CTO aprovou Package 1 e autorizou Governance Evidence. A mesma branch/PR #25 agora
+expõe read model v1 individual e autorizado, sem ledger, persistence ou migration.
+Lifecycle, ownership, system/legacy, audit class, retention/deletion/reconciliation e
+limites de export ficam explícitos. Cross-org e revoked falham `404`; Package 1 segue
+protegido. v2.1 está funcionalmente completa e aguarda revisão/Release Candidate;
+v2.2/v3.0 continuam `NOT_STARTED`.
+
+Gate local Package 2: Ruff PASS; mypy 168 arquivos; API `357 passed, 2 skipped`;
+Engineering focal `18 passed`; conjunto Engineering/workflow `47 passed`; operations
+`69 passed, 7 skipped`; OpenAPI 79 paths com governance v1; Compose, secret scan,
+diff/check e Alembic head `e61c4f8a2b90` PASS. Frontend/runtime não impactados.
+
+## 2026-08-07 — TASK-V21-003 Release Candidate v2.1.0
+
+O CTO aprovou os Packages 1 e 2 e confirmou que não existe Package 3. A candidata
+`Vena_IA Platform v2.1.0 — Enterprise Engineering Governance` alinha
+API/FastAPI/health/OpenAPI/frontend em `2.1.0`, preserva os contratos Engineering v1
+e governance evidence v1 e mantém Alembic em `e61c4f8a2b90`, sem nova migration.
+
+Release Notes consolidam ownership por Organization, referências de sistema
+read-only, bloqueio de legados sem owner, autorização fail-closed downstream,
+auditabilidade, lifecycle, retenção, deletion e reconciliation. R-042 e R-048
+permanecem residuais/monitorados; R-049 e R-050 continuam gates futuros. Não houve
+deploy, merge, tag, Release, produção ou CNC executável. A PR #25 permanece Draft e
+a publicação depende de autorização direta do proprietário.
+
+Gate terminal da candidata: Ruff PASS; mypy 168 arquivos; API `357 passed, 2
+skipped`; operations `69 passed, 7 skipped`; focais de versão/governança `70 passed`;
+OpenAPI `2.1.0` com 79 paths e governance evidence v1; Alembic single head
+`e61c4f8a2b90`; Compose config, secret scan e diff/check PASS. O runtime frontend
+local disponível é Node 24/pnpm 11.16, divergente da política Node 22.20/pnpm 11.9;
+por isso typecheck/build/E2E e o ciclo PostgreSQL real permanecem gates obrigatórios
+dos CI oficiais no HEAD final.

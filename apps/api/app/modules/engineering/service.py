@@ -2,13 +2,21 @@ import math
 from typing import cast
 
 from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 
 from app.modules.engineering.models import EngineeringCatalogItem
 from app.modules.engineering.repository import EngineeringCatalogRepository
 from app.modules.engineering.schemas import (
     CatalogItemCreate,
     CatalogItemRead,
+    CatalogDeletionStatus,
+    CatalogGovernanceEvidence,
+    CatalogGovernanceReference,
     CatalogKind,
+    CatalogLifecycle,
+    CatalogReconciliationStatus,
+    CatalogRetentionStatus,
+    CatalogScope,
     EngineeringRecommendation,
     EngineeringReviewReport,
     AvailabilityValue,
@@ -17,15 +25,114 @@ from app.modules.engineering.schemas import (
     RecommendationRequest,
     ReviewChecklistItem,
 )
+from app.modules.organizations.schemas import OrganizationRole
+from app.modules.organizations.service import OrganizationAuthorization
 
 
 class EngineeringCatalogService:
-    def __init__(self, repository: EngineeringCatalogRepository) -> None:
+    def __init__(
+        self,
+        repository: EngineeringCatalogRepository,
+        authorization: OrganizationAuthorization,
+    ) -> None:
         self.repository = repository
+        self.authorization = authorization
 
-    def create(self, payload: CatalogItemCreate, user_id: str) -> EngineeringCatalogItem:
-        return self.repository.add(
-            EngineeringCatalogItem(**payload.model_dump(mode="json"), created_by=user_id)
+    def create(
+        self, payload: CatalogItemCreate, user_id: str, organization_id: str
+    ) -> EngineeringCatalogItem:
+        self.authorization.require_role(
+            organization_id, {OrganizationRole.OWNER, OrganizationRole.ADMIN}
+        )
+        try:
+            return self.repository.add(
+                EngineeringCatalogItem(
+                    **payload.model_dump(mode="json"),
+                    created_by=user_id,
+                    organization_id=organization_id,
+                    scope_type=CatalogScope.ORGANIZATION_OWNED.value,
+                )
+            )
+        except IntegrityError as exc:
+            self.repository.db.rollback()
+            raise HTTPException(status_code=409, detail="Catalog item already exists") from exc
+
+    def list(
+        self, *, organization_id: str | None, kind: CatalogKind | None
+    ) -> list[EngineeringCatalogItem]:
+        if organization_id is not None:
+            self.authorization.require_organization(organization_id)
+        return self.repository.list_accessible(
+            organization_id=organization_id,
+            kind=kind.value if kind is not None else None,
+        )
+
+    def _get_authorized(self, item_id: str, kind: CatalogKind) -> EngineeringCatalogItem:
+        item = self._get_authorized_item(item_id)
+        if item.kind != kind.value:
+            raise HTTPException(
+                status_code=404, detail=f"{kind.value.title()} catalog item not found"
+            )
+        return item
+
+    def _get_authorized_item(self, item_id: str) -> EngineeringCatalogItem:
+        item = self.repository.get(item_id)
+        if item is None or item.scope_type == "LEGACY_UNSCOPED":
+            raise HTTPException(status_code=404, detail="Catalog item not found")
+        if item.scope_type == "ORGANIZATION_OWNED":
+            if item.organization_id is None:
+                raise HTTPException(status_code=404, detail="Catalog item not found")
+            self.authorization.require_organization(item.organization_id)
+        elif item.scope_type != "SYSTEM_REFERENCE":
+            raise HTTPException(status_code=404, detail="Catalog item not found")
+        return item
+
+    def governance(self, item_id: str) -> CatalogGovernanceEvidence:
+        item = self._get_authorized_item(item_id)
+        is_system = item.scope_type == CatalogScope.SYSTEM_REFERENCE.value
+        return CatalogGovernanceEvidence(
+            catalog_reference=CatalogGovernanceReference(
+                id=item.id,
+                kind=CatalogKind(item.kind),
+                code=item.code,
+                data_version=item.data_version,
+            ),
+            scope_type=CatalogScope(item.scope_type),
+            organization_reference=item.organization_id,
+            provenance=item.source,
+            created_at=item.created_at,
+            created_by=item.created_by,
+            lifecycle_status=(
+                CatalogLifecycle.SYSTEM_READ_ONLY if is_system else CatalogLifecycle.ACTIVE
+            ),
+            audit_references=([] if is_system else ["event-type:ENGINEERING_CATALOG_CREATED"]),
+            retention_status=(
+                CatalogRetentionStatus.SYSTEM_MANAGED_NO_TENANT_POLICY
+                if is_system
+                else CatalogRetentionStatus.RETAINED_FOR_TRACEABILITY_NO_TEMPORAL_POLICY
+            ),
+            deletion_status=(
+                CatalogDeletionStatus.SYSTEM_MUTATION_NOT_EXPOSED
+                if is_system
+                else CatalogDeletionStatus.DELETE_NOT_EXPOSED
+            ),
+            reconciliation_status=(
+                CatalogReconciliationStatus.SYSTEM_REFERENCE_NOT_RECONCILABLE
+                if is_system
+                else CatalogReconciliationStatus.NOT_APPLICABLE
+            ),
+            limitations=[
+                "Evidence is an authorized read model, not production readiness or approval.",
+                "No temporal retention or deletion endpoint is defined in v2.1.",
+            ],
+            warnings=(
+                []
+                if is_system
+                else [
+                    "Audit references identify the event class; the existing audit schema "
+                    "does not claim a resource-level event link."
+                ]
+            ),
         )
 
     def select(self, payload: SelectionRequest) -> PreliminarySelection:
@@ -36,12 +143,13 @@ class EngineeringCatalogService:
         )
         items: list[EngineeringCatalogItem] = []
         for item_id, kind in expected:
-            item = self.repository.get(item_id)
-            if item is None or item.kind != kind.value:
-                raise HTTPException(
-                    status_code=404, detail=f"{kind.value.title()} catalog item not found"
-                )
+            item = self._get_authorized(item_id, kind)
             items.append(item)
+        organization_ids = {
+            item.organization_id for item in items if item.scope_type == "ORGANIZATION_OWNED"
+        }
+        if len(organization_ids) > 1:
+            raise HTTPException(status_code=404, detail="Catalog item not found")
         material, machine, tool = items
         return PreliminarySelection(
             operation=payload.operation,
@@ -49,7 +157,8 @@ class EngineeringCatalogService:
             machine=CatalogItemRead.model_validate(machine),
             tool=CatalogItemRead.model_validate(tool),
             traceability=[
-                f"{item.kind}:{item.code}@{item.data_version}:{item.source}" for item in items
+                f"{item.scope_type}:{item.kind}:{item.code}@{item.data_version}:{item.source}"
+                for item in items
             ],
             limitations=[
                 "No toolpath or executable G-code is generated.",

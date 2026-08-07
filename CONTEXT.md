@@ -34,6 +34,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   Verification → v3.0 Manufacturing Intelligence & Digital Thread. O CTO aprovou
   `DEC-037` e oficializou R-048–R-050. Somente v2.1 Package 1 está autorizado para
   implementação; todos os Packages seguintes permanecem `NOT_STARTED`.
+* **v2.1 Package 1 implementado:** catálogos Engineering agora são organization-scoped;
+  membership ativa lê e OWNER/ADMIN cria. `SYSTEM_REFERENCE` é read-only e dados
+  preexistentes viram `LEGACY_UNSCOPED` oculto, sem atribuição arbitrária. A migration
+  head é `e61c4f8a2b90`; Package 2, v2.2 e v3.0 permanecem `NOT_STARTED`.
+* **v2.1 Package 2 implementado:** governance evidence read-only compõe metadados
+  autorizados e políticas técnicas de lifecycle/retention/deletion/reconciliation.
+  Sem ledger, persistência, migration, bulk export ou frontend. v2.1 está funcionalmente
+  completa, pendente de revisão/Release Candidate; v2.2 e v3.0 seguem `NOT_STARTED`.
+* **v2.1 Release Candidate:** Packages 1–2 aprovados; não existe Package 3. Versões
+  API/FastAPI/health/OpenAPI/frontend estão alinhadas em `2.1.0`, migration permanece
+  `e61c4f8a2b90` e release notes estão prontas. PR #25 continua Draft; merge, tag,
+  Release, deploy e v2.2 dependem de gates posteriores.
 * **v1.9 Package 1 implementado:** branch
   `codex/v1.9-controlled-pilot-readiness` adiciona Organization/Team,
   memberships `OWNER`/`ADMIN`/`MEMBER`, bootstrap owner transacional, revogação,
