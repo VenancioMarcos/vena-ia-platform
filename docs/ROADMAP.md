@@ -896,12 +896,12 @@ Package 1 está `APPROVED_FOR_IMPLEMENTATION`; Packages 2 e 3 estão `NOT_STARTE
 | v1.8 | geometry analysis/features e feature planning | corpus/cobertura conservadores; nenhum intent/manufaturabilidade implícitos |
 | v1.9 | Organization/Team, readiness, pilot evidence/integrity/rollback e CNC virtual validation | isolamento/evidence continuam sintéticos e R-042/R-043 monitorados |
 
-Inconsistências registradas para tratamento no Package aplicável: o
-`CNCPlanPreview` existente ainda não expõe `schema_version`/traceability enquanto a
-validação v1.9 referencia `vena-ia.cnc-neutral-plan/v1`; schemas Research não têm uma
-versão pública comum; catálogos Engineering continuam globais autenticados; e alguns
-títulos documentais de v1.9 ainda dizem “Release Candidate” apesar da Release já
-publicada. Nenhuma dessas lacunas autoriza correção funcional nesta TASK.
+Inconsistências registradas: o Package 1 resolveu de forma aditiva a ausência de
+`schema_version`/traceability do `CNCPlanPreview` e conectou o contrato
+`vena-ia.cnc-neutral-plan/v1` ao planning/recommendation. Permanecem pendentes:
+schemas Research sem versão pública comum para Package 2; catálogos Engineering
+globais autenticados; dashboard/evidence para Package 3; e títulos históricos de
+v1.9 ainda marcados “Release Candidate”.
 
 #### Auditoria do fluxo integrado
 
@@ -911,7 +911,7 @@ publicada. Nenhuma dessas lacunas autoriza correção funcional nesta TASK.
 | Feature recognition | `vena-ia.geometry-features/v1`; rule `1.0.0` | topologia válida → primitivas e through hole estrito; revisão humana | cobertura conservadora é limitada e o resultado ainda precisa ser encadeado sem inferir intenção |
 | Engineering recommendation | `vena-ia.engineering-catalog/v1`, `engineering-selection/v1`, `engineering-recommendation/v1` | material/máquina/ferramenta versionados → compatibilidade, parâmetros, tempo/custo preliminares; revisão humana | catálogos são globais autenticados e a recomendação não representa processo liberado |
 | CAM preliminar / process planning | `vena-ia.feature-planning/v1`; `FeaturePlanningBridge` | feature suportada + catálogos explícitos → `DRILLING_CANDIDATE`, assumptions, missing inputs e recommendation opcional | somente through hole; não há orquestração E2E nem contrato agregado de workflow; setup/fixture/tolerância permanecem ausentes |
-| Plano CNC neutro | preview `/cnc/plan/preview`; validação `vena-ia.virtual-cnc-plan-validation/v1` espera `vena-ia.cnc-neutral-plan/v1` | parâmetros allowlisted → preview `SIMULATION_ONLY_REQUIRES_HUMAN_REVIEW`, `executable_output=false` | preview não possui schema version/rastreabilidade upstream e não é conectado ao planning/recommendation |
+| Plano CNC neutro | preview `/cnc/plan/preview`; contrato aditivo `vena-ia.cnc-neutral-plan/v1`; validação `vena-ia.virtual-cnc-plan-validation/v1` | planning/recommendation refs + parâmetros allowlisted → preview `SIMULATION_ONLY_REQUIRES_HUMAN_REVIEW`, `executable_output=false` | Package 1 resolveu versionamento/traceability; validação física e produção continuam proibidas |
 | Relatório | `vena-ia.engineering-review-report/v1` e Research Report separado | recommendation ou síntese RAG → conclusão limitada, evidências/checklist e revisão humana | nenhum relatório único referencia CAD, feature, planning, CNC neutro e evidência científica como uma cadeia |
 
 **CAM preliminar na v2.0** significa exclusivamente process planning: candidatos de
@@ -920,6 +920,8 @@ parâmetros determinísticos e estimativas de tempo/custo. Não contém coordena
 toolpath, pós-processador, G-code, M-code, NC/DNC ou execução.
 
 #### Package 1 — Integrated Engineering Workflow Foundation
+
+**Estado:** `APPROVED` na branch `codex/v2.0-integrated-engineering-platform`.
 
 Objetivo: compor o núcleo determinístico CAD → features → engineering → CAM
 preliminar → plano CNC neutro → relatório, reutilizando serviços e regras existentes.
@@ -941,7 +943,17 @@ Escopo aprovado:
 Gate de saída: cadeia rastreável e determinística, isolamento/autorização preservados,
 relatório integrado não executável e nenhum salto de lacuna como sucesso.
 
+Evidência Package 1: `POST /engineering/workflows` compõe uma única análise CAD com
+os contratos existentes, usa ID determinístico derivado do input, preserva estados
+fechados e formaliza `vena-ia.cnc-neutral-plan/v1` sobre o serviço existente. Nenhuma
+persistência, fila ou migration foi necessária. Catálogos Engineering permanecem
+globais autenticados; o workflow não concede escopo organizacional e o acesso ao
+documento continua fail-closed por ownership. R-044 está mitigado parcialmente e
+monitorado; R-045 permanece aberto/gate.
+
 #### Package 2 — Specialized Assistance and Grounded Research Integration
+
+**Estado:** `APPROVED` na Draft PR #23. Package 1 também está `APPROVED`.
 
 Objetivo: acrescentar assistência especializada somente sobre o núcleo determinístico
 aprovado e conectar pesquisa fundamentada sem permitir que IA substitua regra ou
@@ -955,16 +967,26 @@ permanecer sugestão revisável.
 
 Research reutiliza Documents/RAG, chunks, evidência documento/página/chunk,
 referências heurísticas, síntese grounded, DOE preliminar, ANOVA apenas descritiva e
-Research Report. Lacunas: contratos Research ainda não possuem uma versão pública
-comum, não existe bridge rastreável ao workflow de engenharia e não há validação
-científica autônoma. O Package deve falhar fechado quando grounding for insuficiente
-e nunca produzir decisão científica.
+Research Report. O Package 2 resolve de forma aditiva a versão pública comum e o
+bridge rastreável ao workflow. Validação científica autônoma continua inexistente;
+grounding insuficiente falha fechado e nunca produz decisão científica.
 
 Gate de saída: agentes não alteram resultados determinísticos, fontes continuam
 autorizadas/rastreáveis, prompt injection permanece tratado como dado não confiável
 e overclaim científico é bloqueado.
 
+Evidência Package 2: `vena-ia.specialized-assistance/v1` expõe quatro perfis
+allowlisted que somente explicam um snapshot determinístico reconstruído; o input
+trace é separado da resposta generativa. O bridge
+`vena-ia.grounded-research-assistance/v1` adiciona citations estruturadas e mapeia
+aditivamente synthesis/evidence, DOE preliminar, ANOVA descritiva e Research Report.
+Prompt injection é dado não confiável; provider failure preserva o workflow; output
+com sintaxe CNC ou claim de autoridade é bloqueado. Nenhuma migration ou UI foi criada.
+
 #### Package 3 — Operational Dashboard, Evidence and v2.0 Consolidation
+
+Estado: `APPROVED` na Draft PR #23. Packages 1–3 estão `APPROVED`; v2.0 está
+`RELEASE_CANDIDATE`. Não existe Package 4.
 
 Objetivo: expor o workflow já aprovado e fechar evidence/E2E/release sem criar lógica
 de domínio no frontend.
@@ -988,7 +1010,8 @@ cadeia E2E determinística, partial/failure, ownership/isolation e neutralidade 
 Package 2 cobre grounding, citações, prompt injection, ausência de evidence,
 não sobrescrita de rules e limites DOE/ANOVA; Package 3 cobre acessibilidade,
 frontend/API E2E, restore, observability, resilience, carga sintética e regressão
-integral. Nenhum desses testes é executado nesta TASK documental.
+integral. O Package 3 executa esses gates sem nova migration e prepara
+`docs/RELEASE_NOTES_v2.0.0.md`; publicação depende de ordem posterior.
 
 #### Riscos e limites absolutos
 

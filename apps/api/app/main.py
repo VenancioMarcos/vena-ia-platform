@@ -25,6 +25,8 @@ from app.modules.cad.api.routes import router as cad_router
 from app.modules.documents.api.routes import router as documents_router
 from app.modules.documents.dependencies import initialize_document_storage
 from app.modules.engineering.api.routes import router as engineering_router
+from app.modules.engineering.api.workflow_routes import router as engineering_workflow_router
+from app.modules.engineering.api.assistance_routes import router as engineering_assistance_router
 from app.modules.files.api.routes import router as files_router
 from app.modules.jobs.api.routes import router as jobs_router
 from app.modules.jobs.dependencies import build_job_queue
@@ -34,7 +36,7 @@ from app.modules.projects.api.routes import router as projects_router
 from app.modules.research.api.routes import router as research_router
 from app.modules.users.api.routes import router as users_router
 
-API_VERSION = "1.9.0"
+API_VERSION = "2.0.0"
 
 
 @asynccontextmanager
@@ -151,6 +153,8 @@ def create_app() -> FastAPI:
     app.include_router(audit_router)
     app.include_router(documents_router)
     app.include_router(engineering_router)
+    app.include_router(engineering_workflow_router)
+    app.include_router(engineering_assistance_router)
     app.include_router(jobs_router)
     app.include_router(cad_router)
     app.include_router(manufacturing_router)

@@ -50,6 +50,32 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   assistência especializada/Research grounded e dashboard/evidence/E2E permanecem
   `NOT_STARTED`. A PR documental #22 deve ser integrada antes da branch funcional.
   Migration, deploy e CNC executável não estão autorizados.
+* **v2.0 Package 1 implementado:** a branch
+  `codex/v2.0-integrated-engineering-platform` adiciona o aggregate
+  `vena-ia.integrated-engineering-workflow/v1`, formaliza
+  `vena-ia.cnc-neutral-plan/v1` e reutiliza CAD/features, Engineering,
+  FeaturePlanningBridge, CNC preview e report builder. O fluxo analisa STEP uma vez,
+  mantém missing inputs/unsupported/incompatibility explícitos, exige revisão humana
+  e nunca produz output executável. Não há nova persistência ou migration; catálogos
+  continuam globais autenticados. A Draft PR #23 está aberta; o Backend CI do head
+  funcional/documental `394786e` aprovou lint, mypy, ciclo Alembic, 341 testes da
+  API e 76 testes operacionais reais. Packages 2 e 3 permanecem `NOT_STARTED`.
+* **v2.0 Package 2 implementado:** a mesma branch/PR #23 adiciona assistência
+  especializada bounded sobre o snapshot imutável do Package 1 e bridge Research
+  `vena-ia.grounded-research-assistance/v1`. Quatro perfis allowlisted usam
+  `AIService`, Documents/RAG e Research existentes; contexto é minimizado, citações
+  preservam documento/página/chunk/método, ausência falha fechado e output do modelo
+  não pode mutar fatos ou produzir CNC executável. R-046/R-047 estão mitigados
+  parcialmente/monitorados. O Backend CI do head `04cf56a` aprovou lint, mypy em
+  168 arquivos, ciclo Alembic, 349 testes API e 76 operacionais. Sem persistence,
+  migration ou frontend; Package 3 permanece `NOT_STARTED` e v2.0 não está encerrada.
+* **v2.0 Package 3 implementado:** a mesma Draft PR #23 adiciona dashboard
+  operacional tipado para workflow/assistance/Research, estados explícitos, evidence,
+  citações e checklist humano sem autoridade produtiva. Playwright cobre desktop e
+  largura reduzida, caminho integrado e falhas controladas. Versões API/FastAPI/
+  health/OpenAPI/frontend estão em `2.0.0`; Alembic permanece `d39a7b2c5e11`.
+  Packages 1–3 estão aprovados e a v2.0 está `RELEASE_CANDIDATE`. PR #23 segue Draft;
+  merge, tag, Release e deploy não foram realizados.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

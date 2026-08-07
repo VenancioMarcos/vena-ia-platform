@@ -452,6 +452,8 @@ def test_synthesis_adds_grounding_and_prompt_injection_guard() -> None:
         )
     )
     assert result.status == "AI_ASSISTED_REQUIRES_HUMAN_REVIEW"
+    assert result.schema_version == "vena-ia.grounded-research-assistance/v1"
+    assert result.review_status == "REQUIRES_HUMAN_REVIEW"
     assert result.evidence[0].page_number == 3
     assert any("untrusted" in limitation for limitation in result.limitations)
 

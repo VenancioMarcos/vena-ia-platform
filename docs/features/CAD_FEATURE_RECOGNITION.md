@@ -57,3 +57,11 @@ Traversal is capped at 10,000 faces and reuses the Package 2 50 MiB input limit.
 STL, DXF and IGES remain `PLANNED`; no superficial parser is provided. The contract
 may be a future engineering-planning input, but no machine/tool selection, CAM,
 toolpath, G-code, manufacturability or CNC transmission is activated.
+
+## Integrated workflow reuse
+
+The v2.0 Package 1 workflow reuses the `CADDocumentAnalysis` already produced for
+geometry and features; `FeaturePlanningBridge.plan_from_analysis()` does not reload
+or reparse STEP. Only the existing `THROUGH_CYLINDRICAL_HOLE` rule may produce a
+`DRILLING_CANDIDATE`. Other primitives remain `BLOCKED_UNSUPPORTED_FEATURE`, and no
+feature result establishes process validity or production readiness.

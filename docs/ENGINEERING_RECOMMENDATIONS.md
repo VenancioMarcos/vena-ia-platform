@@ -19,3 +19,12 @@ coordenadas, offsets, G-code, M-code, toolpath, transmissão ou controle CNC.
 gera JSON versionado com conclusão segura, itens indisponíveis, rastreabilidade,
 incerteza baseada somente na completude dos dados e checklist humano nunca
 preenchido automaticamente. A incerteza não representa segurança física.
+
+## Uso no workflow integrado v2.0 Package 1
+
+O `IntegratedEngineeringWorkflowService` reutiliza `recommend()` uma única vez e
+passa o mesmo objeto a `report_from_recommendation()`. Fórmulas, RPM, feed, tempo,
+custo, compatibilidade e report builder não são duplicados. Inputs adicionais de
+processo permanecem explícitos no planning; ausência ou incompatibilidade nunca vira
+aprovação. O contrato e limites completos estão em
+`docs/INTEGRATED_ENGINEERING_WORKFLOW.md`.

@@ -366,3 +366,68 @@ O CTO aprovou a DEC-035 e a decomposição oficial em três Packages. Package 1 
 deve ser integrada como docs-only antes da criação da branch funcional. O escopo
 funcional autorizado limita-se ao workflow integrado determinístico e ao contrato
 CNC neutro aditivo, sem migration, deploy ou saída CNC executável.
+
+## 2026-08-07 — TASK-V20-001 Package 1 implementado
+
+A PR documental #22 foi integrada por Squash Merge em `22ddf9f`. Na branch
+`codex/v2.0-integrated-engineering-platform`, o commit `34dc843` implementa o
+workflow determinístico agregado e formaliza o plano CNC neutro sobre os serviços
+existentes. O STEP é analisado uma única vez; missing input, incompatibilidade e
+feature não suportada permanecem estados fechados. Focal CAD/Engineering/planning/
+CNC/workflow: 54 testes aprovados. Não há persistence, async, migration, frontend,
+deploy ou saída CNC executável. Packages 2 e 3 continuam `NOT_STARTED`.
+
+A Draft PR #23 está `OPEN/DRAFT`. O gate local terminal aprovou Ruff, mypy em 165
+arquivos, 408 testes (9 skips), OpenAPI com 77 paths, Alembic `d39a7b2c5e11`,
+Compose config e secret scan. O Backend CI run `31177827093`, no head `394786e`,
+aprovou lint, mypy, upgrade/downgrade/upgrade PostgreSQL, 341 testes API e 76 testes
+operacionais com PostgreSQL/MinIO. Frontend CI e Runtime Policy não foram disparados
+porque os respectivos domínios não foram alterados.
+
+## 2026-08-07 — TASK-V20-002 Package 2 implementado
+
+O CTO aprovou o Package 1 e autorizou exclusivamente Specialized Assistance and
+Grounded Research Integration na mesma branch/PR #23. O commit funcional `7b123ba`
+adiciona quatro profiles allowlisted, snapshot determinístico imutável, context
+builder minimizado, bridge Research versionado, citations documento/página/chunk,
+limites DOE/ANOVA, prompt injection como dado e output validation CNC/científica.
+R-046 e R-047 avançam somente para mitigação parcial/monitoramento. Focal
+AI/RAG/Research/Package 1: 98 testes aprovados. Sem persistence, migration, frontend,
+deploy, Package 3 ou CNC executável.
+
+Gate terminal Package 2: Ruff PASS; mypy 168 arquivos; pytest integral `416 passed,
+9 skipped`; focal AI/RAG/Research/Package 1 `98 passed`; OpenAPI 78 paths; Alembic
+`d39a7b2c5e11`; Compose config e secret scan PASS. Backend CI run `31179888094`,
+head `04cf56a`, aprovou lint, mypy, ciclo Alembic, 349 testes API e 76 operacionais.
+Frontend/Runtime Policy não foram impactados e não foram disparados.
+
+## 2026-08-07 — TASK-V20-003 Package 3 implementado
+
+O CTO aprovou o Package 2 e autorizou dashboard/evidence/E2E/consolidação na mesma
+Draft PR #23. O commit funcional `34a4347` adiciona uma camada frontend estritamente
+de presentation/orchestration, tipos explícitos para os quatro contratos v2.0,
+estados por estágio, CNC neutro, assistência/Research/citations e human review local
+sem autoridade produtiva. Não há nova persistência ou migration.
+
+Gate local: Ruff PASS; mypy 168 arquivos; pytest integral `416 passed, 9 skipped`;
+operations `69 passed, 7 skipped`; frontend typecheck/build PASS; Playwright `8
+passed` em desktop/largura reduzida; Runtime, resilience e capacity policies PASS;
+OpenAPI `2.0.0` com 78 paths e quatro contratos presentes; Alembic
+`d39a7b2c5e11`; Compose config e secret scan PASS. Packages 1–2 estão aprovados,
+Package 3 está implemented/ready for CTO review e v2.0 está functionally complete
+com Release Candidate pendente. PR #23 permanece Draft; merge/tag/Release/deploy
+não foram realizados.
+
+## 2026-08-07 — TASK-V20-004 Release Candidate
+
+O CTO aprovou os Packages 1–3 e confirmou que não existe Package 4. A validação final
+reutiliza os gates verdes do HEAD funcional `255f7db`: Backend CI `31186291937`,
+Frontend CI `31186291980` e Runtime Policy CI `31186292010`, todos SUCCESS. Versões
+API/FastAPI/health/OpenAPI/frontend são `2.0.0`; OpenAPI possui 78 paths e os quatro
+contratos v2.0; Alembic permanece `d39a7b2c5e11`.
+
+R-044–R-047 e catalog tenancy permanecem residuais/monitorados. Release Notes e
+documentação registram ausência de deploy, decisão científica autônoma e CNC
+executável. Estado: `V2_0_RELEASE_CANDIDATE_READY=TRUE` e
+`BLOCKED_REAL_OWNER_ACTION_REQUIRED`. PR #23 continua Draft; merge/tag/Release não
+foram realizados.

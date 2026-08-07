@@ -44,3 +44,16 @@ def test_cnc_preview_rejects_unsafe_numeric_inputs(
         json=payload,
     )
     assert response.status_code == 422
+
+
+def test_cnc_preview_rejects_executable_fields(client: TestClient, make_account) -> None:
+    account = make_account("cnc-executable@vena-ia.dev")
+    for forbidden in ("gcode", "mcode", "toolpath", "nc_file", "transmission_target"):
+        payload = _payload()
+        payload[forbidden] = "forbidden"
+        response = client.post(
+            "/cnc/plan/preview",
+            headers=account.headers,
+            json=payload,
+        )
+        assert response.status_code == 422

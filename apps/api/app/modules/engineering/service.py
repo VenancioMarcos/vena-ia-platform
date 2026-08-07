@@ -192,7 +192,12 @@ class EngineeringCatalogService:
         )
 
     def report(self, payload: RecommendationRequest) -> EngineeringReviewReport:
-        recommendation = self.recommend(payload)
+        return self.report_from_recommendation(self.recommend(payload))
+
+    def report_from_recommendation(
+        self,
+        recommendation: EngineeringRecommendation,
+    ) -> EngineeringReviewReport:
         unavailable = [
             name
             for name, value in {

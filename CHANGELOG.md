@@ -8,6 +8,62 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Release Candidate — v2.0.0
+* Packages 1–3 aprovados pelo CTO; não existe Package 4.
+* Versões e contratos públicos foram consolidados, notas de release validadas e os
+  riscos R-044–R-047 mantidos como parcialmente mitigados/monitorados.
+* A publicação aguarda Owner Release Gate direto. PR #23 permanece Draft; merge,
+  tag, Release e deploy não foram realizados.
+
+### Adicionado — v2.0 Package 3
+* Dashboard operacional no projeto apresenta a cadeia CAD→Features→Engineering→
+  Planning→CNC Neutral→Report usando exclusivamente estados do backend.
+* Tipos frontend explícitos cobrem os quatro contratos públicos v2.0; assistência
+  generativa permanece visualmente separada do resultado determinístico.
+* Human review, missing inputs, warnings, limitações, evidence e citações estruturadas
+  são visíveis; CNC permanece `SIMULATION_ONLY` e não executável.
+* Playwright valida desktop/largura reduzida, teclado/labels/headings, caminho feliz,
+  bloqueios, missing evidence, falha de provider e autorização fail-closed.
+* API/FastAPI/health/OpenAPI/frontend foram alinhados em `2.0.0`; não há migration.
+
+### Limites — v2.0 Package 3
+* A PR #23 permanece Draft. Não houve merge, tag, Release, deploy, piloto real,
+  publicação comercial, toolpath, postprocessor, G/M-code ou controle CNC.
+
+### Adicionado — v2.0 Package 1
+* `POST /engineering/workflows` expõe o contrato aditivo
+  `vena-ia.integrated-engineering-workflow/v1` e compõe uma única análise STEP em
+  geometry, features, recommendation, planning, plano CNC neutro e relatório.
+* `vena-ia.cnc-neutral-plan/v1` formaliza schema, referências upstream,
+  operation candidates, assumptions, warnings e traceability sobre o preview
+  existente, sempre `simulation_only=true`, `executable_output=false` e revisão humana.
+* Estados fechados preservam ausência, incompatibilidade e feature não suportada;
+  replay usa ID derivado dos inputs e regras, sem nova persistência ou migration.
+* Auth/ownership existentes falham fechado para cross-user/cross-org. Catálogos
+  Engineering continuam globais autenticados, com o impacto explicitamente registrado.
+
+### Adicionado — v2.0 Package 2
+* `POST /engineering/workflow-assistance` adiciona quatro perfis bounded e
+  allowlisted: CAD analysis, manufacturing/engineering, Research e documentation.
+* `vena-ia.specialized-assistance/v1` preserva o snapshot determinístico imutável,
+  separa input trace de resposta generativa e falha seguro quando o provider falha.
+* `vena-ia.grounded-research-assistance/v1` formaliza citações por documento,
+  página, chunk, método e qualidade/limitação da fonte; ausência bloqueia geração.
+* Context builder minimizado, tratamento de prompt injection como dado não confiável
+  e validação de output bloqueiam sintaxe CNC e claims produtivos/científicos.
+* DOE continua preliminar; ANOVA continua descritiva sem F-test/p-value; referências
+  heurísticas não são elevadas a bibliografia validada ou revisão sistemática.
+
+### Limites — v2.0 Package 1
+* Package 2, Package 3, agentes especializados, Research bridge e dashboard não
+  foram iniciados. Não há deploy, toolpath, coordenadas, pós-processador, G/M-code,
+  NC/DNC, transmissão, controle de máquina ou aprovação para produção.
+
+### Limites — v2.0 Package 2
+* Os perfis não são agentes autônomos, não recebem tools de escrita/execução e não
+  alteram workflow, recommendation, planning, catálogo ou CNC plan. Não há nova
+  persistência, migration, provider, RAG/vector store, frontend ou Package 3.
+
 ## [1.9.0] — 2026-08-07 — Controlled Pilot Readiness
 
 ### Release — v1.9.0

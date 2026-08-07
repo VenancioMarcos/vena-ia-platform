@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -122,11 +123,15 @@ class EvidenceRead(StrictModel):
     document_id: str = Field(min_length=1, max_length=36)
     page_number: int = Field(ge=1)
     chunk_index: int = Field(ge=0)
+    chunk_id: str | None = Field(default=None, min_length=1, max_length=36)
+    evidence_reference: str | None = Field(default=None, min_length=1, max_length=100)
+    retrieval_method: str = "SEMANTIC_COSINE_RETRIEVAL"
     score: float = Field(ge=0, le=1)
     excerpt: str = Field(min_length=1, max_length=1_000)
 
 
 class SynthesisResponse(StrictModel):
+    schema_version: str = "vena-ia.grounded-research-assistance/v1"
     project_id: str
     question: str
     synthesis: str
@@ -134,6 +139,7 @@ class SynthesisResponse(StrictModel):
     model: str
     evidence: list[EvidenceRead]
     status: str
+    review_status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
     limitations: list[str]
 
 

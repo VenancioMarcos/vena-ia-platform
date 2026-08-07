@@ -230,3 +230,61 @@ não possui API, banco, domínio, release ou deploy independentes. Handlers são
 allowlisted e nunca executam payload ou conteúdo do usuário. Heartbeat integra
 readiness; leases abandonados voltam à fila. Decisão formal:
 `docs/adr/ADR-0024-asynchronous-job-foundation.md`.
+
+---
+
+## 14. Integrated Engineering Workflow v2.0 Package 1
+
+```text
+Documento STEP autorizado
+  → CADAnalysisService (uma análise)
+  → geometry-analysis/v1 + geometry-features/v1
+  → FeaturePlanningBridge (resultado CAD reutilizado)
+  → EngineeringCatalogService (recommendation + report builder)
+  → CNCPlanningService (cnc-neutral-plan/v1)
+  → integrated-engineering-workflow/v1 + relatório integrado
+```
+
+`IntegratedEngineeringWorkflowService` é um orquestrador síncrono e efêmero dentro
+do Modular Monolith. Não possui repository, tabela, migration, fila, worker ou engine
+de domínio próprios. Cada elo preserva contratos/versionamento e falha fechada;
+missing input, incompatibilidade e feature não suportada não são promovidos. O CNC
+neutral plan estende o preview existente, sempre simulation-only, não executável e
+sob revisão humana. Detalhes: `docs/INTEGRATED_ENGINEERING_WORKFLOW.md` e
+`docs/CNC_NEUTRAL_PLAN.md`.
+
+---
+
+## 15. Specialized Assistance v2.0 Package 2
+
+```text
+Inputs reproduzíveis + auth
+  → IntegratedEngineeringWorkflowService (snapshot autoridade)
+  → context builder allowlisted por profile
+  → Documents/RAG + Research autorizados quando profile=RESEARCH
+  → AIService existente (texto explicativo sem tools)
+  → output validation fail-closed
+  → specialized-assistance/v1 + grounded-research-assistance/v1
+```
+
+O texto generativo é separado do snapshot determinístico e nunca volta como input de
+rules, recommendation, planning ou CNC. O deterministic input trace cobre profile,
+workflow, evidence e template, sem exigir resposta byte-a-byte. Grounding ausente e
+provider failure preservam o workflow. Não há nova persistência, migration, fila,
+provider, vector store ou frontend. Detalhes: `docs/SPECIALIZED_ASSISTANCE.md`.
+
+---
+
+## 16. Operational Dashboard v2.0 Package 3
+
+O componente `EngineeringWorkspace` é camada de presentation/orchestration dentro da
+página de projeto e usa o cliente HTTP único. Tipos explícitos refletem os contratos
+`integrated-engineering-workflow/v1`, `cnc-neutral-plan/v1`,
+`specialized-assistance/v1` e `grounded-research-assistance/v1`.
+
+O frontend não calcula status global, recommendation, planning, validação CNC ou
+autoridade científica. Ele apresenta `workflow_status`, estados por estágio,
+evidence/citations, limitações e revisão humana retornados pelo backend. O
+acknowledgement é somente view state local. Não há nova persistência, migration,
+cliente HTTP, ledger ou subsistema operacional. Detalhes:
+`docs/OPERATIONAL_ENGINEERING_DASHBOARD.md`.

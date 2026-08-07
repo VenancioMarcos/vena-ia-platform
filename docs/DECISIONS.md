@@ -1231,3 +1231,26 @@ observability, jobs, resilience, capacity e pilot evidence são reutilizados. N�
 migration presumida, deploy, piloto real, decisão científica autônoma, toolpath,
 pós-processador, G/M-code, NC/DNC, transmissão ou controle CNC. Após v2.0, extensão
 formal do roadmap até v3.0 exige aprovação antes de qualquer implementação.
+
+A `TASK-V20-001` implementa somente o Package 1 sem persistência ou migration. O
+workflow síncrono reutiliza uma única análise CAD, FeaturePlanningBridge, regras e
+report builder existentes; o plano CNC neutro é uma extensão aditiva do preview.
+R-044 avança para mitigação parcial/monitoramento e R-045 continua aberto/gate.
+Catálogos Engineering permanecem globais autenticados, sem correção silenciosa de
+tenancy; Packages 2 e 3 continuam `NOT_STARTED`.
+
+A `TASK-V20-002` aprova o Package 1 e implementa o Package 2 na mesma Draft PR.
+Perfis bounded reutilizam `AIService` sem tools, provider ou sistema de agentes novo;
+o snapshot `integrated-engineering-workflow/v1` permanece autoridade imutável. O
+bridge `grounded-research-assistance/v1` versiona apenas a fronteira comum necessária,
+com citações e limites científicos explícitos. Não há persistência ou migration.
+R-046 e R-047 avançam somente para mitigação parcial/monitoramento. Package 3 segue
+`NOT_STARTED`.
+
+A `TASK-V20-003` aprova o Package 2 e implementa o Package 3 como camada de
+presentation/orchestration na mesma Draft PR #23. O dashboard usa o status do backend,
+separa determinismo de IA e não cria authority, ledger, persistência ou migration.
+Playwright valida caminho integrado, falhas, Research/CNC e acessibilidade em dois
+viewports. A `TASK-V20-004` aprova os três Packages, confirma que não existe Package
+4 e classifica v2.0 como `RELEASE_CANDIDATE`. R-044–R-047 permanecem mitigados
+parcialmente/monitorados; publicação depende de Owner Release Gate direto.

@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 
 from fastapi import HTTPException
 
 from app.modules.cad.features import GeometryFeature, REVIEW_STATUS as FEATURE_REVIEW_STATUS
 from app.modules.cad.kernel import OpenCascadeGeometryKernel
-from app.modules.cad.service import CADAnalysisService
+from app.modules.cad.service import CADAnalysisService, CADDocumentAnalysis
 from app.modules.engineering.schemas import (
     EngineeringRecommendation,
     EngineeringRecommendationReference,
@@ -26,6 +27,12 @@ FEATURE_SCHEMA_VERSION = "vena-ia.geometry-features/v1"
 ENGINEERING_SCHEMA_VERSION = "vena-ia.engineering-recommendation/v1"
 
 
+@dataclass(frozen=True)
+class FeaturePlanningResult:
+    response: FeaturePlanningResponse
+    recommendation: EngineeringRecommendation | None
+
+
 class FeaturePlanningBridge:
     def __init__(
         self,
@@ -37,6 +44,13 @@ class FeaturePlanningBridge:
 
     def plan(self, payload: FeaturePlanningRequest) -> FeaturePlanningResponse:
         analysis = self._cad.analyze(payload.document_id)
+        return self.plan_from_analysis(payload, analysis).response
+
+    def plan_from_analysis(
+        self,
+        payload: FeaturePlanningRequest,
+        analysis: CADDocumentAnalysis,
+    ) -> FeaturePlanningResult:
         result = analysis.features
         if result is None or result.status != "AVAILABLE":
             raise HTTPException(status_code=422, detail="Validated feature analysis unavailable")
@@ -53,22 +67,18 @@ class FeaturePlanningBridge:
             raise HTTPException(status_code=422, detail="Feature review evidence is invalid")
         dimensions = self._validated_dimensions(feature)
         candidates = self._candidates(feature)
-        catalog_inputs = {
+        required_inputs = {
             "material": payload.material_id,
             "machine": payload.machine_id,
             "tool": payload.tool_id,
+            "manufacturing_intent": payload.manufacturing_intent,
+            "drawing_tolerance": payload.drawing_tolerance,
+            "surface_finish": payload.surface_finish,
+            "fixture": payload.fixture,
+            "coolant": payload.coolant,
+            "material_condition": payload.material_condition,
         }
-        unavailable = [name for name, value in catalog_inputs.items() if value is None]
-        unavailable.extend(
-            [
-                "manufacturing_intent",
-                "drawing_tolerance",
-                "surface_finish",
-                "fixture",
-                "coolant",
-                "material_condition",
-            ]
-        )
+        unavailable = [name for name, value in required_inputs.items() if value is None]
         recommendation = self._recommend(payload, feature, candidates)
         recommendation_reference = (
             None
@@ -110,24 +120,14 @@ class FeaturePlanningBridge:
                     *recommendation.traceability,
                 ]
             )
-        return FeaturePlanningResponse(
+        response = FeaturePlanningResponse(
             status=status,
             feature_id=payload.feature_id,
             feature_type=feature.feature_type,
             feature_dimensions=dimensions,
             planning_rule_version=FEATURE_PLANNING_RULE_VERSION,
             planning_candidates=candidates,
-            required_inputs=[
-                "material",
-                "machine",
-                "tool",
-                "manufacturing_intent",
-                "drawing_tolerance",
-                "surface_finish",
-                "fixture",
-                "coolant",
-                "material_condition",
-            ],
+            required_inputs=list(required_inputs),
             unavailable_inputs=unavailable,
             engineering_recommendation=recommendation_reference,
             planning_context_completeness=completeness,
@@ -147,6 +147,7 @@ class FeaturePlanningBridge:
             ),
             review_status=REVIEW_STATUS,
         )
+        return FeaturePlanningResult(response=response, recommendation=recommendation)
 
     @staticmethod
     def _validated_dimensions(feature: GeometryFeature) -> list[FeaturePlanningDimension]:
@@ -213,5 +214,11 @@ class FeaturePlanningBridge:
                 tool_id=payload.tool_id,
                 operation="drilling",
                 cutting_length_mm=depth,
+                setup_time_min=payload.setup_time_min,
+                machine_hour_rate=payload.machine_hour_rate,
+                tool_cost_allocation=payload.tool_cost_allocation,
+                consumable_cost=payload.consumable_cost,
+                overhead_cost=payload.overhead_cost,
+                currency=payload.currency,
             )
         )

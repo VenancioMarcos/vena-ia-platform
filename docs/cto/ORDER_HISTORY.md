@@ -475,3 +475,32 @@ documental #22. Após a integração, autorizou criar a branch
 `codex/v2.0-integrated-engineering-platform` e implementar exclusivamente o Package
 1: workflow determinístico CAD→features→Engineering→process planning→plano CNC
 neutro→relatório. Packages 2 e 3, migration, deploy e CNC executável permanecem fora.
+
+A PR #22 foi integrada em `22ddf9f`. O Package 1 foi implementado sem migration na
+branch funcional; sua entrega permanece em Draft PR para revisão do CTO. R-044 está
+mitigado parcialmente/monitorado, R-045 permanece aberto/gate e a tenancy global dos
+catálogos Engineering continua registrada sem alteração silenciosa.
+
+## 2026-08-07 — TASK-V20-002
+
+O CTO aprovou tecnicamente o Package 1 e autorizou Package 2 na mesma Draft PR #23.
+A ordem limita a assistência a quatro modos bounded sobre `AIService`, exige
+autoridade determinística imutável, Research grounded/citations, limites científicos,
+prompt injection como dado, falha segura e ausência de CNC executável. Package 3,
+frontend, persistence, migration, merge e deploy permanecem fora.
+
+## 2026-08-07 — TASK-V20-003
+
+O CTO aprovou o Package 2 e autorizou o Package 3 na mesma Draft PR #23. A ordem
+exige dashboard operacional como presentation/orchestration, estados/evidence/revisão
+humana, E2E principal e de falhas, acessibilidade, regressão integral e preparação do
+Release Candidate v2.0.0. Migration, merge, tag, Release, deploy, piloto real,
+publicação comercial e CNC executável permanecem proibidos.
+
+## 2026-08-07 — TASK-V20-004
+
+O CTO aprovou os Packages 1–3, declarou v2.0 funcionalmente completa e autorizou
+somente a validação final do Release Candidate v2.0.0. Não existe Package 4. A ordem
+manda reutilizar gates verdes sem repetição, manter PR #23 Draft e parar em
+`BLOCKED_REAL_OWNER_ACTION_REQUIRED` antes de retirada de Draft, merge, tag ou
+Release. Após eventual release, somente extensão documental do roadmap até v3.0.

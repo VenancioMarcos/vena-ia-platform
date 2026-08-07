@@ -1,29 +1,30 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V20_001
-TITLE=V2_0_PACKAGE_1_INTEGRATED_ENGINEERING_WORKFLOW_FOUNDATION
-BASE=main
-START_HEAD=d30793baca42e662adbc1530b320093abd64f952
-BRANCH=codex/v2.0-roadmap-decomposition
-EXPECTED_STATE=VENA_IA_V2_0_PACKAGE_1_READY_FOR_CTO_REVIEW
-V1_9_RELEASED=TRUE
-V2_0_FUNCTIONAL=NOT_STARTED
-DECISION=DEC_035_APPROVED_CTO
-PACKAGE_1=APPROVED_FOR_IMPLEMENTATION
-PACKAGE_2=NOT_STARTED
-PACKAGE_3=NOT_STARTED
-FUNCTIONAL_IMPLEMENTATION=PACKAGE_1_ONLY
-MIGRATION=PROHIBITED
+MISSION=TASK_V20_004
+TITLE=FINAL_RELEASE_CANDIDATE_VALIDATION_V2_0_0
+START_HEAD=255f7dbda33790149a5d169a2b2825eac10a327f
+BRANCH=codex/v2.0-integrated-engineering-platform
+PACKAGE_1=APPROVED
+PACKAGE_2=APPROVED
+PACKAGE_3=APPROVED
+PACKAGE_4=DOES_NOT_EXIST
+V2_0=RELEASE_CANDIDATE
+V2_0_RELEASE_CANDIDATE_READY=TRUE
+ALEMBIC_HEAD=d39a7b2c5e11
+PR=23_OPEN_DRAFT_MERGEABLE
+MERGE=PROHIBITED_PENDING_OWNER_GATE
+TAG=PROHIBITED_PENDING_OWNER_GATE
+RELEASE=PROHIBITED_PENDING_OWNER_GATE
 DEPLOY=PROHIBITED
 EXECUTABLE_CNC=PROHIBITED
 TODAY_TARGET=V3_0
-GOVERNANCE_BYPASS=PROHIBITED
+NEXT_AFTER_RELEASE=ROADMAP_EXTENSION_TO_V3_0_DOCUMENTAL
+BLOCKER=BLOCKED_REAL_OWNER_ACTION_REQUIRED
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
 ```
 
-Escopo exclusivo: integrar a PR documental #22 e implementar o Package 1 na branch
-`codex/v2.0-integrated-engineering-platform`, compondo CAD→features→Engineering→
-process planning→plano CNC neutro→relatório sem duplicar engines. Packages 2 e 3
-permanecem fora. CAM preliminar não inclui toolpath, coordenadas, pós-processador,
-G/M-code ou NC/DNC. Não realizar merge da PR funcional, migration ou deploy.
+O CTO aprovou os três Packages e autorizou somente o fechamento do Release Candidate.
+Os gates verdes do HEAD `255f7db` são reutilizados porque não houve mudança funcional.
+PR #23 permanece Draft; retirada de Draft, merge, tag e Release exigem autorização
+direta e específica do proprietário.
