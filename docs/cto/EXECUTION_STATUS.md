@@ -344,5 +344,9 @@ código e será reexecutado no CI terminal do commit documental do RC.
 
 O proprietário autorizou diretamente retirar Draft, Squash Merge, tag anotada e
 GitHub Release v1.9.0. A PR #21 foi integrada em `b149ac1`; o commit de fechamento
-de release será o alvo da tag. Deploy, piloto real e saída CNC executável permanecem
-proibidos. Após validar a publicação, o fluxo retorna ao CTO antes de iniciar v2.0.
+de release `1d3c383` é o alvo da tag anotada (objeto `377fc2d`). A
+[GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.9.0)
+foi publicada e validada diretamente: versões `1.9.0`, 76 paths, Alembic
+`d39a7b2c5e11`, Runtime Policy e 54 testes focais aprovados (1 skip). Deploy, piloto
+real e saída CNC executável permanecem proibidos. O próximo estágio documental é a
+decomposição formal da v2.0; implementação aguarda ordem completa do CTO.

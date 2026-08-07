@@ -11,6 +11,12 @@ PACKAGE_2=APPROVED_COMPLETE
 OWNER_RELEASE_GATE_V1_9=APPROVED_DIRECTLY
 EXPECTED_STATE=VENA_IA_V1_9_RELEASED_AND_VERIFIED
 V1_9_RELEASE_CANDIDATE_READY=TRUE
+V1_9_RELEASED=TRUE
+MERGE_SHA=b149ac182e81b3f7a39091ef0d640ff0ef549980
+RELEASE_COMMIT=1d3c383c9f8e0472d4d1d9b98dd47f1124857c4e
+TAG_OBJECT=377fc2d7876ced24cf41f021aa4827e879952d05
+TAG_TARGET=1d3c383c9f8e0472d4d1d9b98dd47f1124857c4e
+RELEASE_URL=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.9.0
 TODAY_TARGET=V3_0
 TARGET_PRIORITY=HIGH
 GOVERNANCE_BYPASS=PROHIBITED
@@ -23,7 +29,6 @@ Escopo exclusivo: integrar a PR #21, publicar e validar tag/Release v1.9.0 e
 registrar o fechamento. Não existe Package 3 e nenhuma funcionalidade nova pode
 ser adicionada.
 
-O Owner Release Gate foi concedido diretamente. Após a publicação, validar tag,
-Release, versões, migration, riscos e Working Tree; enviar o status ao CTO e aguardar
-a ordem completa para o próximo estágio oficial. A meta v3.0 não autoriza inventar
-roadmap além da v2.0.
+O Owner Release Gate foi concedido diretamente e a publicação foi validada. Enviar
+o status ao CTO e aguardar a ordem completa para o próximo estágio oficial. A meta
+v3.0 não autoriza inventar roadmap além da v2.0.

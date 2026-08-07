@@ -1181,7 +1181,7 @@ nova migration. Persistir bundles foi rejeitado por ampliar retenção sem neces
 auditoria existente registra as operações e SHA-256 apenas detecta alteração canônica.
 
 A `TASK-V19-003` aprovou ambos os Packages como funcionalmente completos e definiu
-que a v1.9 possui exatamente dois Packages. O Release Candidate preserva R-042 e
-R-043 como riscos residuais/monitorados e não autoriza piloto real, deploy, publicação
-ou saída CNC executável. Qualquer progressão além da v2.0 exige extensão formal do
-roadmap e aprovação do CTO; a meta operacional v3.0 não altera esse gate.
+que a v1.9 possui exatamente dois Packages. A Release v1.9.0 preserva R-042 e R-043
+como riscos residuais/monitorados e não autoriza piloto real, deploy, publicação
+comercial ou saída CNC executável. Qualquer progressão além da v2.0 exige extensão
+formal do roadmap e aprovação do CTO; a meta operacional v3.0 não altera esse gate.

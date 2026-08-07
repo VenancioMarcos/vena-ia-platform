@@ -40,7 +40,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   CNC virtual não executável. Checksum prova somente integridade canônica; Package 2
   exige revisão humana e não representa piloto, produção, SLA ou deploy.
 * **Release v1.9.0:** a PR #21 foi integrada por Squash Merge em `b149ac1`; o
-  fechamento de release registra Packages 1–2 completos, versões
+  fechamento de release `1d3c383`, a tag anotada e a
+  [GitHub Release](https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v1.9.0)
+  registram Packages 1–2 completos, versões
   API/FastAPI/health/OpenAPI/frontend `1.9.0` e Alembic `d39a7b2c5e11`. R-042 e
   R-043 continuam residuais/monitorados; nenhum deploy ou piloto real foi realizado.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
