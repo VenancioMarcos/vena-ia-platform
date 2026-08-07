@@ -463,11 +463,18 @@ def test_specialized_profiles_are_allowlisted_and_workflow_is_immutable(
     cad = MagicMock()
     cad.analyze.return_value = _analysis()
     ai = MagicMock()
-    ai.chat.return_value = ChatResult(
-        provider="test-provider",
-        model="test-model",
-        content="The geometry evidence is preliminary and requires human review.",
-    )
+    ai.chat.side_effect = [
+        ChatResult(
+            provider="test-provider",
+            model="test-model",
+            content="The geometry evidence is preliminary and requires human review.",
+        ),
+        ChatResult(
+            provider="test-provider",
+            model="test-model",
+            content="A different wording preserves the same bounded evidence trace.",
+        ),
+    ]
     _assistance_overrides(cad=cad, ai=ai)
     try:
         workflow_payload = _full_payload(client, account.headers)
@@ -477,6 +484,15 @@ def test_specialized_profiles_are_allowlisted_and_workflow_is_immutable(
             json=workflow_payload,
         )
         assisted = client.post(
+            "/engineering/workflow-assistance",
+            headers=account.headers,
+            json={
+                "profile": "CAD_ANALYSIS",
+                "question": "Explain the geometry limitations.",
+                "workflow": workflow_payload,
+            },
+        )
+        replay = client.post(
             "/engineering/workflow-assistance",
             headers=account.headers,
             json={
@@ -498,7 +514,12 @@ def test_specialized_profiles_are_allowlisted_and_workflow_is_immutable(
     assert body["executable_output"] is False
     assert _without_timestamps(body["source_workflow"]) == _without_timestamps(direct.json())
     assert body["deterministic_input_trace"] in body["assistance_id"]
-    assert cad.analyze.call_count == 2
+    assert body["deterministic_input_trace"] == replay.json()["deterministic_input_trace"]
+    assert body["response"] != replay.json()["response"]
+    assert _without_timestamps(body["source_workflow"]) == _without_timestamps(
+        replay.json()["source_workflow"]
+    )
+    assert cad.analyze.call_count == 3
 
     messages = ai.chat.call_args.args[1].messages
     assert "immutable" in messages[0].content
