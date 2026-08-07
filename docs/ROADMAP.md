@@ -746,10 +746,11 @@ testados e zero saída liberada para máquina.
 
 Condição de avanço: aceite humano do piloto e riscos de produção tratados.
 
-### Decomposição proposta — TASK-V19-000
+### Decomposição oficial — TASK-V19-001
 
-Estado: `READY_FOR_CTO_APPROVAL`. Nenhuma implementação funcional da v1.9 está
-autorizada por esta decomposição.
+Estado: `APPROVED_FOR_IMPLEMENTATION`. O CTO aprovou a baseline de dois Packages e
+autorizou exclusivamente a implementação funcional do Package 1. Package 2 permanece
+`NOT_STARTED` e exige autorização específica posterior.
 
 #### Package 1 — Controlled Pilot Governance and Organizational Foundation
 

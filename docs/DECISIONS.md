@@ -1137,10 +1137,10 @@ Catálogos material/máquina/ferramenta devem ser explicitamente selecionados pa
 reutilizar a recommendation v1.7. Candidate e recommendation permanecem sob revisão
 humana, sem saída executável, manufaturabilidade, CAM, toolpath ou código CNC.
 
-## DEC-034 — Decomposição proposta da v1.9 em fundação e ensaio controlado
+## DEC-034 — Decomposição oficial da v1.9 em fundação e ensaio controlado
 
 **Data:** 2026-08-06
-**Status:** Proposta — aguarda aprovação do CTO
+**Status:** APROVADA — CTO
 **Tipo:** Arquitetura | Segurança | Operação | Produto
 **Documentos relacionados:** `docs/ROADMAP.md`, `docs/RISK_REGISTER.md`,
 `docs/PERMANENT_OPERATIONAL_LIMITS.md`, `docs/AUTHORIZATION_MATRIX.md`
@@ -1151,7 +1151,7 @@ O roadmap define Controlled Pilot Readiness e suas entregas, mas não definia
 Packages. Iniciar código sem decomposição inventaria escopo e colocaria validação de
 piloto antes da identidade organizacional, isolamento e governança necessários.
 
-### Decisão proposta
+### Decisão
 
 Usar dois Packages. Package 1 formaliza Organization/Team, membership/papéis,
 ownership, onboarding, contexto e checklist de piloto sob isolamento fail-closed.
@@ -1159,8 +1159,9 @@ Package 2 compõe runbooks, restore/incidente, proposta SLO, capacidade descart�
 privacidade, suporte, jornada E2E e validação virtual de plano CNC neutro. Package 3
 não é criado porque não há dependência independente que justifique fragmentação.
 
-O Package 1 é apenas `READY_FOR_CTO_APPROVAL`: esta decisão não autoriza implementação,
-migration, branch funcional, piloto ou deploy.
+O Package 1 está `APPROVED_FOR_IMPLEMENTATION` pela `TASK-V19-001`. A autorização
+abrange a implementação funcional controlada e sua migration; piloto real e deploy
+continuam proibidos.
 
 ### Justificativa
 
