@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [1.7.0] — 2026-08-06 — Engineering Catalogs and CAM
+
 ### Adicionado — v1.7 Package 3
 * Relatório `vena-ia.engineering-review-report/v1` reutiliza a recomendação do
   Package 2 e consolida conclusão fechada, incerteza informacional, ausências,
