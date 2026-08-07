@@ -896,12 +896,12 @@ Package 1 está `APPROVED_FOR_IMPLEMENTATION`; Packages 2 e 3 estão `NOT_STARTE
 | v1.8 | geometry analysis/features e feature planning | corpus/cobertura conservadores; nenhum intent/manufaturabilidade implícitos |
 | v1.9 | Organization/Team, readiness, pilot evidence/integrity/rollback e CNC virtual validation | isolamento/evidence continuam sintéticos e R-042/R-043 monitorados |
 
-Inconsistências registradas para tratamento no Package aplicável: o
-`CNCPlanPreview` existente ainda não expõe `schema_version`/traceability enquanto a
-validação v1.9 referencia `vena-ia.cnc-neutral-plan/v1`; schemas Research não têm uma
-versão pública comum; catálogos Engineering continuam globais autenticados; e alguns
-títulos documentais de v1.9 ainda dizem “Release Candidate” apesar da Release já
-publicada. Nenhuma dessas lacunas autoriza correção funcional nesta TASK.
+Inconsistências registradas: o Package 1 resolveu de forma aditiva a ausência de
+`schema_version`/traceability do `CNCPlanPreview` e conectou o contrato
+`vena-ia.cnc-neutral-plan/v1` ao planning/recommendation. Permanecem pendentes:
+schemas Research sem versão pública comum para Package 2; catálogos Engineering
+globais autenticados; dashboard/evidence para Package 3; e títulos históricos de
+v1.9 ainda marcados “Release Candidate”.
 
 #### Auditoria do fluxo integrado
 
@@ -911,7 +911,7 @@ publicada. Nenhuma dessas lacunas autoriza correção funcional nesta TASK.
 | Feature recognition | `vena-ia.geometry-features/v1`; rule `1.0.0` | topologia válida → primitivas e through hole estrito; revisão humana | cobertura conservadora é limitada e o resultado ainda precisa ser encadeado sem inferir intenção |
 | Engineering recommendation | `vena-ia.engineering-catalog/v1`, `engineering-selection/v1`, `engineering-recommendation/v1` | material/máquina/ferramenta versionados → compatibilidade, parâmetros, tempo/custo preliminares; revisão humana | catálogos são globais autenticados e a recomendação não representa processo liberado |
 | CAM preliminar / process planning | `vena-ia.feature-planning/v1`; `FeaturePlanningBridge` | feature suportada + catálogos explícitos → `DRILLING_CANDIDATE`, assumptions, missing inputs e recommendation opcional | somente through hole; não há orquestração E2E nem contrato agregado de workflow; setup/fixture/tolerância permanecem ausentes |
-| Plano CNC neutro | preview `/cnc/plan/preview`; validação `vena-ia.virtual-cnc-plan-validation/v1` espera `vena-ia.cnc-neutral-plan/v1` | parâmetros allowlisted → preview `SIMULATION_ONLY_REQUIRES_HUMAN_REVIEW`, `executable_output=false` | preview não possui schema version/rastreabilidade upstream e não é conectado ao planning/recommendation |
+| Plano CNC neutro | preview `/cnc/plan/preview`; contrato aditivo `vena-ia.cnc-neutral-plan/v1`; validação `vena-ia.virtual-cnc-plan-validation/v1` | planning/recommendation refs + parâmetros allowlisted → preview `SIMULATION_ONLY_REQUIRES_HUMAN_REVIEW`, `executable_output=false` | Package 1 resolveu versionamento/traceability; validação física e produção continuam proibidas |
 | Relatório | `vena-ia.engineering-review-report/v1` e Research Report separado | recommendation ou síntese RAG → conclusão limitada, evidências/checklist e revisão humana | nenhum relatório único referencia CAD, feature, planning, CNC neutro e evidência científica como uma cadeia |
 
 **CAM preliminar na v2.0** significa exclusivamente process planning: candidatos de
@@ -920,6 +920,10 @@ parâmetros determinísticos e estimativas de tempo/custo. Não contém coordena
 toolpath, pós-processador, G-code, M-code, NC/DNC ou execução.
 
 #### Package 1 — Integrated Engineering Workflow Foundation
+
+**Estado:** `IMPLEMENTED / READY_FOR_CTO_REVIEW` na branch
+`codex/v2.0-integrated-engineering-platform`. Packages 2 e 3 permanecem
+`NOT_STARTED`; v2.0 não está encerrada.
 
 Objetivo: compor o núcleo determinístico CAD → features → engineering → CAM
 preliminar → plano CNC neutro → relatório, reutilizando serviços e regras existentes.
@@ -940,6 +944,14 @@ Escopo aprovado:
 
 Gate de saída: cadeia rastreável e determinística, isolamento/autorização preservados,
 relatório integrado não executável e nenhum salto de lacuna como sucesso.
+
+Evidência Package 1: `POST /engineering/workflows` compõe uma única análise CAD com
+os contratos existentes, usa ID determinístico derivado do input, preserva estados
+fechados e formaliza `vena-ia.cnc-neutral-plan/v1` sobre o serviço existente. Nenhuma
+persistência, fila ou migration foi necessária. Catálogos Engineering permanecem
+globais autenticados; o workflow não concede escopo organizacional e o acesso ao
+documento continua fail-closed por ownership. R-044 está mitigado parcialmente e
+monitorado; R-045 permanece aberto/gate.
 
 #### Package 2 — Specialized Assistance and Grounded Research Integration
 

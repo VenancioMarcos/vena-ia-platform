@@ -1231,3 +1231,10 @@ observability, jobs, resilience, capacity e pilot evidence são reutilizados. N�
 migration presumida, deploy, piloto real, decisão científica autônoma, toolpath,
 pós-processador, G/M-code, NC/DNC, transmissão ou controle CNC. Após v2.0, extensão
 formal do roadmap até v3.0 exige aprovação antes de qualquer implementação.
+
+A `TASK-V20-001` implementa somente o Package 1 sem persistência ou migration. O
+workflow síncrono reutiliza uma única análise CAD, FeaturePlanningBridge, regras e
+report builder existentes; o plano CNC neutro é uma extensão aditiva do preview.
+R-044 avança para mitigação parcial/monitoramento e R-045 continua aberto/gate.
+Catálogos Engineering permanecem globais autenticados, sem correção silenciosa de
+tenancy; Packages 2 e 3 continuam `NOT_STARTED`.

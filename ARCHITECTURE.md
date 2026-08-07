@@ -230,3 +230,25 @@ não possui API, banco, domínio, release ou deploy independentes. Handlers são
 allowlisted e nunca executam payload ou conteúdo do usuário. Heartbeat integra
 readiness; leases abandonados voltam à fila. Decisão formal:
 `docs/adr/ADR-0024-asynchronous-job-foundation.md`.
+
+---
+
+## 14. Integrated Engineering Workflow v2.0 Package 1
+
+```text
+Documento STEP autorizado
+  → CADAnalysisService (uma análise)
+  → geometry-analysis/v1 + geometry-features/v1
+  → FeaturePlanningBridge (resultado CAD reutilizado)
+  → EngineeringCatalogService (recommendation + report builder)
+  → CNCPlanningService (cnc-neutral-plan/v1)
+  → integrated-engineering-workflow/v1 + relatório integrado
+```
+
+`IntegratedEngineeringWorkflowService` é um orquestrador síncrono e efêmero dentro
+do Modular Monolith. Não possui repository, tabela, migration, fila, worker ou engine
+de domínio próprios. Cada elo preserva contratos/versionamento e falha fechada;
+missing input, incompatibilidade e feature não suportada não são promovidos. O CNC
+neutral plan estende o preview existente, sempre simulation-only, não executável e
+sob revisão humana. Detalhes: `docs/INTEGRATED_ENGINEERING_WORKFLOW.md` e
+`docs/CNC_NEUTRAL_PLAN.md`.

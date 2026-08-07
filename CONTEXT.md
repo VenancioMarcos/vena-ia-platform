@@ -50,6 +50,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   assistência especializada/Research grounded e dashboard/evidence/E2E permanecem
   `NOT_STARTED`. A PR documental #22 deve ser integrada antes da branch funcional.
   Migration, deploy e CNC executável não estão autorizados.
+* **v2.0 Package 1 implementado:** a branch
+  `codex/v2.0-integrated-engineering-platform` adiciona o aggregate
+  `vena-ia.integrated-engineering-workflow/v1`, formaliza
+  `vena-ia.cnc-neutral-plan/v1` e reutiliza CAD/features, Engineering,
+  FeaturePlanningBridge, CNC preview e report builder. O fluxo analisa STEP uma vez,
+  mantém missing inputs/unsupported/incompatibility explícitos, exige revisão humana
+  e nunca produz output executável. Não há nova persistência ou migration; catálogos
+  continuam globais autenticados. Packages 2 e 3 permanecem `NOT_STARTED`.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

@@ -475,3 +475,8 @@ documental #22. Após a integração, autorizou criar a branch
 `codex/v2.0-integrated-engineering-platform` e implementar exclusivamente o Package
 1: workflow determinístico CAD→features→Engineering→process planning→plano CNC
 neutro→relatório. Packages 2 e 3, migration, deploy e CNC executável permanecem fora.
+
+A PR #22 foi integrada em `22ddf9f`. O Package 1 foi implementado sem migration na
+branch funcional; sua entrega permanece em Draft PR para revisão do CTO. R-044 está
+mitigado parcialmente/monitorado, R-045 permanece aberto/gate e a tenancy global dos
+catálogos Engineering continua registrada sem alteração silenciosa.

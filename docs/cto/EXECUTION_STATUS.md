@@ -366,3 +366,13 @@ O CTO aprovou a DEC-035 e a decomposição oficial em três Packages. Package 1 
 deve ser integrada como docs-only antes da criação da branch funcional. O escopo
 funcional autorizado limita-se ao workflow integrado determinístico e ao contrato
 CNC neutro aditivo, sem migration, deploy ou saída CNC executável.
+
+## 2026-08-07 — TASK-V20-001 Package 1 implementado
+
+A PR documental #22 foi integrada por Squash Merge em `22ddf9f`. Na branch
+`codex/v2.0-integrated-engineering-platform`, o commit `34dc843` implementa o
+workflow determinístico agregado e formaliza o plano CNC neutro sobre os serviços
+existentes. O STEP é analisado uma única vez; missing input, incompatibilidade e
+feature não suportada permanecem estados fechados. Focal CAD/Engineering/planning/
+CNC/workflow: 54 testes aprovados. Não há persistence, async, migration, frontend,
+deploy ou saída CNC executável. Packages 2 e 3 continuam `NOT_STARTED`.

@@ -8,6 +8,23 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v2.0 Package 1
+* `POST /engineering/workflows` expõe o contrato aditivo
+  `vena-ia.integrated-engineering-workflow/v1` e compõe uma única análise STEP em
+  geometry, features, recommendation, planning, plano CNC neutro e relatório.
+* `vena-ia.cnc-neutral-plan/v1` formaliza schema, referências upstream,
+  operation candidates, assumptions, warnings e traceability sobre o preview
+  existente, sempre `simulation_only=true`, `executable_output=false` e revisão humana.
+* Estados fechados preservam ausência, incompatibilidade e feature não suportada;
+  replay usa ID derivado dos inputs e regras, sem nova persistência ou migration.
+* Auth/ownership existentes falham fechado para cross-user/cross-org. Catálogos
+  Engineering continuam globais autenticados, com o impacto explicitamente registrado.
+
+### Limites — v2.0 Package 1
+* Package 2, Package 3, agentes especializados, Research bridge e dashboard não
+  foram iniciados. Não há deploy, toolpath, coordenadas, pós-processador, G/M-code,
+  NC/DNC, transmissão, controle de máquina ou aprovação para produção.
+
 ## [1.9.0] — 2026-08-07 — Controlled Pilot Readiness
 
 ### Release — v1.9.0
