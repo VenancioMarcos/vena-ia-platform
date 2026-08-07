@@ -72,4 +72,5 @@ failure seguro, limites científicos e ausência de CNC executável.
 
 ### Próximos passos
 
-Packages 1–3 estão aprovados; v2.0 está em Release Candidate na Draft PR #23.
+Packages 1–3 foram publicados em `v2.0.0`. Orchestration, tools de escrita e agentes
+stateful continuam proibidos sem nova decisão formal.

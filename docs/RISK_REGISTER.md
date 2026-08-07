@@ -20,6 +20,9 @@
 | R-045 | CRÍTICO | Um workflow integrado e dashboard podem ser interpretados como sistema aprovado para produção ou máquina. | Dashboard mantém `NON_PRODUCTION`, revisão humana, `simulation_only=true`, `executable_output=false`, separa estágios/IA e não oferece toolpath/G/M-code/NC/DNC/transmissão/controle. Evidência de uso real continua necessária. | MITIGADO PARCIALMENTE v2.0 PACKAGE 3 / MONITORAR |
 | R-046 | ALTO | Assistente/agente pode sobrescrever regra determinística, preencher lacuna ou elevar sugestão a decisão. | Perfis allowlisted recebem contexto minimizado, retornam texto separado do snapshot imutável, não possuem tools e bloqueiam output CNC/claims de autoridade; provider failure preserva o workflow. | MITIGADO PARCIALMENTE v2.0 PACKAGE 2 / MONITORAR |
 | R-047 | ALTO | Síntese Research integrada pode extrapolar fontes, DOE preliminar ou ANOVA descritiva como validação científica. | Bridge versionado exige documento/página/chunk/método, bloqueia ausência, marca chunks como dados não confiáveis e preserva DOE preliminar/ANOVA descritiva sem F-test, p-value, causalidade ou comprovação. | MITIGADO PARCIALMENTE v2.0 PACKAGE 2 / MONITORAR |
+| R-048 | CRÍTICO | Catálogos e dados Engineering globais podem vazar ou ser alterados entre organizações quando a plataforma ampliar automação. | v2.1 deve introduzir ownership organizacional, migration/backfill reversíveis, autorização fail-closed, audit e testes cross-org/cross-team sem confiar em body/header. | PROPOSTO PARA v2.1 / AGUARDA CTO |
+| R-049 | CRÍTICO | Evidência de simulação pode ser interpretada como validação física, de máquina ou liberação produtiva. | v2.2 deve separar modelo/evidence de validação real, registrar assumptions/envelope/engine/corpus e manter `NON_PRODUCTION`, revisão humana e ausência de output executável. | PROPOSTO PARA v2.2 / AGUARDA CTO |
+| R-050 | CRÍTICO | Orchestration, tools ou agentes futuros podem escalar sugestão para mutação, decisão ou execução sem autoridade. | v3.0 deve limitar tools a read-only allowlisted, separar snapshots, registrar audit/replay, falhar fechado e exigir decisão formal antes de qualquer capability de escrita/execução. | PROPOSTO PARA v3.0 / AGUARDA CTO |
 | R-020 | ALTO | Parâmetros de corte genéricos podem ser inadequados para ferramenta, material, fixação ou máquina reais. | Package 2 v1.7 exige fonte/versão, falha explícita para dado ausente, aplica limites declarados e revisão humana; nunca gera ou envia código para máquina. | MITIGADO PARCIALMENTE v1.7 PACKAGE 2 / MONITORAR |
 | R-021 | CRÍTICO | Estruturas CNC preliminares poderiam ser confundidas com saída liberada para máquina. | Não gerar G-code; marcar simulação/revisão humana e `executable_output=false`; proibir transmissão e produção. | MONITORAR v0.8 |
 | R-022 | ALTO | Referências heurísticas podem ser separadas ou interpretadas incorretamente. | Preservar texto bruto, página, método e estado preliminar; exigir revisão humana. | MONITORAR v0.9 |
@@ -64,7 +67,10 @@
 | v1.7 Engineering Catalogs and CAM | R-020 | dados/rules rastreáveis, limites de máquina e revisão humana |
 | v1.8 CAD Interoperability | R-019 | kernel decidido por ADR e propriedades validadas contra corpus conhecido |
 | v1.9 Controlled Pilot Readiness | R-021 a R-029 | isolamento, restore, SLOs e simulação controlada; nenhuma transmissão CNC |
-| v2.0 Integrated Engineering Platform | riscos residuais | dono, prazo, controle e aceite registrados; deploy permanece missão separada |
+| v2.0 Integrated Engineering Platform | R-044 a R-047 | versão publicada; riscos permanecem residuais/monitorados e deploy continua separado |
+| v2.1 Enterprise Engineering Governance | R-042, R-048 | ownership, migration/backfill, autorização e auditoria organization-scoped aprovados |
+| v2.2 Advanced Engineering Planning & Verification | R-019, R-039 a R-045, R-049 | corpus/planning/simulation evidence aprovados sem execução ou falsa validação física |
+| v3.0 Manufacturing Intelligence & Digital Thread | R-044, R-046, R-047, R-050 | provenance integral e inteligência bounded sem autoridade produtiva/científica autônoma |
 
 ## Segurança de segredos
 
@@ -78,7 +84,7 @@
 
 ## Classificação CNC
 
-CAD, CAM, CNC, geração de G-code e simulação estão ausentes ou apenas reservados
-em documentação. Não existe saída CNC para validar. Qualquer implementação futura
-permanece `REQUIRES_HUMAN_REVIEW` até aprovação de um processo completo de
-validação e simulação.
+CAD, features, process planning preliminar, CNC neutro e validação virtual existem
+somente como análise/evidence `NON_PRODUCTION`. Não existe toolpath, postprocessor,
+G/M-code, NC/DNC, transmissão ou controle de máquina. Toda evolução permanece
+`REQUIRES_HUMAN_REVIEW`; simulação não equivale a validação física nem produção.

@@ -40,7 +40,7 @@ piloto real, deploy, produção, cliente ou CNC.
   reescrita ampla de tenancy.
 - R-042 permanece crítico e monitorado, mesmo com cobertura fail-closed.
 
-## Validação do Release Candidate
+## Validação da release v1.9.0
 
 A `TASK-V19-003` confirmou os Packages 1–2 como completos para o Release Candidate
 v1.9.0. R-042 permanece parcialmente mitigado/monitorado; R-043 cobre falsa

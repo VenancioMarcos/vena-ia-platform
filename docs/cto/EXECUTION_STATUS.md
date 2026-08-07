@@ -441,3 +441,12 @@ redundante. A tag anotada e a GitHub Release `v2.0.0` publicam a Integrated
 Engineering Platform sem deploy, piloto real ou CNC executável. R-044–R-047 e
 catalog tenancy permanecem residuais/monitorados. Próximo estágio: somente extensão
 documental do roadmap até v3.0, aguardando ordem formal do CTO.
+
+## 2026-08-07 — TASK-V30-000 Roadmap Extension
+
+A baseline `v2.0.0` foi auditada sem repetir testes funcionais. A proposta mínima usa
+v2.1 para tenancy/governança Engineering, v2.2 para features/planning/verification e
+v3.0 para Manufacturing Intelligence & Digital Thread. `DEC-037` permanece proposta
+pendente do CTO; R-048–R-050 registram riscos distintos de tenancy, falsa confiança
+em simulação e escalada de autoridade. Entrega exclusivamente documental, sem código,
+migration, deploy ou CNC executável.

@@ -141,7 +141,7 @@ membership ativa pode gerar/verificar/rollback; cross-org/team e membership revo
 falham como `404`. Validação CNC aceita contrato neutro estrito e não possui campo
 para G/M-code, toolpath, transmissão ou payload executável.
 
-No Release Candidate v1.9.0, SHA-256 é exclusivamente checksum de integridade:
+Na release v1.9.0, SHA-256 é exclusivamente checksum de integridade:
 não prova autoria, identidade, assinatura, não repúdio ou confiança externa.
 Evidence incompleta, falha, indisponível, com checksum divergente, rollback falho ou
 validação CNC inválida bloqueia prontidão. Todo material permanece sintético e não
