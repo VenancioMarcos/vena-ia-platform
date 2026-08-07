@@ -23,6 +23,13 @@ class EvidenceStatus(StrEnum):
     NOT_APPLICABLE = "NOT_APPLICABLE"
 
 
+class RollbackResultStatus(StrEnum):
+    SUCCESS = "SUCCESS"
+    PARTIAL = "PARTIAL"
+    FAILED = "FAILED"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+
+
 class EvidenceItem(StrictEvidenceModel):
     category: str
     status: EvidenceStatus
@@ -60,6 +67,27 @@ class SupportPath(StrictEvidenceModel):
     escalation_path: str
     severity: str
     expected_internal_action: str
+
+
+class RollbackActionResult(StrictEvidenceModel):
+    action: str
+    target: str
+    result: RollbackResultStatus
+    warnings: list[str]
+    evidence_reference: str
+    timestamp: datetime
+    responsible_actor: str
+
+
+class RollbackRequest(StrictEvidenceModel):
+    membership_id: str | None = None
+
+
+class RollbackResult(StrictEvidenceModel):
+    schema_version: str = "vena-ia.pilot-rollback/v1"
+    overall_result: RollbackResultStatus
+    actions: list[RollbackActionResult]
+    review_status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
 
 
 class NeutralCNCPlan(StrictEvidenceModel):
@@ -135,7 +163,7 @@ class PilotEvidenceBundle(StrictEvidenceModel):
     virtual_cnc_validation: VirtualCNCValidation
     risks: list[str]
     limitations: list[str]
-    rollback_status: Literal["DEFINED_NOT_EXECUTED"] = "DEFINED_NOT_EXECUTED"
+    rollback_status: RollbackResultStatus = RollbackResultStatus.NOT_APPLICABLE
     rollback_actions: list[str]
     review_status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
     traceability: list[str]
@@ -148,6 +176,7 @@ class OperationalEvidenceSource(StrictEvidenceModel):
     source_contract: str
     evidence_reference: str
     owner: str
+    status: EvidenceStatus = EvidenceStatus.AVAILABLE
     limitations: list[str] = []
     warnings: list[str] = []
 
@@ -235,6 +264,33 @@ def validate_virtual_cnc(plan: NeutralCNCPlan) -> VirtualCNCValidation:
     )
 
 
+class IntegrityVerification(StrictEvidenceModel):
+    schema_version: str = "vena-ia.pilot-evidence-integrity/v1"
+    status: Literal["MATCH", "MISMATCH"]
+    readiness_accepted: bool
+    expected_sha256: str
+    actual_sha256: str
+    semantics: str = (
+        "Checksum verifies canonical payload integrity only; it does not prove identity, "
+        "authorship, non-repudiation, digital signature, or external trust."
+    )
+
+
+def verify_bundle_integrity(bundle: PilotEvidenceBundle) -> IntegrityVerification:
+    payload = bundle.model_dump(mode="json")
+    actual = str(payload["integrity_sha256"])
+    payload["integrity_sha256"] = ""
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    expected = hashlib.sha256(canonical).hexdigest()
+    matched = expected == actual
+    return IntegrityVerification(
+        status="MATCH" if matched else "MISMATCH",
+        readiness_accepted=matched and bundle.readiness_status == "READY_FOR_HUMAN_REVIEW",
+        expected_sha256=expected,
+        actual_sha256=actual,
+    )
+
+
 class RehearsalService:
     def __init__(
         self,
@@ -279,7 +335,7 @@ class RehearsalService:
         items = [
             EvidenceItem(
                 category=source.category,
-                status=EvidenceStatus.AVAILABLE,
+                status=source.status,
                 source_contract=source.source_contract,
                 evidence_reference=source.evidence_reference,
                 generated_at=generated_at,
@@ -313,13 +369,28 @@ class RehearsalService:
                 ),
             ]
         )
+        statuses = {item.status for item in items}
+        if EvidenceStatus.FAILED in statuses:
+            evidence_status = EvidenceStatus.FAILED
+            readiness_status = "REHEARSAL_FAILED"
+        elif EvidenceStatus.NOT_AVAILABLE in statuses or EvidenceStatus.PARTIAL in statuses:
+            evidence_status = (
+                EvidenceStatus.NOT_AVAILABLE
+                if EvidenceStatus.NOT_AVAILABLE in statuses
+                else EvidenceStatus.PARTIAL
+            )
+            readiness_status = "INCOMPLETE"
+        else:
+            evidence_status = EvidenceStatus.AVAILABLE
+            readiness_status = "READY_FOR_HUMAN_REVIEW"
+
         raw: dict[str, object] = {
             "pilot_context_id": context.id,
             "organization_id": context.organization_id,
             "team_id": context.team_id,
             "rehearsal_key": request.rehearsal_key,
-            "evidence_status": EvidenceStatus.AVAILABLE,
-            "readiness_status": "READY_FOR_HUMAN_REVIEW",
+            "evidence_status": evidence_status,
+            "readiness_status": readiness_status,
             "generated_at": generated_at,
             "evidence_items": items,
             "slo_proposals": [

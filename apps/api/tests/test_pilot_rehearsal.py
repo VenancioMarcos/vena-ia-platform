@@ -4,6 +4,7 @@ from app.modules.audit.models import SecurityAuditEvent
 from app.modules.organizations.models import PilotContext, PilotReadinessChecklist
 from app.modules.organizations.rehearsal import (
     AUTHORITATIVE_EVIDENCE,
+    EvidenceStatus,
     RehearsalRequest,
     RehearsalService,
 )
@@ -123,7 +124,7 @@ def test_rehearsal_builds_review_only_integrity_bundle(client, make_account):
     assert bundle["organization_id"] == organization["id"]
     assert bundle["readiness_status"] == "READY_FOR_HUMAN_REVIEW"
     assert bundle["review_status"] == "REQUIRES_HUMAN_REVIEW"
-    assert bundle["rollback_status"] == "DEFINED_NOT_EXECUTED"
+    assert bundle["rollback_status"] == "NOT_APPLICABLE"
     assert len(bundle["integrity_sha256"]) == 64
     assert bundle["integrity_semantics"].endswith("not an authenticity signature.")
     categories = {item["category"] for item in bundle["evidence_items"]}
@@ -167,6 +168,41 @@ def test_member_cannot_start_rehearsal(client, make_account):
         headers=owner.headers,
     ).json()
     assert _run(client, member, context["id"]).status_code == 404
+    assert (
+        client.post(
+            f"/pilot-contexts/{context['id']}/virtual-cnc-validation",
+            json=_plan(),
+            headers=member.headers,
+        ).status_code
+        == 404
+    )
+
+
+def test_admin_can_rehearse_without_authority_escalation(client, make_account):
+    owner = make_account("rehearsal-admin-owner@vena-ia.dev")
+    admin = make_account("rehearsal-admin@vena-ia.dev")
+    organization, context = _ready_context(client, owner)
+    created = client.post(
+        f"/organizations/{organization['id']}/memberships",
+        json={"user_id": admin.id, "role": "ADMIN"},
+        headers=owner.headers,
+    )
+    assert created.status_code == 201
+    assert _run(client, admin, context["id"], "synthetic-admin-run").status_code == 200
+    assert (
+        client.post(
+            f"/organizations/{organization['id']}/memberships",
+            json={"user_id": admin.id, "role": "OWNER"},
+            headers=admin.headers,
+        ).status_code
+        in {403, 422}
+    )
+    revoked = client.delete(
+        f"/organizations/{organization['id']}/memberships/{created.json()['id']}",
+        headers=owner.headers,
+    )
+    assert revoked.status_code == 204
+    assert _run(client, admin, context["id"], "synthetic-revoked-admin").status_code == 404
 
 
 def test_cross_org_rehearsal_is_hidden(client, make_account):
@@ -247,6 +283,102 @@ def test_missing_restore_evidence_fails_closed(client, make_account, db_session)
         assert "restore" in str(getattr(exc, "detail", ""))
     else:
         raise AssertionError("Missing restore evidence must fail closed")
+
+
+def test_partial_failed_and_unavailable_evidence_never_become_ready(
+    client, make_account, db_session
+):
+    owner = make_account("rehearsal-statuses@vena-ia.dev")
+    _, context_data = _ready_context(client, owner)
+    context = db_session.get(PilotContext, context_data["id"])
+    checklist = db_session.scalar(
+        select(PilotReadinessChecklist).where(
+            PilotReadinessChecklist.pilot_context_id == context_data["id"]
+        )
+    )
+    assert context is not None and checklist is not None
+    request = RehearsalRequest(rehearsal_key="synthetic-status-gate", neutral_cnc_plan=_plan())
+    for source_status, global_status in (
+        (EvidenceStatus.PARTIAL, "INCOMPLETE"),
+        (EvidenceStatus.NOT_AVAILABLE, "INCOMPLETE"),
+        (EvidenceStatus.FAILED, "REHEARSAL_FAILED"),
+    ):
+        sources = tuple(
+            item.model_copy(update={"status": source_status})
+            if item.category == "authorization"
+            else item
+            for item in AUTHORITATIVE_EVIDENCE
+        )
+        bundle = RehearsalService(sources).build(context, checklist, request)
+        assert bundle.readiness_status == global_status
+        assert bundle.readiness_status != "READY_FOR_HUMAN_REVIEW"
+
+
+def test_integrity_verification_detects_tampering(client, make_account):
+    owner = make_account("rehearsal-integrity@vena-ia.dev")
+    _, context = _ready_context(client, owner)
+    bundle = _run(client, owner, context["id"]).json()
+    matched = client.post(
+        f"/pilot-contexts/{context['id']}/evidence/verify",
+        json=bundle,
+        headers=owner.headers,
+    )
+    assert matched.status_code == 200
+    assert matched.json()["status"] == "MATCH"
+    assert matched.json()["readiness_accepted"] is True
+    bundle["limitations"][0] = "tampered synthetic claim"
+    mismatch = client.post(
+        f"/pilot-contexts/{context['id']}/evidence/verify",
+        json=bundle,
+        headers=owner.headers,
+    )
+    assert mismatch.status_code == 200
+    assert mismatch.json()["status"] == "MISMATCH"
+    assert mismatch.json()["readiness_accepted"] is False
+    assert "does not prove identity" in mismatch.json()["semantics"]
+
+
+def test_rollback_reports_success_partial_and_authorization(client, make_account):
+    owner = make_account("rollback-owner@vena-ia.dev")
+    member = make_account("rollback-member@vena-ia.dev")
+    organization, context = _ready_context(client, owner)
+    team = client.post(
+        f"/organizations/{organization['id']}/teams",
+        json={"name": "Rollback Team"},
+        headers=owner.headers,
+    ).json()
+    membership = client.post(
+        f"/organizations/{organization['id']}/memberships",
+        json={"user_id": member.id, "role": "MEMBER", "team_id": team["id"]},
+        headers=owner.headers,
+    ).json()
+    denied = client.post(
+        f"/pilot-contexts/{context['id']}/rehearsals/rollback",
+        json={},
+        headers=member.headers,
+    )
+    assert denied.status_code == 404
+    success = client.post(
+        f"/pilot-contexts/{context['id']}/rehearsals/rollback",
+        json={"membership_id": membership["id"]},
+        headers=owner.headers,
+    )
+    assert success.status_code == 200, success.text
+    assert success.json()["overall_result"] == "SUCCESS"
+    assert {item["result"] for item in success.json()["actions"]} >= {
+        "SUCCESS",
+        "NOT_APPLICABLE",
+    }
+
+    _, context_two = _ready_context(client, owner)
+    partial = client.post(
+        f"/pilot-contexts/{context_two['id']}/rehearsals/rollback",
+        json={"membership_id": "missing-membership"},
+        headers=owner.headers,
+    )
+    assert partial.status_code == 200
+    assert partial.json()["overall_result"] == "PARTIAL"
+    assert "FAILED" in {item["result"] for item in partial.json()["actions"]}
 
 
 def test_privacy_failure_blocks_rehearsal(client, make_account, db_session):

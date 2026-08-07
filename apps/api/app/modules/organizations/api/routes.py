@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, HTTPException, Request, Response
 
 from app.modules.audit.service import record_security_event
@@ -29,10 +31,16 @@ from app.modules.organizations.schemas import (
 from app.modules.organizations.rehearsal import (
     NeutralCNCPlan,
     PilotEvidenceBundle,
+    IntegrityVerification,
     RehearsalRequest,
     RehearsalService,
+    RollbackActionResult,
+    RollbackRequest,
+    RollbackResult,
+    RollbackResultStatus,
     VirtualCNCValidation,
     validate_virtual_cnc,
+    verify_bundle_integrity,
 )
 
 router = APIRouter(tags=["controlled-pilot"])
@@ -289,3 +297,110 @@ def run_synthetic_rehearsal(
     _audit(request, service, "PILOT_REHEARSAL_ROLLBACK_DEFINED")
     _audit(request, service, "PILOT_REHEARSAL_COMPLETED")
     return bundle
+
+
+@router.post(
+    "/pilot-contexts/{context_id}/evidence/verify", response_model=IntegrityVerification
+)
+def verify_pilot_evidence(
+    context_id: str,
+    payload: PilotEvidenceBundle,
+    service: OrganizationServiceDependency,
+) -> IntegrityVerification:
+    context = service.require_pilot_context(context_id)
+    service.authorization.require_role(
+        context.organization_id, {OrganizationRole.OWNER, OrganizationRole.ADMIN}
+    )
+    if payload.pilot_context_id != context.id or payload.organization_id != context.organization_id:
+        raise HTTPException(status_code=404, detail="Pilot evidence not found")
+    return verify_bundle_integrity(payload)
+
+
+@router.post(
+    "/pilot-contexts/{context_id}/rehearsals/rollback", response_model=RollbackResult
+)
+def rollback_synthetic_rehearsal(
+    context_id: str,
+    payload: RollbackRequest,
+    request: Request,
+    service: OrganizationServiceDependency,
+) -> RollbackResult:
+    context = service.require_pilot_context(context_id)
+    service.authorization.require_role(
+        context.organization_id, {OrganizationRole.OWNER, OrganizationRole.ADMIN}
+    )
+    now = datetime.now(timezone.utc)
+    actions: list[RollbackActionResult] = []
+    if context.status == "CLOSED":
+        close_result = RollbackResultStatus.NOT_APPLICABLE
+        close_warnings = ["Pilot Context was already closed."]
+    else:
+        context.status = "CLOSED"
+        context.updated_at = now
+        service.repository.commit()
+        close_result = RollbackResultStatus.SUCCESS
+        close_warnings = []
+    actions.append(
+        RollbackActionResult(
+            action="CLOSE_PILOT_CONTEXT",
+            target=context.id,
+            result=close_result,
+            warnings=close_warnings,
+            evidence_reference=f"pilot-context:{context.id}",
+            timestamp=now,
+            responsible_actor=service.user.id,
+        )
+    )
+    if payload.membership_id is not None:
+        try:
+            membership = service.revoke_membership(
+                context.organization_id, payload.membership_id
+            )
+            result = RollbackResultStatus.SUCCESS
+            warnings: list[str] = []
+            reference = f"membership:{membership.id}:REVOKED"
+        except HTTPException as exc:
+            result = RollbackResultStatus.FAILED
+            warnings = [str(exc.detail)]
+            reference = f"membership:{payload.membership_id}:FAILED"
+        actions.append(
+            RollbackActionResult(
+                action="REVOKE_SYNTHETIC_MEMBERSHIP",
+                target=payload.membership_id,
+                result=result,
+                warnings=warnings,
+                evidence_reference=reference,
+                timestamp=now,
+                responsible_actor=service.user.id,
+            )
+        )
+    actions.append(
+        RollbackActionResult(
+            action="CLEAN_DISPOSABLE_FIXTURES",
+            target="ephemeral-evidence",
+            result=RollbackResultStatus.NOT_APPLICABLE,
+            warnings=["No persistent Package 2 fixture or artifact exists."],
+            evidence_reference="in-memory:cleared-on-response",
+            timestamp=now,
+            responsible_actor=service.user.id,
+        )
+    )
+    results = {item.result for item in actions}
+    if RollbackResultStatus.FAILED in results:
+        overall = (
+            RollbackResultStatus.PARTIAL
+            if RollbackResultStatus.SUCCESS in results
+            else RollbackResultStatus.FAILED
+        )
+    elif RollbackResultStatus.SUCCESS in results:
+        overall = RollbackResultStatus.SUCCESS
+    else:
+        overall = RollbackResultStatus.NOT_APPLICABLE
+    _audit(
+        request,
+        service,
+        "PILOT_REHEARSAL_ROLLBACK_COMPLETED"
+        if overall == RollbackResultStatus.SUCCESS
+        else "PILOT_REHEARSAL_ROLLBACK_PARTIAL_OR_FAILED",
+    )
+    return RollbackResult(overall_result=overall, actions=actions)
