@@ -9,7 +9,7 @@ START_HEAD=1384b6c2acce25471f48d2990c07547a2bd6f651
 EXPECTED_STATE=VENA_IA_V1_9_PACKAGE_1_READY_FOR_CTO_REVIEW
 DOCUMENTAL_PULL_REQUEST=20
 FUNCTIONAL_PULL_REQUEST=DRAFT_REQUIRED
-PACKAGE_1=APPROVED_FOR_IMPLEMENTATION
+PACKAGE_1=IMPLEMENTED_READY_FOR_CTO_REVIEW
 PACKAGE_2=NOT_STARTED
 TAG_RELEASE=PROHIBITED
 DEPLOY=PROHIBITED
@@ -17,6 +17,6 @@ PILOT_REAL=PROHIBITED
 TOOLPATH_GCODE_CNC=PROHIBITED
 ```
 
-Escopo: integrar a baseline documental aprovada, implementar exclusivamente o
-Package 1 com isolamento fail-closed e manter a PR funcional em Draft. Package 2,
-piloto real, deploy e saídas CNC executáveis são proibidos.
+Escopo concluído localmente: a baseline documental foi integrada e o Package 1 foi
+implementado com isolamento fail-closed. A PR funcional permanece Draft; Package 2,
+piloto real, deploy e saídas CNC executáveis continuam proibidos.

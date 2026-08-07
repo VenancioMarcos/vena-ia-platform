@@ -67,3 +67,26 @@
 
 Essas quebras removem vulnerabilidades críticas e são registradas também em
 `CHANGELOG.md` e `CONTEXT.md`.
+
+## Fronteira organizacional v1.9 Package 1
+
+Os papéis abaixo são memberships persistidas e não substituem o papel global legado.
+Toda operação exige JWT válido e usuário do banco; `X-User-ID`, body, query e headers
+arbitrários nunca fornecem identidade, organização, equipe ou papel.
+
+| Capacidade | OWNER | ADMIN | MEMBER | Sem membership |
+|---|---|---|---|---|
+| Organization read | Permitido | Permitido | Permitido na própria organização | `404` |
+| Organization update | Permitido | Permitido | `404` | `404` |
+| Team create/update | Permitido | Permitido | `404` | `404` |
+| Team read | Todas da organização | Todas da organização | Somente Team vinculada | `404` |
+| Membership read | Permitido | Permitido | Negado (`404`) | `404` |
+| Membership create | ADMIN ou MEMBER | Somente MEMBER | Negado (`404`) | `404` |
+| Role change | Permitido, exceto OWNER | Negado | Negado; self-promotion impossível | `404` |
+| Revogação | ADMIN/MEMBER; nunca OWNER | Somente MEMBER | Negado | `404` |
+| Pilot Context | Permitido no escopo autorizado | Permitido no escopo autorizado | Própria Team | `404` |
+| Readiness checklist | Permitido no escopo autorizado | Permitido no escopo autorizado | Própria Team | `404` |
+
+Negativas explícitas: não existe transferência de OWNER; `MEMBER` exige `team_id`;
+`ADMIN`/`OWNER` são organizacionais; status sintético nunca equivale a piloto,
+deploy, produção ou CNC aprovados.

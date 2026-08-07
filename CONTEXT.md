@@ -29,10 +29,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 * **Fase:** v0.1–v1.8 concluídas e publicadas. A TASK-V19-001 aprovou a decomposição
   oficial da v1.9 em dois Packages e autorizou exclusivamente o Package 1.
-* **v1.9 Package 1 aprovado:** Controlled Pilot Governance and Organizational
-  Foundation formaliza Organization/Team, membership/papéis, ownership, onboarding,
-  pilot context, readiness/privacy e isolamento. Estado `APPROVED_FOR_IMPLEMENTATION`;
-  deploy e piloto real permanecem proibidos.
+* **v1.9 Package 1 implementado:** branch
+  `codex/v1.9-controlled-pilot-readiness` adiciona Organization/Team,
+  memberships `OWNER`/`ADMIN`/`MEMBER`, bootstrap owner transacional, revogação,
+  contexto sintético e readiness/privacy. JWT + banco são a única autoridade;
+  cross-org/team, mass assignment, papel/body/header forjados e `X-User-ID` falham
+  fechados. Migration head `d39a7b2c5e11`; Package 2, deploy e piloto real continuam proibidos.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

@@ -126,6 +126,16 @@ Na v0.4.1, somente PDF é aceito. A API valida:
 Formatos CAD/CAM/CNC permanecem bloqueados até existirem parsers e validações
 específicos.
 
+## 7.1 Isolamento organizacional para preparação sintética
+
+A v1.9 adiciona memberships allowlisted consultadas no banco a cada operação.
+Organization/Team/papel informados pelo cliente não concedem autoridade. OWNER
+inicial é o usuário autenticado e é criado atomicamente; MEMBER exige Team;
+cross-organization/cross-team falha como `404`; schemas rejeitam mass assignment.
+Revogação bloqueia a próxima autorização por membership, sem prometer invalidação
+além das garantias atuais do JWT registradas em R-013. O contexto de piloto é apenas
+sintético e nunca autoriza deploy, cliente, produção ou CNC.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

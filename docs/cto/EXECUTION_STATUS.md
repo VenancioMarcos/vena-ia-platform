@@ -276,3 +276,14 @@ Nenhuma implementação, migration, deploy, piloto real ou saída CNC foi inicia
 O CTO aprovou DEC-034 e tornou a decomposição em dois Packages a baseline oficial.
 Package 1 está `APPROVED_FOR_IMPLEMENTATION`; Package 2 permanece `NOT_STARTED`.
 R-042 continua CRÍTICO e ABERTO/GATE, sem redução decorrente da aprovação documental.
+
+## 2026-08-06 — TASK-V19-001 Package 1
+
+A PR documental #20 foi integrada em `3776fc4`. Na branch funcional, o Package 1
+implementa Organization/Team/Membership, papéis allowlisted, bootstrap owner,
+revogação, Pilot Context, readiness/privacy e auditoria existente. A migration única
+avança o head para `d39a7b2c5e11`. O gate local aprovou Ruff, mypy (161 arquivos),
+314 testes da API (2 skips), 13 testes focais novos, 12 testes operacionais,
+frontend typecheck/build, runtime policy, Compose config e OpenAPI 1.9.0/72 paths.
+O ciclo focal Alembic upgrade/downgrade/upgrade passou; PostgreSQL real fica para o
+Backend CI. R-042 está mitigado parcialmente/monitorado; Package 2 não foi iniciado.

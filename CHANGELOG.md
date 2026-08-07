@@ -8,6 +8,20 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.9 Package 1
+* Fronteira persistente `Organization`/`Team`/`Membership` com `OWNER`, `ADMIN` e
+  `MEMBER`, bootstrap transacional do owner e revogação auditável.
+* Contratos versionados de organização, membership, contexto sintético de piloto e
+  readiness/privacy checklist, sempre sob revisão humana.
+* Autorização fail-closed por JWT + banco, isolamento cross-organization/cross-team,
+  schemas contra mass assignment e testes negativos para papel/body/header forjados.
+* Migration `d39a7b2c5e11` com downgrade real e constraints contra memberships
+  duplicadas. Recursos pessoais existentes não foram migrados para tenancy.
+
+### Limites — v1.9 Package 1
+* Não há piloto real, empresa/cliente real, convite externo, deploy, billing,
+  SSO/SCIM, CAM, toolpath, G-code, M-code ou controle CNC.
+
 ## [1.8.0] — 2026-08-06 — CAD Interoperability and Feature Recognition
 
 ### Adicionado — v1.8 Package 4

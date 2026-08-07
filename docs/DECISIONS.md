@@ -1171,7 +1171,7 @@ evita nova plataforma, microserviço, provider ou duplicação operacional.
 
 ### Impacto
 
-Uma implementação futura do Package 1 provavelmente exigirá entidades persistentes
-e migration, mas isso depende de aprovação e ADR técnico específico. R-042 passa a
-registrar isolamento organizacional. Dados reais, convite externo, billing, SSO,
-SLO produtivo, deploy, CAM/toolpath/G-code e máquina continuam fora.
+O Package 1 implementa as entidades persistentes e a migration única
+`d39a7b2c5e11`, conforme ADR-0029. R-042 permanece crítico e apenas parcialmente
+mitigado/monitorado. Dados reais, convite externo, billing, SSO, SLO produtivo,
+deploy, CAM/toolpath/G-code e máquina continuam fora.

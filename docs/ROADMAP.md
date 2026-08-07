@@ -748,9 +748,10 @@ Condição de avanço: aceite humano do piloto e riscos de produção tratados.
 
 ### Decomposição oficial — TASK-V19-001
 
-Estado: `APPROVED_FOR_IMPLEMENTATION`. O CTO aprovou a baseline de dois Packages e
-autorizou exclusivamente a implementação funcional do Package 1. Package 2 permanece
-`NOT_STARTED` e exige autorização específica posterior.
+Estado do Package 1: `IMPLEMENTED / READY_FOR_CTO_REVIEW`. O CTO aprovou a baseline
+de dois Packages e a implementação está na branch
+`codex/v1.9-controlled-pilot-readiness`. Package 2 permanece `NOT_STARTED` e exige
+autorização específica posterior.
 
 #### Package 1 — Controlled Pilot Governance and Organizational Foundation
 
@@ -772,9 +773,9 @@ autenticada; contratos versionados de organization, membership, pilot context e
 readiness checklist; migration única quando comprovadamente necessária; onboarding
 sem convite externo automático; matriz de autorização atualizada; evidência sintética.
 
-Contratos propostos: `vena-ia.organization/v1`, `vena-ia.membership/v1`,
-`vena-ia.pilot-context/v1` e `vena-ia.pilot-readiness-checklist/v1`. Mudança
-semântica futura exige nova versão.
+Contratos implementados: `vena-ia.organization/v1`, `vena-ia.team/v1`,
+`vena-ia.membership/v1`, `vena-ia.pilot-context/v1` e
+`vena-ia.pilot-readiness-checklist/v1`. Mudança semântica futura exige nova versão.
 
 Dados: somente IDs técnicos, nomes operacionais mínimos, papel allowlisted, estado,
 responsável, timestamps e evidência/checklist categorizada. Não coletar dados de
@@ -785,7 +786,7 @@ Riscos: R-001–R-004/R-013/R-014/R-030 de identidade e autorização, R-028 de
 isolamento, R-031/R-034 residuais e R-042 de isolamento organizacional. Nenhum risco
 é considerado resolvido por criar o contrato.
 
-Testes previstos: contrato/migration; auth; matriz completa de papéis; membership;
+Testes implementados: contrato/migration; auth; matriz completa de papéis; membership;
 owner/admin/member; cross-organization e cross-team 404; mass assignment; papel
 forjado por body/header; `X-User-ID`; onboarding/revogação; estados/checklist;
 privacidade e logs; concorrência/idempotência; regressão dos recursos próprios existentes.

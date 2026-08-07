@@ -426,3 +426,8 @@ O CTO aprovou a decomposição documental da v1.9 em exatamente dois Packages,
 autorizou integrar a PR #20 e executar exclusivamente o Package 1 na branch
 `codex/v1.9-controlled-pilot-readiness`. Package 2, piloto real, deploy e qualquer
 saída CNC executável permanecem proibidos. R-042 continua CRÍTICO e ABERTO/GATE.
+
+A PR #20 foi integrada em `3776fc4`. O Package 1 foi implementado na branch
+`codex/v1.9-controlled-pilot-readiness` com migration `d39a7b2c5e11`, contratos
+versionados e testes fail-closed. A entrega funcional deve permanecer em Draft PR;
+Package 2 segue `NOT_STARTED` até nova ordem específica do CTO.
