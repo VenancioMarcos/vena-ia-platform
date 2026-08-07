@@ -748,9 +748,8 @@ Condição de avanço: aceite humano do piloto e riscos de produção tratados.
 
 ### Decomposição oficial — TASK-V19-001
 
-Estado do Package 1: `COMPLETE / RELEASE CANDIDATE`. O CTO aprovou a baseline de
-dois Packages e a implementação está na branch
-`codex/v1.9-controlled-pilot-readiness`, na Draft PR #21.
+Estado do Package 1: `COMPLETE / RELEASED v1.9.0`. O CTO aprovou a baseline de
+dois Packages e a implementação foi integrada pela PR #21.
 
 #### Package 1 — Controlled Pilot Governance and Organizational Foundation
 
@@ -803,9 +802,8 @@ toolpath, G-code ou máquina CNC.
 
 #### Package 2 — Controlled Operational Rehearsal and Virtual Pilot Evidence
 
-Estado: `COMPLETE / RELEASE CANDIDATE` na Draft PR #21. O CTO aprovou o Package 2;
-a v1.9 aguarda exclusivamente o Owner Release Gate para retirar Draft, integrar e
-publicar. Não existe Package 3.
+Estado: `COMPLETE / RELEASED v1.9.0` pela PR #21. O CTO aprovou o Package 2 e o
+proprietário aprovou o Owner Release Gate. Não existe Package 3.
 
 Objetivo: compor, somente sobre o contexto sintético autorizado do Package 1, a
 jornada piloto reversível e as evidências operacionais já existentes.

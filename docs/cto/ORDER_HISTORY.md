@@ -453,3 +453,10 @@ Package 3. A ordem autoriza somente o Release Candidate terminal, mantendo a PR 
 Draft. Merge, tag e GitHub Release exigem Owner Release Gate posterior; deploy,
 piloto real e CNC executável permanecem proibidos. A meta diária v3.0 não permite
 pular versões nem inventar roadmap além da v2.0.
+
+## 2026-08-07 — autorização direta Release v1.9.0
+
+O proprietário aprovou diretamente o `OWNER_RELEASE_GATE_V1_9`. A PR #21 foi
+retirada de Draft e integrada por Squash Merge em `b149ac1`. A autorização cobre
+somente o fechamento documental, tag anotada, GitHub Release e validação direta;
+deploy, piloto real, implementação v2.0 e CNC executável permanecem fora do escopo.

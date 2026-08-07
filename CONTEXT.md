@@ -27,9 +27,8 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.8 concluídas e publicadas. Os dois Packages oficiais da v1.9
-  estão completos e aprovados pelo CTO; a `TASK-V19-003` prepara o Release Candidate
-  v1.9.0 e mantém merge/tag/Release sob autorização direta do proprietário.
+* **Fase:** v0.1–v1.9 concluídas e publicadas. Os dois Packages oficiais da v1.9
+  foram aprovados, integrados e publicados como v1.9.0 após o Owner Release Gate.
 * **v1.9 Package 1 implementado:** branch
   `codex/v1.9-controlled-pilot-readiness` adiciona Organization/Team,
   memberships `OWNER`/`ADMIN`/`MEMBER`, bootstrap owner transacional, revogação,
@@ -40,10 +39,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   sintética allowlisted, false-readiness fail-closed, rollback explícito e validação
   CNC virtual não executável. Checksum prova somente integridade canônica; Package 2
   exige revisão humana e não representa piloto, produção, SLA ou deploy.
-* **v1.9 Release Candidate:** Packages 1–2 estão `COMPLETE / RELEASE CANDIDATE` na
-  Draft PR #21. API/FastAPI/health/OpenAPI/frontend permanecem em `1.9.0`; os riscos
-  R-042 e R-043 continuam residuais/monitorados. Nenhum merge, tag, Release ou deploy
-  pode ocorrer antes do Owner Release Gate.
+* **Release v1.9.0:** a PR #21 foi integrada por Squash Merge em `b149ac1`; o
+  fechamento de release registra Packages 1–2 completos, versões
+  API/FastAPI/health/OpenAPI/frontend `1.9.0` e Alembic `d39a7b2c5e11`. R-042 e
+  R-043 continuam residuais/monitorados; nenhum deploy ou piloto real foi realizado.
 * **v1.8 Package 2:** integração controlada cadquery-ocp/OCCT atrás de adapter
   valida STEP real contra box sintético. Parser textual preserva metadados; kernel
   é autoridade apenas para propriedades calculadas. R-019/R-038 seguem monitorados.

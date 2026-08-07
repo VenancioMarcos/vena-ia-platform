@@ -1,6 +1,6 @@
 # Vena_IA Platform v1.9.0 — Controlled Pilot Readiness
 
-**Status:** Release Candidate; not published; no deploy
+**Status:** published; no deploy
 
 ## Organizational foundation
 
@@ -56,6 +56,6 @@ configuration and the Backend, Frontend and Runtime Policy CI workflows.
 
 ## Publication
 
-PR #21 remains Draft during Release Candidate validation. Squash Merge, annotated
-tag `v1.9.0` and GitHub Release publication require the direct Owner Release Gate.
-No deploy is part of this release process.
+PR #21 was integrated by Squash Merge after the direct Owner Release Gate. The
+annotated tag `v1.9.0` and GitHub Release were published from the final release
+commit. No deploy is part of this release process.

@@ -339,3 +339,10 @@ runtime policy, Compose config, secret scan e head Alembic `d39a7b2c5e11` PASS.
 O PostgreSQL local não respondeu dentro de 120 s; o ciclo
 upgrade/downgrade/upgrade permanece comprovado pelo Backend CI verde do HEAD de
 código e será reexecutado no CI terminal do commit documental do RC.
+
+## 2026-08-07 — Owner Release Gate v1.9.0
+
+O proprietário autorizou diretamente retirar Draft, Squash Merge, tag anotada e
+GitHub Release v1.9.0. A PR #21 foi integrada em `b149ac1`; o commit de fechamento
+de release será o alvo da tag. Deploy, piloto real e saída CNC executável permanecem
+proibidos. Após validar a publicação, o fluxo retorna ao CTO antes de iniciar v2.0.
