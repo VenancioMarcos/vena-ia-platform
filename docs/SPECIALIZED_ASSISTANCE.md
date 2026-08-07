@@ -25,9 +25,10 @@ profile, pergunta, workflow/schema, evidence e template, mas não exige texto id
 ## Context allowlist e falha segura
 
 Cada profile recebe somente fatos necessários. Tokens, secrets, logs internos, PII,
-authority fields e machine targets não entram no context builder. Catálogos são
-marcados `GLOBAL_AUTHENTICATED_NOT_ORGANIZATION_SCOPED`; a assistência não os chama
-de catálogo da organização. Falha de provider retorna `FAILED`, sem mutar o workflow.
+authority fields e machine targets não entram no context builder. Catálogos carregam
+proveniência allowlisted `ORGANIZATION_OWNED` ou `SYSTEM_REFERENCE`; legados sem owner
+não chegam ao contexto. A resposta não recebe authority de escrita. Falha de provider
+retorna `FAILED`, sem mutar o workflow.
 
 Output vazio, claim de autoridade produtiva/científica ou linha com sintaxe potencial
 G/M-code é bloqueado. Todo contrato fixa `NON_PRODUCTION`,

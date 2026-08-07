@@ -8,6 +8,21 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v2.1 Package 1
+* Catálogos Engineering distinguem `ORGANIZATION_OWNED`, `SYSTEM_REFERENCE` e
+  `LEGACY_UNSCOPED`, com ownership persistido e índices únicos por organização.
+* `POST /engineering/catalogs` exige `organization_id` como identificador do recurso;
+  somente OWNER/ADMIN criam e membership ativa lê, sempre por token + banco.
+* Listagem, selection, recommendation, planning, workflow e assistance falham fechado.
+  Referências de sistema são read-only e registros legados sem owner ficam ocultos.
+* Migration `e61c4f8a2b90` preserva legados sem inventar organização e possui downgrade.
+
+### Compatibilidade e limites — v2.1 Package 1
+* Schemas v1 recebem somente `scope_type` e `organization_id` aditivos. Exigir a
+  organização na criação é a quebra necessária para remover escrita global.
+* O downgrade não restaura unicidade global incompatível com duplicatas legítimas
+  entre organizações. Package 2, v2.2, v3.0, deploy e CNC executável não foram iniciados.
+
 ## [2.0.0] — 2026-08-07 — Integrated Engineering Platform
 
 ### Publicado

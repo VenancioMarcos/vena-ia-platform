@@ -13,7 +13,14 @@ class CatalogKind(StrEnum):
     TOOL = "TOOL"
 
 
+class CatalogScope(StrEnum):
+    SYSTEM_REFERENCE = "SYSTEM_REFERENCE"
+    ORGANIZATION_OWNED = "ORGANIZATION_OWNED"
+    LEGACY_UNSCOPED = "LEGACY_UNSCOPED"
+
+
 class CatalogItemCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     kind: CatalogKind
     code: str = Field(min_length=1, max_length=100, pattern=r"^[A-Z0-9._-]+$")
     name: str = Field(min_length=1, max_length=255)
@@ -26,11 +33,14 @@ class CatalogItemRead(CatalogItemCreate):
     model_config = ConfigDict(from_attributes=True)
     schema_version: str = "vena-ia.engineering-catalog/v1"
     id: str
+    scope_type: CatalogScope
+    organization_id: str | None
     created_by: str
     created_at: datetime
 
 
 class SelectionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     material_id: str
     machine_id: str
     tool_id: str

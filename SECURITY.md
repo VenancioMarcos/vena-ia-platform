@@ -171,6 +171,18 @@ Não existem controles de produção, machine-send, download NC, postprocessor,
 toolpath ou G/M-code. `REVIEW ACKNOWLEDGED` é somente confirmação visual local e não
 constitui aprovação, assinatura, certificação ou autorização de fabricação.
 
+## 7.4 Ownership de catálogos Engineering v2.1
+
+Catálogos graváveis pertencem a uma Organization. `organization_id` apenas identifica
+o recurso; autorização deriva de JWT, usuário persistido e membership ativa. OWNER e
+ADMIN escrevem; memberships ativas leem; cross-org falha como `404`. Schemas rejeitam
+campos extras e headers de identidade/papel não concedem autoridade.
+
+`SYSTEM_REFERENCE` não possui owner e é read-only. Registros anteriores à migration
+são `LEGACY_UNSCOPED` e ficam invisíveis até reconciliação por evidência confiável;
+nunca são atribuídos à primeira, atual ou default Organization. A FK usa `RESTRICT`,
+sem cascade destrutivo.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

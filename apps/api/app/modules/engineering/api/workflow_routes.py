@@ -20,6 +20,8 @@ from app.modules.engineering.workflow_schemas import (
     IntegratedEngineeringWorkflow,
     IntegratedWorkflowRequest,
 )
+from app.modules.organizations.repository import OrganizationRepository
+from app.modules.organizations.service import OrganizationAuthorization
 
 router = APIRouter(prefix="/engineering", tags=["engineering-workflow"])
 
@@ -27,14 +29,17 @@ router = APIRouter(prefix="/engineering", tags=["engineering-workflow"])
 @router.post("/workflows", response_model=IntegratedEngineeringWorkflow)
 def create_integrated_workflow(
     payload: IntegratedWorkflowRequest,
-    _current_user: CurrentUserDependency,
+    current_user: CurrentUserDependency,
     cad: CADAnalysisServiceDependency,
     db: Session = Depends(get_db),
 ) -> IntegratedEngineeringWorkflow:
     try:
         return IntegratedEngineeringWorkflowService(
             cad,
-            EngineeringCatalogService(EngineeringCatalogRepository(db)),
+            EngineeringCatalogService(
+                EngineeringCatalogRepository(db),
+                OrganizationAuthorization(OrganizationRepository(db), current_user),
+            ),
             CNCPlanningService(),
         ).execute(payload)
     except (DocumentNotFoundError, ProjectNotFoundError, DocumentAccessDeniedError) as exc:

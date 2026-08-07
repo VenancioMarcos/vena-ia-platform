@@ -20,6 +20,17 @@ gera JSON versionado com conclusão segura, itens indisponíveis, rastreabilidad
 incerteza baseada somente na completude dos dados e checklist humano nunca
 preenchido automaticamente. A incerteza não representa segurança física.
 
+## Ownership e compatibilidade v2.1 Package 1
+
+Itens criados pela API são `ORGANIZATION_OWNED`. A criação exige `organization_id`
+na query e membership OWNER/ADMIN no banco; qualquer membership ativa pode listar.
+Sem organização, a listagem retorna somente `SYSTEM_REFERENCE` autenticada.
+`LEGACY_UNSCOPED` nunca entra em selection/recommendation.
+
+`scope_type` e `organization_id` são aditivos ao contrato v1. Mistura cross-org falha
+fechado. Código/versão iguais podem existir em organizações distintas; referências de
+sistema preservam unicidade global.
+
 ## Uso no workflow integrado v2.0 Package 1
 
 O `IntegratedEngineeringWorkflowService` reutiliza `recommend()` uma única vez e

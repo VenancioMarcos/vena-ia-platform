@@ -72,8 +72,15 @@ def _catalog(
     code: str,
     properties: dict[str, object],
 ) -> str:
+    organizations = client.get("/organizations", headers=headers).json()
+    if organizations:
+        organization_id = organizations[0]["id"]
+    else:
+        organization_id = client.post(
+            "/organizations", headers=headers, json={"name": "Planning test organization"}
+        ).json()["id"]
     response = client.post(
-        "/engineering/catalogs",
+        f"/engineering/catalogs?organization_id={organization_id}",
         headers=headers,
         json={
             "kind": kind,

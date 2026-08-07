@@ -459,3 +459,18 @@ O CTO aprovou `DEC-037`, oficializou a sequência v2.1→v2.2→v3.0 e os riscos
 R-048–R-050. Somente v2.1 Package 1 — Ownership and Compatibility — recebeu
 `APPROVED_FOR_IMPLEMENTATION`; Package 2 e todas as versões posteriores permanecem
 `NOT_STARTED`. A PR documental #24 deve ser integrada antes da branch funcional.
+
+## 2026-08-07 — TASK-V21-001 Package 1 implementado
+
+A PR documental #24 foi integrada em `3134de2`. A branch
+`codex/v2.1-enterprise-engineering-governance` implementa ownership de catálogos por
+Organization. `SYSTEM_REFERENCE` é read-only, `LEGACY_UNSCOPED` fica oculto e
+`TOKEN + DATABASE = AUTHORITY` protege consumers downstream. A migration
+`e61c4f8a2b90` não inventa owner e possui downgrade data-preserving. Package 2, v2.2,
+v3.0, release, deploy e CNC executável permanecem fora.
+
+Gate local: Ruff PASS; mypy em 168 arquivos PASS; API `355 passed, 2 skipped`;
+operations `69 passed, 7 skipped`; focais Engineering/workflow `43 passed`; OpenAPI,
+Compose config, diff/check e Alembic single head `e61c4f8a2b90` PASS. O Docker daemon
+local está ausente; upgrade/downgrade/upgrade PostgreSQL permanece gate obrigatório do
+Backend CI da Draft PR.

@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -28,64 +30,75 @@ from app.modules.engineering.schemas import (
 )
 from app.modules.engineering.service import EngineeringCatalogService
 from app.modules.engineering.planning import FeaturePlanningBridge
+from app.modules.organizations.repository import OrganizationRepository
+from app.modules.organizations.service import OrganizationAuthorization
 
 router = APIRouter(prefix="/engineering", tags=["engineering"])
 
 
+def _catalog_service(db: Session, current_user: CurrentUserDependency) -> EngineeringCatalogService:
+    return EngineeringCatalogService(
+        EngineeringCatalogRepository(db),
+        OrganizationAuthorization(OrganizationRepository(db), current_user),
+    )
+
+
 @router.post("/catalogs", response_model=CatalogItemRead, status_code=201)
 def create_catalog_item(
-    payload: CatalogItemCreate, current_user: CurrentUserDependency, db: Session = Depends(get_db)
+    payload: CatalogItemCreate,
+    current_user: CurrentUserDependency,
+    organization_id: Annotated[str, Query(min_length=1, max_length=36)],
+    db: Session = Depends(get_db),
 ) -> EngineeringCatalogItem:
-    return EngineeringCatalogService(EngineeringCatalogRepository(db)).create(
-        payload, current_user.id
-    )
+    return _catalog_service(db, current_user).create(payload, current_user.id, organization_id)
 
 
 @router.get("/catalogs", response_model=list[CatalogItemRead])
 def list_catalog_items(
-    _current_user: CurrentUserDependency,
+    current_user: CurrentUserDependency,
+    organization_id: Annotated[str | None, Query(min_length=1, max_length=36)] = None,
     kind: CatalogKind | None = None,
     db: Session = Depends(get_db),
 ) -> list[EngineeringCatalogItem]:
-    return EngineeringCatalogRepository(db).list(kind.value if kind else None)
+    return _catalog_service(db, current_user).list(organization_id=organization_id, kind=kind)
 
 
 @router.post("/selections/preliminary", response_model=PreliminarySelection)
 def select_preliminary(
-    payload: SelectionRequest, _current_user: CurrentUserDependency, db: Session = Depends(get_db)
+    payload: SelectionRequest, current_user: CurrentUserDependency, db: Session = Depends(get_db)
 ) -> PreliminarySelection:
-    return EngineeringCatalogService(EngineeringCatalogRepository(db)).select(payload)
+    return _catalog_service(db, current_user).select(payload)
 
 
 @router.post("/recommendations/preliminary", response_model=EngineeringRecommendation)
 def recommend_preliminary(
     payload: RecommendationRequest,
-    _current_user: CurrentUserDependency,
+    current_user: CurrentUserDependency,
     db: Session = Depends(get_db),
 ) -> EngineeringRecommendation:
-    return EngineeringCatalogService(EngineeringCatalogRepository(db)).recommend(payload)
+    return _catalog_service(db, current_user).recommend(payload)
 
 
 @router.post("/reports/preliminary", response_model=EngineeringReviewReport)
 def report_preliminary(
     payload: RecommendationRequest,
-    _current_user: CurrentUserDependency,
+    current_user: CurrentUserDependency,
     db: Session = Depends(get_db),
 ) -> EngineeringReviewReport:
-    return EngineeringCatalogService(EngineeringCatalogRepository(db)).report(payload)
+    return _catalog_service(db, current_user).report(payload)
 
 
 @router.post("/planning/from-document-feature", response_model=FeaturePlanningResponse)
 def plan_from_document_feature(
     payload: FeaturePlanningRequest,
-    _current_user: CurrentUserDependency,
+    current_user: CurrentUserDependency,
     cad: CADAnalysisServiceDependency,
     db: Session = Depends(get_db),
 ) -> FeaturePlanningResponse:
     try:
         return FeaturePlanningBridge(
             cad,
-            EngineeringCatalogService(EngineeringCatalogRepository(db)),
+            _catalog_service(db, current_user),
         ).plan(payload)
     except (DocumentNotFoundError, ProjectNotFoundError, DocumentAccessDeniedError) as exc:
         raise HTTPException(status_code=404, detail="Document not found") from exc

@@ -35,8 +35,10 @@ e clearance são explícitos; não existem defaults ocultos. O fluxo preserva so
 document, schema versions, kernel/rule versions, catalog versions, feature,
 recommendation, planning, plano CNC neutro e report refs.
 
-Catálogos Engineering continuam globais autenticados no Package 1. O workflow não
-altera sua tenancy nem os apresenta como recursos Organization-scoped.
+Desde v2.1 Package 1, catálogos Engineering são `ORGANIZATION_OWNED` ou referências
+`SYSTEM_REFERENCE`; `LEGACY_UNSCOPED` é bloqueado. O workflow reutiliza autorização
+por membership, impede mistura cross-org e preserva escopo na traceability sem aceitar
+authority fields no payload.
 
 ## Limites absolutos
 

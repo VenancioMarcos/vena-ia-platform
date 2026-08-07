@@ -1307,3 +1307,19 @@ reutilizados. Nenhum microserviço, migration, código, deploy, piloto real, too
 postprocessor, G/M-code, machine connectivity ou agente autônomo é autorizado por
 esta proposta. Implementação depende de aprovação explícita posterior do CTO e gates
 reservados continuam dependentes do proprietário.
+
+## DEC-038 — Ownership organizacional de catálogos Engineering
+
+**Data:** 2026-08-07
+**Status:** IMPLEMENTADA — PENDENTE DE REVISÃO CTO
+**Tipo:** Arquitetura / Dados / Segurança / Compatibilidade
+
+Catalog items graváveis pertencem a uma Organization, sem Team scope. Membership
+ativa lê; OWNER/ADMIN cria. `SYSTEM_REFERENCE` é read-only e linhas anteriores viram
+`LEGACY_UNSCOPED` invisível até reconciliação confiável. Owner nunca é inferido pela
+organização atual, primeira ou default.
+
+A unicidade é por Organization para owned e global para system references. Schemas v1
+recebem campos aditivos; exigir `organization_id` na criação elimina escrita global.
+O downgrade preserva dados e não restaura constraint global incompatível com duplicatas
+legítimas entre organizações. ADR-0030 registra consequências e limites.

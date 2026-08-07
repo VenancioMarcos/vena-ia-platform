@@ -288,3 +288,21 @@ evidence/citations, limitações e revisão humana retornados pelo backend. O
 acknowledgement é somente view state local. Não há nova persistência, migration,
 cliente HTTP, ledger ou subsistema operacional. Detalhes:
 `docs/OPERATIONAL_ENGINEERING_DASHBOARD.md`.
+
+---
+
+## 17. Enterprise Engineering Governance v2.1 Package 1
+
+```text
+JWT + usuário persistido
+  → OrganizationAuthorization (membership ativa)
+  → EngineeringCatalogService (OWNER/ADMIN write; membership read)
+  → EngineeringCatalogRepository (consulta filtrada)
+  → engineering_catalog_items (scope_type + organization_id)
+  → recommendation/planning/workflow/assistance com provenance
+```
+
+O ownership referencia Organization; Team não foi adicionado por falta de requisito.
+`ORGANIZATION_OWNED`, `SYSTEM_REFERENCE` read-only e `LEGACY_UNSCOPED` bloqueado
+separam proveniência. A auditoria existente registra mutações, sem ledger paralelo.
+Decisão formal: `docs/adr/ADR-0030-engineering-catalog-ownership.md`.

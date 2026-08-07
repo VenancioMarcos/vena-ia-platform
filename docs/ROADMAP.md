@@ -1543,6 +1543,11 @@ política de leitura/escrita, estratégia de migration/backfill, compatibilidade
 dados legados, índices e contrato aditivo. Depende da fronteira Organization/Team
 v1.9. Riscos: R-042 e R-048.
 
+**Estado de execução:** `IMPLEMENTED / READY_FOR_CTO_REVIEW`. A implementação usa
+Organization scope (sem Team scope), separa referências de sistema de registros
+legados bloqueados, preserva schemas v1 por adição e introduz a migration reversível
+`e61c4f8a2b90`. Package 2 permanece `NOT_STARTED`.
+
 **Package 2 — Governance evidence — `NOT_STARTED`:** autorização fail-closed, auditoria de lifecycle,
 testes cross-org/cross-team, export/retention compatíveis, documentação e gate de
 migration reversível. Depende do Package 1. Não inclui SSO/SCIM, billing, cliente real

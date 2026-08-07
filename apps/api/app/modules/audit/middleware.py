@@ -24,6 +24,7 @@ _AUDITED_MUTATIONS = {
     ("POST", "/chat/{project_id}/messages"): "CHAT_MESSAGE_CREATED",
     ("POST", "/chat/{project_id}/ask"): "CHAT_RESPONSE_GENERATED",
     ("POST", "/research/reports"): "REPORT_CREATED",
+    ("POST", "/engineering/catalogs"): "ENGINEERING_CATALOG_CREATED",
 }
 
 
