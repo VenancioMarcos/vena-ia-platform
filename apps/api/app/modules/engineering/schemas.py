@@ -129,6 +129,18 @@ class FeaturePlanningRequest(BaseModel):
     material_id: str | None = Field(default=None, min_length=1, max_length=255)
     machine_id: str | None = Field(default=None, min_length=1, max_length=255)
     tool_id: str | None = Field(default=None, min_length=1, max_length=255)
+    manufacturing_intent: str | None = Field(default=None, min_length=1, max_length=500)
+    drawing_tolerance: str | None = Field(default=None, min_length=1, max_length=255)
+    surface_finish: str | None = Field(default=None, min_length=1, max_length=255)
+    fixture: str | None = Field(default=None, min_length=1, max_length=500)
+    coolant: str | None = Field(default=None, min_length=1, max_length=255)
+    material_condition: str | None = Field(default=None, min_length=1, max_length=255)
+    setup_time_min: float | None = Field(default=None, ge=0, le=100_000)
+    machine_hour_rate: float | None = Field(default=None, ge=0, le=1_000_000)
+    tool_cost_allocation: float | None = Field(default=None, ge=0, le=1_000_000)
+    consumable_cost: float | None = Field(default=None, ge=0, le=1_000_000)
+    overhead_cost: float | None = Field(default=None, ge=0, le=1_000_000)
+    currency: str | None = Field(default=None, min_length=3, max_length=3)
 
 
 class FeaturePlanningDimension(BaseModel):
