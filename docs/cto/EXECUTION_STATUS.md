@@ -1,6 +1,17 @@
 # Estado de execução CTO
 
 ```text
+MISSION=TASK_V17_002
+STATE=V1_7_PACKAGE_2_VALIDATION_IN_PROGRESS
+BRANCH=codex/v1.7-intelligent-engineering
+START_HEAD=4fc524197eadc1fe30982d4102c235c2c10090e9
+PULL_REQUEST=18
+```
+
+Contrato v1, operações allowlisted, compatibilidade, parâmetros, tempo/custo,
+fontes, unidades e revisão humana implementados. Gate terminal em execução.
+
+```text
 MISSION=TASK_V16_003_R1
 STATE=V1_6_PACKAGE_3_REMEDIATION_IN_PROGRESS
 BRANCH=codex/v1.6-reliability-scalability

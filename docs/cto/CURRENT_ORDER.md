@@ -1,23 +1,19 @@
 # Ordem CTO atual
 
 ```text
-MISSION=TASK_V16_003_R1
-TITLE=REAL_PROCESS_INTEGRATION_AND_CAPACITY_EVIDENCE
-BRANCH=codex/v1.6-reliability-scalability
-START_HEAD=69dc0916cf0cac58efbc1092b17f6ffa56ee5e93
-EXPECTED_STATE=VENA_IA_V1_6_PACKAGE_3_REMEDIATION_READY_FOR_CTO_REVIEW
-PULL_REQUEST=17
+MISSION=TASK_V17_002
+TITLE=ENGINEERING_RULES_PRELIMINARY_PARAMETERS_AND_ESTIMATES
+BRANCH=codex/v1.7-intelligent-engineering
+START_HEAD=4fc524197eadc1fe30982d4102c235c2c10090e9
+EXPECTED_STATE=VENA_IA_V1_7_PACKAGE_2_READY_FOR_CTO_REVIEW
+PULL_REQUEST=18
 PULL_REQUEST_DRAFT=KEEP_DRAFT
 MERGE=PROHIBITED
 TAG_RELEASE=PROHIBITED
 DEPLOY=PROHIBITED
-V1_6_PACKAGE_1=APPROVED_BY_CTO
-V1_6_PACKAGE_2=APPROVED_BY_CTO
-V1_6_PACKAGE_3=PARTIALLY_APPROVED_REMEDIATION_REQUIRED
-STATE=READY_FOR_CTO_REVIEW
+PACKAGE_3=PROHIBITED
+TOOLPATH_GCODE_CNC=PROHIBITED
 ```
 
-Escopo: reclassificar o baseline anterior, iniciar APIs/workers independentes com
-PostgreSQL/Redis/MinIO compartilhados, executar HTTP/E2E/claims/recovery/backpressure,
-soak integrado e bundle atômico. Sem merge, tag, Release, deploy, piloto, SLA/SLO,
-API paga ou v1.7.
+Escopo: regras determinísticas allowlisted, compatibilidade preliminar, parâmetros,
+tempo/custo opcionais, fontes, unidades, limitações e revisão humana obrigatória.

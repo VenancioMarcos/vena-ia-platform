@@ -1,5 +1,11 @@
 # Histórico de ordens do CTO
 
+## 2026-08-06 — TASK-V17-002
+
+O CTO aprovou a TASK-V16-004 e ordenou continuar na mesma branch/PR #18 com regras
+determinísticas, compatibilidade e estimativas preliminares rastreáveis, mantendo
+revisão humana e proibindo qualquer saída CNC executável.
+
 ## 2026-07-30 — v0.4.1 Security Gate
 
 Integração, tag e release autorizadas e concluídas.

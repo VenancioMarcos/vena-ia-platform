@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -46,3 +46,46 @@ class PreliminarySelection(BaseModel):
     tool: CatalogItemRead
     traceability: list[str]
     limitations: list[str]
+
+
+class RecommendationRequest(SelectionRequest):
+    cutting_length_mm: float | None = Field(default=None, gt=0, le=1_000_000)
+    setup_time_min: float | None = Field(default=None, ge=0, le=100_000)
+    machine_hour_rate: float | None = Field(default=None, ge=0, le=1_000_000)
+    tool_cost_allocation: float | None = Field(default=None, ge=0, le=1_000_000)
+    consumable_cost: float | None = Field(default=None, ge=0, le=1_000_000)
+    overhead_cost: float | None = Field(default=None, ge=0, le=1_000_000)
+    currency: str | None = Field(default=None, min_length=3, max_length=3)
+
+
+class AvailabilityValue(BaseModel):
+    status: str
+    value: float | None = None
+    unit: str | None = None
+    reason: str | None = None
+
+
+class EngineeringRecommendation(BaseModel):
+    schema_version: str = "vena-ia.engineering-recommendation/v1"
+    status: str = REVIEW_STATUS
+    compatibility: str
+    operation: str
+    material: CatalogItemRead
+    machine: CatalogItemRead
+    tool: CatalogItemRead
+    preliminary_parameters: dict[str, AvailabilityValue]
+    formulas: list[str]
+    units: dict[str, str]
+    assumptions: list[str]
+    limitations: list[str]
+    traceability: list[str]
+    data_versions: dict[str, str]
+    rule_version: str
+    source: str
+    source_version: str
+    machining_time_estimate: AvailabilityValue
+    setup_time_estimate: AvailabilityValue
+    total_estimated_time: AvailabilityValue
+    cost_estimate: AvailabilityValue
+    cost_components: dict[str, float]
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

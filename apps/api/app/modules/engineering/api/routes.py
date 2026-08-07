@@ -9,7 +9,9 @@ from app.modules.engineering.schemas import (
     CatalogItemCreate,
     CatalogItemRead,
     CatalogKind,
+    EngineeringRecommendation,
     PreliminarySelection,
+    RecommendationRequest,
     SelectionRequest,
 )
 from app.modules.engineering.service import EngineeringCatalogService
@@ -40,3 +42,12 @@ def select_preliminary(
     payload: SelectionRequest, _current_user: CurrentUserDependency, db: Session = Depends(get_db)
 ) -> PreliminarySelection:
     return EngineeringCatalogService(EngineeringCatalogRepository(db)).select(payload)
+
+
+@router.post("/recommendations/preliminary", response_model=EngineeringRecommendation)
+def recommend_preliminary(
+    payload: RecommendationRequest,
+    _current_user: CurrentUserDependency,
+    db: Session = Depends(get_db),
+) -> EngineeringRecommendation:
+    return EngineeringCatalogService(EngineeringCatalogRepository(db)).recommend(payload)

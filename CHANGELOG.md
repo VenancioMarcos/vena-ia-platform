@@ -8,6 +8,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v1.7 Package 2
+* Contrato `vena-ia.engineering-recommendation/v1` e rota autenticada para regras
+  determinísticas allowlisted de milling, drilling e turning.
+* Compatibilidade preliminar, RPM/feed, tempo e custo retornam fonte, versões,
+  fórmulas, unidades, hipóteses, limitações e `NOT_AVAILABLE` quando faltam dados.
+* Nenhuma recomendação contém toolpath, coordenadas, G-code, M-code ou comando CNC.
+
 ### Adicionado — v1.7 Package 1
 * Contratos versionados `vena-ia.engineering-catalog/v1` e
   `vena-ia.engineering-selection/v1` para materiais, máquinas e ferramentas.

@@ -648,6 +648,11 @@ de materiais, máquinas e ferramentas, fonte/versão rastreáveis, repository,
 service, APIs autenticadas e seleção preliminar. Não há toolpath, G-code ou
 integração com máquina; revisão humana permanece obrigatória.
 
+**Estado do Package 2:** regras determinísticas para milling, drilling e turning,
+compatibilidade preliminar, parâmetros, tempo/custo opcionais e contrato versionado
+foram adicionados à mesma Draft PR #18. Ausência de dados é explícita; nenhuma
+saída executável ou liberação de processo foi introduzida.
+
 Objetivo: concluir a base CAM prevista com dados de engenharia rastreáveis.
 
 Entregas: catálogos persistentes de materiais, máquinas e ferramentas; versão e

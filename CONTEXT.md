@@ -27,7 +27,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **Fase:** v0.1–v1.6 concluídas e publicadas; v1.7 Package 1 em implementação na branch `codex/v1.7-intelligent-engineering`.
+* **Fase:** v0.1–v1.6 concluídas e publicadas; v1.7 Packages 1–2 em revisão na Draft PR #18, branch `codex/v1.7-intelligent-engineering`.
 * **Repositório:** público, em `github.com/VenancioMarcos/vena-ia-platform`.
 * **Arquitetura:** Modular Monolith (`docs/adr/ADR-001.md`), com organização em `apps/`, `packages/`, `services/`.
 * **Backend:** `apps/api` v1.6.0 com persistência SQLAlchemy, senha PBKDF2, JWT HS256 assinado, cookie HttpOnly/Bearer, expiração, autorização centralizada e controles distribuídos por Redis. `X-User-ID` não autentica. A migration head `b18e4c7d2a91` adiciona jobs assíncronos duráveis.
@@ -180,6 +180,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   persistente de materiais/máquinas/ferramentas e seleção rastreável usam APIs
   autenticadas. Toda saída é `PRELIMINARY_ENGINEERING_REQUIRES_HUMAN_REVIEW` e
   não gera toolpath, G-code nem comando para máquina.
+* **v1.7 Engineering Rules Package 2:** regras sob demanda para milling, drilling
+  e turning validam compatibilidade declarada e calculam somente parâmetros,
+  tempo e custo preliminares rastreáveis. Dado ausente produz `NOT_AVAILABLE`;
+  toda saída exige revisão humana e permanece não executável.
 * **Limites operacionais permanentes:** o controle oficial está ativo em `docs/PERMANENT_OPERATIONAL_LIMITS.md`.
 
 ```text
