@@ -748,10 +748,9 @@ Condição de avanço: aceite humano do piloto e riscos de produção tratados.
 
 ### Decomposição oficial — TASK-V19-001
 
-Estado do Package 1: `IMPLEMENTED / READY_FOR_CTO_REVIEW`. O CTO aprovou a baseline
-de dois Packages e a implementação está na branch
-`codex/v1.9-controlled-pilot-readiness`. Package 2 permanece `NOT_STARTED` e exige
-autorização específica posterior.
+Estado do Package 1: `COMPLETE / RELEASE CANDIDATE`. O CTO aprovou a baseline de
+dois Packages e a implementação está na branch
+`codex/v1.9-controlled-pilot-readiness`, na Draft PR #21.
 
 #### Package 1 — Controlled Pilot Governance and Organizational Foundation
 
@@ -804,8 +803,9 @@ toolpath, G-code ou máquina CNC.
 
 #### Package 2 — Controlled Operational Rehearsal and Virtual Pilot Evidence
 
-Estado: `IMPLEMENTED / READY_FOR_CTO_REVIEW` na Draft PR #21. A v1.9 global não
-está encerrada e exige revisão CTO, release candidate e gate posterior.
+Estado: `COMPLETE / RELEASE CANDIDATE` na Draft PR #21. O CTO aprovou o Package 2;
+a v1.9 aguarda exclusivamente o Owner Release Gate para retirar Draft, integrar e
+publicar. Não existe Package 3.
 
 Objetivo: compor, somente sobre o contexto sintético autorizado do Package 1, a
 jornada piloto reversível e as evidências operacionais já existentes.
@@ -834,7 +834,7 @@ repositório quando aplicável; nenhum dado real de cliente ou máquina.
 Riscos: R-021–R-029, R-031–R-034, R-038–R-041 e R-042; simulação não elimina
 risco de produção, e métricas descartáveis não constituem SLA/SLO produtivo.
 
-Testes previstos: jornada piloto sintética; isolamento organizacional; restore;
+Testes implementados: jornada piloto sintética; isolamento organizacional; restore;
 incidente; readiness/degradação; carga-alvo bounded; acessibilidade; privacidade;
 rollback; evidência/checksum; plano CNC neutro virtual sem G/M-code, transmissão ou máquina.
 

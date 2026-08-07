@@ -39,3 +39,10 @@ piloto real, deploy, produção, cliente ou CNC.
 - Recursos pessoais existentes preservam seus contratos e ownership; não há
   reescrita ampla de tenancy.
 - R-042 permanece crítico e monitorado, mesmo com cobertura fail-closed.
+
+## Validação do Release Candidate
+
+A `TASK-V19-003` confirmou os Packages 1–2 como completos para o Release Candidate
+v1.9.0. R-042 permanece parcialmente mitigado/monitorado; R-043 cobre falsa
+prontidão e também permanece residual. O aceite do RC não autoriza deploy, piloto
+real, saída CNC executável, merge, tag ou publicação.

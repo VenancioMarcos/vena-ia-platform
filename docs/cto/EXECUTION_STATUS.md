@@ -320,3 +320,22 @@ Gate terminal local: Ruff PASS; mypy PASS em 162 arquivos; API `328 passed,
 
 `PLANNED_PAUSE = CLOSED`
 `CONTINUOUS_CTO_CODEX_FLOW_POLICY = ACTIVE`
+
+## 2026-08-07 — TASK-V19-003 Release Candidate
+
+O CTO aprovou os dois Packages, confirmou que não existe Package 3 e autorizou uma
+única validação terminal do Release Candidate v1.9.0. A documentação foi fechada
+como `COMPLETE / RELEASE CANDIDATE`; R-042 e R-043 permanecem parcialmente
+mitigados/monitorados. A PR #21 deve continuar Draft e merge/tag/Release dependem
+exclusivamente de autorização direta posterior do proprietário.
+
+`TODAY_TARGET = V3_0`, sem bypass de governança. O roadmap oficial termina em v2.0;
+qualquer implementação posterior exige extensão formal e aprovação do CTO.
+
+Gate local terminal: Ruff PASS; mypy PASS em 162 arquivos; pytest integral
+`397 passed, 9 skipped`; focal auth/organizations/rehearsal/CNC `54 passed,
+1 skipped`; frontend typecheck/build PASS; API/health/OpenAPI `1.9.0` com 76 paths;
+runtime policy, Compose config, secret scan e head Alembic `d39a7b2c5e11` PASS.
+O PostgreSQL local não respondeu dentro de 120 s; o ciclo
+upgrade/downgrade/upgrade permanece comprovado pelo Backend CI verde do HEAD de
+código e será reexecutado no CI terminal do commit documental do RC.

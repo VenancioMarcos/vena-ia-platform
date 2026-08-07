@@ -8,6 +8,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Release Candidate — v1.9.0
+* Os Packages 1–2 estão funcionalmente completos e preparados como Release
+  Candidate, sem deploy, piloto real ou publicação nesta etapa.
+* A validação terminal cobre isolamento organizacional, falsa prontidão, rollback,
+  integridade, segurança CNC virtual, migration e compatibilidade dos contratos.
+* As notas de release estão em `docs/RELEASE_NOTES_v1.9.0.md`; R-042 e R-043
+  permanecem mitigados parcialmente e monitorados.
+
 ### Adicionado — v1.9 Package 1
 * Fronteira persistente `Organization`/`Team`/`Membership` com `OWNER`, `ADMIN` e
   `MEMBER`, bootstrap transacional do owner e revogação auditável.

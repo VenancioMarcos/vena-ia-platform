@@ -68,7 +68,7 @@
 Essas quebras removem vulnerabilidades críticas e são registradas também em
 `CHANGELOG.md` e `CONTEXT.md`.
 
-## Fronteira organizacional v1.9 Package 1
+## Fronteira organizacional v1.9 Release Candidate
 
 Os papéis abaixo são memberships persistidas e não substituem o papel global legado.
 Toda operação exige JWT válido e usuário do banco; `X-User-ID`, body, query e headers
@@ -92,3 +92,6 @@ arbitrários nunca fornecem identidade, organização, equipe ou papel.
 Negativas explícitas: não existe transferência de OWNER; `MEMBER` exige `team_id`;
 `ADMIN`/`OWNER` são organizacionais; status sintético nunca equivale a piloto,
 deploy, produção ou CNC aprovados.
+
+Gate terminal: `TOKEN + DATABASE = AUTHORITY`. Request body, query, `X-User-ID`,
+`X-Role` e demais headers nunca concedem identidade, membership ou papel.

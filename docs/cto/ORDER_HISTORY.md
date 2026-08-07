@@ -445,3 +445,11 @@ o estado é `PAUSED_PLANNED_CONTINUATION_REQUIRED`, com retomada somente sob nov
 O CTO encerrou a pausa no HEAD `873156c`, confirmou os três CI verdes e autorizou
 somente as lacunas focais. Package 2 foi completado sem migration, merge, release,
 deploy, piloto real ou saída CNC executável; v1.9 permanece aberta para revisão.
+
+## 2026-08-07 — TASK-V19-003
+
+O CTO aprovou os Packages 1–2, declarou a v1.9 funcionalmente completa e proibiu
+Package 3. A ordem autoriza somente o Release Candidate terminal, mantendo a PR #21
+Draft. Merge, tag e GitHub Release exigem Owner Release Gate posterior; deploy,
+piloto real e CNC executável permanecem proibidos. A meta diária v3.0 não permite
+pular versões nem inventar roadmap além da v2.0.
