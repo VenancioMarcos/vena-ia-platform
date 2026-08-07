@@ -49,3 +49,11 @@ jobs:
       - name: Build
         working-directory: apps/web
         run: pnpm run build
+
+      - name: Install Playwright Chromium
+        working-directory: apps/web
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: E2E and accessibility
+        working-directory: apps/web
+        run: pnpm run test:e2e

@@ -6,6 +6,7 @@ import { FileText, Loader2, MessageSquareText, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { api, ApiError } from "../../../lib/api";
+import { EngineeringWorkspace } from "../../../components/engineering-workspace";
 
 type Project = { id: string; name: string; status: string };
 type Document = {
@@ -78,6 +79,7 @@ export default function ProjectPage({
   const [busy, setBusy] = useState<string | null>("load");
   const [error, setError] = useState<string | null>(null);
   const jobControllers = useRef<Record<string, AbortController>>({});
+  const handleEngineeringError = useCallback((message: string) => setError(message), []);
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setError(null);
@@ -317,13 +319,14 @@ export default function ProjectPage({
         <section className="grid gap-6 lg:grid-cols-2">
           <article className="border border-line bg-white p-5">
             <h2 className="flex items-center gap-2 font-semibold">
-              <Upload size={18} /> Documentos PDF
+              <Upload size={18} /> Documentos PDF e STEP
             </h2>
             <form onSubmit={uploadDocument} className="mt-4 flex flex-wrap gap-2">
               <input
                 required
                 type="file"
-                accept="application/pdf,.pdf"
+                aria-label="Arquivo PDF ou STEP"
+                accept="application/pdf,.pdf,.step,.stp,application/step"
                 onChange={(event) => setFile(event.target.files?.[0] ?? null)}
                 className="min-w-0 flex-1 rounded border border-line p-2 text-sm"
               />
@@ -434,6 +437,7 @@ export default function ProjectPage({
             <form onSubmit={ask} className="mt-4 grid gap-2">
               <textarea
                 required
+                aria-label="Pergunta sobre os documentos"
                 maxLength={4000}
                 value={question}
                 onChange={(event) => setQuestion(event.target.value)}
@@ -486,6 +490,12 @@ export default function ProjectPage({
             )}
           </div>
         </section>
+
+        <EngineeringWorkspace
+          projectId={projectId}
+          documents={documents}
+          onError={handleEngineeringError}
+        />
       </div>
     </main>
   );
