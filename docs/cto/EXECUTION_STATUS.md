@@ -25,7 +25,8 @@ Gate local terminal: Ruff PASS; mypy `169 source files` PASS; API `370 passed,
 typecheck e build de produção PASS; OpenAPI `2.1.0`, 79 paths e topology evidence v1
 PASS; Alembic single head `e61c4f8a2b90`; Compose config, diff/check e secret diff
 scan PASS. O warning de leitura do config Docker do usuário não alterou o resultado
-do `docker compose config`. CI permanece pendente até publicação da Draft PR.
+do `docker compose config`. A Draft PR #27 aprovou o Backend CI inicial no run
+`31443637842` (`test`, 3m03s); o commit de status preserva a mesma implementação.
 
 ```text
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
