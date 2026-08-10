@@ -8,6 +8,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Documentação
+* `CAD_TO_GCODE_GAP_ANALYSIS_v1` audita a baseline v2.1.0 e separa capacidades
+  reais, parciais e ausentes entre STEP, interpretação de fabricação, process
+  planning, toolpath, pós-processamento e verificação.
+* A análise propõe alvo CNC sintético 3 eixos/2.5D, verificação independente em
+  três níveis, teste cego, gates G0–G10 e um marco v2.3 sujeito à decisão formal.
+* Nenhum toolpath, G/M-code, NC/DNC, machine-send, deploy ou controle CNC foi criado.
+
 ## [2.1.0] — 2026-08-07 — Enterprise Engineering Governance
 
 ### Publicado

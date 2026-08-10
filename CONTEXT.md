@@ -27,6 +27,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **TASK-CADGCODE-001 — gap analysis concluída para revisão:** a branch
+  `codex/cad-to-gcode-gap-analysis` documenta o estado real v2.1.0. STEP/B-Rep,
+  propriedades globais, feature rule fechada e plano CNC neutro são parciais;
+  CAD 2D, interpretação geral de fabricação, toolpath, pós-processador, G-code e
+  simulação de remoção/colisão estão ausentes. `docs/CAD_TO_GCODE_GAP_ANALYSIS_v1.md`
+  propõe concluir v2.2 e criar v2.3 controlada, com alvo sintético, teste cego e
+  gates G0–G10. Nenhuma implementação ou autoridade física foi iniciada.
+
 * **Fase:** v0.1–v2.0 concluídas e publicadas. Os três Packages oficiais da v2.0
   foram aprovados, integrados e publicados como v2.0.0 após o Owner Release Gate.
 * **Roadmap pós-v2.0:** a `TASK-V30-000` propõe, sem código, a sequência mínima
