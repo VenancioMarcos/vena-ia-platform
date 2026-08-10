@@ -22,6 +22,7 @@ class CADAnalysisResponse(BaseModel):
     report: str
     geometry: "GeometryAnalysisContract"
     features: "GeometryFeaturesContract"
+    topology_evidence: "GeometryTopologyEvidenceContract"
 
 
 class GeometryValue(BaseModel):
@@ -96,3 +97,52 @@ class GeometryFeaturesContract(BaseModel):
     traceability: list[str]
     uncertainty: str
     tolerance: GeometryValue
+
+
+class TopologyTransformEvidence(BaseModel):
+    representation: str
+    matrix: tuple[tuple[float, float, float, float], ...] | None = None
+
+
+class TopologyElementEvidenceResponse(BaseModel):
+    element_id: str
+    kind: str
+    geometry_type: str
+    orientation: str
+    bounds: tuple[tuple[float, float, float], tuple[float, float, float]] | None
+    metrics: dict[str, float]
+    contained_by: list[str]
+    contains: list[str]
+    adjacent_to: list[str]
+    connected_to: list[str]
+    ambiguity_group: str | None
+    limitations: list[str]
+
+
+class GeometryTopologyEvidenceContract(BaseModel):
+    schema_version: str = "vena-ia.geometry-topology-evidence/v1"
+    status: str
+    source_sha256: str | None
+    source_format: str = "STEP_PART_21"
+    kernel: str
+    kernel_version: str | None
+    kernel_binding: str
+    stable_id_version: str
+    source_unit: str
+    normalized_unit: str | None
+    normalization_scale: float | None
+    transform: TopologyTransformEvidence
+    topology_valid: bool | None
+    shape_type: str | None
+    counts: dict[str, int]
+    elements: list[TopologyElementEvidenceResponse]
+    kernel_tolerance: GeometryValue
+    modeling_tolerance: GeometryValue
+    manufacturing_tolerance: GeometryValue
+    warnings: list[str]
+    unsupported: list[str]
+    limitations: list[str]
+    provenance: list[str]
+    evidence_refs: list[str]
+    human_review_required: bool = True
+    executable_output: bool = False

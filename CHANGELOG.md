@@ -8,6 +8,27 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v2.2 Package 1
+* O contrato aditivo `vena-ia.geometry-topology-evidence/v1` expõe evidência geral
+  de B-Rep carregada pelo adapter OCCT existente: sólidos, shells, faces, wires,
+  edges e vertices, com contenção, adjacência, conectividade, bounds, orientação,
+  métricas e classificação geométrica de superfícies/curvas.
+* IDs canônicos incluem a fronteira de versão do kernel e declaram grupos ambíguos
+  para elementos geometricamente indistinguíveis; replay do mesmo STEP/corpus é
+  testado sem depender de endereço de memória ou identidade de objeto.
+* SHA-256 da fonte, binding/kernel, unidades de origem/normalizadas, transformação,
+  tolerâncias de kernel/modelagem e provenance são explícitos. Unidade ambígua e
+  topologia inválida falham fechado e não emitem elementos.
+* Corpus sintético cobre box, cilindro, cone, esfera, toro, elipse e B-spline,
+  além de limites, replay e falsos claims. Nenhuma migration foi necessária.
+
+### Limites — v2.2 Package 1
+* Evidência geométrica não implica feature, intenção, manufaturabilidade, setup,
+  operação, ferramenta, toolpath, postprocessor ou G/M-code.
+* Tolerância de manufatura nunca é inferida; toda saída exige revisão humana.
+  `CAD_TO_GCODE_CONTROLLED_VALIDATION_READY = FALSE` e
+  `PHYSICAL_USE_AUTHORIZED = FALSE` permanecem invariantes.
+
 ## [2.1.0] — 2026-08-07 — Enterprise Engineering Governance
 
 ### Publicado

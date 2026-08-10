@@ -1,5 +1,32 @@
 # Estado de execução CTO
 
+## 2026-08-10 — TASK-V22-001 General Geometry Evidence
+
+```text
+MISSION=TASK_V22_001
+STATE=VENA_IA_V2_2_PACKAGE_1_READY_FOR_CTO_REVIEW
+BRANCH=codex/v2.2-general-geometry-evidence
+BASELINE=705e76b534bf8748fdbc15a212293e43430557ed
+CONTRACT=vena-ia.geometry-topology-evidence/v1
+MIGRATION=NONE_HEAD_e61c4f8a2b90
+CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE
+PHYSICAL_USE_AUTHORIZED=FALSE
+PACKAGE_2=NOT_STARTED
+NEXT=CTO_REVIEW
+```
+
+Read model topológico geral implementado sobre o adapter OCCT existente, com IDs
+canônicos/versionados, ambiguity, units/transform/tolerances, relações, corpus
+sintético, falhas fechadas e contratos anteriores preservados. Sem manufacturing
+intent, toolpath, postprocessor, G/M-code, machine-send ou autoridade física.
+
+Gate local terminal: Ruff PASS; mypy `169 source files` PASS; API `370 passed,
+2 skipped`; focais CAD/evidence/features/planning/workflow `65 passed`; frontend
+typecheck e build de produção PASS; OpenAPI `2.1.0`, 79 paths e topology evidence v1
+PASS; Alembic single head `e61c4f8a2b90`; Compose config, diff/check e secret diff
+scan PASS. O warning de leitura do config Docker do usuário não alterou o resultado
+do `docker compose config`. CI permanece pendente até publicação da Draft PR.
+
 ```text
 CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
 AUTONOMOUS_CTO_CODEX_OPERATION=ACTIVE

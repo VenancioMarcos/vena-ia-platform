@@ -315,3 +315,22 @@ recurso evita agregação cross-tenant. Audit evidence referencia a classe de ev
 existente, sem fabricar correlação por resource ID ausente no schema de auditoria.
 O Release Candidate v2.1.0 fecha exatamente Packages 1–2 sem Package 3 e sem nova
 fronteira arquitetural. Contratos de domínio v1 e Alembic `e61c4f8a2b90` permanecem.
+
+---
+
+## 18. General Geometry Evidence v2.2 Package 1
+
+```text
+STEP autorizado + metadata textual
+  → OpenCascadeGeometryKernel (um único transfer/load)
+  → KernelGeometry + FeatureRecognizer v1 preservados
+  → GeometryEvidenceBuilder bounded
+  → vena-ia.geometry-topology-evidence/v1
+```
+
+O evidence é um read model efêmero no módulo CAD existente. Não possui repository,
+tabela, migration, fila ou microserviço. IDs derivam de descritores geométricos
+canônicos e da identidade/versionamento do kernel; empates são expostos como grupos
+de ambiguidade. Unidade desconhecida e topologia inválida não emitem elementos.
+Tolerâncias de kernel/modelagem são separadas e manufacturing tolerance permanece
+`NOT_PROVIDED`. Detalhes: `docs/GEOMETRY_TOPOLOGY_EVIDENCE.md` e ADR-0031.

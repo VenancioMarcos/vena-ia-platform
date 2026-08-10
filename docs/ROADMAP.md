@@ -1569,10 +1569,12 @@ features, planning ou agentes.
 **Objetivo:** ampliar cobertura determinística e evidence de verificação mantendo
 planning separado de execução.
 
-**Package 1 — Geometry and feature coverage — `NOT_STARTED`:** corpus e regras versionadas para blind
-holes, slots, pockets e patterns; threads, freeform, PMI/MBD e assemblies entram
-somente após prova de parser/kernel e corpus. Nenhuma primitiva implica intenção ou
-manufaturabilidade. Riscos: R-019, R-039 e R-040.
+**Package 1 — General Geometry Evidence — `READY_FOR_CTO_REVIEW`:** contrato
+`vena-ia.geometry-topology-evidence/v1` geral e versionado para topologia B-Rep,
+IDs canônicos/replay, unidades/transformação, tolerâncias separadas, relações e
+classificação de superfícies/curvas. Corpus sintético e falhas fechadas cobrem
+unidade ambígua, topologia inválida e limites. O evidence não é uma lista de features
+nem implica intenção ou manufaturabilidade. Riscos: R-019, R-039 e R-040.
 
 **Package 2 — Planning and verification evidence — `NOT_STARTED`:** candidatos de operação, setup,
 tooling, fixture assumptions, sequência e estimativas rastreáveis; contratos para
@@ -1587,7 +1589,17 @@ para validação física; testes de boundary CNC; revisão humana obrigatória.
 **Condição de avanço:** evidência determinística e de simulação aprovada antes da
 integração no digital thread v3.0.
 
-## 10.5 v3.0 — Manufacturing Intelligence & Digital Thread
+## 10.5 v2.3 — Controlled CAD-to-G-code Validation
+
+**Objetivo:** validar de modo controlado e não produtivo a cadeia determinística
+CAD→candidato→verificadores independentes, somente após aprovação integral da v2.2.
+
+**Packages aprovados no roadmap:** candidato bounded 3-axis/2.5D com verifier
+independente; postprocessor sintético versionado com verifier RS274 independente;
+e verificação Level-2 de remoção/colisão com blind-test harness. Gates G0–G9 não
+autorizam uso físico, produção, machine-send, DNC ou cycle start.
+
+## 10.6 v3.0 — Manufacturing Intelligence & Digital Thread
 
 **Objetivo arquitetural:** transformar o workflow integrado em um digital thread
 versionado e auditável que conecta CAD→features→engineering→planning→Research→
