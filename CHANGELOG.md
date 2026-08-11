@@ -8,6 +8,19 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v2.3 Package 1
+* `vena-ia.toolpath-candidate/v1` cria candidatos determinísticos, lineares e
+  bounded para regiões explicitamente autorizadas por
+  `vena-ia.verified-process-plan/v1`.
+* `vena-ia.toolpath-verification-evidence/v1` é implementado separadamente do
+  gerador e rejeita primitives, limites, continuidade, feeds/rapids, referências
+  de região e entrada preliminar no envelope final protegido.
+
+### Limites — v2.3 Package 1
+* A trajetória é somente `CANDIDATE_FOR_VALIDATION`, exige revisão humana e não
+  possui autoridade produtiva ou saída executável. Não há arcos, CAM livre,
+  cutter sweep, collision, postprocessor, RS274, G/M-code, NC/DNC ou máquina.
+
 ### Adicionado — v2.2 Package 2
 * `vena-ia.manufacturing-geometry-model/v1` consome topology evidence v1 e separa
   fatos geométricos de interpretação de manufatura explicitamente fornecida.

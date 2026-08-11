@@ -1601,6 +1601,11 @@ independente; postprocessor sintético versionado com verifier RS274 independent
 e verificação Level-2 de remoção/colisão com blind-test harness. Gates G0–G9 não
 autorizam uso físico, produção, machine-send, DNC ou cycle start.
 
+**Package 1 — Bounded 3-axis / 2.5D Toolpath — `IN_PROGRESS`:** contrato
+`vena-ia.toolpath-candidate/v1` e verificador independente v1 iniciam somente
+segmentos lineares bounded para regiões do plano verificado. A saída mantém
+`production_authority=false`, revisão humana e não inclui postprocessor ou G-code.
+
 ## 10.6 v3.0 — Manufacturing Intelligence & Digital Thread
 
 **Objetivo arquitetural:** transformar o workflow integrado em um digital thread

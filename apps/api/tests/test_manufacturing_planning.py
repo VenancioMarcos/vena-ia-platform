@@ -15,6 +15,8 @@ from app.modules.cad.service import CADDocumentAnalysis
 from app.modules.engineering.manufacturing import ManufacturingPlanningService
 from app.modules.engineering.manufacturing_schemas import ManufacturingPlanningRequest
 from app.modules.engineering.schemas import AvailabilityValue
+from app.modules.engineering.toolpath import ToolpathCandidateError, ToolpathCandidateService, ToolpathVerifier
+from app.modules.engineering.toolpath_schemas import ToolpathCandidateRequest
 
 
 def _step_bytes(tmp_path: Path, shape: object, name: str = "manufacturing") -> bytes:
@@ -218,6 +220,83 @@ def test_resource_mismatch_blocks_plan(tmp_path: Path) -> None:
     assert result.status == "BLOCKED_RESOURCE_MISMATCH"
     assert result.operation_candidates == []
     assert "INCOMPATIBLE" in result.verification.resource_compatibility
+
+
+def _toolpath_request(model, operation_id: str) -> ToolpathCandidateRequest:
+    return ToolpathCandidateRequest.model_validate(
+        {
+            "manufacturing_model": model,
+            "operation_candidate_id": operation_id,
+            "tool": {
+                "tool_id": "synthetic-tool-0.5mm",
+                "diameter_mm": 0.5,
+                "flute_length_mm": 10,
+            },
+            "machine_minimum": [-10, -10, -10],
+            "machine_maximum": [20, 30, 50],
+            "clearance_z_mm": 40,
+            "retract_z_mm": 35,
+            "feed_mm_min": 800,
+        }
+    )
+
+
+def test_toolpath_candidate_is_bounded_deterministic_and_non_executable(tmp_path: Path) -> None:
+    cad = MagicMock()
+    cad.analyze.return_value = _analysis(tmp_path)
+    engineering = MagicMock()
+    engineering.recommend.return_value = _recommendation()
+    model = ManufacturingPlanningService(cad, engineering).plan(
+        ManufacturingPlanningRequest.model_validate(_full_payload())
+    )
+    operation_id = model.operation_candidates[0].candidate_id
+    request = _toolpath_request(model, operation_id)
+
+    first = ToolpathCandidateService().create(request)
+    second = ToolpathCandidateService().create(request)
+
+    assert first.status == "CANDIDATE_FOR_VALIDATION"
+    assert first.schema_version == "vena-ia.toolpath-candidate/v1"
+    assert first.executable_output is False
+    assert first.production_authority is False
+    assert all(segment.primitive == "LINEAR" for segment in first.segments)
+    assert first.verification.status == "PASS_REQUIRES_HUMAN_REVIEW"
+    assert first.verification.deterministic_replay_hash == (
+        second.verification.deterministic_replay_hash
+    )
+
+
+def test_toolpath_verifier_rejects_protected_feed_and_generator_fails_closed(tmp_path: Path) -> None:
+    cad = MagicMock()
+    cad.analyze.return_value = _analysis(tmp_path)
+    engineering = MagicMock()
+    engineering.recommend.return_value = _recommendation()
+    model = ManufacturingPlanningService(cad, engineering).plan(
+        ManufacturingPlanningRequest.model_validate(_full_payload())
+    )
+    generated = ToolpathCandidateService().create(
+        _toolpath_request(model, model.operation_candidates[0].candidate_id)
+    )
+    forged = generated.model_copy(
+        update={
+            "segments": [
+                generated.segments[0].model_copy(
+                    update={
+                        "motion": "FEED_CANDIDATE",
+                        "feed_mm_min": 800,
+                        "start": (5.0, 10.0, 15.0),
+                        "end": (5.0, 10.0, 15.0),
+                    }
+                )
+            ]
+        }
+    )
+    assert ToolpathVerifier().verify(forged, model).status == "REJECTED"
+
+    invalid = _toolpath_request(model, model.operation_candidates[0].candidate_id)
+    invalid = invalid.model_copy(update={"clearance_z_mm": 51})
+    with pytest.raises(ToolpathCandidateError, match="Clearance"):
+        ToolpathCandidateService().create(invalid)
 
 
 def _catalog(

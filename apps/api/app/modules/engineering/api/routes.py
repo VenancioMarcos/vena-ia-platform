@@ -23,6 +23,8 @@ from app.modules.engineering.manufacturing_schemas import (
     ManufacturingGeometryModel,
     ManufacturingPlanningRequest,
 )
+from app.modules.engineering.toolpath import ToolpathCandidateError, ToolpathCandidateService
+from app.modules.engineering.toolpath_schemas import ToolpathCandidate, ToolpathCandidateRequest
 from app.modules.engineering.repository import EngineeringCatalogRepository
 from app.modules.engineering.schemas import (
     CatalogItemCreate,
@@ -151,3 +153,14 @@ def plan_manufacturing_geometry(
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except CADContentUnavailableError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@router.post("/planning/toolpath-candidate", response_model=ToolpathCandidate)
+def create_toolpath_candidate(
+    payload: ToolpathCandidateRequest,
+    _current_user: CurrentUserDependency,
+) -> ToolpathCandidate:
+    try:
+        return ToolpathCandidateService().create(payload)
+    except ToolpathCandidateError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
