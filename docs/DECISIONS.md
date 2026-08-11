@@ -1394,3 +1394,21 @@ falham como campos extras. G9 permanece `PENDING_REVIEW` por design até existir
 fronteira separada, explicitamente autorizada e resolvida server-side a partir de
 identidade e estado confiáveis. Nenhum registry, ledger, role ou assinatura foi
 inventado para antecipar essa decisão.
+
+## DEC-042 — Immutable Digital Thread and Bounded Intelligence
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — RELEASE CANDIDATE v3.0.0
+**Tipo:** Arquitetura / Provenance / Tenancy / AI Safety
+
+Adotar `vena-ia.digital-thread/v1` como manifesto efêmero, imutável e determinístico
+para a cadeia CAD→report. O contrato registra hash canônico, schema, lifecycle,
+ownership, upstream/downstream, provenance, generation/replay e verification refs.
+Tenancy é autorizada por token e membership do banco; organization não é autoridade
+autodeclarada. Hash/ref/version/stale/forged falham fechado.
+
+Adotar `bounded-manufacturing-intelligence/v1` como leitura explicativa do manifesto.
+Ela não possui tools, write capability, estado autônomo, acesso de máquina ou poder
+para alterar evidence/G0–G9. Manifesto em existing storage é suficiente nesta fase;
+ledger, event sourcing, tabela e migration foram rejeitados por ausência de requisito
+real. G9 continua exclusivamente autoritativo e pendente.

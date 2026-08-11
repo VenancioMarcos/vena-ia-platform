@@ -34,6 +34,17 @@ from app.modules.engineering.blind_validation_schemas import (
     ControlledBlindValidationEvidence,
     ControlledBlindValidationRequest,
 )
+from app.modules.engineering.digital_thread import (
+    BoundedManufacturingIntelligenceService,
+    DigitalThreadError,
+    DigitalThreadService,
+)
+from app.modules.engineering.digital_thread_schemas import (
+    BoundedIntelligenceRequest,
+    BoundedIntelligenceResponse,
+    DigitalThreadBuildRequest,
+    DigitalThreadManifest,
+)
 from app.modules.engineering.repository import EngineeringCatalogRepository
 from app.modules.engineering.schemas import (
     CatalogItemCreate,
@@ -203,3 +214,36 @@ def freeze_controlled_blind_validation(
     _current_user: CurrentUserDependency,
 ) -> ControlledBlindValidationEvidence:
     return ControlledBlindValidationService().freeze(payload)
+
+
+@router.post("/digital-thread", response_model=DigitalThreadManifest)
+def build_digital_thread(
+    payload: DigitalThreadBuildRequest,
+    current_user: CurrentUserDependency,
+    organization_id: Annotated[str, Query(min_length=1, max_length=36)],
+    db: Session = Depends(get_db),
+) -> DigitalThreadManifest:
+    OrganizationAuthorization(OrganizationRepository(db), current_user).require_organization(
+        organization_id
+    )
+    try:
+        return DigitalThreadService().build(payload, organization_id)
+    except DigitalThreadError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.post("/digital-thread/intelligence", response_model=BoundedIntelligenceResponse)
+def analyze_digital_thread(
+    payload: BoundedIntelligenceRequest,
+    current_user: CurrentUserDependency,
+    organization_id: Annotated[str, Query(min_length=1, max_length=36)],
+    db: Session = Depends(get_db),
+) -> BoundedIntelligenceResponse:
+    OrganizationAuthorization(OrganizationRepository(db), current_user).require_organization(
+        organization_id
+    )
+    if payload.thread.organization_id != organization_id or (
+        payload.baseline is not None and payload.baseline.organization_id != organization_id
+    ):
+        raise HTTPException(status_code=404, detail="Digital thread not found")
+    return BoundedManufacturingIntelligenceService().analyze(payload)
