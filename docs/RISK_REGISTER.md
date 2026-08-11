@@ -21,7 +21,7 @@
 | R-046 | ALTO | Assistente/agente pode sobrescrever regra determinística, preencher lacuna ou elevar sugestão a decisão. | Perfis allowlisted recebem contexto minimizado, retornam texto separado do snapshot imutável, não possuem tools e bloqueiam output CNC/claims de autoridade; provider failure preserva o workflow. | MITIGADO PARCIALMENTE v2.0 PACKAGE 2 / MONITORAR |
 | R-047 | ALTO | Síntese Research integrada pode extrapolar fontes, DOE preliminar ou ANOVA descritiva como validação científica. | Bridge versionado exige documento/página/chunk/método, bloqueia ausência, marca chunks como dados não confiáveis e preserva DOE preliminar/ANOVA descritiva sem F-test, p-value, causalidade ou comprovação. | MITIGADO PARCIALMENTE v2.0 PACKAGE 2 / MONITORAR |
 | R-048 | CRÍTICO | Catálogos e dados Engineering globais podem vazar ou ser alterados entre organizações quando a plataforma ampliar automação. | Packages 1–2 adicionam ownership por Organization, legado bloqueado, referências read-only, migration reversível, authorization/evidence fail-closed, lifecycle técnico e testes cross-org/revogação. Não existe bulk export nem reconciliation mutável. | MITIGADO PARCIALMENTE v2.1 PACKAGE 2 / MONITORAR |
-| R-049 | CRÍTICO | Evidência de simulação pode ser interpretada como validação física, de máquina ou liberação produtiva. | Planning verification v1 cobre somente coerência/coverage/resources/precedence/setup geométrico preliminar. Toolpath v2.3 P1 adiciona apenas verificação estrutural independente; material removal, collision e kinematics seguem gates v2.3 posteriores. | MITIGADO PARCIALMENTE v2.3 PACKAGE 1 / MONITORAR |
+| R-049 | CRÍTICO | Evidência de simulação pode ser interpretada como validação física, de máquina ou liberação produtiva. | v2.3 P3 adiciona reconstrução Level-2 independente e bounded, falha fechada de stock/coverage/gouge/rapid/fixture, replay e harness cego G0–G9. G9 exige revisão humana real e readiness/physical authority permanecem false. B-Rep exato, holder collision e kinematics continuam ausentes. | MITIGADO PARCIALMENTE v2.3 PACKAGE 3 / MONITORAR |
 | R-050 | CRÍTICO | Orchestration, tools ou agentes futuros podem escalar sugestão para mutação, decisão ou execução sem autoridade. | v3.0 deve limitar tools a read-only allowlisted, separar snapshots, registrar audit/replay, falhar fechado e exigir decisão formal antes de qualquer capability de escrita/execução. | ABERTO / GATE v3.0 |
 | R-020 | ALTO | Parâmetros de corte genéricos podem ser inadequados para ferramenta, material, fixação ou máquina reais. | Package 2 v1.7 exige fonte/versão, falha explícita para dado ausente, aplica limites declarados e revisão humana; nunca gera ou envia código para máquina. | MITIGADO PARCIALMENTE v1.7 PACKAGE 2 / MONITORAR |
 | R-021 | CRÍTICO | Estruturas CNC preliminares poderiam ser confundidas com saída liberada para máquina. | Não gerar G-code; marcar simulação/revisão humana e `executable_output=false`; proibir transmissão e produção. | MONITORAR v0.8 |
@@ -84,7 +84,7 @@
 
 ## Classificação CNC
 
-CAD, features, process planning preliminar, CNC neutro e validação virtual existem
-somente como análise/evidence `NON_PRODUCTION`. Não existe toolpath, postprocessor,
-G/M-code, NC/DNC, transmissão ou controle de máquina. Toda evolução permanece
-`REQUIRES_HUMAN_REVIEW`; simulação não equivale a validação física nem produção.
+CAD, features, planning, toolpath e G-code sintéticos existem somente como candidatos
+e evidence `NON_PRODUCTION`. Não existe NC/DNC, transmissão, cycle start ou controle
+de máquina. Toda evolução permanece `REQUIRES_HUMAN_REVIEW`; Level-2 bounded não
+equivale a B-Rep exato, cinemática, validação física nem produção.

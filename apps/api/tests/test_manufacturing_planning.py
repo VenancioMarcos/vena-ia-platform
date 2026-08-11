@@ -14,6 +14,10 @@ from app.modules.cad.parser import StepAnalysis
 from app.modules.cad.service import CADDocumentAnalysis
 from app.modules.engineering.manufacturing import ManufacturingPlanningService
 from app.modules.engineering.manufacturing_schemas import ManufacturingPlanningRequest
+from app.modules.engineering.level2 import Level2Verifier
+from app.modules.engineering.level2_schemas import KeepOutBounds, Level2VerificationRequest
+from app.modules.engineering.blind_validation import ControlledBlindValidationService
+from app.modules.engineering.blind_validation_schemas import ControlledBlindValidationRequest
 from app.modules.engineering.schemas import AvailabilityValue
 from app.modules.engineering.toolpath import ToolpathCandidateError, ToolpathCandidateService, ToolpathVerifier
 from app.modules.engineering.toolpath_schemas import ToolpathCandidateRequest
@@ -321,6 +325,213 @@ def test_synthetic_postprocessor_and_independent_rs274_verifier(tmp_path: Path) 
     assert result.program.endswith("M30")
     assert result.verification.status == "PASS_REQUIRES_HUMAN_REVIEW"
     assert RS274SafeSubsetVerifier().verify("G21\nG17\nG90\nG94\nG2 X1 Y1\nM30", "x").status == "REJECTED"
+
+
+def _controlled_validation_artifacts(tmp_path: Path):
+    cad = MagicMock()
+    cad.analyze.return_value = _analysis(tmp_path)
+    engineering = MagicMock()
+    engineering.recommend.return_value = _recommendation()
+    model = ManufacturingPlanningService(cad, engineering).plan(
+        ManufacturingPlanningRequest.model_validate(_full_payload())
+    )
+    path = ToolpathCandidateService().create(
+        _toolpath_request(model, model.operation_candidates[0].candidate_id)
+    )
+    gcode = SyntheticPostprocessor().generate(GCodeCandidateRequest(toolpath=path))
+    level2_request = Level2VerificationRequest(
+        manufacturing_model=model,
+        toolpath=path,
+    )
+    level2 = Level2Verifier().verify(level2_request)
+    return model, path, gcode, level2
+
+
+def test_level2_reconstructs_deterministically_without_reusing_generator(
+    tmp_path: Path,
+) -> None:
+    model, path, _gcode, first = _controlled_validation_artifacts(tmp_path)
+    second = Level2Verifier().verify(
+        Level2VerificationRequest(manufacturing_model=model, toolpath=path)
+    )
+
+    assert first.status == "PASS_REQUIRES_HUMAN_REVIEW"
+    assert first.target_coverage == "COMPLETE"
+    assert first.simplified_sweep_volume_mm3 > 0
+    assert first.replay_hash == second.replay_hash
+    assert first.physical_validation is False
+
+
+def test_level2_rejects_incomplete_and_inconsistent_trajectory(tmp_path: Path) -> None:
+    model, path, _gcode, _level2 = _controlled_validation_artifacts(tmp_path)
+    incomplete = path.model_copy(
+        update={
+            "segments": [
+                segment.model_copy(update={"target_region_id": None})
+                if segment.motion == "FEED_CANDIDATE"
+                else segment
+                for segment in path.segments
+            ]
+        }
+    )
+    inconsistent = path.model_copy(
+        update={
+            "segments": [
+                path.segments[0],
+                path.segments[1].model_copy(update={"start": (-9.0, -9.0, 39.0)}),
+                *path.segments[2:],
+            ]
+        }
+    )
+
+    incomplete_result = Level2Verifier().verify(
+        Level2VerificationRequest(manufacturing_model=model, toolpath=incomplete)
+    )
+    inconsistent_result = Level2Verifier().verify(
+        Level2VerificationRequest(manufacturing_model=model, toolpath=inconsistent)
+    )
+
+    assert incomplete_result.status == "REJECTED"
+    assert incomplete_result.target_coverage == "INCOMPLETE"
+    assert inconsistent_result.status == "REJECTED"
+    assert any("discontinuity" in reason for reason in inconsistent_result.rejected_reasons)
+
+
+def test_level2_rejects_gouge_rapid_and_fixture_keepout(tmp_path: Path) -> None:
+    model, path, _gcode, _level2 = _controlled_validation_artifacts(tmp_path)
+    protected_point = (5.0, 10.0, 15.0)
+    feed_index = next(
+        index for index, segment in enumerate(path.segments) if segment.motion == "FEED_CANDIDATE"
+    )
+    forged_segments = list(path.segments)
+    forged_segments[feed_index] = forged_segments[feed_index].model_copy(
+        update={"start": protected_point, "end": protected_point}
+    )
+    forged_segments[0] = forged_segments[0].model_copy(update={"end": protected_point})
+    forged = path.model_copy(update={"segments": forged_segments})
+    keepout = KeepOutBounds(
+        minimum=(-10.5, -10.5, 39.5),
+        maximum=(-9.5, -9.5, 40.5),
+        source_ref="synthetic-fixture-envelope",
+    )
+
+    result = Level2Verifier().verify(
+        Level2VerificationRequest(
+            manufacturing_model=model,
+            toolpath=forged,
+            fixture_keep_outs=[keepout],
+        )
+    )
+
+    assert result.status == "REJECTED"
+    assert result.gouge_detected is True
+    assert result.protected_surface_violation is True
+    assert result.rapid_collision_detected is True
+    assert result.fixture_collision_detected is True
+
+
+def test_level2_fails_closed_for_stock_and_nonfinite_evidence(tmp_path: Path) -> None:
+    model, path, _gcode, _level2 = _controlled_validation_artifacts(tmp_path)
+    missing_stock = model.model_copy(
+        update={"stock": model.stock.model_copy(update={"minimum": None})}
+    )
+    insufficient_stock = model.model_copy(
+        update={
+            "stock": model.stock.model_copy(
+                update={"status": "INVALID", "contains_final_geometry": False}
+            )
+        }
+    )
+    nonfinite = path.model_copy(
+        update={
+            "segments": [
+                path.segments[0].model_copy(update={"end": (float("nan"), 0.0, 0.0)}),
+                *path.segments[1:],
+            ]
+        }
+    )
+
+    missing_result = Level2Verifier().verify(
+        Level2VerificationRequest(manufacturing_model=missing_stock, toolpath=path)
+    )
+    insufficient_result = Level2Verifier().verify(
+        Level2VerificationRequest(manufacturing_model=insufficient_stock, toolpath=path)
+    )
+    nonfinite_result = Level2Verifier().verify(
+        Level2VerificationRequest(manufacturing_model=model, toolpath=nonfinite)
+    )
+
+    assert missing_result.status == "REQUIRES_INPUT"
+    assert insufficient_result.status == "REJECTED"
+    assert nonfinite_result.status == "REJECTED"
+    assert any("non-finite" in reason for reason in nonfinite_result.rejected_reasons)
+
+
+def test_blind_harness_freezes_g0_g8_and_requires_real_g9_review(tmp_path: Path) -> None:
+    model, path, gcode, level2 = _controlled_validation_artifacts(tmp_path)
+    request = ControlledBlindValidationRequest(
+        holdout_id="sealed-holdout-001",
+        sealed_reference_hash="a" * 64,
+        cad_hash="b" * 64,
+        manufacturing_model=model,
+        toolpath=path,
+        gcode_candidate=gcode,
+        level2_evidence=level2,
+        questions_asked=["Are all safety gates supported by frozen evidence?"],
+    )
+
+    first = ControlledBlindValidationService().freeze(request)
+    second = ControlledBlindValidationService().freeze(request)
+    gates = {gate.gate: gate.status for gate in first.gates}
+
+    assert all(gates[f"G{index}"] == "PASS" for index in range(9))
+    assert gates["G9"] == "PENDING_REVIEW"
+    assert first.cad_to_gcode_controlled_validation_ready is False
+    assert first.physical_use_authorized is False
+    assert first.replay_hash == second.replay_hash
+    assert first.omissions == []
+    assert first.false_positives == []
+
+
+def test_level2_and_blind_routes_require_authenticated_identity(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+) -> None:
+    model, path, gcode, level2 = _controlled_validation_artifacts(tmp_path)
+    level2_payload = Level2VerificationRequest(
+        manufacturing_model=model,
+        toolpath=path,
+    ).model_dump(mode="json")
+    blind_payload = ControlledBlindValidationRequest(
+        holdout_id="sealed-holdout-route",
+        sealed_reference_hash="c" * 64,
+        cad_hash="d" * 64,
+        manufacturing_model=model,
+        toolpath=path,
+        gcode_candidate=gcode,
+        level2_evidence=level2,
+    ).model_dump(mode="json")
+
+    assert client.post(
+        "/engineering/planning/level2-verification", json=level2_payload
+    ).status_code == 401
+    account = make_account("level2-route@vena-ia.dev")
+    level2_response = client.post(
+        "/engineering/planning/level2-verification",
+        headers=account.headers,
+        json=level2_payload,
+    )
+    blind_response = client.post(
+        "/engineering/planning/controlled-blind-validation",
+        headers=account.headers,
+        json=blind_payload,
+    )
+
+    assert level2_response.status_code == 200, level2_response.text
+    assert blind_response.status_code == 200, blind_response.text
+    assert blind_response.json()["cad_to_gcode_controlled_validation_ready"] is False
+    assert blind_response.json()["physical_use_authorized"] is False
 
 
 def _catalog(

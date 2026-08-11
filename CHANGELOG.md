@@ -8,6 +8,23 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — v2.3 Package 3
+* `vena-ia.level2-material-removal-evidence/v1` independently reconstructs the
+  candidate trajectory and applies bounded stock, target-coverage, simplified
+  cutter-sweep, protected-envelope, rapid and fixture keep-out checks.
+* `vena-ia.controlled-blind-validation/v1` freezes CAD, planning, toolpath,
+  postprocessor and Level-2 hashes before sealed-reference adjudication and records
+  gates G0–G9 with deterministic replay.
+* Missing, invalid, non-finite, discontinuous, colliding or incomplete evidence
+  fails closed. G9 remains `PENDING_REVIEW` without real human-review evidence, so
+  controlled-validation readiness remains false.
+
+### Limits — v2.3 Package 3
+* Level 2 is a conservative endpoint/cylindrical-sweep approximation, not exact
+  B-Rep removal, holder collision, machine kinematics or physical validation.
+* All artifacts remain non-production candidates. Machine send, NC/DNC transfer,
+  cycle start, CNC control and physical use are not authorized.
+
 ### Adicionado — v2.3 Package 1
 * `vena-ia.toolpath-candidate/v1` cria candidatos determinísticos, lineares e
   bounded para regiões explicitamente autorizadas por
