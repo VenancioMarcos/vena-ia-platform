@@ -8,6 +8,22 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [2.3.0] — 2026-08-11 — Controlled CAD-to-G-code Validation
+
+### Published technical boundary
+* Packages 1–3 provide bounded toolpath candidates, independent geometry checks,
+  synthetic RS274 candidates, an independent safe-subset parser, bounded Level-2
+  evidence and a sealed-reference blind harness.
+* G0–G8 are evidence gates. G9 remains `PENDING_REVIEW` and cannot originate from
+  request-body fields; controlled-validation readiness and physical authority remain
+  false.
+* API, health, OpenAPI and frontend metadata align at 2.3.0. Alembic remains at the
+  existing single head with no migration.
+
+### Safety
+* This release is not production CAM, validated real-machine G-code or CNC physical
+  authorization. It provides no machine-send, NC/DNC, cycle start or direct control.
+
 ### Added — v2.3 Package 3
 * `vena-ia.level2-material-removal-evidence/v1` independently reconstructs the
   candidate trajectory and applies bounded stock, target-coverage, simplified

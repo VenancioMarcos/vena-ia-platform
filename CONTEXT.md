@@ -27,6 +27,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **Release Candidate v2.3.0:** Packages 1–3 e a correção de authority G9 estão
+  aprovados pelo CTO na Draft PR #28. API/health/OpenAPI/frontend estão alinhados em
+  2.3.0; release notes registram a fronteira técnica não produtiva. G9 permanece
+  `PENDING_REVIEW`, readiness e physical authority permanecem false. A publicação
+  técnica não concede machine-send, NC/DNC, cycle start ou controle CNC.
+
 * **TASK-V23 Package 3 pronta para revisão:** a branch
   `codex/v2.3-controlled-cad-gcode-validation` e a Draft PR #28 acrescentam
   `level2-material-removal-evidence/v1` e o harness
