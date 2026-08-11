@@ -1674,4 +1674,21 @@ todos os Packages posteriores permanecem `NOT_STARTED`.
 
 ---
 
-**Fim do Documento 03 — Roadmap Executivo Vena_IA até v3.0 (proposta)**
+## 11. v3.1 — Controlled Test Environment
+
+**TASK-V31-002:** `IMPLEMENTED / READY_FOR_CTO_REVIEW`.
+
+A v3.1 integra, sem duplicação e sem nova persistência, os contratos publicados de
+CAD, topology, Manufacturing Geometry, verified process plan, toolpath candidate,
+postprocessor sintético, Level-1/Level-2, blind validation e Digital Thread. A entrega
+inclui orchestration autenticada, required-user-input explícito, display de G0–G9 e
+download controlado com prova curta vinculada a identidade, tenancy e hashes.
+
+**Gate:** G0–G8 com evidence determinística, G9 obrigatoriamente
+`PENDING_AUTHORITATIVE_REVIEW`, `PHYSICAL_USE_AUTHORIZED=false`. Não inclui v3.2,
+deploy, produção, teste físico, machine-send, DNC/NC transfer, cycle start ou controle
+direto. Revisão da Draft PR/CI pelo CTO é o próximo passo.
+
+---
+
+**Fim do Documento 03 — Roadmap Executivo Vena_IA até v3.1**

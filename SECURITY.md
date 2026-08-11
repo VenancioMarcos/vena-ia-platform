@@ -193,6 +193,20 @@ No Release Candidate v2.1.0, os mesmos controles foram revalidados sem novo pape
 endpoint de mutação ou authority client-side. Enterprise governance continua
 `NON_PRODUCTION`; publicação e deploy permanecem gates separados.
 
+## 7.5 Download controlado de candidato v3.1
+
+As rotas do ambiente controlado exigem identidade autenticada e membership ativa no
+banco. Organization, role, reviewer e G9 enviados por body/header/frontend não são
+autoridade. Catálogos organization-owned devem pertencer ao mesmo escopo.
+
+O download usa prova HMAC curta vinculada a user, organization e hashes canônicos dos
+artifacts completos de candidato, blind evidence e Digital Thread. Assinatura, expiração, hash/manifest G-code, parser
+RS274 independente, bundle/replay blind, G0–G8, G9 pendente e replay/ownership do
+thread são revalidados. Respostas usam `no-store` e classificação explícita.
+
+O arquivo é candidato não produtivo. Não existe machine-send, DNC/NC transfer, cycle
+start, controle direto, autoridade física ou aprovação G9 nessa fronteira.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

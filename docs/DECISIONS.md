@@ -1412,3 +1412,23 @@ Ela não possui tools, write capability, estado autônomo, acesso de máquina ou
 para alterar evidence/G0–G9. Manifesto em existing storage é suficiente nesta fase;
 ledger, event sourcing, tabela e migration foram rejeitados por ausência de requisito
 real. G9 continua exclusivamente autoritativo e pendente.
+
+## DEC-043 — Controlled Test Environment and Candidate Download
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Arquitetura / Orchestration / CNC Safety / Authorization
+
+TASK-V31-002 adota uma camada aditiva de orchestration sobre serviços determinísticos
+existentes, sem reimplementar CAD, planning, toolpath, postprocessor, verificadores ou
+Digital Thread e sem nova persistência/migration. A execução exige token, usuário do
+banco, membership ativa e catálogos no mesmo escopo organizacional.
+
+O download controlado usa prova HMAC curta vinculada a user/org e aos hashes canônicos
+dos artifacts completos. O servidor revalida assinatura/expiração, hash/manifest do candidato, parser
+RS274 independente, bundle/replay blind, G0–G8, G9 pendente e replay/ownership do
+Digital Thread. Cliente, header ou body não aprovam G9 ou uso físico.
+
+O arquivo é somente `CANDIDATE_FOR_VALIDATION`, `NON_PRODUCTION` e
+`REQUIRES_HUMAN_REVIEW`. Machine-send, DNC/NC transfer, cycle start, controle direto,
+produção e bypass de revisão permanecem ausentes. ADR-0036 registra consequências.

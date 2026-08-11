@@ -117,3 +117,18 @@ decisão. Misturar itens de organizações distintas falha como `404`.
 
 Release Candidate v2.1.0: matriz revalidada sem novos papéis ou mutações públicas;
 `TOKEN + DATABASE = AUTHORITY` permanece o gate terminal.
+
+## Controlled Test Environment — v3.1
+
+| Capacidade | OWNER | ADMIN | MEMBER ativo | Sem membership | Não autenticado |
+|---|---|---|---|---|---|
+| Executar cadeia controlada com recursos da Organization | Permitido | Permitido | Permitido | `404` | `401` |
+| Download de `.candidate.nc` com prova válida e atual | Permitido | Permitido | Permitido | `404` | `401` |
+| Usar catálogo de outra Organization | `422`/fail-closed | `422`/fail-closed | `422`/fail-closed | `404` | `401` |
+| Forjar proof/hash/replay/G9 | Negado (`422`) | Negado (`422`) | Negado (`422`) | Negado | Negado |
+| Aprovar G9, produção ou uso físico | Sem endpoint | Sem endpoint | Sem endpoint | Sem endpoint | Sem endpoint |
+| Machine-send, DNC/NC, cycle start, controle CNC | Sem endpoint | Sem endpoint | Sem endpoint | Sem endpoint | Sem endpoint |
+
+`organization_id` identifica o escopo e nunca concede membership. A prova de download
+é adicional à sessão e não substitui a autorização atual no banco. G9 permanece
+`PENDING_AUTHORITATIVE_REVIEW`; o frontend não possui controle de promoção.

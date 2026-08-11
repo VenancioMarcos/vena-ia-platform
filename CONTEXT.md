@@ -27,6 +27,17 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **TASK-V31-002 — Controlled Test Environment implementada:** a branch
+  `codex/v3.1-controlled-test-environment` compõe a cadeia autorizada
+  CAD→evidências→Manufacturing Geometry→Process Plan→Toolpath bounded→postprocessor
+  sintético→Level-1/Level-2→blind evidence→Digital Thread→download controlado. Token,
+  membership ativa e escopo organizacional são autoridade; prova HMAC curta vincula
+  usuário/organização/hashes e o download revalida integridade. G0–G8 passam somente
+  com evidence; G9 segue `PENDING_AUTHORITATIVE_REVIEW`.
+  `PHYSICAL_USE_AUTHORIZED=false`; não existem machine-send, DNC/NC transfer, cycle
+  start, controle direto ou bypass de human review. Não há migration, merge, release,
+  deploy ou início de v3.2 nesta missão.
+
 * **Release v3.0.0 publicada:** a PR #29 foi integrada em `f2ffe5c`; tag anotada e
   GitHub Release publicam Manufacturing Intelligence & Digital Thread.
   `vena-ia.digital-thread/v1` encadeia artifacts

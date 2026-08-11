@@ -8,6 +8,22 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — TASK-V31-002 Controlled Test Environment
+* Authenticated organization-scoped orchestration composes authorized CAD, topology
+  evidence, manufacturing geometry, verified process plan, bounded toolpath,
+  synthetic postprocessor, Level-1/Level-2 evidence, blind validation and Digital
+  Thread without duplicating deterministic services.
+* A short-lived HMAC proof binds controlled candidate downloads to authenticated
+  user, organization and immutable hashes; download independently revalidates the
+  candidate, blind bundle and Digital Thread.
+* The project UI exposes required inputs, G0–G9, Digital Thread and a clearly
+  non-production `.candidate.nc` download.
+
+### Safety
+* G0–G8 require evidence; G9 remains `PENDING_AUTHORITATIVE_REVIEW` and cannot come
+  from the client. Physical use, machine-send, DNC/NC transfer, cycle start, direct
+  machine control and human-review bypass remain false or absent.
+
 ## [3.0.0] — 2026-08-11 — Manufacturing Intelligence & Digital Thread
 
 ### Added
