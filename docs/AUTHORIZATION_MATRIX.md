@@ -136,3 +136,8 @@ Release Candidate v2.1.0: matriz revalidada sem novos papéis ou mutações púb
 TASK-V31-003 confirms that query/header flags are non-authoritative, top-level body
 authority injection is rejected, expired proof and revoked membership fail closed,
 and a valid HMAC proves integrity only. Replay cannot promote G9 or physical use.
+
+The TASK-V31-004 review package is read-only output of the already authorized run.
+OWNER/ADMIN/MEMBER receive the same organization-bound evidence; none receives a G9
+approval capability. Forged reviewer/evidence authority, stale/version/hash/replay
+mismatch and cross-Organization access fail closed. There is no review mutation route.

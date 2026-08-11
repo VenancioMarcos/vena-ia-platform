@@ -27,6 +27,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **TASK-V31-004 — G9 Review Package:** the existing controlled run now returns
+  deterministic `vena-ia.g9-review-package/v1`, hash-bound to the candidate, Digital
+  Thread, blind bundle, G0-G8, Level-1/Level-2 and exact contract/component versions.
+  It consolidates human-review and external-validation protocols without accepting
+  reviewer authority or external disposition. G9 remains pending; readiness and
+  physical authority remain false. No persistence, migration, machine integration,
+  deploy or v3.2 was introduced.
+
 * **TASK-V31-003 — G9/external-validation preparation:** the v3.1 implementation was
   audited without creating a G9 transition. `docs/G9_EXTERNAL_VALIDATION_PREPARATION.md`
   separates automatic integrity evidence, authoritative human review evidence,

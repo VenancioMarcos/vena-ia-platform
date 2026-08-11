@@ -1453,3 +1453,23 @@ missão separada. Simulação externa e protocolo físico também continuam fora
 
 G9 permanece `PENDING_AUTHORITATIVE_REVIEW`; readiness e physical authority ficam
 false. Nenhuma mudança arquitetural, migration, machine interface ou v3.2 foi criada.
+
+## DEC-045 — Deterministic G9 Review Package
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Evidence / External Handoff / Human Authority
+
+TASK-V31-004 adota `vena-ia.g9-review-package/v1` como output aditivo do run
+autenticado existente. O pacote consolida hashes, versions, G0-G8, Level-1/Level-2,
+Digital Thread, blind evidence, limitações, riscos e protocolos sem duplicar artifacts,
+criar persistência ou estabelecer reviewer authority.
+
+`package_hash` e `package_id` derivam canonicamente do conteúdo. Uma reconstrução com
+os mesmos artifacts produz o mesmo pacote, independentemente do usuário autenticado
+ou instante de emissão do token de download. Hash/HMAC/replay permanecem evidência de
+integridade apenas.
+
+Reviewer, decision e external evidence authority não pertencem ao input público.
+Adjudicação, integração externa e teste físico exigem missões separadas. G9 permanece
+pending; readiness/physical authority permanecem false; não há migration ou v3.2.

@@ -1695,6 +1695,13 @@ adjudication, independent external-simulation evidence and prerequisites that wo
 require a separate Owner-authorized physical-test protocol. This task creates no G9
 transition, physical authority, machine connection or v3.2 scope.
 
+**TASK-V31-004 — G9 Review Package and External Validation Handoff:**
+`IMPLEMENTED / READY_FOR_CTO_REVIEW`. The existing authenticated run exposes a
+deterministic package bound to candidate/Digital Thread/blind/G0-G8/Level-1/Level-2
+hashes and versions, plus non-authoritative human/external protocols. G9 remains
+pending and no reviewer registry, approval endpoint, external integration, physical
+authority, persistence, migration or v3.2 was introduced.
+
 ---
 
 **Fim do Documento 03 — Roadmap Executivo Vena_IA até v3.1**

@@ -8,6 +8,15 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — TASK-V31-004 G9 Review Package
+* Added deterministic `vena-ia.g9-review-package/v1` to the existing authenticated
+  controlled run, binding candidate, Digital Thread, blind evidence, G0-G8,
+  Level-1/Level-2, contract/component versions, limitations and risks.
+* Added a read-only UI summary and protocols for qualified human review and future
+  independent external validation.
+* Forged reviewer/evidence fields, stale lifecycle, version/hash/replay mismatch and
+  every G9-authority attempt remain fail-closed; no approval endpoint was introduced.
+
 ### Documentation and assurance — TASK-V31-003 G9 preparation
 * Classified the evidence that can be produced automatically, requires an authorized
   human reviewer, requires external simulation and is mandatory before any physical
