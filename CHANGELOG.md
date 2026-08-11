@@ -16,6 +16,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   gerador e rejeita primitives, limites, continuidade, feeds/rapids, referências
   de região e entrada preliminar no envelope final protegido.
 
+### Adicionado — v2.3 Package 2
+* `vena-ia.gcode-candidate/v1` e o pós-processador sintético puro produzem somente
+  o subset RS274 allowlisted para validação, acompanhado de manifest hashable.
+* `vena-ia.rs274-safe-subset-verification/v1` usa parser/modal independente e
+  rejeita sintaxe, códigos e modalidades fora de métrico/XY/absoluto/feed-min.
+
 ### Limites — v2.3 Package 1
 * A trajetória é somente `CANDIDATE_FOR_VALIDATION`, exige revisão humana e não
   possui autoridade produtiva ou saída executável. Não há arcos, CAM livre,

@@ -1606,6 +1606,11 @@ autorizam uso físico, produção, machine-send, DNC ou cycle start.
 segmentos lineares bounded para regiões do plano verificado. A saída mantém
 `production_authority=false`, revisão humana e não inclui postprocessor ou G-code.
 
+**Package 2 — Synthetic Postprocessor + RS274 Safe Subset — `IN_PROGRESS`:** alvo
+somente sintético `VENA_SYNTHETIC_3AXIS_MILL_V1` usa G21/G17/G90/G94, G0/G1 lineares
+e M30. O parser independente rejeita macros, variáveis, arcos, ciclos, compensação,
+offsets, extensões de fornecedor, turning e multi-axis.
+
 ## 10.6 v3.0 — Manufacturing Intelligence & Digital Thread
 
 **Objetivo arquitetural:** transformar o workflow integrado em um digital thread

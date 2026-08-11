@@ -17,6 +17,8 @@ from app.modules.engineering.manufacturing_schemas import ManufacturingPlanningR
 from app.modules.engineering.schemas import AvailabilityValue
 from app.modules.engineering.toolpath import ToolpathCandidateError, ToolpathCandidateService, ToolpathVerifier
 from app.modules.engineering.toolpath_schemas import ToolpathCandidateRequest
+from app.modules.engineering.postprocessor import RS274SafeSubsetVerifier, SyntheticPostprocessor
+from app.modules.engineering.postprocessor_schemas import GCodeCandidateRequest
 
 
 def _step_bytes(tmp_path: Path, shape: object, name: str = "manufacturing") -> bytes:
@@ -297,6 +299,28 @@ def test_toolpath_verifier_rejects_protected_feed_and_generator_fails_closed(tmp
     invalid = invalid.model_copy(update={"clearance_z_mm": 51})
     with pytest.raises(ToolpathCandidateError, match="Clearance"):
         ToolpathCandidateService().create(invalid)
+
+
+def test_synthetic_postprocessor_and_independent_rs274_verifier(tmp_path: Path) -> None:
+    cad = MagicMock()
+    cad.analyze.return_value = _analysis(tmp_path)
+    engineering = MagicMock()
+    engineering.recommend.return_value = _recommendation()
+    model = ManufacturingPlanningService(cad, engineering).plan(
+        ManufacturingPlanningRequest.model_validate(_full_payload())
+    )
+    path = ToolpathCandidateService().create(
+        _toolpath_request(model, model.operation_candidates[0].candidate_id)
+    )
+    result = SyntheticPostprocessor().generate(GCodeCandidateRequest(toolpath=path))
+
+    assert result.classification == "CANDIDATE_FOR_VALIDATION"
+    assert result.production_authority is False
+    assert result.executable_output is False
+    assert result.program.startswith("G21\nG17\nG90\nG94\n")
+    assert result.program.endswith("M30")
+    assert result.verification.status == "PASS_REQUIRES_HUMAN_REVIEW"
+    assert RS274SafeSubsetVerifier().verify("G21\nG17\nG90\nG94\nG2 X1 Y1\nM30", "x").status == "REJECTED"
 
 
 def _catalog(

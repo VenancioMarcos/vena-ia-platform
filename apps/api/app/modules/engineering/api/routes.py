@@ -25,6 +25,8 @@ from app.modules.engineering.manufacturing_schemas import (
 )
 from app.modules.engineering.toolpath import ToolpathCandidateError, ToolpathCandidateService
 from app.modules.engineering.toolpath_schemas import ToolpathCandidate, ToolpathCandidateRequest
+from app.modules.engineering.postprocessor import PostprocessorError, SyntheticPostprocessor
+from app.modules.engineering.postprocessor_schemas import GCodeCandidate, GCodeCandidateRequest
 from app.modules.engineering.repository import EngineeringCatalogRepository
 from app.modules.engineering.schemas import (
     CatalogItemCreate,
@@ -163,4 +165,15 @@ def create_toolpath_candidate(
     try:
         return ToolpathCandidateService().create(payload)
     except ToolpathCandidateError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.post("/planning/gcode-candidate", response_model=GCodeCandidate)
+def create_gcode_candidate(
+    payload: GCodeCandidateRequest,
+    _current_user: CurrentUserDependency,
+) -> GCodeCandidate:
+    try:
+        return SyntheticPostprocessor().generate(payload)
+    except PostprocessorError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
