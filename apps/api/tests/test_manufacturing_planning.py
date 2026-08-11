@@ -670,6 +670,7 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
     client: TestClient,
     make_account,
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     owner = make_account("controlled-environment-owner@vena-ia.dev")
     organization_id = client.post(
@@ -743,6 +744,21 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
             headers=owner.headers,
             json=download_payload,
         )
+        transport_forgery = client.post(
+            "/engineering/controlled-environment/download"
+            "?g9_state=APPROVED&physical_use_authorized=true",
+            headers={
+                **owner.headers,
+                "X-Vena-IA-G9": "APPROVED",
+                "X-Vena-IA-Physical-Use-Authorized": "true",
+            },
+            json=download_payload,
+        )
+        body_forgery = client.post(
+            "/engineering/controlled-environment/download",
+            headers=owner.headers,
+            json={**download_payload, "g9_state": "APPROVED"},
+        )
         forged = dict(download_payload)
         forged["blind_validation"] = {
             **result["blind_validation"],
@@ -782,8 +798,60 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
         )
         outsider = make_account("controlled-environment-outsider@vena-ia.dev")
         denied = client.post(
+            "/engineering/controlled-environment/download?g9_state=APPROVED",
+            headers={**outsider.headers, "X-Vena-IA-G9": "APPROVED"},
+            json=download_payload,
+        )
+
+        member = make_account("controlled-environment-revoked@vena-ia.dev")
+        team = client.post(
+            f"/organizations/{organization_id}/teams",
+            headers=owner.headers,
+            json={"name": "Controlled environment team"},
+        )
+        assert team.status_code == 201, team.text
+        membership = client.post(
+            f"/organizations/{organization_id}/memberships",
+            headers=owner.headers,
+            json={
+                "user_id": member.id,
+                "role": "MEMBER",
+                "team_id": team.json()["id"],
+            },
+        )
+        assert membership.status_code == 201, membership.text
+        member_run = client.post(
+            "/engineering/controlled-environment/runs",
+            headers=member.headers,
+            json=payload,
+        )
+        assert member_run.status_code == 200, member_run.text
+        member_result = member_run.json()
+        member_download_payload = {
+            "organization_id": organization_id,
+            "gcode_candidate": member_result["gcode_candidate"],
+            "blind_validation": member_result["blind_validation"],
+            "digital_thread": member_result["digital_thread"],
+            "download_token": member_result["download_token"],
+        }
+        revoked = client.delete(
+            f"/organizations/{organization_id}/memberships/{membership.json()['id']}",
+            headers=owner.headers,
+        )
+        assert revoked.status_code == 204
+        revoked_download = client.post(
             "/engineering/controlled-environment/download",
-            headers=outsider.headers,
+            headers=member.headers,
+            json=member_download_payload,
+        )
+
+        monkeypatch.setattr(
+            "app.modules.engineering.controlled_environment.time.time",
+            lambda: 4_000_000_000,
+        )
+        expired_download = client.post(
+            "/engineering/controlled-environment/download",
+            headers=owner.headers,
             json=download_payload,
         )
     finally:
@@ -807,7 +875,13 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
     assert download.headers["x-vena-ia-physical-use-authorized"] == "false"
     assert download.headers["x-vena-ia-review-state"] == "REQUIRES_HUMAN_REVIEW"
     assert download.text.endswith("M30")
+    assert transport_forgery.status_code == 200
+    assert transport_forgery.headers["x-vena-ia-physical-use-authorized"] == "false"
+    assert transport_forgery.headers["x-vena-ia-review-state"] == "REQUIRES_HUMAN_REVIEW"
+    assert body_forgery.status_code == 422
     assert rejected.status_code == 422
     assert altered_candidate_response.status_code == 422
     assert altered_thread_response.status_code == 422
     assert denied.status_code == 404
+    assert revoked_download.status_code == 404
+    assert expired_download.status_code == 422
