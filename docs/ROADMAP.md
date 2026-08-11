@@ -1689,6 +1689,12 @@ download controlado com prova curta vinculada a identidade, tenancy e hashes.
 deploy, produção, teste físico, machine-send, DNC/NC transfer, cycle start ou controle
 direto. Revisão da Draft PR/CI pelo CTO é o próximo passo.
 
+**TASK-V31-003 — G9/external-validation preparation:** `IMPLEMENTED / READY_FOR_CTO_REVIEW`.
+The evidence boundary now distinguishes automatic integrity evidence, authorized human
+adjudication, independent external-simulation evidence and prerequisites that would
+require a separate Owner-authorized physical-test protocol. This task creates no G9
+transition, physical authority, machine connection or v3.2 scope.
+
 ---
 
 **Fim do Documento 03 — Roadmap Executivo Vena_IA até v3.1**

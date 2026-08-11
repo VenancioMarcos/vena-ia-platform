@@ -8,6 +8,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Documentation and assurance — TASK-V31-003 G9 preparation
+* Classified the evidence that can be produced automatically, requires an authorized
+  human reviewer, requires external simulation and is mandatory before any physical
+  test; no G9 approval mechanism or physical authority was introduced.
+* Extended controlled-download assurance for query/header/body authority forgery,
+  expired proof and immediately revoked Organization membership.
+
 ### Added — TASK-V31-002 Controlled Test Environment
 * Authenticated organization-scoped orchestration composes authorized CAD, topology
   evidence, manufacturing geometry, verified process plan, bounded toolpath,

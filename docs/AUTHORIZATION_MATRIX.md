@@ -132,3 +132,7 @@ Release Candidate v2.1.0: matriz revalidada sem novos papéis ou mutações púb
 `organization_id` identifica o escopo e nunca concede membership. A prova de download
 é adicional à sessão e não substitui a autorização atual no banco. G9 permanece
 `PENDING_AUTHORITATIVE_REVIEW`; o frontend não possui controle de promoção.
+
+TASK-V31-003 confirms that query/header flags are non-authoritative, top-level body
+authority injection is rejected, expired proof and revoked membership fail closed,
+and a valid HMAC proves integrity only. Replay cannot promote G9 or physical use.

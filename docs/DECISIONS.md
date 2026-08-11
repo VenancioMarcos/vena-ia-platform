@@ -1432,3 +1432,24 @@ Digital Thread. Cliente, header ou body não aprovam G9 ou uso físico.
 O arquivo é somente `CANDIDATE_FOR_VALIDATION`, `NON_PRODUCTION` e
 `REQUIRES_HUMAN_REVIEW`. Machine-send, DNC/NC transfer, cycle start, controle direto,
 produção e bypass de revisão permanecem ausentes. ADR-0036 registra consequências.
+
+## DEC-044 — G9 Evidence Boundary and External Validation Preparation
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Assurance / CNC Safety / Human Authority
+
+TASK-V31-003 formaliza quatro classes que não podem ser confundidas: evidence de
+integridade produzível automaticamente; adjudicação humana autoritativa; validação
+externa independente; e pré-condições separadamente autorizadas para qualquer teste
+físico. Hash, HMAC e replay provam integridade, mas nunca identidade/qualificação do
+reviewer, decisão G9 ou autoridade física.
+
+O contrato público permanece sem endpoint de transição G9. Uma futura adjudicação
+deve ser server-side, vinculada à identidade/membership atual do reviewer, qualificação,
+conflito de interesse, Digital Thread, frozen bundle, candidate hash, versões exatas,
+disposição, findings, timestamp e regras de revogação/supersession. Sua criação exige
+missão separada. Simulação externa e protocolo físico também continuam fora do escopo.
+
+G9 permanece `PENDING_AUTHORITATIVE_REVIEW`; readiness e physical authority ficam
+false. Nenhuma mudança arquitetural, migration, machine interface ou v3.2 foi criada.

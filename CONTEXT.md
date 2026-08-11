@@ -27,6 +27,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **TASK-V31-003 — G9/external-validation preparation:** the v3.1 implementation was
+  audited without creating a G9 transition. `docs/G9_EXTERNAL_VALIDATION_PREPARATION.md`
+  separates automatic integrity evidence, authoritative human review evidence,
+  independent external-simulation evidence and the separately authorized prerequisites
+  for any physical test. Focused assurance covers body/query/header forgery, proof
+  expiry, revoked membership, cross-Organization access and artifact tampering.
+  G9 remains `PENDING_AUTHORITATIVE_REVIEW`; controlled-validation readiness and
+  physical authority remain false.
+
 * **TASK-V31-002 — Controlled Test Environment implementada:** a branch
   `codex/v3.1-controlled-test-environment` compõe a cadeia autorizada
   CAD→evidências→Manufacturing Geometry→Process Plan→Toolpath bounded→postprocessor
