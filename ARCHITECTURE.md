@@ -371,3 +371,22 @@ não chama o gerador/verificador Level 1. O harness recebe somente hash da refer
 selada e nunca a resposta esperada. G9 depende de evidência humana real e bloqueia
 readiness quando pendente. Detalhes: `docs/LEVEL2_BLIND_VALIDATION.md`, ADR-0033 e
 ADR-0034.
+
+---
+
+## 21. Manufacturing Digital Thread v3.0
+
+```text
+authorized deterministic artifacts
+  → canonical hash/version/provenance validation
+  → immutable vena-ia.digital-thread/v1 manifest
+  → read-only bounded intelligence
+  → human-reviewable explanation/report
+```
+
+The manifest is an ephemeral, frozen read model in the Engineering module and uses
+existing storage boundaries; it creates no table, ledger, event store or migration.
+Routes authorize Organization membership from token plus database. Invalid hashes,
+forward/broken refs, schema mismatch, stale/revoked artifacts and cross-org access
+fail closed. The bounded layer has no tools or mutation path and cannot approve
+G0–G9. ADR-0035 records the boundary.

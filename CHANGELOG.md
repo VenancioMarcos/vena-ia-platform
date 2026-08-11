@@ -8,6 +8,24 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [3.0.0] — 2026-08-11 — Manufacturing Intelligence & Digital Thread
+
+### Added
+* `vena-ia.digital-thread/v1` creates immutable, deterministic manifests across CAD,
+  topology, manufacturing geometry, process plan, toolpath, G-code, verification,
+  review state and report artifacts with hashes, versions, provenance, upstream and
+  downstream references, lifecycle, replay and organization ownership.
+* `vena-ia.bounded-manufacturing-intelligence/v1` explains, summarizes, compares and
+  identifies missing evidence without tools, mutation, gate approval or physical
+  authority.
+* Authenticated routes enforce active database membership and fail closed for
+  cross-organization, forged hashes, broken refs, version mismatch and stale artifacts.
+
+### Safety
+* G9 remains an authoritative human-review boundary and cannot be resolved by the
+  manifest or intelligence layer. Controlled-validation readiness and physical use
+  remain false; all G-code remains non-production and requires human review.
+
 ## [2.3.0] — 2026-08-11 — Controlled CAD-to-G-code Validation
 
 ### Published technical boundary

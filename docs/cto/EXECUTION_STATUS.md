@@ -1,5 +1,19 @@
 # Estado de execução CTO
 
+## 2026-08-11 — v3.0 Release Candidate
+
+```text
+STATE=VENA_IA_V3_0_RELEASE_CANDIDATE_READY_FOR_CTO_APPROVED_FLOW
+V2_3_RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v2.3.0
+BRANCH=codex/v3.0-manufacturing-digital-thread
+CONTRACTS=vena-ia.digital-thread/v1_vena-ia.bounded-manufacturing-intelligence/v1
+TENANCY=TOKEN_PLUS_DATABASE_FAIL_CLOSED
+PERSISTENCE=IMMUTABLE_MANIFEST_NO_MIGRATION
+G9=PENDING_AUTHORITATIVE_REVIEW
+CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE
+PHYSICAL_USE_AUTHORIZED=FALSE
+```
+
 ## 2026-08-11 — TASK-V23-003A G9 authority correction
 
 ```text

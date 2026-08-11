@@ -27,6 +27,16 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **v3.0 Release Candidate:** `vena-ia.digital-thread/v1` encadeia artifacts
+  imutáveis/versionados com ownership organizacional, hashes, refs, provenance,
+  lifecycle e replay, sem banco/ledger/migration nova. A inteligência bounded é
+  read-only, sem tools, não altera evidence nem gates. Cross-org, hash/ref/version
+  divergentes, stale e forged artifacts falham fechado. G9 continua
+  `PENDING_AUTHORITATIVE_REVIEW`; readiness e physical authority continuam false.
+* **Release v2.3.0 publicada:** PR #28 integrada em `91d20f4`; tag anotada e GitHub
+  Release publicam a fronteira técnica controlada com G9 pendente e zero autoridade
+  física.
+
 * **Release Candidate v2.3.0:** Packages 1–3 e a correção de authority G9 estão
   aprovados pelo CTO na Draft PR #28. API/health/OpenAPI/frontend estão alinhados em
   2.3.0; release notes registram a fronteira técnica não produtiva. G9 permanece
