@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from app.modules.cad.evidence import GeometryTopologyEvidence
     from app.modules.cad.features import FeatureRecognitionResult, FeatureRecognizer
 
 
@@ -38,6 +39,56 @@ class OpenCascadeGeometryKernel:
         recognizer: FeatureRecognizer | None = None,
         unit: str = "mm",
     ) -> tuple[KernelGeometry, FeatureRecognitionResult | None]:
+        shape, geometry = self._load_step_shape(content)
+        features = None if recognizer is None else recognizer.recognize(shape, geometry, unit)
+        return geometry, features
+
+    def analyze_step_with_evidence(
+        self,
+        content: bytes,
+        recognizer: FeatureRecognizer | None = None,
+        unit: str = "mm",
+    ) -> tuple[
+        KernelGeometry,
+        FeatureRecognitionResult | None,
+        GeometryTopologyEvidence,
+        str | None,
+    ]:
+        from app.modules.cad.evidence import (
+            GeometryEvidenceBuilder,
+            GeometryEvidenceError,
+            unavailable_evidence,
+        )
+
+        shape, geometry = self._load_step_shape(content)
+        try:
+            evidence = GeometryEvidenceBuilder().build(
+                shape,
+                geometry,
+                content,
+                unit,
+                kernel=self.name,
+                kernel_version=self.version,
+                kernel_binding=self.binding,
+            )
+        except GeometryEvidenceError as exc:
+            evidence = unavailable_evidence(
+                content,
+                unit,
+                kernel=self.name,
+                kernel_version=self.version,
+                kernel_binding=self.binding,
+                warning=str(exc),
+            )
+        feature_warning = None
+        try:
+            features = None if recognizer is None else recognizer.recognize(shape, geometry, unit)
+        except GeometryKernelError as exc:
+            features = None
+            feature_warning = str(exc)
+        return geometry, features, evidence, feature_warning
+
+    def _load_step_shape(self, content: bytes) -> tuple[object, KernelGeometry]:
         if len(content) > 50 * 1024 * 1024:
             raise GeometryKernelError("STEP resource limit exceeded")
         if not content.lstrip().startswith(b"ISO-10303-21;"):
@@ -89,8 +140,7 @@ class OpenCascadeGeometryKernel:
                 topology_valid=valid,
                 shape_type=shape_type,
             )
-            features = None if recognizer is None else recognizer.recognize(shape, geometry, unit)
-            return geometry, features
+            return shape, geometry
         except GeometryKernelError:
             raise
         except Exception as exc:

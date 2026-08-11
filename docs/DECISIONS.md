@@ -1337,3 +1337,35 @@ O CTO aprovou Packages 1–2 e confirmou que não existe Package 3. A release al
 API/FastAPI/health/OpenAPI/frontend em `2.1.0`, preserva Alembic `e61c4f8a2b90` e
 contratos v1. O Owner Release Gate direto autorizou o Squash Merge da PR #25, a tag
 anotada e a GitHub Release. Não houve deploy; v2.2 segue `NOT_STARTED`.
+
+## DEC-039 — General Geometry Topology Evidence v1
+
+**Data:** 2026-08-10
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Arquitetura / CAD / Evidência / Segurança
+
+A TASK-V22-001 adota `vena-ia.geometry-topology-evidence/v1` como contrato aditivo e
+read model efêmero no módulo CAD. O shape é carregado pelo mesmo adapter OCCT; não há
+segundo kernel, microserviço, repository ou migration. IDs canônicos são limitados
+por versão do kernel/algoritmo e ambiguidades são declaradas.
+
+Unidade ambígua e topologia inválida falham fechado. Kernel, modelagem e tolerância
+de manufatura são campos separados; a última nunca é inferida. Classificação de
+surface/curve é evidência geométrica, não feature ou manufacturing intent. R-019,
+R-039 e R-040 avançam parcialmente; R-041/R-044/R-049 não são promovidos. Package 2,
+toolpath, postprocessor, G/M-code e autoridade física permanecem fora.
+
+## DEC-040 — Manufacturing Interpretation & Verified Process Planning
+
+**Data:** 2026-08-10
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Arquitetura / Manufacturing / Planning / Segurança
+
+Adotar os contratos `manufacturing-geometry-model/v1`, `verified-process-plan/v1` e
+`planning-verification-evidence/v1`. Stock/intent/configuração são facts explícitos;
+geometry não gera operação. Catálogos/autorização v2.1 são reutilizados sem paralelo.
+Access/datum/WCS/setup são candidatos 3-axis/2.5D e verification não é simulação.
+
+A Gap Analysis da PR #26 é preservada integralmente na linha v2.2/PR #27. Este
+registro e ADR-0032 tornam a PR #27 a continuação oficial dos documentos de estado;
+a PR #26 só pode ser fechada após comparar os blobs remotos. Sem migration ou v2.3.

@@ -15,6 +15,14 @@ from app.modules.documents.service import (
     ProjectNotFoundError,
 )
 from app.modules.engineering.models import EngineeringCatalogItem
+from app.modules.engineering.manufacturing import (
+    ManufacturingPlanningError,
+    ManufacturingPlanningService,
+)
+from app.modules.engineering.manufacturing_schemas import (
+    ManufacturingGeometryModel,
+    ManufacturingPlanningRequest,
+)
 from app.modules.engineering.repository import EngineeringCatalogRepository
 from app.modules.engineering.schemas import (
     CatalogItemCreate,
@@ -118,6 +126,28 @@ def plan_from_document_feature(
     except InvalidDocumentError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except StepParseError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except CADContentUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@router.post(
+    "/planning/manufacturing-geometry",
+    response_model=ManufacturingGeometryModel,
+)
+def plan_manufacturing_geometry(
+    payload: ManufacturingPlanningRequest,
+    current_user: CurrentUserDependency,
+    cad: CADAnalysisServiceDependency,
+    db: Session = Depends(get_db),
+) -> ManufacturingGeometryModel:
+    try:
+        return ManufacturingPlanningService(cad, _catalog_service(db, current_user)).plan(payload)
+    except (DocumentNotFoundError, ProjectNotFoundError, DocumentAccessDeniedError) as exc:
+        raise HTTPException(status_code=404, detail="Document not found") from exc
+    except InvalidDocumentError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except (StepParseError, ManufacturingPlanningError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except CADContentUnavailableError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc

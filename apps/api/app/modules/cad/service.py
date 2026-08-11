@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
+from app.modules.cad.evidence import GeometryTopologyEvidence, unavailable_evidence
 from app.modules.cad.parser import StepAnalysis, StepTextParser
-from app.modules.cad.features import FeatureRecognitionError, FeatureRecognitionResult, FeatureRecognizer
+from app.modules.cad.features import FeatureRecognitionResult, FeatureRecognizer
 from app.modules.cad.kernel import GeometryKernelError, KernelGeometry, OpenCascadeGeometryKernel
 from app.modules.documents.service import DocumentService, InvalidDocumentError
 from app.modules.documents.storage import DocumentStorage, StorageError
@@ -21,6 +22,7 @@ class CADDocumentAnalysis:
     geometry_warning: str | None = None
     features: FeatureRecognitionResult | None = None
     feature_warning: str | None = None
+    topology_evidence: GeometryTopologyEvidence | None = None
 
 
 class CADAnalysisService:
@@ -47,16 +49,25 @@ class CADAnalysisService:
         geometry_warning = None
         features = None
         feature_warning = None
+        topology_evidence = None
         try:
-            geometry, features = OpenCascadeGeometryKernel().analyze_step_with_features(
-                content,
-                recognizer=FeatureRecognizer(),
-                unit=analysis.length_unit,
+            geometry, features, topology_evidence, feature_warning = (
+                OpenCascadeGeometryKernel().analyze_step_with_evidence(
+                    content,
+                    recognizer=FeatureRecognizer(),
+                    unit=analysis.length_unit,
+                )
             )
-        except FeatureRecognitionError as exc:
-            feature_warning = str(exc)
         except GeometryKernelError as exc:
             geometry_warning = str(exc)
+            topology_evidence = unavailable_evidence(
+                content,
+                analysis.length_unit,
+                kernel=OpenCascadeGeometryKernel.name,
+                kernel_version=OpenCascadeGeometryKernel.version,
+                kernel_binding=OpenCascadeGeometryKernel.binding,
+                warning=str(exc),
+            )
         dimensions = (
             "unavailable"
             if analysis.bounding_box is None
@@ -78,4 +89,5 @@ class CADAnalysisService:
             geometry_warning=geometry_warning,
             features=features,
             feature_warning=feature_warning,
+            topology_evidence=topology_evidence,
         )

@@ -11,6 +11,9 @@ from app.modules.cad.schemas import (
     GeometryAnalysisContract,
     GeometryFeatureResponse,
     GeometryFeaturesContract,
+    GeometryTopologyEvidenceContract,
+    TopologyElementEvidenceResponse,
+    TopologyTransformEvidence,
     FeatureDimensionResponse,
     GeometryValue,
 )
@@ -168,14 +171,99 @@ def analyze_step_document(
             f"kernel:{OpenCascadeGeometryKernel.version}",
             "feature-rule:1.0.0",
         ],
-        uncertainty=(
-            "UNKNOWN" if feature_result is None else feature_result.uncertainty
-        ),
+        uncertainty=("UNKNOWN" if feature_result is None else feature_result.uncertainty),
         tolerance=GeometryValue(
             value=None if feature_result is None else feature_result.tolerance,
             unit=analysis.length_unit,
             status="NOT_AVAILABLE" if feature_result is None else "AVAILABLE",
         ),
+    )
+    topology_evidence = result.topology_evidence
+    topology_contract = GeometryTopologyEvidenceContract(
+        status="NOT_AVAILABLE" if topology_evidence is None else topology_evidence.status,
+        source_sha256=None if topology_evidence is None else topology_evidence.source_sha256,
+        kernel=OpenCascadeGeometryKernel.name,
+        kernel_version=(None if topology_evidence is None else topology_evidence.kernel_version),
+        kernel_binding=OpenCascadeGeometryKernel.binding,
+        stable_id_version=(
+            "occt-canonical-geometry/v1"
+            if topology_evidence is None
+            else topology_evidence.stable_id_version
+        ),
+        source_unit=analysis.length_unit,
+        normalized_unit=(None if topology_evidence is None else topology_evidence.normalized_unit),
+        normalization_scale=(
+            None if topology_evidence is None else topology_evidence.normalization_scale
+        ),
+        transform=TopologyTransformEvidence(
+            representation=(
+                "NOT_AVAILABLE"
+                if topology_evidence is None
+                else topology_evidence.transform_representation
+            ),
+        ),
+        topology_valid=(None if topology_evidence is None else topology_evidence.topology_valid),
+        shape_type=None if topology_evidence is None else topology_evidence.shape_type,
+        counts={} if topology_evidence is None else topology_evidence.counts,
+        elements=[]
+        if topology_evidence is None
+        else [
+            TopologyElementEvidenceResponse(
+                element_id=element.element_id,
+                kind=element.kind,
+                geometry_type=element.geometry_type,
+                orientation=element.orientation,
+                bounds=element.bounds,
+                metrics=element.metrics,
+                contained_by=list(element.contained_by),
+                contains=list(element.contains),
+                adjacent_to=list(element.adjacent_to),
+                connected_to=list(element.connected_to),
+                ambiguity_group=element.ambiguity_group,
+                limitations=list(element.limitations),
+            )
+            for element in topology_evidence.elements
+        ],
+        kernel_tolerance=GeometryValue(
+            value=None if topology_evidence is None else topology_evidence.kernel_tolerance,
+            unit="mm",
+            status=(
+                "NOT_AVAILABLE"
+                if topology_evidence is None or topology_evidence.kernel_tolerance is None
+                else "AVAILABLE"
+            ),
+        ),
+        modeling_tolerance=GeometryValue(
+            value=(None if topology_evidence is None else topology_evidence.modeling_tolerance_max),
+            unit="mm",
+            status=(
+                "NOT_AVAILABLE"
+                if topology_evidence is None or topology_evidence.modeling_tolerance_max is None
+                else "AVAILABLE"
+            ),
+        ),
+        manufacturing_tolerance=GeometryValue(
+            value=None,
+            unit=analysis.length_unit,
+            status="NOT_PROVIDED",
+        ),
+        warnings=(
+            ["Topology evidence is unavailable."]
+            if topology_evidence is None
+            else list(topology_evidence.warnings)
+        ),
+        unsupported=(
+            ["TOPOLOGY_EVIDENCE_EXTRACTION"]
+            if topology_evidence is None
+            else list(topology_evidence.unsupported)
+        ),
+        limitations=(
+            ["No geometric topology evidence was produced."]
+            if topology_evidence is None
+            else list(topology_evidence.limitations)
+        ),
+        provenance=[] if topology_evidence is None else list(topology_evidence.provenance),
+        evidence_refs=([] if topology_evidence is None else list(topology_evidence.evidence_refs)),
     )
     return CADAnalysisResponse(
         document_id=result.document_id,
@@ -192,4 +280,5 @@ def analyze_step_document(
         report=result.report,
         geometry=geometry_contract,
         features=feature_contract,
+        topology_evidence=topology_contract,
     )

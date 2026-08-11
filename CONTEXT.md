@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.4
-**Última atualização:** 2026-08-07
+**Versão:** 2.5
+**Última atualização:** 2026-08-10
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -27,13 +27,34 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **TASK-V22-002 — v2.2 Package 2 pronta para revisão:** a mesma branch/PR #27
+  adiciona `manufacturing-geometry-model/v1`, `verified-process-plan/v1` e
+  `planning-verification-evidence/v1`. Stock é obrigatório/provenanced, regiões
+  externas ao envelope são decompostas sem sobreposição, superfícies finais ficam
+  protegidas e material interno desconhecido não é inventado. Acesso/datum/WCS/setup
+  são somente candidatos 3-axis/2.5D. Intent e recursos autorizados são gates; não
+  há toolpath, postprocessor, G/M-code ou simulação física.
+* **Integração documental PR #26/#27:** a Gap Analysis histórica foi portada
+  integralmente para `docs/CAD_TO_GCODE_GAP_ANALYSIS_v1.md` na linha v2.2. Os
+  documentos de estado da PR #27 são a continuação oficial; a PR #26 pode ser
+  encerrada como redundante somente após confirmar o blob remoto preservado.
+
+* **TASK-V22-001 — v2.2 Package 1 pronta para revisão:** a branch
+  `codex/v2.2-general-geometry-evidence` adiciona
+  `vena-ia.geometry-topology-evidence/v1` ao endpoint CAD autorizado. O read model
+  efêmero reutiliza o mesmo carregamento OCCT, registra hash/provenance, unidades,
+  transformação, tolerâncias e topologia geral com IDs canônicos/replay. Unidade
+  ambígua, topologia inválida e limite excedido falham fechado. Package 2 não foi
+  iniciada; não há migration, manufacturing intent ou output CNC executável.
+* **Roadmap aprovado pelo Owner:** v2.2 → v2.3 → v3.0. A prioridade operacional é
+  `FIRST_CONTROLLED_CAD_TO_GCODE_VALIDATION > VERSION_NUMBER`; cada Package ainda
+  exige sua missão técnica e seus gates. Autoridade física continua inexistente.
+
 * **Fase:** v0.1–v2.0 concluídas e publicadas. Os três Packages oficiais da v2.0
   foram aprovados, integrados e publicados como v2.0.0 após o Owner Release Gate.
-* **Roadmap pós-v2.0:** a `TASK-V30-000` propõe, sem código, a sequência mínima
-  v2.1 Enterprise Engineering Governance → v2.2 Advanced Engineering Planning &
-  Verification → v3.0 Manufacturing Intelligence & Digital Thread. O CTO aprovou
-  `DEC-037` e oficializou R-048–R-050. Somente v2.1 Package 1 está autorizado para
-  implementação; todos os Packages seguintes permanecem `NOT_STARTED`.
+* **Roadmap pós-v2.0:** `DEC-037` foi ampliada pela autorização direta do Owner para
+  v2.1 → v2.2 → v2.3 → v3.0. A v2.2 Package 1 está implementada; Packages seguintes
+  permanecem fora desta missão.
 * **v2.1 Package 1 implementado:** catálogos Engineering agora são organization-scoped;
   membership ativa lê e OWNER/ADMIN cria. `SYSTEM_REFERENCE` é read-only e dados
   preexistentes viram `LEGACY_UNSCOPED` oculto, sem atribuição arbitrária. A migration
@@ -46,7 +67,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   API/FastAPI/health/OpenAPI/frontend estão alinhadas em `2.1.0`, migration permanece
   `e61c4f8a2b90` e release notes estão publicadas. A PR #25 foi integrada por Squash
   Merge em `f5d6775`; tag e GitHub Release `v2.1.0` encerram a versão sem deploy.
-  A v2.2 permanece `NOT_STARTED` até nova ordem formal do CTO.
+  A v2.2 Package 1 está implementada em branch separada e aguarda revisão do CTO.
 * **Fluxo operacional:** `AUTONOMOUS_CTO_CODEX_OPERATION = ACTIVE` para operações
   técnicas rotineiras formalmente aprovadas pelo CTO. Ações materialmente não
   delegáveis e limites permanentes continuam exigindo o gate aplicável.
