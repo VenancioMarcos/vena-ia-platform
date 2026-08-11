@@ -13,11 +13,14 @@ Use an independent, bounded Level-2 reconstruction for stock, target coverage,
 simplified cylindrical sweep, protected envelopes, rapid motion and supplied fixture
 keep-outs. Freeze all deterministic artifacts in a blind harness that receives the
 sealed-reference hash but not expected features or operations. Gates G0–G8 are
-technical evidence; G9 requires real human-review evidence.
+technical evidence. The public request has no review field: reviewer identity,
+decision and evidence authority must never originate from payload text. G9 remains
+pending until a separately authorized server-side boundary resolves trusted evidence.
 
 ## Consequences
 
 Missing or malformed evidence fails closed and replay is deterministic. Without real
-G9 evidence, readiness remains false. The approximation is not exact B-Rep removal,
+G9 evidence, readiness remains false. Extra-field/mass-assignment attempts are
+rejected. The approximation is not exact B-Rep removal,
 holder collision, machine kinematics or physical validation and grants no production
 or machine authority.

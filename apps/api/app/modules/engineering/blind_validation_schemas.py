@@ -10,13 +10,6 @@ from app.modules.engineering.postprocessor_schemas import GCodeCandidate
 from app.modules.engineering.toolpath_schemas import ToolpathCandidate
 
 
-class HumanReviewEvidence(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    reviewer_ref: str = Field(min_length=1, max_length=255)
-    decision: Literal["APPROVED_FOR_CONTROLLED_VALIDATION", "REJECTED"]
-    evidence_ref: str = Field(min_length=1, max_length=500)
-
-
 class ControlledBlindValidationRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     holdout_id: str = Field(min_length=1, max_length=255)
@@ -27,7 +20,6 @@ class ControlledBlindValidationRequest(BaseModel):
     gcode_candidate: GCodeCandidate
     level2_evidence: Level2VerificationEvidence
     questions_asked: list[str] = Field(default_factory=list)
-    human_review: HumanReviewEvidence | None = None
 
 
 class GateEvidence(BaseModel):

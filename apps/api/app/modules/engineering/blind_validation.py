@@ -38,10 +38,6 @@ class ControlledBlindValidationService:
             model.recommendation
             and not model.recommendation.compatibility.endswith("INCOMPATIBLE")
         )
-        review_pass = bool(
-            request.human_review
-            and request.human_review.decision == "APPROVED_FOR_CONTROLLED_VALIDATION"
-        )
         gate_values: list[
             tuple[
                 Literal["G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"],
@@ -66,8 +62,8 @@ class ControlledBlindValidationService:
         gates.append(
             GateEvidence(
                 gate="G9",
-                status="PASS" if review_pass else ("FAIL" if request.human_review else "PENDING_REVIEW"),
-                evidence_ref=(request.human_review.evidence_ref if request.human_review else "PENDING_HUMAN_REVIEW"),
+                status="PENDING_REVIEW",
+                evidence_ref="PENDING_AUTHORITATIVE_SERVER_SIDE_HUMAN_REVIEW",
             )
         )
         bundle_hash = _hash(
@@ -89,7 +85,7 @@ class ControlledBlindValidationService:
             false_positives=[],
             process_divergence="PENDING_SEALED_REFERENCE_ADJUDICATION",
             toolpath_divergence="PENDING_SEALED_REFERENCE_ADJUDICATION",
-            human_adjudication="RECORDED" if request.human_review else "PENDING_REVIEW",
+            human_adjudication="PENDING_AUTHORITATIVE_REVIEW",
             replay_hash=_hash(
                 {
                     "bundle": bundle_hash,
@@ -100,6 +96,7 @@ class ControlledBlindValidationService:
             limitations=[
                 "The sealed reference body is never loaded by this harness.",
                 "Omissions, false positives and divergence require later human adjudication.",
+                "G9 authority cannot originate from the public request payload.",
                 "No artifact grants physical or production authority.",
             ],
         )

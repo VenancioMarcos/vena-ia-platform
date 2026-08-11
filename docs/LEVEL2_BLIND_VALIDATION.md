@@ -28,13 +28,24 @@ identity; G7 RS274 verification; G8 Level-2 evidence; G9 real human review. All 
 pass for controlled-validation readiness. A missing G9 is `PENDING_REVIEW`, never an
 implicit approval.
 
+## G9 authority boundary
+
+The public request cannot contain `human_review`, `reviewer_ref`, review `decision`
+or `evidence_ref`. Authentication alone does not grant review authority, and textual
+references are not proof. Unknown fields are rejected to prevent mass assignment.
+Package 3 therefore always emits G9 as `PENDING_REVIEW` and readiness as false. A
+future G9 transition requires a separately authorized mechanism that derives reviewer
+identity and authority from trusted server/database state; it is intentionally deferred.
+
 ## Delivery record
 
 Files added/changed: Level-2 and blind schemas/services, authenticated routes, focal
 tests and governance documentation. Acceptance covers deterministic PASS, stock and
 evidence failures, target omission, trajectory inconsistency, gouge, rapid collision,
 fixture keep-out, non-finite coordinates, blind replay and G9 pending. No migration
-is needed. Next step is CTO review of Draft PR #28; v3.0 is not started.
+is needed. Forged reviewer/evidence/approval payloads and authenticated ordinary-user
+mass assignment are rejected without changing replay. Next step is CTO review of
+Draft PR #28; v3.0 is not started.
 
 `CAD_TO_GCODE_CONTROLLED_VALIDATION_READY = FALSE`
 

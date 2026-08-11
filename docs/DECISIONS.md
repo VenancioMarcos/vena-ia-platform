@@ -1387,3 +1387,10 @@ não entra no contrato de execução. G9 exige evidência humana real e, quando 
 fica `PENDING_REVIEW`; readiness não pode ser promovida. Level 2 não é B-Rep exato,
 cinemática, validação física nem autorização produtiva. Não há migration ou novo
 serviço arquitetural.
+
+**Correção de authority TASK-V23-003A:** `human_review` não pertence ao request
+público. `reviewer_ref`, `decision` e `evidence_ref` textuais não são autoridade e
+falham como campos extras. G9 permanece `PENDING_REVIEW` por design até existir uma
+fronteira separada, explicitamente autorizada e resolvida server-side a partir de
+identidade e estado confiáveis. Nenhum registry, ledger, role ou assinatura foi
+inventado para antecipar essa decisão.

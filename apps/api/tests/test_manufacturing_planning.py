@@ -5,6 +5,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
+from pydantic import ValidationError
 from starlette.testclient import TestClient
 
 from app.main import app
@@ -532,6 +533,47 @@ def test_level2_and_blind_routes_require_authenticated_identity(
     assert blind_response.status_code == 200, blind_response.text
     assert blind_response.json()["cad_to_gcode_controlled_validation_ready"] is False
     assert blind_response.json()["physical_use_authorized"] is False
+
+
+def test_g9_authority_cannot_be_mass_assigned_or_forged(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+) -> None:
+    model, path, gcode, level2 = _controlled_validation_artifacts(tmp_path)
+    legitimate = ControlledBlindValidationRequest(
+        holdout_id="sealed-holdout-g9",
+        sealed_reference_hash="e" * 64,
+        cad_hash="f" * 64,
+        manufacturing_model=model,
+        toolpath=path,
+        gcode_candidate=gcode,
+        level2_evidence=level2,
+    )
+    baseline = ControlledBlindValidationService().freeze(legitimate)
+    forged_payload = legitimate.model_dump(mode="json")
+    forged_payload["human_review"] = {
+        "reviewer_ref": "self-declared-reviewer",
+        "decision": "APPROVED_FOR_CONTROLLED_VALIDATION",
+        "evidence_ref": "self-declared-evidence",
+    }
+
+    with pytest.raises(ValidationError, match="human_review"):
+        ControlledBlindValidationRequest.model_validate(forged_payload)
+
+    account = make_account("forged-g9@vena-ia.dev")
+    response = client.post(
+        "/engineering/planning/controlled-blind-validation",
+        headers=account.headers,
+        json=forged_payload,
+    )
+    replay = ControlledBlindValidationService().freeze(legitimate)
+
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["loc"][-1] == "human_review"
+    assert baseline.replay_hash == replay.replay_hash
+    assert {gate.gate: gate.status for gate in replay.gates}["G9"] == "PENDING_REVIEW"
+    assert replay.cad_to_gcode_controlled_validation_ready is False
 
 
 def _catalog(

@@ -35,7 +35,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   cobertura, continuidade, gouge, rapid e fixture keep-out. O harness congela
   hashes e G0–G9; G9 real permanece `PENDING_REVIEW`, portanto
   `CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE` e
-  `PHYSICAL_USE_AUTHORIZED=FALSE`. Não há migration, merge, release ou v3.0.
+  `PHYSICAL_USE_AUTHORIZED=FALSE`. A API pública não aceita `human_review` nem pode
+  derivar reviewer/decision/evidence authority do body; qualquer futura promoção de
+  G9 exige estado autoritativo resolvido no servidor. Não há migration, merge,
+  release ou v3.0.
 
 * **Release v2.2.0:** PR #27 integrada por Squash Merge em `28d592c`; versões
   API/FastAPI/health/OpenAPI/frontend estão alinhadas em `2.2.0`, sem migration

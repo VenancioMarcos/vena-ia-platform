@@ -18,6 +18,9 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * Missing, invalid, non-finite, discontinuous, colliding or incomplete evidence
   fails closed. G9 remains `PENDING_REVIEW` without real human-review evidence, so
   controlled-validation readiness remains false.
+* The public blind-validation request cannot carry `human_review`, reviewer identity,
+  a review decision or evidence authority. Extra-field/mass-assignment attempts fail
+  validation; G9 can only be resolved by a future authoritative server-side boundary.
 
 ### Limits — v2.3 Package 3
 * Level 2 is a conservative endpoint/cylindrical-sweep approximation, not exact
