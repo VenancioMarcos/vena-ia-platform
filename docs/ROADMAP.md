@@ -1569,7 +1569,7 @@ features, planning ou agentes.
 **Objetivo:** ampliar cobertura determinística e evidence de verificação mantendo
 planning separado de execução.
 
-**Package 1 — General Geometry Evidence — `READY_FOR_CTO_REVIEW`:** contrato
+**Package 1 — General Geometry Evidence — `COMPLETE / RELEASED v2.2.0`:** contrato
 `vena-ia.geometry-topology-evidence/v1` geral e versionado para topologia B-Rep,
 IDs canônicos/replay, unidades/transformação, tolerâncias separadas, relações e
 classificação de superfícies/curvas. Corpus sintético e falhas fechadas cobrem
@@ -1577,7 +1577,7 @@ unidade ambígua, topologia inválida e limites. O evidence não é uma lista de
 nem implica intenção ou manufaturabilidade. Riscos: R-019, R-039 e R-040.
 
 **Package 2 — Manufacturing Interpretation & Verified Process Planning —
-`READY_FOR_CTO_REVIEW`:** manufacturing geometry model separa facts/intents, exige
+`COMPLETE / RELEASED v2.2.0`:** manufacturing geometry model separa facts/intents, exige
 stock provenanced, protege final surfaces, registra removal/unknown/accessibility e
 propõe datum/WCS/setup 3-axis/2.5D. Plano versionado usa intent explícito, catálogos
 organization-scoped, precedência e verification evidence de coerência/replay. Falha
@@ -1588,8 +1588,8 @@ simulation física ou machine connectivity. Riscos: R-041, R-044, R-045 e R-049.
 planning reproduzível; simulation evidence marcada `NON_PRODUCTION` e insuficiente
 para validação física; testes de boundary CNC; revisão humana obrigatória.
 
-**Condição de avanço:** evidência determinística e de simulação aprovada antes da
-integração no digital thread v3.0.
+**Condição de avanço:** concluída pela PR #27, Squash Merge `28d592c` e release
+v2.2.0. A próxima etapa autorizada é a fronteira controlada v2.3.
 
 ## 10.5 v2.3 — Controlled CAD-to-G-code Validation
 

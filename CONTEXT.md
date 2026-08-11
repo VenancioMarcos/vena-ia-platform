@@ -27,6 +27,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **Release v2.2.0:** PR #27 integrada por Squash Merge em `28d592c`; versões
+  API/FastAPI/health/OpenAPI/frontend estão alinhadas em `2.2.0`, sem migration
+  nova (head `e61c4f8a2b90`). A release mantém planning determinístico e não
+  produtivo; v2.3 é a próxima fronteira formal de toolpath/G-code candidato.
+* **Integração documental PR #26/#27 concluída:** a PR #26 foi encerrada como
+  substituída somente após o blob da Gap Analysis ser comprovado byte a byte na
+  PR #27 (`27cb85167c22aca6e9719c872d202981b387b75d`).
+
 * **TASK-V22-002 — v2.2 Package 2 pronta para revisão:** a mesma branch/PR #27
   adiciona `manufacturing-geometry-model/v1`, `verified-process-plan/v1` e
   `planning-verification-evidence/v1`. Stock é obrigatório/provenanced, regiões
