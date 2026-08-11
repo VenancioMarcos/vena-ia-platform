@@ -270,6 +270,7 @@ class GeometryEvidenceBuilder:
         from OCP.TopAbs import (  # type: ignore[import-untyped]
             TopAbs_EDGE,
             TopAbs_FACE,
+            TopAbs_REVERSED,
             TopAbs_SHELL,
             TopAbs_ShapeEnum,
             TopAbs_SOLID,
@@ -324,6 +325,34 @@ class GeometryEvidenceBuilder:
                         props = GProp_GProps()
                         BRepGProp.SurfaceProperties_s(typed, props)
                         metrics = {"area": _rounded(props.Mass())}
+                        if geometry_type == "PLANE":
+                            plane = adapter.Plane()
+                            direction = plane.Axis().Direction()
+                            sign = -1.0 if typed.Orientation() == TopAbs_REVERSED else 1.0
+                            metrics.update(
+                                {
+                                    "normal_x": _rounded(sign * direction.X()),
+                                    "normal_y": _rounded(sign * direction.Y()),
+                                    "normal_z": _rounded(sign * direction.Z()),
+                                    "location_x": _rounded(plane.Location().X()),
+                                    "location_y": _rounded(plane.Location().Y()),
+                                    "location_z": _rounded(plane.Location().Z()),
+                                }
+                            )
+                        elif geometry_type in {"CYLINDER", "CONE", "TORUS"}:
+                            primitives = {
+                                "CYLINDER": adapter.Cylinder,
+                                "CONE": adapter.Cone,
+                                "TORUS": adapter.Torus,
+                            }
+                            axis = primitives[geometry_type]().Axis().Direction()
+                            metrics.update(
+                                {
+                                    "axis_x": _rounded(axis.X()),
+                                    "axis_y": _rounded(axis.Y()),
+                                    "axis_z": _rounded(axis.Z()),
+                                }
+                            )
                     elif kind == "EDGE":
                         adapter = BRepAdaptor_Curve(typed)
                         geometry_type = self._curve_type(adapter.GetType().name)

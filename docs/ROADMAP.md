@@ -1576,11 +1576,13 @@ classificação de superfícies/curvas. Corpus sintético e falhas fechadas cobr
 unidade ambígua, topologia inválida e limites. O evidence não é uma lista de features
 nem implica intenção ou manufaturabilidade. Riscos: R-019, R-039 e R-040.
 
-**Package 2 — Planning and verification evidence — `NOT_STARTED`:** candidatos de operação, setup,
-tooling, fixture assumptions, sequência e estimativas rastreáveis; contratos para
-collision/stock/kinematic/envelope evidence somente quando houver engine verificável.
-Falha e ausência permanecem explícitas. Não há toolpath, postprocessor, G/M-code,
-NC/DNC ou machine connectivity. Riscos: R-041, R-044, R-045 e R-049.
+**Package 2 — Manufacturing Interpretation & Verified Process Planning —
+`READY_FOR_CTO_REVIEW`:** manufacturing geometry model separa facts/intents, exige
+stock provenanced, protege final surfaces, registra removal/unknown/accessibility e
+propõe datum/WCS/setup 3-axis/2.5D. Plano versionado usa intent explícito, catálogos
+organization-scoped, precedência e verification evidence de coerência/replay. Falha
+e ausência permanecem explícitas. Não há toolpath, postprocessor, G/M-code, NC/DNC,
+simulation física ou machine connectivity. Riscos: R-041, R-044, R-045 e R-049.
 
 **Aceite:** corpus de falsos positivos/negativos; provenance de rules/catalogs;
 planning reproduzível; simulation evidence marcada `NON_PRODUCTION` e insuficiente

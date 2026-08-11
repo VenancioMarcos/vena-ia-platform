@@ -27,6 +27,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **TASK-V22-002 — v2.2 Package 2 pronta para revisão:** a mesma branch/PR #27
+  adiciona `manufacturing-geometry-model/v1`, `verified-process-plan/v1` e
+  `planning-verification-evidence/v1`. Stock é obrigatório/provenanced, regiões
+  externas ao envelope são decompostas sem sobreposição, superfícies finais ficam
+  protegidas e material interno desconhecido não é inventado. Acesso/datum/WCS/setup
+  são somente candidatos 3-axis/2.5D. Intent e recursos autorizados são gates; não
+  há toolpath, postprocessor, G/M-code ou simulação física.
+* **Integração documental PR #26/#27:** a Gap Analysis histórica foi portada
+  integralmente para `docs/CAD_TO_GCODE_GAP_ANALYSIS_v1.md` na linha v2.2. Os
+  documentos de estado da PR #27 são a continuação oficial; a PR #26 pode ser
+  encerrada como redundante somente após confirmar o blob remoto preservado.
+
 * **TASK-V22-001 — v2.2 Package 1 pronta para revisão:** a branch
   `codex/v2.2-general-geometry-evidence` adiciona
   `vena-ia.geometry-topology-evidence/v1` ao endpoint CAD autorizado. O read model

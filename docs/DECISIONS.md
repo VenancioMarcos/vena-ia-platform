@@ -1354,3 +1354,18 @@ de manufatura são campos separados; a última nunca é inferida. Classificaçã
 surface/curve é evidência geométrica, não feature ou manufacturing intent. R-019,
 R-039 e R-040 avançam parcialmente; R-041/R-044/R-049 não são promovidos. Package 2,
 toolpath, postprocessor, G/M-code e autoridade física permanecem fora.
+
+## DEC-040 — Manufacturing Interpretation & Verified Process Planning
+
+**Data:** 2026-08-10
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Arquitetura / Manufacturing / Planning / Segurança
+
+Adotar os contratos `manufacturing-geometry-model/v1`, `verified-process-plan/v1` e
+`planning-verification-evidence/v1`. Stock/intent/configuração são facts explícitos;
+geometry não gera operação. Catálogos/autorização v2.1 são reutilizados sem paralelo.
+Access/datum/WCS/setup são candidatos 3-axis/2.5D e verification não é simulação.
+
+A Gap Analysis da PR #26 é preservada integralmente na linha v2.2/PR #27. Este
+registro e ADR-0032 tornam a PR #27 a continuação oficial dos documentos de estado;
+a PR #26 só pode ser fechada após comparar os blobs remotos. Sem migration ou v2.3.

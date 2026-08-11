@@ -334,3 +334,21 @@ canônicos e da identidade/versionamento do kernel; empates são expostos como g
 de ambiguidade. Unidade desconhecida e topologia inválida não emitem elementos.
 Tolerâncias de kernel/modelagem são separadas e manufacturing tolerance permanece
 `NOT_PROVIDED`. Detalhes: `docs/GEOMETRY_TOPOLOGY_EVIDENCE.md` e ADR-0031.
+
+---
+
+## 19. Manufacturing Interpretation v2.2 Package 2
+
+```text
+geometry-topology-evidence/v1 + explicit stock/intent/constraints
+  → ManufacturingPlanningService (bounded deterministic rules)
+  → existing organization-scoped EngineeringCatalogService
+  → manufacturing-geometry-model/v1
+  → verified-process-plan/v1 + planning-verification-evidence/v1
+```
+
+O serviço é efêmero e permanece no Modular Monolith. Stock não é inferido da peça;
+faces finais são protegidas; accessibility/datum/WCS/setup são candidatos. Recursos
+reutilizam exatamente ownership/autorização v2.1. Verification cobre coerência,
+missing inputs, resources, precedence e replay, nunca remoção física, colisão ou
+cinemática. Detalhes: `docs/MANUFACTURING_GEOMETRY_MODEL.md` e ADR-0032.

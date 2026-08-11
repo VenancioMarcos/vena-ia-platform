@@ -1,5 +1,24 @@
 # Estado de execução CTO
 
+## 2026-08-10 — TASK-V22-002 Manufacturing Interpretation
+
+```text
+MISSION=TASK_V22_002
+STATE=VENA_IA_V2_2_PACKAGE_2_READY_FOR_CTO_REVIEW
+BRANCH=codex/v2.2-general-geometry-evidence
+PR=27
+CONTRACTS=manufacturing-geometry-model/v1_verified-process-plan/v1_planning-verification-evidence/v1
+PR26_GAP_ANALYSIS=PRESERVED_IN_PR27_PENDING_REMOTE_BLOB_PROOF
+MIGRATION=NONE_HEAD_e61c4f8a2b90
+CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE
+PHYSICAL_USE_AUTHORIZED=FALSE
+V2_3=NOT_STARTED
+NEXT=CTO_REVIEW
+```
+
+Stock/intent/resources são gates; removal/protected/unknown, access/datum/WCS/setup,
+precedence e replay são não executáveis. Geometry nunca é manufacturing intent.
+
 ## 2026-08-10 — TASK-V22-001 General Geometry Evidence
 
 ```text

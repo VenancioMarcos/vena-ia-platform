@@ -8,6 +8,27 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Adicionado — v2.2 Package 2
+* `vena-ia.manufacturing-geometry-model/v1` consome topology evidence v1 e separa
+  fatos geométricos de interpretação de manufatura explicitamente fornecida.
+* Stock possui estados `PROVIDED`, `DERIVED_FROM_AUTHORIZED_CONFIGURATION`,
+  `MISSING`, `AMBIGUOUS` e `INVALID`; bounding box da peça nunca vira stock factual.
+* Relação stock→final produz regiões geométricas não sobrepostas fora do envelope,
+  preserva todas as faces finais e mantém material desconhecido interno explícito.
+* Candidatos bounded 3-axis/2.5D cobrem acesso cardinal, datum, WCS e setup sem
+  escolher offset, fixture ou datum de produção silenciosamente.
+* `vena-ia.verified-process-plan/v1` aplica `ASK_ONLY_WHEN_BLOCKING`, recursos
+  organization-scoped existentes, parâmetros preliminares, precedência versionada e
+  `vena-ia.planning-verification-evidence/v1` para coerência/replay.
+* A Gap Analysis original da PR #26 foi preservada integralmente em
+  `docs/CAD_TO_GCODE_GAP_ANALYSIS_v1.md`; estado corrente permanece nos documentos
+  oficiais da branch/PR #27, eliminando fontes paralelas contraditórias.
+
+### Limites — v2.2 Package 2
+* Planning verification não é material-removal/collision/kinematic simulation.
+* Não há toolpath, cutter location, postprocessor, RS274, G/M-code, NC/DNC ou
+  controle de máquina. Drilling exige target confirmado além de superfície cilíndrica.
+
 ### Adicionado — v2.2 Package 1
 * O contrato aditivo `vena-ia.geometry-topology-evidence/v1` expõe evidência geral
   de B-Rep carregada pelo adapter OCCT existente: sólidos, shells, faces, wires,
