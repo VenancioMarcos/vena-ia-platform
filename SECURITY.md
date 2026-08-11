@@ -193,6 +193,35 @@ No Release Candidate v2.1.0, os mesmos controles foram revalidados sem novo pape
 endpoint de mutação ou authority client-side. Enterprise governance continua
 `NON_PRODUCTION`; publicação e deploy permanecem gates separados.
 
+## 7.5 Download controlado de candidato v3.1
+
+As rotas do ambiente controlado exigem identidade autenticada e membership ativa no
+banco. Organization, role, reviewer e G9 enviados por body/header/frontend não são
+autoridade. Catálogos organization-owned devem pertencer ao mesmo escopo.
+
+O download usa prova HMAC curta vinculada a user, organization e hashes canônicos dos
+artifacts completos de candidato, blind evidence e Digital Thread. Assinatura, expiração, hash/manifest G-code, parser
+RS274 independente, bundle/replay blind, G0–G8, G9 pendente e replay/ownership do
+thread são revalidados. Respostas usam `no-store` e classificação explícita.
+
+O arquivo é candidato não produtivo. Não existe machine-send, DNC/NC transfer, cycle
+start, controle direto, autoridade física ou aprovação G9 nessa fronteira.
+
+## 7.6 G9 Review Package v3.1
+
+`vena-ia.g9-review-package/v1` é produzido somente pelo backend a partir de candidate,
+Digital Thread, blind validation e Level-1/Level-2 já validados. O hash do pacote,
+artifact hashes, versions e replay refs são evidence de integridade, nunca autoridade.
+
+O contrato é output-only, estrito e não possui reviewer, decision ou evidence-authority
+input. Campos extras, lifecycle stale, versão divergente, hash/replay adulterado,
+candidate/thread/blind mismatch ou G9 diferente de pending falham fechado. O pacote
+descreve protocolos humano/externo, mas não os executa e não aceita retorno externo.
+
+Identity/membership atuais continuam sendo autorizadas antes da execução controlada.
+Não existe endpoint de aprovação, registry de reviewer, integração de simulador,
+machine-send, DNC/NC, cycle start, controle físico ou bypass de revisão.
+
 ---
 
 ## 8. Reportar uma Vulnerabilidade

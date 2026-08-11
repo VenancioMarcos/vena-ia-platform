@@ -8,6 +8,40 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [3.1.0] — 2026-08-11 — Controlled CAD-to-G-code Test Environment
+
+### Added — TASK-V31-004 G9 Review Package
+* Added deterministic `vena-ia.g9-review-package/v1` to the existing authenticated
+  controlled run, binding candidate, Digital Thread, blind evidence, G0-G8,
+  Level-1/Level-2, contract/component versions, limitations and risks.
+* Added a read-only UI summary and protocols for qualified human review and future
+  independent external validation.
+* Forged reviewer/evidence fields, stale lifecycle, version/hash/replay mismatch and
+  every G9-authority attempt remain fail-closed; no approval endpoint was introduced.
+
+### Documentation and assurance — TASK-V31-003 G9 preparation
+* Classified the evidence that can be produced automatically, requires an authorized
+  human reviewer, requires external simulation and is mandatory before any physical
+  test; no G9 approval mechanism or physical authority was introduced.
+* Extended controlled-download assurance for query/header/body authority forgery,
+  expired proof and immediately revoked Organization membership.
+
+### Added — TASK-V31-002 Controlled Test Environment
+* Authenticated organization-scoped orchestration composes authorized CAD, topology
+  evidence, manufacturing geometry, verified process plan, bounded toolpath,
+  synthetic postprocessor, Level-1/Level-2 evidence, blind validation and Digital
+  Thread without duplicating deterministic services.
+* A short-lived HMAC proof binds controlled candidate downloads to authenticated
+  user, organization and immutable hashes; download independently revalidates the
+  candidate, blind bundle and Digital Thread.
+* The project UI exposes required inputs, G0–G9, Digital Thread and a clearly
+  non-production `.candidate.nc` download.
+
+### Safety
+* G0–G8 require evidence; G9 remains `PENDING_AUTHORITATIVE_REVIEW` and cannot come
+  from the client. Physical use, machine-send, DNC/NC transfer, cycle start, direct
+  machine control and human-review bypass remain false or absent.
+
 ## [3.0.0] — 2026-08-11 — Manufacturing Intelligence & Digital Thread
 
 ### Added

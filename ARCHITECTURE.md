@@ -390,3 +390,24 @@ Routes authorize Organization membership from token plus database. Invalid hashe
 forward/broken refs, schema mismatch, stale/revoked artifacts and cross-org access
 fail closed. The bounded layer has no tools or mutation path and cannot approve
 G0–G9. ADR-0035 records the boundary.
+
+---
+
+## 22. Controlled Test Environment v3.1
+
+```text
+token + database membership + organization-scoped inputs
+  → ControlledEnvironmentService
+  → existing CAD/planning/toolpath/postprocessor/verification services
+  → blind replay + immutable Digital Thread
+  → short-lived HMAC download proof
+  → independent server-side revalidation
+  → non-production .candidate.nc download
+```
+
+The orchestration remains inside the Engineering module and introduces no database,
+ledger, queue, repository or migration. The proof binds current user, organization,
+candidate output, blind replay and Digital Thread replay. Download requires current
+membership and revalidates all bindings. G9 cannot be promoted by this route or UI;
+no machine adapter or physical-control port exists. Details:
+`docs/CONTROLLED_TEST_ENVIRONMENT.md` and ADR-0036.

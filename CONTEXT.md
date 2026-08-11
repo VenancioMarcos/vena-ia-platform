@@ -27,6 +27,40 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **Release Candidate v3.1.0 — NON_PRODUCTION:** API/FastAPI/health/OpenAPI and
+  frontend versions are aligned at `3.1.0`; release notes consolidate the Controlled
+  Test Environment and deterministic G9 Review Package. Draft PR #30 remains the
+  release gate. G9 is pending, readiness/physical authority are false and no deploy,
+  external validation, machine interface or v3.2 is included.
+
+* **TASK-V31-004 — G9 Review Package:** the existing controlled run now returns
+  deterministic `vena-ia.g9-review-package/v1`, hash-bound to the candidate, Digital
+  Thread, blind bundle, G0-G8, Level-1/Level-2 and exact contract/component versions.
+  It consolidates human-review and external-validation protocols without accepting
+  reviewer authority or external disposition. G9 remains pending; readiness and
+  physical authority remain false. No persistence, migration, machine integration,
+  deploy or v3.2 was introduced.
+
+* **TASK-V31-003 — G9/external-validation preparation:** the v3.1 implementation was
+  audited without creating a G9 transition. `docs/G9_EXTERNAL_VALIDATION_PREPARATION.md`
+  separates automatic integrity evidence, authoritative human review evidence,
+  independent external-simulation evidence and the separately authorized prerequisites
+  for any physical test. Focused assurance covers body/query/header forgery, proof
+  expiry, revoked membership, cross-Organization access and artifact tampering.
+  G9 remains `PENDING_AUTHORITATIVE_REVIEW`; controlled-validation readiness and
+  physical authority remain false.
+
+* **TASK-V31-002 — Controlled Test Environment implementada:** a branch
+  `codex/v3.1-controlled-test-environment` compõe a cadeia autorizada
+  CAD→evidências→Manufacturing Geometry→Process Plan→Toolpath bounded→postprocessor
+  sintético→Level-1/Level-2→blind evidence→Digital Thread→download controlado. Token,
+  membership ativa e escopo organizacional são autoridade; prova HMAC curta vincula
+  usuário/organização/hashes e o download revalida integridade. G0–G8 passam somente
+  com evidence; G9 segue `PENDING_AUTHORITATIVE_REVIEW`.
+  `PHYSICAL_USE_AUTHORIZED=false`; não existem machine-send, DNC/NC transfer, cycle
+  start, controle direto ou bypass de human review. Não há migration, merge, release,
+  deploy ou início de v3.2 nesta missão.
+
 * **Release v3.0.0 publicada:** a PR #29 foi integrada em `f2ffe5c`; tag anotada e
   GitHub Release publicam Manufacturing Intelligence & Digital Thread.
   `vena-ia.digital-thread/v1` encadeia artifacts

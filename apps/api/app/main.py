@@ -36,7 +36,7 @@ from app.modules.projects.api.routes import router as projects_router
 from app.modules.research.api.routes import router as research_router
 from app.modules.users.api.routes import router as users_router
 
-API_VERSION = "3.0.0"
+API_VERSION = "3.1.0"
 
 
 @asynccontextmanager
@@ -83,6 +83,12 @@ def create_app() -> FastAPI:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=[
+            "Content-Disposition",
+            "X-Vena-IA-Classification",
+            "X-Vena-IA-Physical-Use-Authorized",
+            "X-Vena-IA-Review-State",
+        ],
     )
     app.add_middleware(
         AuditCorrelationMiddleware,

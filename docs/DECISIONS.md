@@ -1412,3 +1412,64 @@ Ela não possui tools, write capability, estado autônomo, acesso de máquina ou
 para alterar evidence/G0–G9. Manifesto em existing storage é suficiente nesta fase;
 ledger, event sourcing, tabela e migration foram rejeitados por ausência de requisito
 real. G9 continua exclusivamente autoritativo e pendente.
+
+## DEC-043 — Controlled Test Environment and Candidate Download
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Arquitetura / Orchestration / CNC Safety / Authorization
+
+TASK-V31-002 adota uma camada aditiva de orchestration sobre serviços determinísticos
+existentes, sem reimplementar CAD, planning, toolpath, postprocessor, verificadores ou
+Digital Thread e sem nova persistência/migration. A execução exige token, usuário do
+banco, membership ativa e catálogos no mesmo escopo organizacional.
+
+O download controlado usa prova HMAC curta vinculada a user/org e aos hashes canônicos
+dos artifacts completos. O servidor revalida assinatura/expiração, hash/manifest do candidato, parser
+RS274 independente, bundle/replay blind, G0–G8, G9 pendente e replay/ownership do
+Digital Thread. Cliente, header ou body não aprovam G9 ou uso físico.
+
+O arquivo é somente `CANDIDATE_FOR_VALIDATION`, `NON_PRODUCTION` e
+`REQUIRES_HUMAN_REVIEW`. Machine-send, DNC/NC transfer, cycle start, controle direto,
+produção e bypass de revisão permanecem ausentes. ADR-0036 registra consequências.
+
+## DEC-044 — G9 Evidence Boundary and External Validation Preparation
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Assurance / CNC Safety / Human Authority
+
+TASK-V31-003 formaliza quatro classes que não podem ser confundidas: evidence de
+integridade produzível automaticamente; adjudicação humana autoritativa; validação
+externa independente; e pré-condições separadamente autorizadas para qualquer teste
+físico. Hash, HMAC e replay provam integridade, mas nunca identidade/qualificação do
+reviewer, decisão G9 ou autoridade física.
+
+O contrato público permanece sem endpoint de transição G9. Uma futura adjudicação
+deve ser server-side, vinculada à identidade/membership atual do reviewer, qualificação,
+conflito de interesse, Digital Thread, frozen bundle, candidate hash, versões exatas,
+disposição, findings, timestamp e regras de revogação/supersession. Sua criação exige
+missão separada. Simulação externa e protocolo físico também continuam fora do escopo.
+
+G9 permanece `PENDING_AUTHORITATIVE_REVIEW`; readiness e physical authority ficam
+false. Nenhuma mudança arquitetural, migration, machine interface ou v3.2 foi criada.
+
+## DEC-045 — Deterministic G9 Review Package
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Evidence / External Handoff / Human Authority
+
+TASK-V31-004 adota `vena-ia.g9-review-package/v1` como output aditivo do run
+autenticado existente. O pacote consolida hashes, versions, G0-G8, Level-1/Level-2,
+Digital Thread, blind evidence, limitações, riscos e protocolos sem duplicar artifacts,
+criar persistência ou estabelecer reviewer authority.
+
+`package_hash` e `package_id` derivam canonicamente do conteúdo. Uma reconstrução com
+os mesmos artifacts produz o mesmo pacote, independentemente do usuário autenticado
+ou instante de emissão do token de download. Hash/HMAC/replay permanecem evidência de
+integridade apenas.
+
+Reviewer, decision e external evidence authority não pertencem ao input público.
+Adjudicação, integração externa e teste físico exigem missões separadas. G9 permanece
+pending; readiness/physical authority permanecem false; não há migration ou v3.2.

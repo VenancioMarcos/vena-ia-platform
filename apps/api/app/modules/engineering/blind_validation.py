@@ -20,7 +20,9 @@ def _hash(value: object) -> str:
 class ControlledBlindValidationService:
     """Freezes artifacts before later comparison; never reads a sealed reference body."""
 
-    def freeze(self, request: ControlledBlindValidationRequest) -> ControlledBlindValidationEvidence:
+    def freeze(
+        self, request: ControlledBlindValidationRequest
+    ) -> ControlledBlindValidationEvidence:
         model = request.manufacturing_model
         path = request.toolpath
         gcode = request.gcode_candidate
@@ -35,8 +37,7 @@ class ControlledBlindValidationService:
             "level2_evidence": _hash(level2.model_dump(mode="json")),
         }
         resource_pass = bool(
-            model.recommendation
-            and not model.recommendation.compatibility.endswith("INCOMPATIBLE")
+            model.recommendation and not model.recommendation.compatibility.endswith("INCOMPATIBLE")
         )
         gate_values: list[
             tuple[
@@ -51,12 +52,18 @@ class ControlledBlindValidationService:
             ("G3", model.verification.status == "PASS_REQUIRES_HUMAN_REVIEW", "process_plan"),
             ("G4", resource_pass, "manufacturing_model"),
             ("G5", path.verification.status == "PASS_REQUIRES_HUMAN_REVIEW", "toolpath"),
-            ("G6", gcode.postprocessor_version == "VENA_SYNTHETIC_3AXIS_POST_V1", "gcode_candidate"),
+            (
+                "G6",
+                gcode.postprocessor_version == "VENA_SYNTHETIC_3AXIS_POST_V1",
+                "gcode_candidate",
+            ),
             ("G7", gcode.verification.status == "PASS_REQUIRES_HUMAN_REVIEW", "gcode_candidate"),
             ("G8", level2.status == "PASS_REQUIRES_HUMAN_REVIEW", "level2_evidence"),
         ]
         gates = [
-            GateEvidence(gate=gate, status="PASS" if passed else "FAIL", evidence_ref=artifacts[ref])
+            GateEvidence(
+                gate=gate, status="PASS" if passed else "FAIL", evidence_ref=artifacts[ref]
+            )
             for gate, passed, ref in gate_values
         ]
         gates.append(
@@ -99,4 +106,36 @@ class ControlledBlindValidationService:
                 "G9 authority cannot originate from the public request payload.",
                 "No artifact grants physical or production authority.",
             ],
+        )
+
+    @staticmethod
+    def validate(evidence: ControlledBlindValidationEvidence) -> bool:
+        bundle_hash = _hash(
+            {
+                "holdout": evidence.holdout_id,
+                "sealed": evidence.sealed_reference_hash,
+                "artifacts": evidence.frozen_artifact_hashes,
+            }
+        )
+        replay_hash = _hash(
+            {
+                "bundle": bundle_hash,
+                "gates": [gate.model_dump(mode="json") for gate in evidence.gates],
+            }
+        )
+        expected_gates = {f"G{index}" for index in range(10)}
+        actual_gates = {gate.gate for gate in evidence.gates}
+        automatic = tuple(gate for gate in evidence.gates if gate.gate != "G9")
+        return bool(
+            evidence.frozen_bundle_hash == bundle_hash
+            and evidence.replay_hash == replay_hash
+            and actual_gates == expected_gates
+            and len(evidence.gates) == 10
+            and all(gate.status == "PASS" for gate in automatic)
+            and any(
+                gate.gate == "G9" and gate.status == "PENDING_REVIEW" for gate in evidence.gates
+            )
+            and evidence.human_adjudication == "PENDING_AUTHORITATIVE_REVIEW"
+            and evidence.cad_to_gcode_controlled_validation_ready is False
+            and evidence.physical_use_authorized is False
         )

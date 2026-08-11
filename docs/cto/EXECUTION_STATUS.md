@@ -652,3 +652,101 @@ A tag anotada `v2.1.0` foi publicada com objeto
 `draft=false` e `prerelease=false`. Estado terminal:
 `VENA_IA_V2_1_RELEASED_AND_FULLY_VERIFIED`; v2.2 segue `NOT_STARTED` e o fluxo
 retorna a `AWAITING_CTO_NEXT_ORDER`.
+
+## 2026-08-11 — TASK-V31-002 Controlled Test Environment
+
+Estado funcional: `VENA_IA_V3_1_CONTROLLED_TEST_ENVIRONMENT_READY`. A branch
+`codex/v3.1-controlled-test-environment`, implementation HEAD `84d200b` e Draft PR
+#30 entregam orchestration autenticada CAD→evidence→Manufacturing Geometry→verified
+Process Plan→bounded Toolpath→synthetic G-code→Level-1/Level-2→blind evidence→Digital
+Thread→controlled download. A prova HMAC curta vincula user, Organization e hashes
+canônicos dos artifacts completos; download revalida membership, integridade,
+safe-subset, blind replay, thread replay e safety state.
+
+Gates locais: Ruff PASS; mypy 183 arquivos PASS; pytest integral `460 passed, 9
+skipped`; pós-hardening focal `21 passed` e tamper/cross-org PASS; frontend typecheck e
+build PASS; Playwright `10 passed` em desktop/largura reduzida; Compose config e
+diff/check PASS. Backend CI e Frontend CI da PR #30 concluíram SUCCESS no implementation
+HEAD. A PR permanece Draft, OPEN, MERGEABLE/CLEAN.
+
+Safety terminal: G0–G8 PASS com evidence; G9 `PENDING_AUTHORITATIVE_REVIEW`;
+`CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE`;
+`PHYSICAL_USE_AUTHORIZED=FALSE`; machine-send, DNC, NC transfer, cycle start, controle
+direto e bypass de human review não ocorreram e não existem na fronteira. Nenhum
+merge, tag, Release, deploy, teste físico ou v3.2 foi iniciado.
+
+## 2026-08-11 — TASK-V31-003 G9/external-validation preparation
+
+```text
+STATE=VENA_IA_V3_1_G9_EXTERNAL_VALIDATION_PREPARATION_READY_FOR_CTO_REVIEW
+BRANCH=codex/v3.1-controlled-test-environment
+PR=30_DRAFT
+G0_G8=AUDITED_PASS_WITH_BOUNDED_EVIDENCE
+G9=PENDING_AUTHORITATIVE_REVIEW
+G9_TRANSITION_ENDPOINT=ABSENT
+AUTOMATIC_EVIDENCE=INTEGRITY_ONLY
+HUMAN_REVIEW_EVIDENCE=REQUIRES_SEPARATELY_AUTHORIZED_SERVER_SIDE_BOUNDARY
+EXTERNAL_SIMULATION=REQUIRED_NOT_EXECUTED
+PHYSICAL_TEST_PROTOCOL=SEPARATE_OWNER_AUTHORIZATION_REQUIRED
+CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE
+PHYSICAL_USE_AUTHORIZED=FALSE
+MACHINE_SEND=FALSE
+DNC=FALSE
+NC_TRANSFER=FALSE
+CYCLE_START=FALSE
+DIRECT_MACHINE_CONTROL=FALSE
+NO_HUMAN_REVIEW_BYPASS=TRUE
+V3_2=NOT_STARTED
+NEXT=CTO_REVIEW
+```
+
+## 2026-08-11 — TASK-V31-004 G9 Review Package
+
+```text
+STATE=VENA_IA_V3_1_G9_REVIEW_PACKAGE_READY
+BRANCH=codex/v3.1-controlled-test-environment
+PR=30_DRAFT
+CONTRACT=vena-ia.g9-review-package/v1
+PACKAGE=DETERMINISTIC_HASH_AND_VERSION_BOUND
+G0_G8=REPRODUCIBLE_BOUNDED_EVIDENCE
+G9=PENDING_AUTHORITATIVE_REVIEW
+REVIEWER_AUTHORITY_INPUT=ABSENT
+EXTERNAL_EVIDENCE_AUTHORITY_INPUT=ABSENT
+AUTOMATIC_AUTHORITY=FALSE
+CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE
+PHYSICAL_USE_AUTHORIZED=FALSE
+MACHINE_SEND=FALSE
+DNC=FALSE
+NC_TRANSFER=FALSE
+CYCLE_START=FALSE
+DIRECT_MACHINE_CONTROL=FALSE
+NO_HUMAN_REVIEW_BYPASS=TRUE
+MIGRATION=NONE
+V3_2=NOT_STARTED
+NEXT=CTO_REVIEW
+```
+
+## 2026-08-11 — TASK-V31-005 Release Candidate v3.1.0
+
+```text
+STATE=VENA_IA_V3_1_NON_PRODUCTION_RELEASE_CANDIDATE
+VERSION=3.1.0
+BRANCH=codex/v3.1-controlled-test-environment
+PR=30_DRAFT
+RELEASE_TITLE=Vena_IA_Platform_v3.1.0_Controlled_CAD-to-G-code_Test_Environment
+CLASSIFICATION=NON_PRODUCTION_REQUIRES_HUMAN_REVIEW
+G0_G8=PASS
+G9=PENDING_AUTHORITATIVE_REVIEW
+CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE
+PHYSICAL_USE_AUTHORIZED=FALSE
+MACHINE_SEND=FALSE
+DNC=FALSE
+NC_TRANSFER=FALSE
+CYCLE_START=FALSE
+DIRECT_MACHINE_CONTROL=FALSE
+NO_HUMAN_REVIEW_BYPASS=TRUE
+MIGRATION=NONE
+DEPLOY=NONE
+V3_2=NOT_STARTED
+NEXT=FINAL_CI_THEN_AUTHORIZED_RELEASE_FLOW
+```

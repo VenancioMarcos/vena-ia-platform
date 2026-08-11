@@ -61,3 +61,22 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   }
   return response.json() as Promise<T>;
 }
+
+export async function apiDownload(
+  path: string,
+  init: RequestInit
+): Promise<{ blob: Blob; filename: string }> {
+  const response = await fetch(`${API_URL}${path}`, {
+    ...init,
+    credentials: "include",
+    headers: { "Content-Type": "application/json", ...(init.headers ?? {}) },
+    signal: init.signal ?? AbortSignal.timeout(API_TIMEOUT_MS)
+  });
+  if (!response.ok) {
+    const body: unknown = await response.json().catch(() => null);
+    throw new ApiError(apiErrorDetail(body) ?? `Request failed (${response.status})`, response.status);
+  }
+  const disposition = response.headers.get("Content-Disposition") ?? "";
+  const filename = disposition.match(/filename="([^"]+)"/)?.[1] ?? "vena-ia.candidate.nc";
+  return { blob: await response.blob(), filename };
+}

@@ -132,3 +132,54 @@ export type SpecializedAssistance = {
   executable_output: false;
   deterministic_input_trace: string;
 };
+
+export type GateEvidence = { gate: string; status: string; evidence_ref: string };
+export type DigitalThreadManifest = {
+  thread_id: string;
+  organization_id: string;
+  status: string;
+  artifacts: Array<{ artifact_id: string; artifact_type: string; content_hash: string }>;
+  replay_hash: string;
+  g9_state: "PENDING_AUTHORITATIVE_REVIEW";
+  physical_use_authorized: false;
+};
+export type G9ReviewPackage = {
+  schema_version: "vena-ia.g9-review-package/v1";
+  package_id: string;
+  package_hash: string;
+  candidate_output_hash: string;
+  digital_thread_id: string;
+  digital_thread_replay_hash: string;
+  blind_validation_bundle_hash: string;
+  blind_validation_replay_hash: string;
+  artifact_hashes: Record<string, string>;
+  contract_versions: Record<string, string>;
+  component_versions: Record<string, string>;
+  gates: GateEvidence[];
+  g9_state: "PENDING_AUTHORITATIVE_REVIEW";
+  automatic_authority: false;
+  physical_use_authorized: false;
+  required_external_artifacts: string[];
+};
+export type ControlledEnvironmentResult = {
+  status: "READY_FOR_CONTROLLED_DOWNLOAD";
+  classification: "CANDIDATE_FOR_VALIDATION";
+  non_production: true;
+  review_state: "REQUIRES_HUMAN_REVIEW";
+  g9_state: "PENDING_AUTHORITATIVE_REVIEW";
+  physical_use_authorized: false;
+  machine_send: false;
+  dnc: false;
+  nc_transfer: false;
+  cycle_start: false;
+  direct_machine_control: false;
+  gcode_candidate: { program: string; output_hash: string };
+  blind_validation: {
+    gates: GateEvidence[];
+    replay_hash: string;
+  };
+  digital_thread: DigitalThreadManifest;
+  g9_review_package: G9ReviewPackage;
+  download_token: string;
+  limitations: string[];
+};
