@@ -247,6 +247,16 @@ function ControlledResult({ result, busy, onDownload }: {
       {result.blind_validation.gates.map((gate) => <li key={gate.gate} className="border border-line bg-white p-2 text-sm"><strong>{gate.gate}</strong> · {gate.status}</li>)}
     </ol>
     <ThreadSummary thread={result.digital_thread} />
+    <div className="border border-line bg-white p-3 text-sm">
+      <p className="font-semibold">G9 Review Package · {result.g9_review_package.g9_state}</p>
+      <p className="break-all text-xs text-steel">
+        {result.g9_review_package.package_id} · hash {result.g9_review_package.package_hash}
+      </p>
+      <p className="mt-1">
+        {Object.keys(result.g9_review_package.artifact_hashes).length} artefatos vinculados ·
+        autoridade automática=false
+      </p>
+    </div>
     <pre className="max-h-72 overflow-auto border border-line bg-slate-950 p-3 text-xs text-green-200">{result.gcode_candidate.program}</pre>
     <button type="button" disabled={busy} onClick={onDownload} className="flex w-fit items-center gap-2 rounded bg-amber-900 px-4 py-2 text-sm text-white disabled:opacity-50">
       <Download size={16} /> Download controlado (.candidate.nc)

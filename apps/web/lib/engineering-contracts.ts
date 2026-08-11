@@ -143,6 +143,24 @@ export type DigitalThreadManifest = {
   g9_state: "PENDING_AUTHORITATIVE_REVIEW";
   physical_use_authorized: false;
 };
+export type G9ReviewPackage = {
+  schema_version: "vena-ia.g9-review-package/v1";
+  package_id: string;
+  package_hash: string;
+  candidate_output_hash: string;
+  digital_thread_id: string;
+  digital_thread_replay_hash: string;
+  blind_validation_bundle_hash: string;
+  blind_validation_replay_hash: string;
+  artifact_hashes: Record<string, string>;
+  contract_versions: Record<string, string>;
+  component_versions: Record<string, string>;
+  gates: GateEvidence[];
+  g9_state: "PENDING_AUTHORITATIVE_REVIEW";
+  automatic_authority: false;
+  physical_use_authorized: false;
+  required_external_artifacts: string[];
+};
 export type ControlledEnvironmentResult = {
   status: "READY_FOR_CONTROLLED_DOWNLOAD";
   classification: "CANDIDATE_FOR_VALIDATION";
@@ -161,6 +179,7 @@ export type ControlledEnvironmentResult = {
     replay_hash: string;
   };
   digital_thread: DigitalThreadManifest;
+  g9_review_package: G9ReviewPackage;
   download_token: string;
   limitations: string[];
 };

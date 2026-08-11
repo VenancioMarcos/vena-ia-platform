@@ -29,6 +29,7 @@ from app.modules.engineering.digital_thread_schemas import (
     DigitalThreadBuildRequest,
     DigitalThreadManifest,
 )
+from app.modules.engineering.g9_review import G9ReviewPackageService
 from app.modules.engineering.level2 import Level2Verifier
 from app.modules.engineering.level2_schemas import (
     Level2VerificationEvidence,
@@ -145,6 +146,7 @@ class ControlledEnvironmentService:
             level2,
             blind,
         )
+        review_package = G9ReviewPackageService().build(gcode, level2, blind, thread)
         token = self._token(
             user_id,
             request.organization_id,
@@ -160,6 +162,7 @@ class ControlledEnvironmentService:
             level2_evidence=level2,
             blind_validation=blind,
             digital_thread=thread,
+            g9_review_package=review_package,
             download_token=token,
             limitations=[
                 "Controlled download is a non-production candidate export only.",

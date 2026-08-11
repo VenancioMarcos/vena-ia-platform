@@ -39,6 +39,7 @@ from app.modules.engineering.blind_validation_schemas import (
     ControlledBlindValidationEvidence,
     ControlledBlindValidationRequest,
 )
+from app.modules.engineering.g9_review import G9ReviewPackageError
 from app.modules.engineering.digital_thread import (
     BoundedManufacturingIntelligenceService,
     DigitalThreadError,
@@ -292,6 +293,7 @@ def run_controlled_environment(
         ToolpathCandidateError,
         PostprocessorError,
         ControlledEnvironmentError,
+        G9ReviewPackageError,
     ) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except ValidationError as exc:

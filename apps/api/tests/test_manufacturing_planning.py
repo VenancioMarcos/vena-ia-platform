@@ -19,6 +19,9 @@ from app.modules.engineering.level2 import Level2Verifier
 from app.modules.engineering.level2_schemas import KeepOutBounds, Level2VerificationRequest
 from app.modules.engineering.blind_validation import ControlledBlindValidationService
 from app.modules.engineering.blind_validation_schemas import ControlledBlindValidationRequest
+from app.modules.engineering.controlled_environment_schemas import ControlledEnvironmentResult
+from app.modules.engineering.g9_review import G9ReviewPackageService
+from app.modules.engineering.g9_review_schemas import G9ReviewPackage
 from app.modules.engineering.schemas import AvailabilityValue
 from app.modules.engineering.toolpath import (
     ToolpathCandidateError,
@@ -732,6 +735,67 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
         )
         assert run.status_code == 200, run.text
         result = run.json()
+        parsed_result = ControlledEnvironmentResult.model_validate(result)
+        review_package = parsed_result.g9_review_package
+        assert G9ReviewPackageService.validate(
+            review_package,
+            parsed_result.gcode_candidate,
+            parsed_result.level2_evidence,
+            parsed_result.blind_validation,
+            parsed_result.digital_thread,
+        )
+        forged_evidence_package = review_package.model_copy(
+            update={
+                "artifact_hashes": {
+                    **review_package.artifact_hashes,
+                    "GCODE_CANDIDATE": "0" * 64,
+                }
+            }
+        )
+        assert not G9ReviewPackageService.validate(
+            forged_evidence_package,
+            parsed_result.gcode_candidate,
+            parsed_result.level2_evidence,
+            parsed_result.blind_validation,
+            parsed_result.digital_thread,
+        )
+        version_mismatch_package = review_package.model_copy(
+            update={
+                "contract_versions": {
+                    **review_package.contract_versions,
+                    "GCODE_CANDIDATE": "forged-version",
+                }
+            }
+        )
+        assert not G9ReviewPackageService.validate(
+            version_mismatch_package,
+            parsed_result.gcode_candidate,
+            parsed_result.level2_evidence,
+            parsed_result.blind_validation,
+            parsed_result.digital_thread,
+        )
+        with pytest.raises(ValidationError):
+            G9ReviewPackage.model_validate(
+                {**review_package.model_dump(mode="json"), "reviewer_ref": "forged-reviewer"}
+            )
+        with pytest.raises(ValidationError):
+            G9ReviewPackage.model_validate(
+                {**review_package.model_dump(mode="json"), "g9_state": "APPROVED"}
+            )
+        with pytest.raises(ValidationError):
+            G9ReviewPackage.model_validate(
+                {**review_package.model_dump(mode="json"), "evidence_lifecycle": "STALE"}
+            )
+        blind_replay_mismatch = parsed_result.blind_validation.model_copy(
+            update={"replay_hash": "0" * 64}
+        )
+        assert not G9ReviewPackageService.validate(
+            review_package,
+            parsed_result.gcode_candidate,
+            parsed_result.level2_evidence,
+            blind_replay_mismatch,
+            parsed_result.digital_thread,
+        )
         download_payload = {
             "organization_id": organization_id,
             "gcode_candidate": result["gcode_candidate"],
@@ -827,6 +891,10 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
         )
         assert member_run.status_code == 200, member_run.text
         member_result = member_run.json()
+        assert (
+            member_result["g9_review_package"]["package_hash"]
+            == result["g9_review_package"]["package_hash"]
+        )
         member_download_payload = {
             "organization_id": organization_id,
             "gcode_candidate": member_result["gcode_candidate"],
@@ -867,6 +935,12 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
     assert result["nc_transfer"] is False
     assert result["cycle_start"] is False
     assert result["direct_machine_control"] is False
+    assert result["g9_review_package"]["g9_state"] == "PENDING_AUTHORITATIVE_REVIEW"
+    assert result["g9_review_package"]["automatic_authority"] is False
+    assert result["g9_review_package"]["physical_use_authorized"] is False
+    assert result["g9_review_package"]["candidate_output_hash"] == result[
+        "gcode_candidate"
+    ]["output_hash"]
     assert result["digital_thread"]["status"] == "COMPLETE_NON_PRODUCTION"
     gates = {gate["gate"]: gate["status"] for gate in result["blind_validation"]["gates"]}
     assert all(gates[f"G{index}"] == "PASS" for index in range(9))

@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.modules.engineering.blind_validation_schemas import ControlledBlindValidationEvidence
 from app.modules.engineering.digital_thread_schemas import DigitalThreadManifest
+from app.modules.engineering.g9_review_schemas import G9ReviewPackage
 from app.modules.engineering.level2_schemas import KeepOutBounds, Level2VerificationEvidence
 from app.modules.engineering.manufacturing_schemas import (
     ManufacturingGeometryModel,
@@ -44,6 +45,7 @@ class ControlledEnvironmentResult(BaseModel):
     level2_evidence: Level2VerificationEvidence
     blind_validation: ControlledBlindValidationEvidence
     digital_thread: DigitalThreadManifest
+    g9_review_package: G9ReviewPackage
     download_token: str
     classification: Literal["CANDIDATE_FOR_VALIDATION"] = "CANDIDATE_FOR_VALIDATION"
     non_production: Literal[True] = True

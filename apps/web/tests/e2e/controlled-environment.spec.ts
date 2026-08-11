@@ -48,6 +48,24 @@ test("controlled environment keeps G9 pending and downloads only a candidate", a
       g9_state: "PENDING_AUTHORITATIVE_REVIEW",
       physical_use_authorized: false
     },
+    g9_review_package: {
+      schema_version: "vena-ia.g9-review-package/v1",
+      package_id: `g9-package-${"c".repeat(24)}`,
+      package_hash: "c".repeat(64),
+      candidate_output_hash: "a".repeat(64),
+      digital_thread_id: "thread-controlled",
+      digital_thread_replay_hash: "d".repeat(64),
+      blind_validation_bundle_hash: "e".repeat(64),
+      blind_validation_replay_hash: "b".repeat(64),
+      artifact_hashes: { CAD: "1".repeat(64), GCODE_CANDIDATE: "2".repeat(64) },
+      contract_versions: { G9_REVIEW_PACKAGE: "vena-ia.g9-review-package/v1" },
+      component_versions: { postprocessor: "VENA_SYNTHETIC_3AXIS_POST_V1" },
+      gates,
+      g9_state: "PENDING_AUTHORITATIVE_REVIEW",
+      automatic_authority: false,
+      physical_use_authorized: false,
+      required_external_artifacts: ["exact_candidate_hash_binding"]
+    },
     download_token: "signed-controlled-download-proof",
     limitations: ["No physical authority."]
   } as const;
@@ -95,6 +113,8 @@ test("controlled environment keeps G9 pending and downloads only a candidate", a
   await expect(page.getByText("G9: PENDING_AUTHORITATIVE_REVIEW")).toBeVisible();
   await expect(page.getByText("PHYSICAL_USE_AUTHORIZED=false")).toBeVisible();
   await expect(page.getByText("G9 · PENDING_REVIEW")).toBeVisible();
+  await expect(page.getByText("G9 Review Package · PENDING_AUTHORITATIVE_REVIEW")).toBeVisible();
+  await expect(page.getByText(/autoridade automática=false/)).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: /Download controlado/ }).click();
   const download = await downloadPromise;
