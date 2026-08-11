@@ -1,8 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.modules.auth.dependencies import CurrentUserDependency
 from app.modules.cad.dependencies import CADAnalysisServiceDependency
@@ -28,7 +30,10 @@ from app.modules.engineering.toolpath_schemas import ToolpathCandidate, Toolpath
 from app.modules.engineering.postprocessor import PostprocessorError, SyntheticPostprocessor
 from app.modules.engineering.postprocessor_schemas import GCodeCandidate, GCodeCandidateRequest
 from app.modules.engineering.level2 import Level2Verifier
-from app.modules.engineering.level2_schemas import Level2VerificationEvidence, Level2VerificationRequest
+from app.modules.engineering.level2_schemas import (
+    Level2VerificationEvidence,
+    Level2VerificationRequest,
+)
 from app.modules.engineering.blind_validation import ControlledBlindValidationService
 from app.modules.engineering.blind_validation_schemas import (
     ControlledBlindValidationEvidence,
@@ -44,6 +49,15 @@ from app.modules.engineering.digital_thread_schemas import (
     BoundedIntelligenceResponse,
     DigitalThreadBuildRequest,
     DigitalThreadManifest,
+)
+from app.modules.engineering.controlled_environment import (
+    ControlledEnvironmentError,
+    ControlledEnvironmentService,
+)
+from app.modules.engineering.controlled_environment_schemas import (
+    ControlledDownloadRequest,
+    ControlledEnvironmentRequest,
+    ControlledEnvironmentResult,
 )
 from app.modules.engineering.repository import EngineeringCatalogRepository
 from app.modules.engineering.schemas import (
@@ -247,3 +261,75 @@ def analyze_digital_thread(
     ):
         raise HTTPException(status_code=404, detail="Digital thread not found")
     return BoundedManufacturingIntelligenceService().analyze(payload)
+
+
+@router.post(
+    "/controlled-environment/runs",
+    response_model=ControlledEnvironmentResult,
+)
+def run_controlled_environment(
+    payload: ControlledEnvironmentRequest,
+    current_user: CurrentUserDependency,
+    cad: CADAnalysisServiceDependency,
+    db: Session = Depends(get_db),
+) -> ControlledEnvironmentResult:
+    OrganizationAuthorization(OrganizationRepository(db), current_user).require_organization(
+        payload.organization_id
+    )
+    try:
+        return ControlledEnvironmentService(
+            cad,
+            _catalog_service(db, current_user),
+            settings.auth_secret_key,
+        ).run(payload, current_user.id)
+    except (DocumentNotFoundError, ProjectNotFoundError, DocumentAccessDeniedError) as exc:
+        raise HTTPException(status_code=404, detail="Document not found") from exc
+    except InvalidDocumentError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except (
+        StepParseError,
+        ManufacturingPlanningError,
+        ToolpathCandidateError,
+        PostprocessorError,
+        ControlledEnvironmentError,
+    ) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except ValidationError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail="Generated controlled evidence failed validation.",
+        ) from exc
+    except CADContentUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@router.post("/controlled-environment/download", response_class=Response)
+def download_controlled_candidate(
+    payload: ControlledDownloadRequest,
+    current_user: CurrentUserDependency,
+    cad: CADAnalysisServiceDependency,
+    db: Session = Depends(get_db),
+) -> Response:
+    OrganizationAuthorization(OrganizationRepository(db), current_user).require_organization(
+        payload.organization_id
+    )
+    try:
+        program = ControlledEnvironmentService(
+            cad,
+            _catalog_service(db, current_user),
+            settings.auth_secret_key,
+        ).validate_download(payload, current_user.id)
+    except ControlledEnvironmentError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    filename = f"vena-ia-{payload.gcode_candidate.output_hash[:16]}.candidate.nc"
+    return Response(
+        content=program,
+        media_type="text/plain",
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "X-Vena-IA-Classification": "CANDIDATE_FOR_VALIDATION",
+            "X-Vena-IA-Physical-Use-Authorized": "false",
+            "X-Vena-IA-Review-State": "REQUIRES_HUMAN_REVIEW",
+        },
+    )

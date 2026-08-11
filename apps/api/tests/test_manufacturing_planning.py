@@ -20,7 +20,11 @@ from app.modules.engineering.level2_schemas import KeepOutBounds, Level2Verifica
 from app.modules.engineering.blind_validation import ControlledBlindValidationService
 from app.modules.engineering.blind_validation_schemas import ControlledBlindValidationRequest
 from app.modules.engineering.schemas import AvailabilityValue
-from app.modules.engineering.toolpath import ToolpathCandidateError, ToolpathCandidateService, ToolpathVerifier
+from app.modules.engineering.toolpath import (
+    ToolpathCandidateError,
+    ToolpathCandidateService,
+    ToolpathVerifier,
+)
 from app.modules.engineering.toolpath_schemas import ToolpathCandidateRequest
 from app.modules.engineering.postprocessor import RS274SafeSubsetVerifier, SyntheticPostprocessor
 from app.modules.engineering.postprocessor_schemas import GCodeCandidateRequest
@@ -120,9 +124,7 @@ def test_general_manufacturing_model_is_deterministic_and_non_executable(
     assert first.planning_schema_version == "vena-ia.verified-process-plan/v1"
     assert first.stock.contains_final_geometry is True
     assert len(first.removal_regions) == 6
-    assert sum(region.volume or 0 for region in first.removal_regions) == pytest.approx(
-        2448
-    )
+    assert sum(region.volume or 0 for region in first.removal_regions) == pytest.approx(2448)
     assert len(first.protected_regions) == 6
     assert first.accessibility_candidates
     assert first.datum_candidates
@@ -207,9 +209,7 @@ def test_no_false_drilling_claim_from_cylindrical_or_general_geometry(tmp_path: 
 
     assert result.status == "REQUIRES_INPUT"
     assert result.operation_candidates == []
-    assert "drilling_target_confirmation" in {
-        item.field for item in result.missing_inputs
-    }
+    assert "drilling_target_confirmation" in {item.field for item in result.missing_inputs}
 
 
 def test_resource_mismatch_blocks_plan(tmp_path: Path) -> None:
@@ -273,7 +273,9 @@ def test_toolpath_candidate_is_bounded_deterministic_and_non_executable(tmp_path
     )
 
 
-def test_toolpath_verifier_rejects_protected_feed_and_generator_fails_closed(tmp_path: Path) -> None:
+def test_toolpath_verifier_rejects_protected_feed_and_generator_fails_closed(
+    tmp_path: Path,
+) -> None:
     cad = MagicMock()
     cad.analyze.return_value = _analysis(tmp_path)
     engineering = MagicMock()
@@ -325,7 +327,10 @@ def test_synthetic_postprocessor_and_independent_rs274_verifier(tmp_path: Path) 
     assert result.program.startswith("G21\nG17\nG90\nG94\n")
     assert result.program.endswith("M30")
     assert result.verification.status == "PASS_REQUIRES_HUMAN_REVIEW"
-    assert RS274SafeSubsetVerifier().verify("G21\nG17\nG90\nG94\nG2 X1 Y1\nM30", "x").status == "REJECTED"
+    assert (
+        RS274SafeSubsetVerifier().verify("G21\nG17\nG90\nG94\nG2 X1 Y1\nM30", "x").status
+        == "REJECTED"
+    )
 
 
 def _controlled_validation_artifacts(tmp_path: Path):
@@ -514,9 +519,10 @@ def test_level2_and_blind_routes_require_authenticated_identity(
         level2_evidence=level2,
     ).model_dump(mode="json")
 
-    assert client.post(
-        "/engineering/planning/level2-verification", json=level2_payload
-    ).status_code == 401
+    assert (
+        client.post("/engineering/planning/level2-verification", json=level2_payload).status_code
+        == 401
+    )
     account = make_account("level2-route@vena-ia.dev")
     level2_response = client.post(
         "/engineering/planning/level2-verification",
@@ -658,3 +664,150 @@ def test_manufacturing_route_blocks_cross_organization_resources(
     assert allowed.status_code == 200, allowed.text
     assert allowed.json()["status"] == "READY_FOR_REVIEW"
     assert allowed.json()["executable_output"] is False
+
+
+def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+) -> None:
+    owner = make_account("controlled-environment-owner@vena-ia.dev")
+    organization_id = client.post(
+        "/organizations",
+        headers=owner.headers,
+        json={"name": "Controlled environment organization"},
+    ).json()["id"]
+    planning = _full_payload()
+    planning["material_id"] = _catalog(
+        client,
+        owner.headers,
+        organization_id,
+        "MATERIAL",
+        "MAT-CONTROLLED",
+        {"cutting_speed_m_min": 150, "feed_per_tooth_mm": 0.05},
+    )
+    planning["machine_id"] = _catalog(
+        client,
+        owner.headers,
+        organization_id,
+        "MACHINE",
+        "MACHINE-CONTROLLED",
+        {"operations": ["milling"], "max_rpm": 10000, "max_feed_mm_min": 4000},
+    )
+    planning["tool_id"] = _catalog(
+        client,
+        owner.headers,
+        organization_id,
+        "TOOL",
+        "TOOL-CONTROLLED",
+        {"operations": ["milling"], "diameter_mm": 0.5, "teeth": 2},
+    )
+    payload = {
+        "organization_id": organization_id,
+        "planning": planning,
+        "tool": {
+            "tool_id": "synthetic-tool-0.5mm",
+            "diameter_mm": 0.5,
+            "flute_length_mm": 10,
+        },
+        "machine_minimum": [-10, -10, -10],
+        "machine_maximum": [20, 30, 50],
+        "clearance_z_mm": 40,
+        "retract_z_mm": 35,
+        "feed_mm_min": 800,
+        "fixture_keep_outs": [],
+        "holdout_id": "sealed-holdout-controlled-route",
+        "sealed_reference_hash": "a" * 64,
+        "questions_asked": ["Do G0-G8 have replayable evidence?"],
+    }
+    cad = MagicMock()
+    cad.analyze.return_value = _analysis(tmp_path)
+    app.dependency_overrides[get_cad_analysis_service] = lambda: cad
+    try:
+        run = client.post(
+            "/engineering/controlled-environment/runs",
+            headers=owner.headers,
+            json=payload,
+        )
+        assert run.status_code == 200, run.text
+        result = run.json()
+        download_payload = {
+            "organization_id": organization_id,
+            "gcode_candidate": result["gcode_candidate"],
+            "blind_validation": result["blind_validation"],
+            "digital_thread": result["digital_thread"],
+            "download_token": result["download_token"],
+        }
+        download = client.post(
+            "/engineering/controlled-environment/download",
+            headers=owner.headers,
+            json=download_payload,
+        )
+        forged = dict(download_payload)
+        forged["blind_validation"] = {
+            **result["blind_validation"],
+            "gates": [
+                ({**gate, "status": "PASS"} if gate["gate"] == "G9" else gate)
+                for gate in result["blind_validation"]["gates"]
+            ],
+        }
+        rejected = client.post(
+            "/engineering/controlled-environment/download",
+            headers=owner.headers,
+            json=forged,
+        )
+        altered_candidate = {
+            **download_payload,
+            "gcode_candidate": {
+                **result["gcode_candidate"],
+                "program": result["gcode_candidate"]["program"] + "\nM30",
+            },
+        }
+        altered_candidate_response = client.post(
+            "/engineering/controlled-environment/download",
+            headers=owner.headers,
+            json=altered_candidate,
+        )
+        altered_thread = {
+            **download_payload,
+            "digital_thread": {
+                **result["digital_thread"],
+                "physical_use_authorized": True,
+            },
+        }
+        altered_thread_response = client.post(
+            "/engineering/controlled-environment/download",
+            headers=owner.headers,
+            json=altered_thread,
+        )
+        outsider = make_account("controlled-environment-outsider@vena-ia.dev")
+        denied = client.post(
+            "/engineering/controlled-environment/download",
+            headers=outsider.headers,
+            json=download_payload,
+        )
+    finally:
+        app.dependency_overrides.pop(get_cad_analysis_service, None)
+
+    assert result["status"] == "READY_FOR_CONTROLLED_DOWNLOAD"
+    assert result["non_production"] is True
+    assert result["review_state"] == "REQUIRES_HUMAN_REVIEW"
+    assert result["g9_state"] == "PENDING_AUTHORITATIVE_REVIEW"
+    assert result["physical_use_authorized"] is False
+    assert result["machine_send"] is False
+    assert result["dnc"] is False
+    assert result["nc_transfer"] is False
+    assert result["cycle_start"] is False
+    assert result["direct_machine_control"] is False
+    assert result["digital_thread"]["status"] == "COMPLETE_NON_PRODUCTION"
+    gates = {gate["gate"]: gate["status"] for gate in result["blind_validation"]["gates"]}
+    assert all(gates[f"G{index}"] == "PASS" for index in range(9))
+    assert gates["G9"] == "PENDING_REVIEW"
+    assert download.status_code == 200, download.text
+    assert download.headers["x-vena-ia-physical-use-authorized"] == "false"
+    assert download.headers["x-vena-ia-review-state"] == "REQUIRES_HUMAN_REVIEW"
+    assert download.text.endswith("M30")
+    assert rejected.status_code == 422
+    assert altered_candidate_response.status_code == 422
+    assert altered_thread_response.status_code == 422
+    assert denied.status_code == 404

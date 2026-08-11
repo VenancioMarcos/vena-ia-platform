@@ -2,6 +2,7 @@ import { expect, test, type Page, type Route } from "@playwright/test";
 
 const projectId = "11111111-1111-4111-8111-111111111111";
 const documentId = "22222222-2222-4222-8222-222222222222";
+const organizationId = "33333333-3333-4333-8333-333333333333";
 
 const workflow = {
   schema_version: "vena-ia.integrated-engineering-workflow/v1",
@@ -38,6 +39,7 @@ async function mockBase(page: Page) {
     const path = url.pathname;
     if (path === `/projects/${projectId}`) return json(route, { id: projectId, name: "Projeto E2E", status: "ACTIVE" });
     if (path === `/projects/${projectId}/documents`) return json(route, { documents: [{ id: documentId, filename: "fixture.step", status: "UPLOADED" }], total: 1 });
+    if (path === "/organizations") return json(route, [{ id: organizationId, name: "Controlled E2E", status: "ACTIVE" }]);
     if (path === `/chat/${projectId}/messages` || path === "/research/reports") return json(route, []);
     if (path === "/engineering/catalogs") return json(route, [
       { id: "material-1", kind: "MATERIAL", code: "STEEL", name: "Steel", data_version: "2026.08", source: "owner supplied" },
@@ -74,7 +76,7 @@ test("authenticated project renders the deterministic chain, neutral CNC and gro
     review_status: "REQUIRES_HUMAN_REVIEW", assistance_status: "AVAILABLE_FOR_REVIEW", non_production: true, simulation_only: true, executable_output: false, deterministic_input_trace: "sha256:fixture"
   }));
   await runWorkflow(page);
-  await expect(page.getByRole("heading", { name: "CAD" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "CAD", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Process Planning" })).toBeVisible();
   await expect(page.getByText("SIMULATION_ONLY").first()).toBeVisible();
   await expect(page.getByText("executable_output=false").first()).toBeVisible();

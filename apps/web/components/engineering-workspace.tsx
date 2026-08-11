@@ -11,6 +11,7 @@ import type {
   SpecializedAssistance,
   WorkflowRequest
 } from "../lib/engineering-contracts";
+import { ControlledTestEnvironment } from "./controlled-test-environment";
 
 type DocumentReference = { id: string; filename: string; status: string };
 type Props = { projectId: string; documents: DocumentReference[]; onError: (message: string) => void };
@@ -261,6 +262,7 @@ export function EngineeringWorkspace({ projectId, documents, onError }: Props) {
           {!assistance && <p className="flex items-center gap-2 text-sm text-steel"><CircleDashed size={16} /> Assistência ainda não solicitada.</p>}
         </div>
       )}
+      <ControlledTestEnvironment documents={documents} onError={onError} />
     </section>
   );
 }

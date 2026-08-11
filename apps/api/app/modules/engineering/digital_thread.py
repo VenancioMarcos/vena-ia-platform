@@ -49,7 +49,9 @@ def _hash(value: object) -> str:
 
 
 class DigitalThreadService:
-    def build(self, request: DigitalThreadBuildRequest, organization_id: str) -> DigitalThreadManifest:
+    def build(
+        self, request: DigitalThreadBuildRequest, organization_id: str
+    ) -> DigitalThreadManifest:
         seen: dict[str, ArtifactType] = {}
         downstream: dict[str, list[str]] = {}
         drafts: list[tuple[DigitalThreadArtifactInput, str]] = []
@@ -65,9 +67,13 @@ class DigitalThreadService:
                 raise DigitalThreadError("Stale or revoked artifacts fail closed.")
             if source.schema_version != SCHEMA_BY_TYPE[source.artifact_type]:
                 raise DigitalThreadError("Artifact schema version does not match its type.")
-            unknown = [reference for reference in source.upstream_artifact_refs if reference not in seen]
+            unknown = [
+                reference for reference in source.upstream_artifact_refs if reference not in seen
+            ]
             if unknown:
-                raise DigitalThreadError("Upstream artifact reference is missing or forward-pointing.")
+                raise DigitalThreadError(
+                    "Upstream artifact reference is missing or forward-pointing."
+                )
             content_hash = _hash(source.content)
             if source.declared_content_hash and source.declared_content_hash != content_hash:
                 raise DigitalThreadError("Declared artifact hash does not match canonical content.")
@@ -106,11 +112,7 @@ class DigitalThreadService:
         return DigitalThreadManifest(
             thread_id=f"thread-{replay_hash[:24]}",
             organization_id=organization_id,
-            status=(
-                "COMPLETE_NON_PRODUCTION"
-                if not missing
-                else "INCOMPLETE_REQUIRES_EVIDENCE"
-            ),
+            status=("COMPLETE_NON_PRODUCTION" if not missing else "INCOMPLETE_REQUIRES_EVIDENCE"),
             artifacts=artifacts,
             missing_artifact_types=missing,
             replay_hash=replay_hash,
@@ -120,6 +122,16 @@ class DigitalThreadService:
                 "No artifact grants physical or production authority.",
             ),
         )
+
+    @staticmethod
+    def validate(thread: DigitalThreadManifest) -> bool:
+        payload = {
+            "organization_id": thread.organization_id,
+            "artifacts": [artifact.model_dump(mode="json") for artifact in thread.artifacts],
+            "missing": thread.missing_artifact_types,
+        }
+        replay = _hash(payload)
+        return thread.replay_hash == replay and thread.thread_id == f"thread-{replay[:24]}"
 
 
 class BoundedManufacturingIntelligenceService:
@@ -175,10 +187,4 @@ class BoundedManufacturingIntelligenceService:
 
     @staticmethod
     def _valid_manifest(thread: DigitalThreadManifest) -> bool:
-        payload = {
-            "organization_id": thread.organization_id,
-            "artifacts": [artifact.model_dump(mode="json") for artifact in thread.artifacts],
-            "missing": thread.missing_artifact_types,
-        }
-        replay = _hash(payload)
-        return thread.replay_hash == replay and thread.thread_id == f"thread-{replay[:24]}"
+        return DigitalThreadService.validate(thread)

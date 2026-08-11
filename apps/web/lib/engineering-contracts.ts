@@ -132,3 +132,35 @@ export type SpecializedAssistance = {
   executable_output: false;
   deterministic_input_trace: string;
 };
+
+export type GateEvidence = { gate: string; status: string; evidence_ref: string };
+export type DigitalThreadManifest = {
+  thread_id: string;
+  organization_id: string;
+  status: string;
+  artifacts: Array<{ artifact_id: string; artifact_type: string; content_hash: string }>;
+  replay_hash: string;
+  g9_state: "PENDING_AUTHORITATIVE_REVIEW";
+  physical_use_authorized: false;
+};
+export type ControlledEnvironmentResult = {
+  status: "READY_FOR_CONTROLLED_DOWNLOAD";
+  classification: "CANDIDATE_FOR_VALIDATION";
+  non_production: true;
+  review_state: "REQUIRES_HUMAN_REVIEW";
+  g9_state: "PENDING_AUTHORITATIVE_REVIEW";
+  physical_use_authorized: false;
+  machine_send: false;
+  dnc: false;
+  nc_transfer: false;
+  cycle_start: false;
+  direct_machine_control: false;
+  gcode_candidate: { program: string; output_hash: string };
+  blind_validation: {
+    gates: GateEvidence[];
+    replay_hash: string;
+  };
+  digital_thread: DigitalThreadManifest;
+  download_token: string;
+  limitations: string[];
+};
