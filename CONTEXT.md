@@ -27,7 +27,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-* **v3.0 Release Candidate:** `vena-ia.digital-thread/v1` encadeia artifacts
+* **Release v3.0.0 publicada:** a PR #29 foi integrada em `f2ffe5c`; tag anotada e
+  GitHub Release publicam Manufacturing Intelligence & Digital Thread.
+  `vena-ia.digital-thread/v1` encadeia artifacts
   imutáveis/versionados com ownership organizacional, hashes, refs, provenance,
   lifecycle e replay, sem banco/ledger/migration nova. A inteligência bounded é
   read-only, sem tools, não altera evidence nem gates. Cross-org, hash/ref/version

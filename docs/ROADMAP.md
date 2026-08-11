@@ -1626,11 +1626,11 @@ versionado e auditável que conecta CAD→features→engineering→planning→Re
 verification→review→report, sem promover IA, simulação ou planning a autoridade
 produtiva.
 
-**Package 1 — Versioned Digital Thread — `READY_FOR_RELEASE`:** identidade e provenance de artefatos,
+**Package 1 — Versioned Digital Thread — `RELEASED v3.0.0`:** identidade e provenance de artefatos,
 relações imutáveis/versionadas, lifecycle, retention e replay; ownership organizacional
 herdado da v2.1 e evidence determinística herdada da v2.2.
 
-**Package 2 — Bounded Manufacturing Intelligence — `READY_FOR_RELEASE`:** perfis especializados continuam
+**Package 2 — Bounded Manufacturing Intelligence — `RELEASED v3.0.0`:** perfis especializados continuam
 bounded; eventual orchestration/tool calling é read-only, allowlisted, auditável e
 incapaz de mutar fatos. Research evolui em qualidade de fontes, reprodutibilidade,
 datasets, métodos estatísticos e relatórios sob revisão humana. Stateful agents,

@@ -1398,7 +1398,7 @@ inventado para antecipar essa decisão.
 ## DEC-042 — Immutable Digital Thread and Bounded Intelligence
 
 **Data:** 2026-08-11
-**Status:** IMPLEMENTADA — RELEASE CANDIDATE v3.0.0
+**Status:** IMPLEMENTADA — RELEASED v3.0.0
 **Tipo:** Arquitetura / Provenance / Tenancy / AI Safety
 
 Adotar `vena-ia.digital-thread/v1` como manifesto efêmero, imutável e determinístico

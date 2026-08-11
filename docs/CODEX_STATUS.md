@@ -1,5 +1,18 @@
 # Status do Executor Codex
 
+## Estado terminal — 2026-08-11 — v3.0.0
+
+```text
+STATE=VENA_IA_V3_0_RELEASED_AND_FULLY_VERIFIED
+MAIN_MERGE=f2ffe5cd7d4c69c3e66f0aaeb806d749efdb6fd5
+PR=29_MERGED
+TAG=v3.0.0
+RELEASE=https://github.com/VenancioMarcos/vena-ia-platform/releases/tag/v3.0.0
+G9=PENDING_AUTHORITATIVE_REVIEW
+CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE
+PHYSICAL_USE_AUTHORIZED=FALSE
+```
+
 ## Estado atual — 2026-08-11 — v2.3 Package 3
 
 ```text
