@@ -1,5 +1,20 @@
 # Status do Executor Codex
 
+## Estado atual — 2026-08-11 — v2.3 Package 3
+
+```text
+STATE=VENA_IA_V2_3_PACKAGE_3_READY_FOR_CTO_REVIEW
+MISSION=TASK_V23_PACKAGE_3
+BRANCH=codex/v2.3-controlled-cad-gcode-validation
+PR=28_DRAFT
+CONTRACTS=level2-material-removal-evidence/v1_controlled-blind-validation/v1
+MIGRATION=NONE_HEAD_e61c4f8a2b90
+CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE_G9_PENDING_REAL_HUMAN_REVIEW
+PHYSICAL_USE_AUTHORIZED=FALSE
+V3_0=NOT_STARTED
+NEXT=CTO_REVIEW
+```
+
 ## Estado atual — 2026-08-11
 
 ```text

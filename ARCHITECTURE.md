@@ -352,3 +352,22 @@ faces finais são protegidas; accessibility/datum/WCS/setup são candidatos. Rec
 reutilizam exatamente ownership/autorização v2.1. Verification cobre coerência,
 missing inputs, resources, precedence e replay, nunca remoção física, colisão ou
 cinemática. Detalhes: `docs/MANUFACTURING_GEOMETRY_MODEL.md` e ADR-0032.
+
+---
+
+## 20. Controlled CAD-to-G-code Verification v2.3
+
+```text
+verified process plan
+  → bounded toolpath candidate → independent Level-1 geometry verification
+  → synthetic RS274 candidate → independent safe-subset parser
+  → independent Level-2 reconstruction and bounded sweep/envelope evidence
+  → sealed-reference blind harness → frozen artifacts + G0–G9
+```
+
+Todos os componentes são serviços efêmeros do módulo Engineering; não há tabela,
+repository, migration ou microserviço novo. Level 2 reimplementa reconstrução/hash e
+não chama o gerador/verificador Level 1. O harness recebe somente hash da referência
+selada e nunca a resposta esperada. G9 depende de evidência humana real e bloqueia
+readiness quando pendente. Detalhes: `docs/LEVEL2_BLIND_VALIDATION.md`, ADR-0033 e
+ADR-0034.

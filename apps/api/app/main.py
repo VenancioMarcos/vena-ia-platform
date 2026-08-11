@@ -36,7 +36,7 @@ from app.modules.projects.api.routes import router as projects_router
 from app.modules.research.api.routes import router as research_router
 from app.modules.users.api.routes import router as users_router
 
-API_VERSION = "2.2.0"
+API_VERSION = "2.3.0"
 
 
 @asynccontextmanager

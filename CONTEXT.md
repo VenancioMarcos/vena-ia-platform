@@ -27,6 +27,25 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **Release Candidate v2.3.0:** Packages 1–3 e a correção de authority G9 estão
+  aprovados pelo CTO na Draft PR #28. API/health/OpenAPI/frontend estão alinhados em
+  2.3.0; release notes registram a fronteira técnica não produtiva. G9 permanece
+  `PENDING_REVIEW`, readiness e physical authority permanecem false. A publicação
+  técnica não concede machine-send, NC/DNC, cycle start ou controle CNC.
+
+* **TASK-V23 Package 3 pronta para revisão:** a branch
+  `codex/v2.3-controlled-cad-gcode-validation` e a Draft PR #28 acrescentam
+  `level2-material-removal-evidence/v1` e o harness
+  `controlled-blind-validation/v1`. O verificador Level-2 reconstrói a trajetória
+  sem chamar gerador/verificador Level-1 e falha fechado para stock/evidence,
+  cobertura, continuidade, gouge, rapid e fixture keep-out. O harness congela
+  hashes e G0–G9; G9 real permanece `PENDING_REVIEW`, portanto
+  `CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE` e
+  `PHYSICAL_USE_AUTHORIZED=FALSE`. A API pública não aceita `human_review` nem pode
+  derivar reviewer/decision/evidence authority do body; qualquer futura promoção de
+  G9 exige estado autoritativo resolvido no servidor. Não há migration, merge,
+  release ou v3.0.
+
 * **Release v2.2.0:** PR #27 integrada por Squash Merge em `28d592c`; versões
   API/FastAPI/health/OpenAPI/frontend estão alinhadas em `2.2.0`, sem migration
   nova (head `e61c4f8a2b90`). A release mantém planning determinístico e não

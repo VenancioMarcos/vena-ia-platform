@@ -8,6 +8,61 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [2.3.0] — 2026-08-11 — Controlled CAD-to-G-code Validation
+
+### Published technical boundary
+* Packages 1–3 provide bounded toolpath candidates, independent geometry checks,
+  synthetic RS274 candidates, an independent safe-subset parser, bounded Level-2
+  evidence and a sealed-reference blind harness.
+* G0–G8 are evidence gates. G9 remains `PENDING_REVIEW` and cannot originate from
+  request-body fields; controlled-validation readiness and physical authority remain
+  false.
+* API, health, OpenAPI and frontend metadata align at 2.3.0. Alembic remains at the
+  existing single head with no migration.
+
+### Safety
+* This release is not production CAM, validated real-machine G-code or CNC physical
+  authorization. It provides no machine-send, NC/DNC, cycle start or direct control.
+
+### Added — v2.3 Package 3
+* `vena-ia.level2-material-removal-evidence/v1` independently reconstructs the
+  candidate trajectory and applies bounded stock, target-coverage, simplified
+  cutter-sweep, protected-envelope, rapid and fixture keep-out checks.
+* `vena-ia.controlled-blind-validation/v1` freezes CAD, planning, toolpath,
+  postprocessor and Level-2 hashes before sealed-reference adjudication and records
+  gates G0–G9 with deterministic replay.
+* Missing, invalid, non-finite, discontinuous, colliding or incomplete evidence
+  fails closed. G9 remains `PENDING_REVIEW` without real human-review evidence, so
+  controlled-validation readiness remains false.
+* The public blind-validation request cannot carry `human_review`, reviewer identity,
+  a review decision or evidence authority. Extra-field/mass-assignment attempts fail
+  validation; G9 can only be resolved by a future authoritative server-side boundary.
+
+### Limits — v2.3 Package 3
+* Level 2 is a conservative endpoint/cylindrical-sweep approximation, not exact
+  B-Rep removal, holder collision, machine kinematics or physical validation.
+* All artifacts remain non-production candidates. Machine send, NC/DNC transfer,
+  cycle start, CNC control and physical use are not authorized.
+
+### Adicionado — v2.3 Package 1
+* `vena-ia.toolpath-candidate/v1` cria candidatos determinísticos, lineares e
+  bounded para regiões explicitamente autorizadas por
+  `vena-ia.verified-process-plan/v1`.
+* `vena-ia.toolpath-verification-evidence/v1` é implementado separadamente do
+  gerador e rejeita primitives, limites, continuidade, feeds/rapids, referências
+  de região e entrada preliminar no envelope final protegido.
+
+### Adicionado — v2.3 Package 2
+* `vena-ia.gcode-candidate/v1` e o pós-processador sintético puro produzem somente
+  o subset RS274 allowlisted para validação, acompanhado de manifest hashable.
+* `vena-ia.rs274-safe-subset-verification/v1` usa parser/modal independente e
+  rejeita sintaxe, códigos e modalidades fora de métrico/XY/absoluto/feed-min.
+
+### Limites — v2.3 Package 1
+* A trajetória é somente `CANDIDATE_FOR_VALIDATION`, exige revisão humana e não
+  possui autoridade produtiva ou saída executável. Não há arcos, CAM livre,
+  cutter sweep, collision, postprocessor, RS274, G/M-code, NC/DNC ou máquina.
+
 ### Adicionado — v2.2 Package 2
 * `vena-ia.manufacturing-geometry-model/v1` consome topology evidence v1 e separa
   fatos geométricos de interpretação de manufatura explicitamente fornecida.

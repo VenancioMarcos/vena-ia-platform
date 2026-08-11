@@ -1369,3 +1369,28 @@ Access/datum/WCS/setup são candidatos 3-axis/2.5D e verification não é simula
 A Gap Analysis da PR #26 é preservada integralmente na linha v2.2/PR #27. Este
 registro e ADR-0032 tornam a PR #27 a continuação oficial dos documentos de estado;
 a PR #26 só pode ser fechada após comparar os blobs remotos. Sem migration ou v2.3.
+
+## DEC-041 — Independent Level-2 Evidence and Sealed Blind Validation
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Arquitetura / Verificação / CNC Safety
+
+Adotar `vena-ia.level2-material-removal-evidence/v1` como verificador bounded que
+reconstrói o candidato sem reutilizar o gerador nem o verificador Level-1. Ele cobre
+stock factual, continuidade, coordenadas finitas, target coverage, sweep cilíndrico
+simplificado, envelope protegido, rapid e fixture keep-out, sempre fail-closed.
+
+Adotar `vena-ia.controlled-blind-validation/v1` como harness que recebe somente o
+hash da referência selada e congela artifacts/replay para G0–G9. O conteúdo esperado
+não entra no contrato de execução. G9 exige evidência humana real e, quando ausente,
+fica `PENDING_REVIEW`; readiness não pode ser promovida. Level 2 não é B-Rep exato,
+cinemática, validação física nem autorização produtiva. Não há migration ou novo
+serviço arquitetural.
+
+**Correção de authority TASK-V23-003A:** `human_review` não pertence ao request
+público. `reviewer_ref`, `decision` e `evidence_ref` textuais não são autoridade e
+falham como campos extras. G9 permanece `PENDING_REVIEW` por design até existir uma
+fronteira separada, explicitamente autorizada e resolvida server-side a partir de
+identidade e estado confiáveis. Nenhum registry, ledger, role ou assinatura foi
+inventado para antecipar essa decisão.
