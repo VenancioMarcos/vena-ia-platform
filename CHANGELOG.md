@@ -50,6 +50,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   `CAD_TO_GCODE_CONTROLLED_VALIDATION_READY = FALSE` e
   `PHYSICAL_USE_AUTHORIZED = FALSE` permanecem invariantes.
 
+## [2.2.0] — 2026-08-11 — Advanced Engineering Planning & Verification
+
+### Publicado
+* Packages 1–2 tornam a topologia geral e o planejamento de manufatura
+  rastreáveis, determinísticos e estritamente não produtivos.
+* API, health, OpenAPI e frontend foram alinhados em `2.2.0`; Alembic permanece
+  no single head `e61c4f8a2b90` e não há migration nova.
+* A release não inclui toolpath, postprocessor, G/M-code, NC/DNC, simulação física,
+  controle de máquina, deploy ou autoridade de produção.
+
 ## [2.1.0] — 2026-08-07 — Enterprise Engineering Governance
 
 ### Publicado
