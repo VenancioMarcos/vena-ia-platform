@@ -1702,6 +1702,10 @@ hashes and versions, plus non-authoritative human/external protocols. G9 remains
 pending and no reviewer registry, approval endpoint, external integration, physical
 authority, persistence, migration or v3.2 was introduced.
 
+**Release Candidate v3.1.0:** `READY_FOR_FINAL_CI`. Versions and release notes are
+aligned for publication as `NON_PRODUCTION`; the release cannot approve G9 or grant
+physical use. Merge, tag and GitHub Release remain the explicit TASK-V31-005 gate.
+
 ---
 
 **Fim do Documento 03 — Roadmap Executivo Vena_IA até v3.1**

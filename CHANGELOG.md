@@ -8,6 +8,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+## [3.1.0] — 2026-08-11 — Controlled CAD-to-G-code Test Environment
+
 ### Added — TASK-V31-004 G9 Review Package
 * Added deterministic `vena-ia.g9-review-package/v1` to the existing authenticated
   controlled run, binding candidate, Digital Thread, blind evidence, G0-G8,

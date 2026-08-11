@@ -27,6 +27,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **Release Candidate v3.1.0 — NON_PRODUCTION:** API/FastAPI/health/OpenAPI and
+  frontend versions are aligned at `3.1.0`; release notes consolidate the Controlled
+  Test Environment and deterministic G9 Review Package. Draft PR #30 remains the
+  release gate. G9 is pending, readiness/physical authority are false and no deploy,
+  external validation, machine interface or v3.2 is included.
+
 * **TASK-V31-004 — G9 Review Package:** the existing controlled run now returns
   deterministic `vena-ia.g9-review-package/v1`, hash-bound to the candidate, Digital
   Thread, blind bundle, G0-G8, Level-1/Level-2 and exact contract/component versions.
