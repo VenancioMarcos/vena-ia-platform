@@ -2,7 +2,7 @@
 
 **Status:** Documento Oficial
 **Versão:** 2.5
-**Última atualização:** 2026-08-10
+**Última atualização:** 2026-08-15
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -26,6 +26,16 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ---
 
 ## 3. Estado atual do projeto
+
+* **TASK-V31-007B — TESTE_01 real browser path completed:** the verified public
+  `TESTE_01_cube.stp` input completed authenticated browser orchestration through
+  geometry/topology evidence, Manufacturing Geometry, verified Process Plan, bounded
+  Toolpath, Level-2, G0–G8 and the immutable Digital Thread. The first controlled
+  candidate was downloaded as `vena-ia-fd23a2b2dec85a45.candidate.nc` with SHA-256
+  `fd23a2b2dec85a4522082e7992dfd5ab90171080fc736a28be9967387986cb49`.
+  The API image includes the OpenGL runtime required by OCP, and only the controlled
+  CAD call receives the longer bounded browser timeout. G9 remains pending;
+  controlled-validation readiness and physical-use authority remain false.
 
 * **TASK-V31-007B — STEP browser MIME compatibility:** the local v3.1 API accepts
   `application/octet-stream` only for `.step`/`.stp` after bounded-size, STEP header

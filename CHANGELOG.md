@@ -17,6 +17,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
   other document types retain their existing MIME allowlists.
 * Regression coverage rejects renamed JPG/PDF bytes, missing STEP header/trailer
   and unsupported extensions without weakening the upload boundary globally.
+* The API runtime now installs the OpenGL compatibility library required by the
+  OpenCascade Python bindings, so real STEP topology evidence remains available in
+  the production-shaped container instead of failing closed as kernel unavailable.
+* The controlled CAD run receives a scoped 120-second browser timeout for its bounded
+  kernel workload; all other API calls retain the existing 30-second timeout.
+* `TESTE_01_cube.stp` completed the real browser path through G0–G8, Manufacturing
+  Geometry, verified Process Plan, bounded Toolpath, Level-2 evidence, Digital Thread
+  and the first controlled `.candidate.nc` download.
 
 ### Added — TASK-V31-006 first controlled test path
 * Added an executable test that uploads a runtime-generated STEP cylinder through the
