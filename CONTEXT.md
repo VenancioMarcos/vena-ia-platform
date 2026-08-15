@@ -27,6 +27,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **TASK-V31-007B — STEP browser MIME compatibility:** the local v3.1 API accepts
+  `application/octet-stream` only for `.step`/`.stp` after bounded-size, STEP header
+  and terminal-marker validation, then stores the canonical `application/step`
+  content type. Focused document tests, Ruff and mypy pass; PostgreSQL, Redis, MinIO,
+  worker readiness and API `3.1.0` remain operational after an API-only rebuild.
+  The real UI TESTE_01 must resume with the same verified cube input; G9 remains
+  pending and controlled-validation/physical-use authority remain false.
+
 * **TASK-V31-006 — First Controlled CAD-to-G-code Test Path:** the v3.1 line now
   verifies a runtime-generated STEP cylinder through real upload/storage/CAD services
   and the complete controlled API chain, without predeclaring expected features. The

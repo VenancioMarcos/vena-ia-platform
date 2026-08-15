@@ -8,6 +8,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Fixed — TASK-V31-007B STEP browser MIME compatibility
+* STEP/STP uploads now accept the browser-observed generic
+  `application/octet-stream` representation only when the extension is `.step` or
+  `.stp`, the configured size bound passes, and both STEP header and terminal
+  markers are present.
+* Valid generic STEP uploads are canonicalized to `application/step`; PDF and all
+  other document types retain their existing MIME allowlists.
+* Regression coverage rejects renamed JPG/PDF bytes, missing STEP header/trailer
+  and unsupported extensions without weakening the upload boundary globally.
+
 ### Added — TASK-V31-006 first controlled test path
 * Added an executable test that uploads a runtime-generated STEP cylinder through the
   real Documents/CAD services and verifies Manufacturing Geometry, Process Plan,
