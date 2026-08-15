@@ -2,7 +2,7 @@
 
 **Status:** Documento Oficial
 **Versão:** 2.5
-**Última atualização:** 2026-08-10
+**Última atualização:** 2026-08-15
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -26,6 +26,39 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ---
 
 ## 3. Estado atual do projeto
+
+* **TASK-V31-007B — TESTE_01 real browser path completed:** the verified public
+  `TESTE_01_cube.stp` input completed authenticated browser orchestration through
+  geometry/topology evidence, Manufacturing Geometry, verified Process Plan, bounded
+  Toolpath, Level-2, G0–G8 and the immutable Digital Thread. The first controlled
+  candidate was downloaded as `vena-ia-fd23a2b2dec85a45.candidate.nc` with SHA-256
+  `fd23a2b2dec85a4522082e7992dfd5ab90171080fc736a28be9967387986cb49`.
+  The API image includes the OpenGL runtime required by OCP, and only the controlled
+  CAD call receives the longer bounded browser timeout. G9 remains pending;
+  controlled-validation readiness and physical-use authority remain false. The full
+  troubleshooting history, execution evidence and reusable end-to-end operating
+  method are recorded in `docs/FIRST_CONTROLLED_CAD_TO_GCODE_TEST.md`.
+
+* **TASK-V31-007B — STEP browser MIME compatibility:** the local v3.1 API accepts
+  `application/octet-stream` only for `.step`/`.stp` after bounded-size, STEP header
+  and terminal-marker validation, then stores the canonical `application/step`
+  content type. Focused document tests, Ruff and mypy pass; PostgreSQL, Redis, MinIO,
+  worker readiness and API `3.1.0` remain operational after an API-only rebuild.
+  The real UI TESTE_01 must resume with the same verified cube input; G9 remains
+  pending and controlled-validation/physical-use authority remain false.
+
+* **TASK-V31-006 — First Controlled CAD-to-G-code Test Path:** the v3.1 line now
+  verifies a runtime-generated STEP cylinder through real upload/storage/CAD services
+  and the complete controlled API chain, without predeclaring expected features. The
+  browser exposes Manufacturing Geometry, Process Plan, Toolpath, Level-2 and Digital
+  Thread artifacts and requires an explicit non-production acknowledgement before
+  download. No GitHub/Vercel deployment configuration or environment exists, so no
+  external infrastructure was invented; the verified web target is the existing local
+  controlled environment. G9/readiness/physical authority remain pending/false.
+
+* **Release v3.1.0 — NON_PRODUCTION:** PR #30 was Squash Merged at `64ac3b8`; the
+  annotated tag and GitHub Release `v3.1.0` are published. Post-merge Backend,
+  Frontend and Runtime Policy CI passed. No deploy or v3.2 was started.
 
 * **Release Candidate v3.1.0 — NON_PRODUCTION:** API/FastAPI/health/OpenAPI and
   frontend versions are aligned at `3.1.0`; release notes consolidate the Controlled

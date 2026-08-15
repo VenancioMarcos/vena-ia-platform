@@ -8,6 +8,39 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Fixed — TASK-V31-007B STEP browser MIME compatibility
+* STEP/STP uploads now accept the browser-observed generic
+  `application/octet-stream` representation only when the extension is `.step` or
+  `.stp`, the configured size bound passes, and both STEP header and terminal
+  markers are present.
+* Valid generic STEP uploads are canonicalized to `application/step`; PDF and all
+  other document types retain their existing MIME allowlists.
+* Regression coverage rejects renamed JPG/PDF bytes, missing STEP header/trailer
+  and unsupported extensions without weakening the upload boundary globally.
+* The API runtime now installs the OpenGL compatibility library required by the
+  OpenCascade Python bindings, so real STEP topology evidence remains available in
+  the production-shaped container instead of failing closed as kernel unavailable.
+* The controlled CAD run receives a scoped 120-second browser timeout for its bounded
+  kernel workload; all other API calls retain the existing 30-second timeout.
+* `TESTE_01_cube.stp` completed the real browser path through G0–G8, Manufacturing
+  Geometry, verified Process Plan, bounded Toolpath, Level-2 evidence, Digital Thread
+  and the first controlled `.candidate.nc` download.
+
+### Added — TASK-V31-006 first controlled test path
+* Added an executable test that uploads a runtime-generated STEP cylinder through the
+  real Documents/CAD services and verifies Manufacturing Geometry, Process Plan,
+  bounded Toolpath, G0-G8, Digital Thread and controlled candidate download without
+  declaring expected features in advance.
+* Expanded the controlled-test UI with reviewable Manufacturing Geometry, Process
+  Plan, Toolpath, Level-2 and Digital Thread artifact evidence.
+* Candidate download now remains disabled until the user explicitly acknowledges
+  `NON_PRODUCTION`, required human review and absence of physical authority.
+
+### Safety
+* G9 remains `PENDING_AUTHORITATIVE_REVIEW`; controlled-validation readiness and
+  physical-use authority remain false. No deploy, machine connection, v3.2 or
+  automatic authority path was introduced.
+
 ## [3.1.0] — 2026-08-11 — Controlled CAD-to-G-code Test Environment
 
 ### Added — TASK-V31-004 G9 Review Package

@@ -37,13 +37,49 @@ test("controlled environment keeps G9 pending and downloads only a candidate", a
     nc_transfer: false,
     cycle_start: false,
     direct_machine_control: false,
+    manufacturing_model: {
+      schema_version: "vena-ia.manufacturing-geometry-model/v1",
+      planning_schema_version: "vena-ia.verified-process-plan/v1",
+      status: "READY_FOR_REVIEW",
+      final_geometry: {
+        source_geometry_hash: "1".repeat(64), topology_evidence_hash: "2".repeat(64),
+        normalized_unit: "mm", bounds: [[0, 0, 0], [10, 20, 30]], topology_valid: true
+      },
+      stock: { status: "PROVIDED", source_ref: "authorized-user-input", contains_final_geometry: true },
+      removal_regions: [{ region_id: "region-1", region_type: "OUTSIDE_FINAL_ENVELOPE", status: "CANDIDATE" }],
+      operation_candidates: [{
+        candidate_id: "operation-1", operation_class: "MILLING_CANDIDATE",
+        status: "CANDIDATE_REQUIRES_HUMAN_REVIEW", target_region_refs: ["region-1"], executable_output: false
+      }],
+      verification: {
+        status: "PASS_REQUIRES_HUMAN_REVIEW", coherent: true,
+        deterministic_replay_hash: "3".repeat(64), physical_validation: false
+      },
+      review_state: "REQUIRES_HUMAN_REVIEW", executable_output: false
+    },
+    toolpath: {
+      schema_version: "vena-ia.toolpath-candidate/v1", status: "CANDIDATE_FOR_VALIDATION",
+      operation_candidate_id: "operation-1", target_region_ids: ["region-1"],
+      segments: [{ segment_id: "segment-1", primitive: "LINEAR", motion: "FEED_CANDIDATE", target_region_id: "region-1" }],
+      verification: { status: "PASS_REQUIRES_HUMAN_REVIEW", deterministic_replay_hash: "4".repeat(64), physical_validation: false },
+      review_state: "REQUIRES_HUMAN_REVIEW", executable_output: false, production_authority: false
+    },
+    level2_evidence: {
+      schema_version: "vena-ia.level2-material-removal-evidence/v1", status: "PASS_REQUIRES_HUMAN_REVIEW",
+      replay_hash: "5".repeat(64), reconstructed_segment_count: 1, target_coverage: "BOUNDED_COMPLETE",
+      remaining_material: "BOUNDED_NOT_EXACT", gouge_detected: false, protected_surface_violation: false,
+      rapid_collision_detected: false, fixture_collision_detected: null, physical_validation: false
+    },
     gcode_candidate: { program: "G21\nG17\nG90\nG94\nM30", output_hash: "a".repeat(64) },
     blind_validation: { gates, replay_hash: "b".repeat(64) },
     digital_thread: {
       thread_id: "thread-controlled",
       organization_id: organizationId,
       status: "COMPLETE_NON_PRODUCTION",
-      artifacts: [{ artifact_id: "cad", artifact_type: "CAD", content_hash: "c".repeat(64) }],
+      artifacts: [{
+        artifact_id: "cad", artifact_type: "CAD", schema_version: "vena-ia.cad-source/v1",
+        content_hash: "c".repeat(64), lifecycle_status: "CURRENT"
+      }],
       replay_hash: "d".repeat(64),
       g9_state: "PENDING_AUTHORITATIVE_REVIEW",
       physical_use_authorized: false
@@ -72,7 +108,7 @@ test("controlled environment keeps G9 pending and downloads only a candidate", a
 
   await page.route("**/*", (route) => {
     const url = new URL(route.request().url());
-    if (url.origin !== "http://localhost:8000") return route.fallback();
+    if (url.origin === "http://127.0.0.1:3100") return route.fallback();
     if (url.pathname === `/projects/${projectId}`) return json(route, { id: projectId, name: "Projeto E2E", status: "ACTIVE" });
     if (url.pathname === `/projects/${projectId}/documents`) return json(route, { documents: [{ id: documentId, filename: "fixture.step", status: "UPLOADED" }], total: 1 });
     if (url.pathname === `/chat/${projectId}/messages` || url.pathname === "/research/reports") return json(route, []);
@@ -115,8 +151,17 @@ test("controlled environment keeps G9 pending and downloads only a candidate", a
   await expect(page.getByText("G9 · PENDING_REVIEW")).toBeVisible();
   await expect(page.getByText("G9 Review Package · PENDING_AUTHORITATIVE_REVIEW")).toBeVisible();
   await expect(page.getByText(/autoridade automática=false/)).toBeVisible();
+  await expect(page.getByRole("region", { name: "Manufacturing Geometry" })).toContainText("READY_FOR_REVIEW");
+  await expect(page.getByRole("region", { name: "Verified Process Plan" })).toContainText("executable_output=false");
+  await expect(page.getByRole("region", { name: "Toolpath candidato" })).toContainText("production_authority=false");
+  await expect(page.getByRole("region", { name: "Level-2 bounded evidence" })).toContainText("physical_validation=false");
+  await expect(page.getByText(/CAD · vena-ia.cad-source\/v1 · CURRENT/)).toBeVisible();
+  const downloadButton = page.getByRole("button", { name: /Download controlado/ });
+  await expect(downloadButton).toBeDisabled();
+  await page.getByLabel(/Confirmo que este arquivo é NON_PRODUCTION/).check();
+  await expect(downloadButton).toBeEnabled();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: /Download controlado/ }).click();
+  await downloadButton.click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("fixture.candidate.nc");
   await expect(

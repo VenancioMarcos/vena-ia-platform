@@ -1473,3 +1473,22 @@ integridade apenas.
 Reviewer, decision e external evidence authority não pertencem ao input público.
 Adjudicação, integração externa e teste físico exigem missões separadas. G9 permanece
 pending; readiness/physical authority permanecem false; não há migration ou v3.2.
+
+## DEC-046 — First Controlled Path Uses the Existing Local Web Boundary
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Validation / Web Delivery / CNC Safety
+
+TASK-V31-006 validates the shortest existing path without creating deployment
+infrastructure: a valid STEP cylindrical body is generated at test runtime, uploaded
+through the authenticated Documents API and processed by the real storage, CAD kernel,
+planning, verification, Digital Thread and controlled-download services. Browser
+coverage verifies the review surface and guarded download contract.
+
+The user acknowledgement is a UX control, never an authority source. Server-side
+membership, artifact integrity, replay and G0-G8 remain authoritative; G9 stays
+`PENDING_AUTHORITATIVE_REVIEW`. No GitHub deployment, environment, secret, variable or
+repository deployment configuration was found, so external Vercel infrastructure was
+not invented. Turning coverage, expanded CAD corpus, external deployment and physical
+validation require separate evidence and authorization.
