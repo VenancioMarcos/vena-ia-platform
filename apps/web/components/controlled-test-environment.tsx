@@ -13,6 +13,7 @@ import type {
 type DocumentReference = { id: string; filename: string; status: string };
 type Organization = { id: string; name: string; status: string };
 type Props = { documents: DocumentReference[]; onError: (message: string) => void };
+const CONTROLLED_RUN_TIMEOUT_MS = 120_000;
 
 function point(value: string): number[] {
   const values = value.split(",").map((item) => Number(item.trim()));
@@ -118,7 +119,8 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
       };
       setResult(await api<ControlledEnvironmentResult>("/engineering/controlled-environment/runs", {
         method: "POST",
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(CONTROLLED_RUN_TIMEOUT_MS)
       }));
     } catch (reason) {
       onError(reason instanceof Error ? reason.message : "Falha na validação controlada.");
