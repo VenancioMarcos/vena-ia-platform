@@ -35,7 +35,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   `fd23a2b2dec85a4522082e7992dfd5ab90171080fc736a28be9967387986cb49`.
   The API image includes the OpenGL runtime required by OCP, and only the controlled
   CAD call receives the longer bounded browser timeout. G9 remains pending;
-  controlled-validation readiness and physical-use authority remain false.
+  controlled-validation readiness and physical-use authority remain false. The full
+  troubleshooting history, execution evidence and reusable end-to-end operating
+  method are recorded in `docs/FIRST_CONTROLLED_CAD_TO_GCODE_TEST.md`.
 
 * **TASK-V31-007B — STEP browser MIME compatibility:** the local v3.1 API accepts
   `application/octet-stream` only for `.step`/`.stp` after bounded-size, STEP header
