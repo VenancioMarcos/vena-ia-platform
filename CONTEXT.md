@@ -27,6 +27,17 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
+* **TESTE_02/TESTE_03 — real STEP AP214/AP203 browser validation completed:** the
+  standards-compliant whitespace emitted around STEP `SI_UNIT` parameters is now
+  recognized conservatively by the textual parser. Focused parser regression passed,
+  the API-only runtime was rebuilt, and both real inputs completed the authenticated
+  rendered-browser controlled path through G0–G8, Manufacturing Geometry, Process
+  Plan, bounded Toolpath, Level-2 and the immutable Digital Thread. The controlled
+  download endpoint returned HTTP 200 and the preserved candidate is 861 bytes with
+  SHA-256 `f012921e34a5817c47bb31f9d12f680f11f1c3ea9e2c885df00501bcc1d23f7e`.
+  G9 remains pending; controlled-validation readiness and physical-use authority
+  remain false. No machine-send, DNC/NC transfer, cycle start or direct control ran.
+
 * **TASK-V31-007B — TESTE_01 real browser path completed:** the verified public
   `TESTE_01_cube.stp` input completed authenticated browser orchestration through
   geometry/topology evidence, Manufacturing Geometry, verified Process Plan, bounded

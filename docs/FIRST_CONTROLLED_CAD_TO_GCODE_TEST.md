@@ -200,13 +200,70 @@ a autorizações protegidas, disponibilidade das ferramentas e gates de seguran�
 - `V3_2=NOT_STARTED`.
 - Nenhum deploy, envio CNC ou uso físico ocorreu.
 
+## Relatório complementar — TESTE_02 e TESTE_03
+
+**Data:** 2026-08-17
+
+**Resultado:** `TASK_SUCCESS`
+
+Os testes complementares reutilizaram a jornada renderizada e os limites de segurança
+do TESTE_01, agora com exportações STEP reais AP214 e AP203. Nenhum atalho de API foi
+usado para declarar o sucesso visual.
+
+### Entradas verificadas
+
+- TESTE_02: `PEÇA_TESTE_02_STEP_AP214.STEP`, SHA-256
+  `082f72616fa41e9b8badcee403a7042da5f5ba4f377b6afab97c57a168a476c8`.
+- TESTE_03: `PEÇA_TESTE_03_STEP_AP203.STEP`, 117,132 bytes, SHA-256
+  `f884b4d1a1c83846a87bcc6d95a7fc5f1c65ddcf5a32571523e87c3a121029fb`.
+- Ambas as entradas preservaram os marcadores `ISO-10303-21` e
+  `END-ISO-10303-21;` e foram identificadas em milímetros.
+
+### Gap localizado e correção mínima
+
+O parser textual reconhecia unidades apenas quando `SI_UNIT` aparecia sem espaços.
+Exportadores reais AP203/AP214 podem emitir espaços e quebras de linha válidos entre
+os parâmetros. A detecção de milímetro, metro e polegada passou a usar expressões
+regulares restritas aos mesmos tokens STEP, tolerando somente whitespace. Unidade não
+reconhecida continua `UNKNOWN`; nenhuma validação de arquivo, MIME ou segurança foi
+relaxada. O teste focal reproduz a forma multiline observada.
+
+### Evidência ponta a ponta
+
+- TESTE_02 e TESTE_03: topologia válida, unidade `mm`, stock contendo a geometria e
+  seis regiões removíveis.
+- Manufacturing Geometry: `READY_FOR_REVIEW`.
+- Verified Process Plan: `PASS_REQUIRES_HUMAN_REVIEW`, uma operação candidata não
+  executável.
+- Toolpath: `CANDIDATE_FOR_VALIDATION`, 19 segmentos lineares e seis regiões-alvo.
+- Level-2: `PASS_REQUIRES_HUMAN_REVIEW`, cobertura completa, sem gouge nem violação
+  de superfície protegida; validação física falsa.
+- Gates G0–G8: `PASS`; G9: `PENDING_AUTHORITATIVE_REVIEW`.
+- Digital Thread: `COMPLETE_NON_PRODUCTION`, nove artefatos imutáveis.
+- O endpoint real `POST /engineering/controlled-environment/download` retornou HTTP
+  200 após o reconhecimento explícito de NON_PRODUCTION na interface.
+- Candidato preservado: `TESTE_03_vena-ia-f012921e34a5817c.candidate.nc`, 861 bytes,
+  SHA-256 `f012921e34a5817c47bb31f9d12f680f11f1c3ea9e2c885df00501bcc1d23f7e`.
+- Regressão local: Ruff aprovado, mypy aprovado em 153 arquivos e API com
+  `399 passed, 2 skipped`.
+
+### Segurança preservada
+
+- `CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE`.
+- `PHYSICAL_USE_AUTHORIZED=FALSE`.
+- `MACHINE_SEND=DNC=NC_TRANSFER=CYCLE_START=DIRECT_MACHINE_CONTROL=FALSE`.
+- `NO_HUMAN_REVIEW_BYPASS=TRUE`.
+- Nenhum deploy, teste físico, aprovação de G9 ou início de v3.2 ocorreu.
+
 ## Delivery record
 
-- **Objective:** first controlled CAD-to-G-code test path.
+- **Objective:** first controlled CAD-to-G-code test path and conservative validation
+  with real AP214/AP203 STEP exports.
 - **Files:** backend integration test, web evidence/review controls, contracts,
   browser tests and project governance documents.
-- **Tests:** focal backend integration, frontend typecheck/build and browser coverage;
-  full regression is the release gate for the Draft PR.
+- **Tests:** focal backend integration, parser whitespace regression, frontend
+  typecheck/build and real rendered-browser coverage; full regression is the release
+  gate for the Draft PR.
 - **Acceptance:** repeatable real backend chain, reviewable browser evidence and all
   safety invariants preserved.
 - **Next step:** CTO review of the Draft PR; no new phase starts automatically.

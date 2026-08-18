@@ -46,6 +46,11 @@ class StepTextParser:
     )
     _file_name = re.compile(r"FILE_NAME\s*\(\s*'([^']*)'", re.IGNORECASE)
     _schema = re.compile(r"FILE_SCHEMA\s*\(\s*\(\s*'([^']+)'", re.IGNORECASE)
+    _millimetre = re.compile(
+        r"SI_UNIT\s*\(\s*\.MILLI\.\s*,\s*\.METRE\.\s*\)", re.IGNORECASE
+    )
+    _metre = re.compile(r"SI_UNIT\s*\(\s*\$\s*,\s*\.METRE\.\s*\)", re.IGNORECASE)
+    _inch = re.compile(r"CONVERSION_BASED_UNIT\s*\(\s*'INCH'", re.IGNORECASE)
 
     def parse(self, content: bytes) -> StepAnalysis:
         if not content.startswith(b"ISO-10303-21;"):
@@ -96,13 +101,12 @@ class StepTextParser:
             maximum=tuple(max(axis) for axis in axes),  # type: ignore[arg-type]
         )
 
-    @staticmethod
-    def _length_unit(text: str) -> str:
-        normalized = text.upper()
-        if "SI_UNIT(.MILLI.,.METRE.)" in normalized:
+    @classmethod
+    def _length_unit(cls, text: str) -> str:
+        if cls._millimetre.search(text):
             return "mm"
-        if "SI_UNIT($,.METRE.)" in normalized:
+        if cls._metre.search(text):
             return "m"
-        if "CONVERSION_BASED_UNIT('INCH'" in normalized:
+        if cls._inch.search(text):
             return "in"
         return "UNKNOWN"

@@ -41,6 +41,18 @@ def test_step_parser_extracts_metadata_and_envelope() -> None:
     assert result.volume is None
 
 
+def test_step_parser_accepts_standard_whitespace_in_length_unit() -> None:
+    content = (
+        b"ISO-10303-21;\nDATA;\n"
+        b"#1=(LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT ( .MILLI.,\n .METRE. ));\n"
+        b"ENDSEC;\nEND-ISO-10303-21;"
+    )
+
+    result = StepTextParser().parse(content)
+
+    assert result.length_unit == "mm"
+
+
 def test_step_parser_rejects_missing_terminator() -> None:
     with pytest.raises(StepParseError, match="terminator"):
         StepTextParser().parse(b"ISO-10303-21;")

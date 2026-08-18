@@ -25,6 +25,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * `TESTE_01_cube.stp` completed the real browser path through G0–G8, Manufacturing
   Geometry, verified Process Plan, bounded Toolpath, Level-2 evidence, Digital Thread
   and the first controlled `.candidate.nc` download.
+* STEP length-unit recognition now tolerates standards-compliant whitespace around
+  `SI_UNIT` parameters. The focused regression covers the multiline millimetre form
+  observed in real AP203/AP214 exports without weakening unknown-unit fail-closed
+  behavior.
+* `PEÇA_TESTE_02_STEP_AP214.STEP` and `PEÇA_TESTE_03_STEP_AP203.STEP` completed the
+  authenticated rendered-browser path through G0–G8, Manufacturing Geometry,
+  verified Process Plan, bounded Toolpath, Level-2, immutable Digital Thread and the
+  controlled non-production download endpoint. G9 remained pending in both runs.
 
 ### Added — TASK-V31-006 first controlled test path
 * Added an executable test that uploads a runtime-generated STEP cylinder through the
