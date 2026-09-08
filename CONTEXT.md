@@ -29,6 +29,8 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-08
 
+- **Handoff CTO:** FIX-002 concluída no commit local 08569ff e enviada ao Gemini; aprovada tecnicamente no escopo por avaliação do relatório. Nova ordem CTO-CODEX-SPEC-003 recebida: proposta documental de ADR/contratos para torneamento XZ, ainda não executada. Sem push ou autoridade física.
+
 - Linha v3.1.0 NON_PRODUCTION; main remota verificada em 64ac3b8. PR #31 Draft em d798417; 052cb8e local, pendente de push.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; não há pipeline de torneamento.
 - Backend/API 3.1.0; modelos SQLAlchemy em apps/api por DEC-011. Migration registrada e61c4f8a2b90; nenhuma migration executada nesta auditoria.

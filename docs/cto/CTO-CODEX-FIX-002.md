@@ -20,3 +20,22 @@ Incompatibilidade mantém rotação/avanço/tempo/custo derivados indisponíveis
 
 ## Próximos passos
 Validação concluída; registrar commit local e enviar resultado ao CTO. Push/merge/visibilidade/deploy não executados. G9 pendente e autoridade física false. A documentação distingue síntese vigente e histórico preservado.
+
+## Encerramento e parecer do CTO
+Commit de implementação: `08569ff728b5b9ae2421e9cbcd2adfc47f649ecc`.
+Árvore limpa após commit; nenhum push. Entrega enviada ao Gemini na conversa
+https://gemini.google.com/app/62dacc664840eafe e recebida com parecer
+**APROVADO TECNICAMENTE NO ESCOPO**, baseado no relatório, sem inspeção direta do diff.
+
+Próxima ordem recebida: **CTO-CODEX-SPEC-003**, exclusivamente documental:
+- Propor ADR sequencial sobre geometria/perfil de revolução e torneamento XZ;
+- definir datum, convenção proposta de X em diâmetro, stock e ferramenta;
+- delimitar faceamento e cilindramento externo reto;
+- especificar pós-processamento e movimento linear, sem implementar CAM;
+- registrar decisão PROPOSED, conferir Markdown/links/diff e suíte API;
+- commit local na mesma branch, sem push/merge/tag/publicação.
+
+A ordem contém exemplos ISO/Fanuc (G90/G94/G95/G96/G50) que exigem confirmação
+em documentação primária do controlador antes de definir semântica ou cabeçalho.
+Não há controlador validado nem autoridade física concedida. SPEC-003 recebida,
+ainda não executada. Nenhum recurso de torneamento foi adicionado pela FIX-002.
