@@ -812,3 +812,10 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * **MAJOR** — mudança incompatível na plataforma ou na arquitetura fundamental.
 * **MINOR** — nova versão executiva do roadmap (v0.2 Core, v0.3 IA Base etc.) ou funcionalidade relevante.
 * **PATCH** — correções e ajustes que não alteram escopo funcional.
+
+## CTO-CODEX-FIX-002 — 2026-09-08 (local, unreleased)
+
+- Reject incompatible catalog selections for calculated spindle speed, feed, machining time and derived total/cost; preserve the complete compatibility contract and human review requirement.
+- Cover machine-only, tool-only and combined incompatibility with negative API regressions.
+- Ignore local certificates, credential files, runtime outputs and temporary CAD/CAM suffixes; preserve .env.example and ordinary CAD fixtures.
+- Clarify current v3.1 context separately from historical delivery checkpoints. No turning pipeline, migration, push, release or physical authority added.

@@ -197,7 +197,12 @@ class EngineeringCatalogService:
             if not isinstance(value, (int, float)) or value <= 0
         ]
         unavailable = AvailabilityValue(
-            status="NOT_AVAILABLE", reason="Missing or invalid: " + ", ".join(missing)
+            status="NOT_AVAILABLE",
+            reason=(
+                "Missing or invalid: " + ", ".join(missing)
+                if missing
+                else "Machine or tool does not support the requested operation"
+            ),
         )
         parameters: dict[str, AvailabilityValue] = {
             "spindle_speed": unavailable,
@@ -205,7 +210,7 @@ class EngineeringCatalogService:
         }
         formulas: list[str] = []
         feed = None
-        if not missing and compatibility.endswith("COMPATIBLE"):
+        if not missing and compatibility == "PRELIMINARY_COMPATIBILITY_CHECK:COMPATIBLE":
             numeric = {key: float(cast(int | float, value)) for key, value in required.items()}
             rpm = min(
                 1000 * numeric["cutting_speed_m_min"] / (math.pi * numeric["diameter_mm"]),

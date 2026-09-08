@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.5
-**Última atualização:** 2026-08-15
+**Versão:** 2.6
+**Última atualização:** 2026-09-08
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -26,6 +26,21 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ---
 
 ## 3. Estado atual do projeto
+
+### 3.1 Síntese vigente — 2026-09-08
+
+- Linha v3.1.0 NON_PRODUCTION; main remota verificada em 64ac3b8. PR #31 Draft em d798417; 052cb8e local, pendente de push.
+- CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; não há pipeline de torneamento.
+- Backend/API 3.1.0; modelos SQLAlchemy em apps/api por DEC-011. Migration registrada e61c4f8a2b90; nenhuma migration executada nesta auditoria.
+- Repositório PUBLIC confirmado diretamente. Nenhuma mudança de visibilidade ou publicação realizada.
+- CTO-CODEX-DIAG-001 concluída em docs/cto/CTO-CODEX-DIAG-001.md: 399 passed, 2 skipped em 258.95 s; Ruff/mypy PASS em Python 3.14.6 experimental. Varredura limitada: 1828 blobs/226 commits, sem assinaturas pesquisadas de credenciais; não certifica ausência absoluta de segredos.
+- Diagnóstico enviado ao Gemini após autorização específica do proprietário; parecer AR recebido. CTO-CODEX-FIX-002 corrige igualdade de compatibilidade, adiciona regressão e reforça .gitignore. Validação: 402 passed, 2 skipped em 118.07 s; Ruff/mypy PASS. Ver docs/cto/CTO-CODEX-FIX-002.md. Commit somente local, sem push.
+- G9 pendente; PHYSICAL_USE_AUTHORIZED=false. Sem machine-send, DNC, transferência NC, cycle start ou deploy.
+
+### 3.2 Histórico de entregas
+
+Os registros abaixo descrevem o estado na data de cada entrega. Versões antigas, packages não iniciados e PRs pendentes são checkpoints históricos; não substituem a síntese vigente acima.
+
 
 * **TESTE_02/TESTE_03 — real STEP AP214/AP203 browser validation completed:** the
   standards-compliant whitespace emitted around STEP `SI_UNIT` parameters is now
@@ -424,7 +439,7 @@ PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 
 * Gateway externo confiável e fluxo público de recuperação de senha; controles distribuídos internos de autenticação já usam Redis.
 * OCR para PDFs sem camada textual; o Package 1 mantém falha explícita.
-* Kernel geométrico CAD, propriedades topológicas, volume/área robustos, CAM, CNC ou simulação.
+* Pipeline de torneamento, CAM geral, simulação cinemática/remoção B-Rep exata e validação independente para uso físico. Kernel CAD/OCCT e evidências topológicas já existem; o candidato de fresamento permanece limitado e NON_PRODUCTION.
 * Capacidade, timeout preemptivo de bibliotecas síncronas e backend histórico de telemetria validados para piloto/produção.
 * Deploy/CD automatizado; os workflows atuais cobrem CI de backend e frontend, sem publicação automática.
 * `packages/database` como pacote real (os modelos vivem em `apps/api` por decisão deliberada — `DEC-011`).
