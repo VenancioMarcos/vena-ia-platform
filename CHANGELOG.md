@@ -8,6 +8,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Documentation — CTO-CODEX-SPEC-003
+
+* ADR-0037 e DEC-047 propõem contratos de torneamento XZ, stock, ferramenta e pós
+  dependente do controlador. Somente documentação; nenhum suporte novo implementado.
+
 ### Fixed — TASK-V31-007B STEP browser MIME compatibility
 * STEP/STP uploads now accept the browser-observed generic
   `application/octet-stream` representation only when the extension is `.step` or

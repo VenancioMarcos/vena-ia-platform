@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.6
+**Versão:** 2.7
 **Última atualização:** 2026-09-08
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-08
 
-- **Handoff CTO:** FIX-002 concluída no commit local 08569ff e enviada ao Gemini; aprovada tecnicamente no escopo por avaliação do relatório. Nova ordem CTO-CODEX-SPEC-003 recebida: proposta documental de ADR/contratos para torneamento XZ, ainda não executada. Sem push ou autoridade física.
+- **Handoff CTO:** SPEC-003 documentada em [ADR-0037](docs/adr/ADR-0037-turning-geometry-and-toolpath-foundation.md) e DEC-047, ambos PROPOSED. Contratos de torneamento XZ, sem código; controlador real não resolvido, emissão NC bloqueada. API: 402 passed, 2 skipped em 123.08 s. Entrega em [CTO-CODEX-SPEC-003](docs/cto/CTO-CODEX-SPEC-003.md); preparar commit local, enviar ao Gemini, solicitar e aguardar nova ordem, continuando o escopo técnico autorizado. FIX-002 aprovada tecnicamente por relatório; sem push ou autoridade física.
 
 - Linha v3.1.0 NON_PRODUCTION; main remota verificada em 64ac3b8. PR #31 Draft em d798417; 052cb8e local, pendente de push.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; não há pipeline de torneamento.

@@ -1492,3 +1492,18 @@ membership, artifact integrity, replay and G0-G8 remain authoritative; G9 stays
 repository deployment configuration was found, so external Vercel infrastructure was
 not invented. Turning coverage, expanded CAD corpus, external deployment and physical
 validation require separate evidence and authorization.
+
+## DEC-047 — Contratos propostos de torneamento XZ
+
+**Data:** 2026-09-08
+**Status:** PROPOSED
+**Tipo:** CAD / Engineering / Turning
+
+CTO-CODEX-SPEC-003 propõe o [ADR-0037](adr/ADR-0037-turning-geometry-and-toolpath-foundation.md):
+perfil de revolução com evidência global, datum frontal, geometria em raio e
+programação proposta em diâmetro; stock/fixação e ferramenta específicos;
+faceamento e cilindramento externo reto; trajetória linear com verificador
+independente. Perfil real de controlador permanece não resolvido e bloqueia NC.
+A sequência G90/G94/G95 sugerida não possui semântica universal de torno;
+a seleção exige manual e sistema de códigos identificados. Não há implementação,
+mudança de contratos vigentes, G9 ou autoridade física. Revisão técnica pendente.
