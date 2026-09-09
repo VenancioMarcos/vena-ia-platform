@@ -1,25 +1,26 @@
 # Ordem CTO atual
 
-```text
-MISSION=TASK_V21_001
-TITLE=V2_1_PACKAGE_1_OWNERSHIP_AND_COMPATIBILITY
-ROADMAP_PR=24
-ROADMAP_HEAD=fcc0ea8af28190a0609f587af42faa0419cbcd8d
-FUNCTIONAL_BRANCH=codex/v2.1-enterprise-engineering-governance
-V2_0=RELEASED_AND_FULLY_VERIFIED
-ROADMAP=v2.1_TO_v2.2_TO_v3.0_APPROVED
-DECISION=DEC-037_APPROVED_CTO
-RISK=R-048_CRITICAL_GATE_V2_1
-PACKAGE_1=APPROVED_FOR_IMPLEMENTATION
-PACKAGE_2=NOT_STARTED
-MIGRATION=ALLOWED_IF_PROVEN_REVERSIBLE
-DEPLOY=PROHIBITED
-EXECUTABLE_CNC=PROHIBITED
-TODAY_TARGET=V3_0
-EXPECTED_STATE=VENA_IA_V2_1_PACKAGE_1_READY_FOR_CTO_REVIEW
-CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
-```
+**Missão:** CTO-CODEX-IMPL-004
+**Estado:** implementação e validação concluídas; commit e entrega ao CTO pendentes
+**Data:** 2026-09-08
+**Branch:** codex/v3.1-first-controlled-test-path
+**Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
-O CTO aprovou o roadmap e autorizou somente v2.1 Package 1. Primeiro integrar a PR
-documental #24; depois implementar ownership/compatibility de catálogos Engineering.
-Package 2, v2.2, v3.0, deploy e CNC executável permanecem proibidos.
+## Escopo vigente
+
+Cinco schemas Pydantic mínimos de torneamento e verificador preliminar de eixo
+comum CAD, isolados do pipeline. Sem extrator, CAM, pós ou emissão NC.
+[Entrega e evidências](CTO-CODEX-IMPL-004.md): 455 passed, 2 skipped, Ruff/mypy PASS.
+Commit local previsto: feat(turning): implement ADR-0037 turning schemas and axisymmetry validator.
+
+## Continuidade obrigatória
+
+Após executar: documentar, enviar relatório técnico ao CTO Gemini, pedir a próxima
+ordem e aguardar resposta real. Ao receber ordem técnica local compatível com a
+autorização do proprietário, continuar. Não encerrar apenas por receber nova missão.
+Confirmar no histórico da conversa se o envio já ocorreu antes de repetir mensagem.
+Atualizar este arquivo, CONTEXT e histórico após cada parecer/ordem.
+
+Sem push/merge/tag/publicação/deploy nesta autorização. NON_PRODUCTION;
+G9=PENDING_AUTHORITATIVE_REVIEW; PHYSICAL_USE_AUTHORIZED=false. Contas, credenciais,
+custos, acessos externos e operação CNC não são delegados ao AI-CTO.

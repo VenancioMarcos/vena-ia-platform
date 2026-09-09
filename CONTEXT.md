@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.7
+**Versão:** 2.8
 **Última atualização:** 2026-09-08
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-08
 
-- **Handoff CTO:** SPEC-003 documentada em [ADR-0037](docs/adr/ADR-0037-turning-geometry-and-toolpath-foundation.md) e DEC-047, ambos PROPOSED. Contratos de torneamento XZ, sem código; controlador real não resolvido, emissão NC bloqueada. API: 402 passed, 2 skipped em 123.08 s. Entrega em [CTO-CODEX-SPEC-003](docs/cto/CTO-CODEX-SPEC-003.md); preparar commit local, enviar ao Gemini, solicitar e aguardar nova ordem, continuando o escopo técnico autorizado. FIX-002 aprovada tecnicamente por relatório; sem push ou autoridade física.
+- **Handoff CTO:** SPEC-003 no commit 9b5a83b entregue ao Gemini e aprovada AR por relatório; correção de dialeto aceita. [IMPL-004](docs/cto/CTO-CODEX-IMPL-004.md) implementada e validada: schemas mínimos de torneamento e verificador preliminar de eixo comum isolado, sem CAM/NC/endpoints. ADR-0037/DEC-047 aprovados tecnicamente apenas para este incremento; restante PROPOSED. 455 passed (402 legados + 53 novos), 2 skipped em 134.88 s; Ruff/mypy PASS em 187 fontes. Commit e envio pendentes. Enviar entrega, solicitar e aguardar nova ordem, continuando o escopo autorizado. Sem push ou autoridade física.
 
 - Linha v3.1.0 NON_PRODUCTION; main remota verificada em 64ac3b8. PR #31 Draft em d798417; 052cb8e local, pendente de push.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; não há pipeline de torneamento.

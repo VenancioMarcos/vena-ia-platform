@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-IMPL-004
+
+* Schemas mínimos estritos de torneamento e verificação preliminar de retas
+  cilíndricas/cônicas, com inspeção BRep isolada e falha fechada.
+* Sem extração de perfil, integração, CAM, emissão NC ou autoridade física.
+
 ### Documentation — CTO-CODEX-SPEC-003
 
 * ADR-0037 e DEC-047 propõem contratos de torneamento XZ, stock, ferramenta e pós

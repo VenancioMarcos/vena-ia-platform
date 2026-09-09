@@ -527,3 +527,39 @@ O CTO aprovou a TASK-V30-000 e autorizou a integração da PR documental #24 seg
 somente da implementação de v2.1 Package 1. O escopo resolve ownership organizacional
 e compatibilidade dos catálogos Engineering com migration reversível se comprovada.
 Package 2, v2.2, v3.0, deploy, produção e CNC executável permanecem fora.
+
+## 2026-09-08 — Retomada do ciclo Gemini/Codex
+
+DIAG-001 entregue; FIX-002 implementada em 08569ff e aprovada tecnicamente por
+relatório. Handoff local b86f51e. SPEC-003 documentada em 9b5a83b, revisada AR;
+dialeto genérico corrigido e aceito. IMPL-004 recebida e executada localmente;
+validação 455 passed/2 skipped, aguardando commit/envio. O proprietário reiterou
+executar, entregar, pedir/aguardar nova ordem e continuar sem perguntas rotineiras.
+
+### Snapshot da ordem substituída (histórico; não executar)
+
+# Ordem CTO atual
+
+```text
+MISSION=TASK_V21_001
+TITLE=V2_1_PACKAGE_1_OWNERSHIP_AND_COMPATIBILITY
+ROADMAP_PR=24
+ROADMAP_HEAD=fcc0ea8af28190a0609f587af42faa0419cbcd8d
+FUNCTIONAL_BRANCH=codex/v2.1-enterprise-engineering-governance
+V2_0=RELEASED_AND_FULLY_VERIFIED
+ROADMAP=v2.1_TO_v2.2_TO_v3.0_APPROVED
+DECISION=DEC-037_APPROVED_CTO
+RISK=R-048_CRITICAL_GATE_V2_1
+PACKAGE_1=APPROVED_FOR_IMPLEMENTATION
+PACKAGE_2=NOT_STARTED
+MIGRATION=ALLOWED_IF_PROVEN_REVERSIBLE
+DEPLOY=PROHIBITED
+EXECUTABLE_CNC=PROHIBITED
+TODAY_TARGET=V3_0
+EXPECTED_STATE=VENA_IA_V2_1_PACKAGE_1_READY_FOR_CTO_REVIEW
+CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
+```
+
+O CTO aprovou o roadmap e autorizou somente v2.1 Package 1. Primeiro integrar a PR
+documental #24; depois implementar ownership/compatibility de catálogos Engineering.
+Package 2, v2.2, v3.0, deploy e CNC executável permanecem proibidos.

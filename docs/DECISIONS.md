@@ -1496,7 +1496,7 @@ validation require separate evidence and authorization.
 ## DEC-047 — Contratos propostos de torneamento XZ
 
 **Data:** 2026-09-08
-**Status:** PROPOSED
+**Status:** APROVADA TECNICAMENTE COM RESSALVAS — IMPL-004; restante PROPOSED
 **Tipo:** CAD / Engineering / Turning
 
 CTO-CODEX-SPEC-003 propõe o [ADR-0037](adr/ADR-0037-turning-geometry-and-toolpath-foundation.md):
@@ -1505,5 +1505,6 @@ programação proposta em diâmetro; stock/fixação e ferramenta específicos;
 faceamento e cilindramento externo reto; trajetória linear com verificador
 independente. Perfil real de controlador permanece não resolvido e bloqueia NC.
 A sequência G90/G94/G95 sugerida não possui semântica universal de torno;
-a seleção exige manual e sistema de códigos identificados. Não há implementação,
-mudança de contratos vigentes, G9 ou autoridade física. Revisão técnica pendente.
+a seleção exige manual e sistema de códigos identificados. Incremento IMPL-004: schemas mínimos e helper de eixo comum isolados. Sem
+mudança de contratos vigentes, integração CAD/CAM, G9 ou autoridade física.
+Parecer AR recebido do Gemini por relatório; implementação aguardando revisão.

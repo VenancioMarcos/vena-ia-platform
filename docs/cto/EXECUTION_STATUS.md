@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-08 — IMPL-004
+
+Schemas mínimos e helper CAD preliminar implementados e validados: 455 passed,
+2 skipped, Ruff/mypy PASS. Commit/envio pendentes; sem integração, CAM ou NC.
+Próxima ação: entregar ao Gemini, solicitar e aguardar nova ordem.
+
+Os estados abaixo são históricos; a ordem vigente está em CURRENT_ORDER.md.
+
 ## 2026-08-11 — Master Mission v3.0 terminal
 
 ```text

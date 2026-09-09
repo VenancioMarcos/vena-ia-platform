@@ -1,8 +1,8 @@
 # ADR-0037 — Contratos propostos para torneamento controlado em XZ
 
-**Status:** PROPOSED — CTO-CODEX-SPEC-003
+**Status:** Aprovado tecnicamente com ressalvas — incremento IMPL-004; demais contratos PROPOSED
 **Data:** 2026-09-08
-**Responsável:** Codex (executor); Gemini (revisão técnica pendente)
+**Responsável:** Codex (executor); Gemini (revisão técnica AR da SPEC-003)
 
 ## Contexto e problema
 
@@ -13,7 +13,7 @@ comum de revolução, perfil usinável ou capacidade de torneamento. Esta propos
 [manufatura](ADR-0032-manufacturing-interpretation-planning.md) e
 [toolpath](ADR-0033-bounded-toolpath-candidates.md); não altera suas versões.
 
-Nenhum contrato abaixo está implementado. A aprovação desta especificação não
+A proposta integral abaixo não está implementada; ver o incremento delimitado ao final. A aprovação desta especificação não
 homologa controlador, ferramenta, fixação, segurança física ou gate G9.
 
 ## Decisão proposta
@@ -206,3 +206,39 @@ NC, cycle start, push, merge, tag, publicação ou deploy nesta missão.
 
 As regras arquiteturais e invariantes acima são propostas do projeto; as fontes
 suportam capacidades da API e a distinção de dialetos, não homologam esta solução.
+
+## Incremento aprovado — CTO-CODEX-IMPL-004
+
+Parecer Gemini recebido em 2026-09-08: AR, baseado no relatório da SPEC-003, sem
+inspeção direta do commit remoto. Correção de dialeto acolhida. Autorizada a
+fundação local de cinco schemas Pydantic e verificador preliminar de eixo comum.
+Não equivale à aprovação de G9 ou dos contratos completos de CAD/CAM/pós.
+
+`engineering/turning_schemas.py` implementa somente dados declarados: ponto radial,
+polyline/origem/direção/fechamento, stock mínimo, ferramenta mínima e requisito de
+controlador. Estritos, sem extras/coerção/NaN/Inf; points usa tuple imutável em
+Python e array no JSON, evitando mutação após validação. Validação de fechamento
+não prova simplicidade, área, proveniência ou equivalência com um BRep. Stock
+mínimo não contém setup/fixação; ferramenta mínima não valida ângulos completos,
+orientação 1..9 ou envelope. Nenhum modelo é um candidato executável.
+
+`ControllerProfileRequirement.x_mode` aceita RADIUS/DIAMETER como declaração a
+resolver (conforme IMPL-004), sem alterar a convenção programada DIAMETER proposta.
+`emission_status` sempre retorna CONTROLLER_PROFILE_UNRESOLVED. Não há emissor NC.
+
+`cad/axisymmetry.py` compara todos os pares de retas cilíndricas/cônicas com
+origens, direção normalizada e tolerâncias explícitas. Adapter OCCT inspeciona um
+sólido válido, todas as faces, planos perpendiculares ao eixo e span angular
+completo de superfícies analíticas. Topologia inválida, eixos divergentes,
+superfícies desconhecidas e recursos excessivos retornam AXISYMMETRY_FAILED.
+Sucesso AXISYMMETRY_PRELIMINARY_PASS não prova revolução global: U completo não
+exclui todo recorte; furos coaxiais e análise de interior exigem extrator futuro.
+Sem retorno de geratriz/datum inferidos, endpoints, integração ou alteração do
+pipeline vigente. O chamador deve declarar a unidade real das coordenadas BRep,
+que pode diferir da unidade original do STEP após a importação do kernel.
+
+Os limites 512 faces e 10.000 pontos são orçamentos conservadores deste helper;
+não prometem cobertura geral ou preempção de crash nativo. Tolerâncias vêm do
+chamador e são numéricas, não fabricação. Status PASS é relativo a esses valores.
+Referências de implementação: [Pydantic ConfigDict](https://docs.pydantic.dev/latest/api/config/)
+e [OCCT BRepCheck_Analyzer](https://dev.opencascade.org/doc/refman/html/class_b_rep_check___analyzer.html).
