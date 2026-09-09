@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-AUTO-015
+
+* Avaliador puro de quantização de diâmetro, precisão 1..6 e ROUND_HALF_UP
+  do valor binário exato em contexto Decimal independente; sem emissão NC.
+* Rejeição de overflow e perda de diâmetro positivo para zero na resolução.
+
 ### Added — CTO-CODEX-AUTO-012A
 
 * Contrato numérico estrito de reconstrução radial/desvio assinado, sem

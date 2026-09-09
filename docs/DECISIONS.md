@@ -1590,3 +1590,10 @@ Nenhuma emissão NC ou integração ao Digital Thread.
 CTO acolheu integralmente o conflito e substituiu AUTO-012 por AUTO-012A.
 Contrato numérico isolado, is_boundary_safe=false/NOT_EVALUATED e limitações
 fixas; retomada local sem NC ou publicação, conforme incremento ADR-0037.
+
+
+### DEC-047 — AUTO-015 autorizada
+
+EXEC-014 concluiu commit 70e4d13 e revalidação 569 pass/2 skips. CTO aprovou
+e emitiu AUTO-015, função numérica isolada; política no ADR-0037. Sem NC
+ou promoção do contrato a segurança de fronteira.

@@ -650,3 +650,10 @@ sem fronteiras/trajectória/NC. Implementação e testes em validação.
 AUTO-012A aprovada por relatório; staging bloqueado por quota, WAIT-013
 confirmada sem descartar arquivos. Proprietário informou novo login no Gemini;
 CTO emitiu EXEC-014. Revisor normal aceitou staging na retomada.
+
+## 2026-09-09 — EXEC-014 aprovada; AUTO-015
+
+Commit 70e4d13 efetivado pelo revisor normal, árvore limpa; revalidação
+569 pass/2 skips em 128.86 s. Gemini aprovou por relatório e emitiu AUTO-015:
+avaliador matemático puro de diâmetro, precisão 1..6, testes completos e commit
+local; nenhuma emissão NC. Próximo passo: entregar e aguardar resposta real.

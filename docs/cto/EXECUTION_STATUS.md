@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-09 — AUTO-015
+
+EXEC-014 concluída em 70e4d13, árvore limpa e 569 pass/2 skips em 128.86 s;
+parecer aprovado por relatório. Avaliador puro implementado, 23 testes novos
+PASS; Ruff/mypy PASS em 193 fontes. Regressão completa 592 passed/2 skipped em 136.68 s. Commit/envio como próximos passos.
+
 ## 2026-09-09 — EXEC-014
 
 AUTO-012A aprovada com 569 pass/2 skips; WAIT-013 preservou arquivos. Nova

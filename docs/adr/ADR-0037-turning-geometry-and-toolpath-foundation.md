@@ -373,3 +373,12 @@ R/X são finitos não negativos; is_boundary_safe=false, boundary_status=
 NOT_EVALUATED e limitação literal NUMERICAL_QUANTIZATION_CHECK_ONLY.
 Não há Z/zonas/trajectória, quantizador textual, NC, controlador homologado ou
 integração Digital Thread. Coerência aritmética não significa segurança física.
+
+
+## Incremento técnico aprovado — AUTO-015
+
+Após EXEC-014/70e4d13, CTO autoriza função pura de quantização NUMÉRICA em
+módulo isolado, sem NC. Política: X=2*R binário, Decimal.from_float exato e
+ROUND_HALF_UP em contexto local independente, 1..6 casas (default sintético 3).
+Rejeitar overflow e desaparecimento de X positivo; relatório existente permanece
+false/NOT_EVALUATED. Não afirma equivalência com decimal ideal ou controlador.

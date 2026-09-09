@@ -96,3 +96,10 @@ do git add pelo revisor normal aceita; bloqueio anterior superado nesta chamada.
 Somente arquivos da AUTO-012A e governança presentes; testes estão em
 test_turning_quantization_schemas.py, arquivo correspondente permitido na ordem
 original, sem duplicar test_turning_schemas.py. Commit e revalidação a seguir.
+
+## Fechamento EXEC-014 e parecer recebido
+
+Commit 70e4d13e39e1063348cf8de148ff4aa6b9fd8b33 efetivado pelo fluxo normal
+do revisor; working tree limpa. Revalidação 569 passed/2 skipped em 128.86 s,
+Ruff/mypy (192 fontes) e diff PASS. Relatório enviado e aprovado pelo Gemini,
+com base no relatório, sem inspeção independente. Nova ordem AUTO-015 recebida.

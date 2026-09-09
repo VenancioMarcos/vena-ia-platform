@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.15
+**Versão:** 2.16
 **Última atualização:** 2026-09-09
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-09
 
-- **Handoff CTO:** STAB-010 aprovada em dc75997 e HOLD-011 executada com árvore limpa. Nova ordem AUTO-012 retoma trabalho local; ajuste acolhido e substituído por [AUTO-012A](docs/cto/CTO-CODEX-AUTO-012.md). Schema numérico isolado de reconstrução radial/desvio implementado; 569 passed/2 skipped em 155.99 s (21 novos), Ruff/mypy PASS em 192 fontes. EXEC-014 recebida após novo login informado; revisor aceitou staging normal, commit/revalidação em curso. is_boundary_safe=false/NOT_EVALUATED, sem avaliação física, NC ou Digital Thread. Marco v3.2.0-turning-synthetic-alpha permanece local, API/manifests 3.1.0. Após validação/commit: enviar relatório, pedir e aguardar nova ordem real.
+- **Handoff CTO:** EXEC-014 concluída em 70e4d13 e aprovada pelo Gemini por relatório (sem inspeção independente do diff): 569 passed/2 skipped, Ruff/mypy PASS. [AUTO-015](docs/cto/CTO-CODEX-AUTO-015.md) implementa avaliador puro de quantização de diâmetro, ROUND_HALF_UP sobre float binário exato, contexto Decimal isolado e precisão 1..6. 23 testes específicos PASS; regressão completa 592 passed/2 skipped em 136.68 s. is_boundary_safe=false/NOT_EVALUATED; sem NC, fronteiras físicas ou Digital Thread. Marco sintético permanece local, API/manifests 3.1.0. Após commit: enviar relatório, pedir e aguardar nova ordem real.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.
