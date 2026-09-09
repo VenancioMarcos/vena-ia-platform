@@ -1,18 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-CAM-007A
-**Estado:** CAM-006A aprovada AR; CAM-007A implementada e validada; commit/envio como próximos passos
+**Missão:** CTO-CODEX-CAM-008A
+**Estado:** CAM-008A implementada e validada; commit/envio como próximos passos
 **Data:** 2026-09-09
 **Branch:** codex/v3.1-first-controlled-test-path
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-CAM-007A substitui CAM-007 após conflito acolhido pelo CTO: verificador contínuo
-de fronteiras sintéticas declaradas, AABB local e zonas estáticas explícitas.
-is_verified=false; collision_status=NOT_VALIDATED; sem stock/material ou validação
-física. [Entrega](CTO-CODEX-CAM-007.md). Implementação e 29 testes específicos PASS;
-Ruff/mypy PASS em 191 fontes; suíte completa 514 passed/2 skipped em 130.95 s. Baseline d3785d3.
+Orquestrador interno CAD -> plano -> verificação -> relatório sintético, sem
+endpoint, persistência ou NC. [Registro](CTO-CODEX-CAM-008.md). Contrato ajustado
+confirmado integralmente pelo CTO; CAM-008A substitui CAM-008. 34 testes E2E PASS;
+Ruff/mypy PASS em 192 fontes. Suíte completa 548 passed/2 skipped em 122.35 s; baseline f55534a.
 
 ## Continuidade obrigatória
 

@@ -1540,3 +1540,17 @@ declaradas enviada ao CTO. Nenhuma validação física/NC autorizada.
 Gemini acolheu o conflito e substituiu CAM-007 por CAM-007A. Implementar
 fronteiras sintéticas declaradas conforme incremento do ADR-0037, mantendo
 is_verified=false e limitações obrigatórias. Sem validação física.
+
+
+### DEC-047 — CAM-008 em revisão de contrato
+
+Ordem de orquestração E2E sintética recebida após aprovação CAM-007A. Ajuste
+de timestamp explícito, unidades suportadas e metadados imutáveis enviado ao CTO.
+Sem integrar ao Digital Thread vigente ou habilitar NC/autoridade física.
+
+
+### DEC-047 — CAM-008A aprovada tecnicamente
+
+Ajustes de CAM-008 confirmados integralmente; CTO emitiu CAM-008A.
+Orquestração sintética interna, metadados imutáveis/replay explícito conforme
+incremento no ADR-0037. Sem integração no Digital Thread vigente ou NC.

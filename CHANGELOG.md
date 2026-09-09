@@ -8,6 +8,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-CAM-008A
+
+* Orquestrador interno une BRep/perfil/plano/verificação em resultado sintético
+  estrito, com falhas por estágio e metadados imutáveis de replay.
+* Timestamp UTC e tolerâncias explícitos; hashes de parâmetros e serialização
+  BRep reais separados. Sem identidade STEP inventada, endpoint, NC ou autoridade.
+
 ### Added — CTO-CODEX-CAM-007A
 
 * Verificador independente contínuo de segmentos contra plano axial conservador

@@ -593,3 +593,17 @@ interferência; proposta CAM-007A enviada. Aguardando decisão técnica.
 Gemini aceitou integralmente a objeção técnica. Ordem CAM-007A: fronteiras
 sintéticas declaradas, is_verified=false, verificação contínua de todos os
 segmentos, local apenas. Implementação e 29 testes específicos aprovados.
+
+
+## 2026-09-09 — CAM-007A aprovada; CAM-008 recebida
+
+CTO aprovou f55534a tecnicamente no escopo por relatório. CAM-008 ordena
+orquestrador interno e E2E sintético. Refinamento de pureza/timestamp, unidades,
+coleção explícita e metadados imutáveis enviado antes de implementar.
+
+
+## 2026-09-09 — CAM-008A confirmada
+
+Refinamentos técnicos aprovados integralmente pelo CTO; CAM-008A substitui
+CAM-008: orquestrador sintético com timestamp/tolerâncias/zonas explícitos e
+metadados imutáveis de serialização BRep. 34 testes E2E PASS, regressão em curso.

@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.11
+**Versão:** 2.12
 **Última atualização:** 2026-09-09
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,10 +29,10 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-09
 
-- **Handoff CTO:** CAM-006A (d3785d3, 485 pass/2 skips) aprovada AR por relatório. Conflito de CAM-007 acolhido; substituída por [CAM-007A](docs/cto/CTO-CODEX-CAM-007.md), verificador de fronteiras sintéticas declaradas. Implementação aprovada localmente: 514 passed/2 skipped em 130.95 s (29 novos). Ruff/mypy PASS em 191 fontes. is_verified=false, collision_status=NOT_VALIDATED, sem stock/material remanescente ou validação física. Após validação, commit local, enviar relatório, pedir/aguardar nova ordem e continuar escopo autorizado.
+- **Handoff CTO:** CAM-007A (f55534a, 514 pass/2 skips) aprovada tecnicamente no escopo por relatório. CAM-008 ajustada e substituída pelo CTO por [CAM-008A](docs/cto/CTO-CODEX-CAM-008.md): orquestrador interno CAD/plano/verificador sintético, timestamp UTC explícito e metadados imutáveis. Implementado; suíte 548 passed/2 skipped em 122.35 s (34 novos), Ruff/mypy PASS em 192 fontes. Sem autoridade física, NC ou Digital Thread integrado. Após validar: commit local, enviar relatório, pedir/aguardar nova ordem e continuar escopo autorizado.
 
 - Linha v3.1.0 NON_PRODUCTION; main remota verificada em 64ac3b8. PR #31 Draft em d798417; 052cb8e local, pendente de push.
-- CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; não há pipeline de torneamento.
+- CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.
 - Backend/API 3.1.0; modelos SQLAlchemy em apps/api por DEC-011. Migration registrada e61c4f8a2b90; nenhuma migration executada nesta auditoria.
 - Repositório PUBLIC confirmado diretamente. Nenhuma mudança de visibilidade ou publicação realizada.
 - CTO-CODEX-DIAG-001 concluída em docs/cto/CTO-CODEX-DIAG-001.md: 399 passed, 2 skipped em 258.95 s; Ruff/mypy PASS em Python 3.14.6 experimental. Varredura limitada: 1828 blobs/226 commits, sem assinaturas pesquisadas de credenciais; não certifica ausência absoluta de segredos.

@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
+from datetime import datetime, timedelta
 from enum import StrEnum
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
+
+from app.modules.engineering.turning_schemas import TurningProfile2D
 
 
 RadialPoint = tuple[Annotated[float, Field(ge=0)], float]
@@ -160,4 +165,86 @@ class TurningVerificationReport(_SyntheticContract):
             raise ValueError("violating indices must be unique and ordered")
         if bool(self.violating_moves) != (self.boundary_status not in {"PASS", "NOT_EVALUATED"}):
             raise ValueError("violation indices must match boundary status")
+        return self
+
+
+def _require_utc(value: datetime) -> datetime:
+    if value.utcoffset() != timedelta(0):
+        raise ValueError("timestamp must be timezone-aware UTC")
+    return value
+
+
+UtcTimestamp = Annotated[datetime, AfterValidator(_require_utc)]
+Sha256Digest = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+
+
+class SyntheticTurningMetadata(_SyntheticContract):
+    """Local reproducibility metadata only; neither signed nor trusted authority."""
+
+    schema_version: Literal["synthetic-turning/v1"] = "synthetic-turning/v1"
+    evaluated_at_utc: UtcTimestamp
+    parameters_digest_sha256: Sha256Digest
+    brep_serialization_digest_sha256: Sha256Digest | None
+    brep_serialization_format: Literal["OCCT_BREP_ASCII_V3_NO_TRIANGLES_NO_NORMALS"] | None
+    occt_binding_version: str | None = Field(default=None, min_length=1, max_length=100)
+    limitations: tuple[
+        Literal["NO_CANONICAL_GEOMETRIC_IDENTITY"],
+        Literal["NO_DIGITAL_THREAD_INTEGRATION"],
+        Literal["NO_PHYSICAL_AUTHORITY"],
+    ] = ("NO_CANONICAL_GEOMETRIC_IDENTITY", "NO_DIGITAL_THREAD_INTEGRATION", "NO_PHYSICAL_AUTHORITY")
+
+    @model_validator(mode="after")
+    def validate_provenance(self) -> SyntheticTurningMetadata:
+        if self.brep_serialization_digest_sha256 is not None and (
+            self.brep_serialization_format is None or self.occt_binding_version is None
+        ):
+            raise ValueError("BRep digest requires serialization format and binding version")
+        return self
+
+
+class SyntheticTurningExecutionResult(_SyntheticContract):
+    pipeline_status: Literal[
+        "SUCCESS_SYNTHETIC", "CAD_EXTRACTION_FAILED", "PLANNING_FAILED", "BOUNDARY_VERIFICATION_FAILED",
+    ]
+    failure_reason: str | None = Field(min_length=1, max_length=255)
+    profile: TurningProfile2D | None
+    plan: TurningToolpathPlan | None
+    verification: TurningVerificationReport | None
+    metadata: SyntheticTurningMetadata
+    is_physical_ready: Literal[False] = False
+    physical_use_authorized: Literal[False] = False
+    executable_output: Literal[False] = False
+    emission_status: Literal["CONTROLLER_PROFILE_UNRESOLVED"] = "CONTROLLER_PROFILE_UNRESOLVED"
+
+    @model_validator(mode="after")
+    def validate_stages(self) -> SyntheticTurningExecutionResult:
+        success = self.pipeline_status == "SUCCESS_SYNTHETIC"
+        if success != (self.failure_reason is None):
+            raise ValueError("success and failure_reason must agree")
+        if self.pipeline_status == "CAD_EXTRACTION_FAILED":
+            if self.profile is not None or self.plan is not None or self.verification is not None:
+                raise ValueError("CAD failure cannot include later-stage artifacts")
+            return self
+        if self.profile is None or self.metadata.brep_serialization_digest_sha256 is None:
+            raise ValueError("later stages require profile and serialized BRep provenance")
+        if self.pipeline_status == "PLANNING_FAILED":
+            if self.plan is not None or self.verification is not None:
+                raise ValueError("planning failure cannot include later-stage artifacts")
+            return self
+        if self.plan is None:
+            raise ValueError("verification stage requires plan")
+        canonical = json.dumps(self.profile.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
+        expected_id = "synthetic-profile:sha256:" + hashlib.sha256(canonical.encode()).hexdigest()
+        if self.plan.profile_id != expected_id:
+            raise ValueError("plan must reference the included synthetic profile")
+        move_count = sum(len(operation.moves) for operation in self.plan.operations)
+        if success and move_count == 0:
+            raise ValueError("empty plans cannot have successful boundary evaluation")
+        if self.verification is not None and any(
+            index >= move_count for index in self.verification.violating_moves
+        ):
+            raise ValueError("verification indices must refer to included plan movements")
+        verified = self.verification is not None and self.verification.declared_boundaries_passed
+        if success != verified:
+            raise ValueError("synthetic success requires exactly declared-boundary PASS")
         return self

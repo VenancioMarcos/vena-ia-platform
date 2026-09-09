@@ -320,3 +320,19 @@ Plano vazio NOT_EVALUATED; entradas inválidas rejeitadas por revalidação.
 PASS significa apenas declared_boundaries_passed; is_verified=false,
 collision_status=NOT_VALIDATED e autoridade/executable_output=false.
 Não modela stock, remoção, ferramenta/fixação reais, NC ou G9.
+
+
+## Incremento técnico aprovado — CTO-CODEX-CAM-008A
+
+Gemini confirmou integralmente os ajustes de CAM-008 e emitiu CAM-008A em
+2026-09-09. Orquestrador interno isolado: BRep -> perfil -> plano sintético ->
+verificador -> resultado tipado, sem endpoints/persistência ou pipeline de fresa.
+Unidade BRep real explicitada por fator 1.0/1000.0/25.4; tolerâncias explícitas;
+zonas obrigatórias; timestamp UTC do chamador (declaração, não relógio confiável).
+Metadados imutáveis incluem digest dos parâmetros canonizados e da serialização
+BRep nativa, não identidade geométrica canônica, hash do STEP ou Digital Thread.
+
+Falhas CAD/planejamento/verificação abortam os estágios seguintes. Só há
+SUCCESS_SYNTHETIC com perfil, plano e relatório PASS de fronteiras declaradas;
+NOT_EVALUATED não é sucesso. is_physical_ready/physical_use_authorized/
+executable_output=false em todos os casos; controlador permanece não resolvido.

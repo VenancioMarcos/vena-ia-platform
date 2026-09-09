@@ -104,3 +104,13 @@ Ruff PASS; mypy PASS em 191 fontes; git diff --cached --check PASS;
 .pytest_cache/cam007a-pytest.log. Sem resumo de warnings.
 Skips Redis real auth/jobs preservados. Python 3.14.6 local experimental;
 nenhum novo CI remoto alegado. Nenhum código modificado após a suíte completa.
+
+## Commit e envio
+
+Commit f55534a27b0ad59e7a6a7f18c23c43ac28638b2b, 12 arquivos,
+567 inserções/12 remoções. Árvore limpa após commit. Relatório enviado ao
+Gemini CTO na conversa autorizada; solicitado parecer e próxima ordem.
+Aguardando resposta real. Nenhum push/NC ou integração.
+
+Parecer recebido: APROVADO TECNICAMENTE NO ESCOPO por relatório. CTO emitiu
+CAM-008, posteriormente ajustada para CAM-008A. Ver CTO-CODEX-CAM-008.md.
