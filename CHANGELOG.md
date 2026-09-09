@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-STEP-005
+
+* Extrator isolado de perfil cilíndrico externo radial/Z, datum explícito e
+  equivalência por reconstrução booleana do sólido, sem CAM/NC.
+* Quatro fixtures STEP AP203/AP214 sintéticas, gerador reproduzível e testes.
+
 ### Added — CTO-CODEX-IMPL-004
 
 * Schemas mínimos estritos de torneamento e verificação preliminar de retas

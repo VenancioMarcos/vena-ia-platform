@@ -1,17 +1,19 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-IMPL-004
-**Estado:** implementação e validação concluídas; commit e entrega ao CTO pendentes
-**Data:** 2026-09-08
+**Missão:** CTO-CODEX-STEP-005
+**Estado:** implementada e validada; commit e envio pendentes
+**Data:** 2026-09-09
 **Branch:** codex/v3.1-first-controlled-test-path
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Cinco schemas Pydantic mínimos de torneamento e verificador preliminar de eixo
-comum CAD, isolados do pipeline. Sem extrator, CAM, pós ou emissão NC.
-[Entrega e evidências](CTO-CODEX-IMPL-004.md): 455 passed, 2 skipped, Ruff/mypy PASS.
-Commit local previsto: feat(turning): implement ADR-0037 turning schemas and axisymmetry validator.
+Extrator de perfil radial/Z isolado para cilindro simples/escalonado, datum
+explícito, quatro fixtures STEP AP203/AP214 e testes reais. Verificação adicional
+por reconstrução de todo sólido e diferenças booleanas, sem promoção automática
+do helper preliminar. Sem integração, fresamento alterado, CAM ou NC.
+[Entrega](CTO-CODEX-STEP-005.md): 469 passed/2 skipped em 127.00 s; Ruff/mypy PASS.
+Commit previsto: feat(cad): implement turning profile extractor and synthetic STEP fixtures.
 
 ## Continuidade obrigatória
 

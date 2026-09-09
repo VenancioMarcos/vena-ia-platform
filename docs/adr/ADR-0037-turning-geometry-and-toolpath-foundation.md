@@ -242,3 +242,32 @@ não prometem cobertura geral ou preempção de crash nativo. Tolerâncias vêm 
 chamador e são numéricas, não fabricação. Status PASS é relativo a esses valores.
 Referências de implementação: [Pydantic ConfigDict](https://docs.pydantic.dev/latest/api/config/)
 e [OCCT BRepCheck_Analyzer](https://dev.opencascade.org/doc/refman/html/class_b_rep_check___analyzer.html).
+
+## Incremento autorizado — CTO-CODEX-STEP-005
+
+O Gemini aprovou IMPL-004 com ressalvas por relatório e emitiu STEP-005, permitindo
+extrator e fixtures, sem CAM/NC. `cad/profile_extractor.py` implementa somente
+cilindros externos simples/escalonados. Mantém datum frontal explícito (origem e
+direção unitária), BRep em unidade declarada, perfil aberto em raio e Z monotônico
+não crescente; faces frontal/traseira e ombros são segmentos radiais em Z
+constante, sem o fechamento da linha de centro. Não dobra raio internamente.
+
+O algoritmo candidato de seção do ADR é delimitado neste incremento por uma
+alternativa analítica: intervalos axiais das faces cilíndricas transformadas,
+ordenação e continuidade C0, reconstrução da união de cilindros e diferença
+booleana em AMBOS os sentidos contra o BRep original. Qualquer face residual,
+falha do kernel ou datum incompatível bloqueia. Não usar volume igual como prova.
+A união/reconstrução impede transformar um teste de eixos ou caixa envolvente
+em alegação de perfil externo completo. Interior, cone, intervalos sobrepostos,
+lacunas e múltiplos sólidos não são suportados. Limite de 32 intervalos.
+
+`PROFILE_AVAILABLE_REQUIRES_REVIEW` significa equivalência numérica no kernel,
+não prova metrológica/física. Transformações e diferenças operam em cópias quando
+necessário; tolerâncias de origem continuam risco numérico explícito. Chamador
+fornece datum e unidade REAL do BRep; não há endpoint público, persistência ou
+proveniência Digital Thread implementados neste incremento. As quatro fixtures
+AP203/AP214 sintéticas e o gerador têm metadados fixos e unidades mm.
+
+Fontes primárias: [OCCT Cut](https://dev.opencascade.org/doc/refman/html/class_b_rep_algo_a_p_i___cut.html)
+e [STEPControl_Writer](https://dev.opencascade.org/doc/refman/html/class_s_t_e_p_control___writer.html).
+APIs exercitadas no binding instalado 7.9.3.1.1; docs correntes são 8.0.1.

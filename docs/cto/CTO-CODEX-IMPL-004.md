@@ -61,3 +61,12 @@ não suportadas; preservar contratos de fresamento e todos os limites físicos.
 Validação concluída; registrar commit local e enviar resultado ao CTO, pedir e
 aguardar nova ordem, mantendo o ciclo autorizado sem depender de novo comando
 do usuário. Sem extrator de perfil ou validação global de revolução nesta entrega.
+
+## Commit e envio
+
+Commit local b5b04b7a1a000ad1dc6ff6c18fe980218989897d; 14 arquivos,
+696 inserções/31 remoções. Working tree limpa após commit. Entrega enviada ao
+CTO Gemini com solicitação de parecer e próxima ordem; resposta recebida: APROVADO COM RESSALVAS, baseada no relatório, sem revisão
+direta do diff. Nova ordem CTO-CODEX-STEP-005 recebida e iniciada; contagem Git
+retificada pelo CTO.
+25 links relativos documentais válidos. Nenhum push.

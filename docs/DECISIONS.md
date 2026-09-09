@@ -1508,3 +1508,12 @@ A sequência G90/G94/G95 sugerida não possui semântica universal de torno;
 a seleção exige manual e sistema de códigos identificados. Incremento IMPL-004: schemas mínimos e helper de eixo comum isolados. Sem
 mudança de contratos vigentes, integração CAD/CAM, G9 ou autoridade física.
 Parecer AR recebido do Gemini por relatório; implementação aguardando revisão.
+
+
+### DEC-047 — Incremento STEP-005
+
+IMPL-004 aprovada AR por relatório. Ordem STEP-005 autoriza localmente extrator
+cilíndrico externo e quatro fixtures. Reconstrução analítica e diferenças booleanas
+bidirecionais são a implementação delimitada de verificação global do subconjunto,
+sem provar CAM/segurança física. Código aguardando revisão do CTO. Sem NC ou
+expansão de fresamento; detalhes e limitações no ADR-0037.

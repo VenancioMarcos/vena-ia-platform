@@ -563,3 +563,10 @@ CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
 O CTO aprovou o roadmap e autorizou somente v2.1 Package 1. Primeiro integrar a PR
 documental #24; depois implementar ownership/compatibility de catálogos Engineering.
 Package 2, v2.2, v3.0, deploy e CNC executável permanecem proibidos.
+
+## 2026-09-09 — CTO-CODEX-STEP-005
+
+Após entrega b5b04b7/IMPL-004 e parecer AR, Gemini emitiu STEP-005: extrator de
+perfil externo + quatro fixtures, commit local e nenhum NC/push. Implementação
+em validação. Ordem anterior apenas de fixtures foi substituída pela versão
+completa STEP-005 recebida após a entrega; não executar versões concorrentes.

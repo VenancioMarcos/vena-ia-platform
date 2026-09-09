@@ -1,10 +1,16 @@
 # Estado de execução CTO
 
+## 2026-09-09 — STEP-005
+
+Extrator cilíndrico externo e quatro fixtures implementados. Suíte final
+469 passed/2 skipped em 127.00 s, incluindo faces radiais. Ruff/mypy PASS.
+Sem CAM, NC ou integração. Após validação final, commit local e envio ao CTO.
+
 ## 2026-09-08 — IMPL-004
 
 Schemas mínimos e helper CAD preliminar implementados e validados: 455 passed,
-2 skipped, Ruff/mypy PASS. Commit/envio pendentes; sem integração, CAM ou NC.
-Próxima ação: entregar ao Gemini, solicitar e aguardar nova ordem.
+2 skipped, Ruff/mypy PASS. Commit b5b04b7 enviado ao Gemini; sem integração, CAM ou NC.
+Estado: aguardando parecer e nova ordem.
 
 Os estados abaixo são históricos; a ordem vigente está em CURRENT_ORDER.md.
 
