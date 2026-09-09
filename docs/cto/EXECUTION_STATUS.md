@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-09 — CAM-006A
+
+Variante sintética de ponto ideal autorizada pelo CTO e implementada.
+Colisão NOT_VALIDATED e autoridade false. Suíte final 485 pass/2 skips em
+131.63 s; 16 testes novos. Ruff/mypy PASS em 190 fontes. Commit/envio pendentes.
+
+## 2026-09-09 — CAM-006 recebida
+
+STEP-005 no commit 57a0fcf aprovada AR. CAM-006 aguarda esclarecimento técnico
+direto do CTO: plano sintético sem claim de colisão ou fundação de setup/envelopes.
+Nenhum código CAM novo. Detalhes em CTO-CODEX-CAM-006.md.
+
 ## 2026-09-09 — STEP-005
 
 Extrator cilíndrico externo e quatro fixtures implementados. Suíte final

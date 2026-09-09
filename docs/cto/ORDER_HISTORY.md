@@ -570,3 +570,12 @@ Após entrega b5b04b7/IMPL-004 e parecer AR, Gemini emitiu STEP-005: extrator de
 perfil externo + quatro fixtures, commit local e nenhum NC/push. Implementação
 em validação. Ordem anterior apenas de fixtures foi substituída pela versão
 completa STEP-005 recebida após a entrega; não executar versões concorrentes.
+
+
+## 2026-09-09 — CAM-006 substituída por CAM-006A
+
+STEP-005 aprovada AR por relatório. Codex identificou ausência de fixação/envelope
+para afirmar is_collision_free. Gemini acolheu o conflito e emitiu CAM-006A:
+Variante A de ponto ideal matemático, autoridade false/colisão NOT_VALIDATED.
+Implementação isolada e testes em curso; sem novo pedido de autorização ao dono
+para esta decisão técnica. Ordem CAM-006 original não deve ser executada.

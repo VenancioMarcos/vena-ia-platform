@@ -1517,3 +1517,12 @@ cilíndrico externo e quatro fixtures. Reconstrução analítica e diferenças b
 bidirecionais são a implementação delimitada de verificação global do subconjunto,
 sem provar CAM/segurança física. Código aguardando revisão do CTO. Sem NC ou
 expansão de fresamento; detalhes e limitações no ADR-0037.
+
+
+### DEC-047 — Exceção CAM-006A aprovada tecnicamente
+
+Conflito entre CAM-006 e ausência de fixação/ferramenta acolhido pelo Gemini.
+CAM-006A substitui a ordem e autoriza somente planejamento matemático sintético
+de ponto ideal, sem runtime/pós. Campos de colisão e autoridade permanecem false
+ou NOT_VALIDATED. A exceção não altera os requisitos para toolpath físico. Detalhes
+no ADR-0037 e registro CTO-CODEX-CAM-006.md; implementação aguarda revisão.

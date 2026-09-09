@@ -1,19 +1,19 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-STEP-005
-**Estado:** implementada e validada; commit e envio pendentes
+**Missão:** CTO-CODEX-CAM-006A
+**Estado:** validada; commit local e entrega ao CTO pendentes
 **Data:** 2026-09-09
 **Branch:** codex/v3.1-first-controlled-test-path
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Extrator de perfil radial/Z isolado para cilindro simples/escalonado, datum
-explícito, quatro fixtures STEP AP203/AP214 e testes reais. Verificação adicional
-por reconstrução de todo sólido e diferenças booleanas, sem promoção automática
-do helper preliminar. Sem integração, fresamento alterado, CAM ou NC.
-[Entrega](CTO-CODEX-STEP-005.md): 469 passed/2 skipped em 127.00 s; Ruff/mypy PASS.
-Commit previsto: feat(cad): implement turning profile extractor and synthetic STEP fixtures.
+Plano matemático sintético de ponto ideal; is_collision_free=false,
+collision_status=NOT_VALIDATED, executable_output=false e physical_use_authorized=false.
+Sem ferramenta real, NC, runtime ou fresamento alterado. Proposta confirmada pelo
+CTO em CAM-006A, substituindo CAM-006. [Entrega](CTO-CODEX-CAM-006.md).
+Suíte final: 485 passed/2 skipped em 131.63 s; Ruff/mypy PASS. Commit local previsto:
+feat(cam): implement synthetic 2D linear turning planner and schemas.
 
 ## Continuidade obrigatória
 

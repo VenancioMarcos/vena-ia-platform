@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.9
+**Versão:** 2.10
 **Última atualização:** 2026-09-09
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-09
 
-- **Handoff CTO:** IMPL-004 (b5b04b7, 455 pass/2 skips) aprovada AR pelo Gemini por relatório. [STEP-005](docs/cto/CTO-CODEX-STEP-005.md) implementada: extrator cilíndrico externo isolado com datum explícito e comparação booleana do sólido reconstruído; quatro STEP sintéticos. 469 passed (455 legados + 14 novos), 2 skipped em 127.00 s; Ruff/mypy PASS em 188 fontes. Commit/envio pendentes. Sem integração CAD/CAM/NC ou autoridade física. Após validação/commit local, enviar entrega ao CTO, solicitar e aguardar nova ordem e continuar o escopo autorizado.
+- **Handoff CTO:** STEP-005 (57a0fcf, 469 pass/2 skips) aprovada AR por relatório. Conflito de CAM-006 acolhido pelo Gemini; substituída por [CAM-006A](docs/cto/CTO-CODEX-CAM-006.md), exclusivamente plano matemático sintético de ponto ideal. Implementada e validada: 485 passed/2 skipped em 131.63 s (16 novos), Ruff/mypy PASS em 190 fontes. Commit/envio pendentes. is_collision_free=false, collision_status=NOT_VALIDATED, sem runtime, ferramenta física, NC ou autoridade. Após validação, commit local, enviar relatório, pedir/aguardar nova ordem e continuar o escopo autorizado.
 
 - Linha v3.1.0 NON_PRODUCTION; main remota verificada em 64ac3b8. PR #31 Draft em d798417; 052cb8e local, pendente de push.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; não há pipeline de torneamento.

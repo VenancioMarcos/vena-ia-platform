@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-CAM-006A
+
+* Planejamento sintético de passes radiais/axiais com stock/sobremetais explícitos,
+  schemas imutáveis e limites de recursos. Colisão NOT_VALIDATED e autoridade false.
+* Sem ferramenta real, integração, NC ou alteração de fresamento.
+
 ### Added — CTO-CODEX-STEP-005
 
 * Extrator isolado de perfil cilíndrico externo radial/Z, datum explícito e

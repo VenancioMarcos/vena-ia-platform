@@ -271,3 +271,33 @@ AP203/AP214 sintéticas e o gerador têm metadados fixos e unidades mm.
 Fontes primárias: [OCCT Cut](https://dev.opencascade.org/doc/refman/html/class_b_rep_algo_a_p_i___cut.html)
 e [STEPControl_Writer](https://dev.opencascade.org/doc/refman/html/class_s_t_e_p_control___writer.html).
 APIs exercitadas no binding instalado 7.9.3.1.1; docs correntes são 8.0.1.
+
+
+## Exceção técnica delimitada — CTO-CODEX-CAM-006A
+
+Após identificar ausência de fixture/envelope/referência da ferramenta, o Codex
+submeteu o conflito ao CTO. Gemini acolheu e substituiu CAM-006 por CAM-006A:
+plano matemático sintético de ponto ideal, isolado do runtime e do pós. Esta
+exceção permite apenas estudar decomposição de passes sem as entradas físicas;
+**não permite chamar o resultado de toolpath validado ou sem colisões**.
+
+`turning_toolpath_schemas.py` fixa is_collision_free=false,
+collision_status=NOT_VALIDATED, executable_output=false e
+physical_use_authorized=false. Modelos estritos, finitos e imutáveis; comprimento
+é a soma geométrica dos segmentos CUTTING, incluindo ar, não corte de material
+ou tempo físico. `profile_id` identifica o conteúdo do perfil sintético, não sua
+proveniência STEP/Digital Thread. Não há valor de avanço ou dados de material.
+
+`turning_planner.py` decompõe faceamento por profundidade axial e desbaste por
+profundidade radial, parâmetros explícitos de teste. Stock frontal em
+Z=face_allowance, fundo=face_allowance-length. Cada diâmetro atinge exatamente
+seu alvo de sobremetal radial; o último passe de cada região pode ser menor que
+ap, nunca maior. Sobremetal axial protege frente e ombros, sem operação traseira.
+Perfis externos cilíndricos com raio não decrescente em Z negativo; undercuts,
+cones, stock insuficiente, valores inválidos e orçamento excessivo são rejeitados.
+
+RAPID/RETRACT são segmentos de ponto ideal com folga geométrica de referência,
+sem afirmar que a posição é segura em máquina. Continuidade e comprimentos são
+checados no contrato; não equivalem a verificador de colisão com material,
+pastilha, suporte ou fixação. Nenhuma ferramenta real ou compensação é consumida.
+Limites: 1000 passes por operação, 10000 movimentos por plano; sem integração.
