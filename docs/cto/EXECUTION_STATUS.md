@@ -1,5 +1,18 @@
 # Estado de execução CTO
 
+## 2026-09-09 — EXEC-014
+
+AUTO-012A aprovada com 569 pass/2 skips; WAIT-013 preservou arquivos. Nova
+ordem EXEC-014 após novo login informado. Revisor aceitou git add normal;
+commit/revalidação em curso. Nenhum bypass ou Git de rede.
+
+## 2026-09-09 — AUTO-012A
+
+Após STAB/HOLD, nova ordem local AUTO-012 ajustada pelo CTO para AUTO-012A.
+Schema numérico implementado, 21 testes específicos; Ruff/mypy PASS em 192 fontes.
+Suíte completa 569 pass/2 skips em 155.99 s. Revisão automática bloqueou git add
+por limite de uso; commit pendente, HEAD dc75997 e árvore modificada. Sem NC.
+
 ## 2026-09-09 — STAB-010
 
 POST-009A aprovada em f3fb048; auditoria/consolidação documental local em curso.

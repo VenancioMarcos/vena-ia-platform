@@ -629,3 +629,24 @@ Documento concluído; suíte exigida 548 pass/2 skips, sem código de produto al
 CTO aprovou f3fb048 por relatório e pediu auditoria/consolidação documental
 do marco local v3.2.0-turning-synthetic-alpha. Sem publicação, tag, NC ou
 alteração de manifests/runtime. Após entrega, aguardar orientação de encerramento.
+
+
+## 2026-09-09 — HOLD-011 e retomada AUTO-012
+
+STAB-010 aprovada em dc75997. HOLD-011 recebida/executada: árvore limpa e
+congelamento confirmado ao CTO, sem alterar docs naquela ordem. Após nova
+diretriz de continuidade no Gemini, CTO emitiu AUTO-012 para schema numérico.
+Proprietário pediu buscar; ordem lida e contrato de is_boundary_safe em revisão.
+
+
+## 2026-09-09 — AUTO-012 substituída por AUTO-012A
+
+CTO confirmou integralmente false/NOT_EVALUATED e contrato somente numérico,
+sem fronteiras/trajectória/NC. Implementação e testes em validação.
+
+
+## 2026-09-09 — WAIT-013 e EXEC-014
+
+AUTO-012A aprovada por relatório; staging bloqueado por quota, WAIT-013
+confirmada sem descartar arquivos. Proprietário informou novo login no Gemini;
+CTO emitiu EXEC-014. Revisor normal aceitou staging na retomada.

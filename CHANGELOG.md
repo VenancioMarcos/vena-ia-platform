@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-AUTO-012A
+
+* Contrato numérico estrito de reconstrução radial/desvio assinado, sem
+  avaliação de fronteira ou formatter NC. is_boundary_safe=false/NOT_EVALUATED.
+* Trabalho local retomado após HOLD-011, sem promover o marco sintético a release.
+
 ### Fixed — TASK-V31-007B STEP browser MIME compatibility
 * STEP/STP uploads now accept the browser-observed generic
   `application/octet-stream` representation only when the extension is `.step` or

@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.14
+**Versão:** 2.15
 **Última atualização:** 2026-09-09
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-09
 
-- **Handoff CTO:** POST-009A (f3fb048) aprovada tecnicamente no escopo por relatório. [STAB-010](docs/cto/CTO-CODEX-STAB-010.md) consolida o marco documental local **v3.2.0-turning-synthetic-alpha — NON_PRODUCTION**: CAD/perfil, planejador 2D, verificador de fronteiras, orquestrador E2E e pré-requisitos de controlador concluídos no escopo sintético. API/manifests continuam 3.1.0; nenhum tag/release/push. Auditoria de 476 arquivos rastreados sem assinaturas pesquisadas de segredos; quatro espaços em linhas vazias históricas corrigidos. Suíte final 548 passed/2 skipped em 152.26 s; Ruff/mypy PASS em 192 fontes. CONTROLLER_PROFILE_UNRESOLVED, sem emissor NC de torno ou autoridade física. Após commit local, enviar relatório e aguardar orientação real do CTO.
+- **Handoff CTO:** STAB-010 aprovada em dc75997 e HOLD-011 executada com árvore limpa. Nova ordem AUTO-012 retoma trabalho local; ajuste acolhido e substituído por [AUTO-012A](docs/cto/CTO-CODEX-AUTO-012.md). Schema numérico isolado de reconstrução radial/desvio implementado; 569 passed/2 skipped em 155.99 s (21 novos), Ruff/mypy PASS em 192 fontes. EXEC-014 recebida após novo login informado; revisor aceitou staging normal, commit/revalidação em curso. is_boundary_safe=false/NOT_EVALUATED, sem avaliação física, NC ou Digital Thread. Marco v3.2.0-turning-synthetic-alpha permanece local, API/manifests 3.1.0. Após validação/commit: enviar relatório, pedir e aguardar nova ordem real.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

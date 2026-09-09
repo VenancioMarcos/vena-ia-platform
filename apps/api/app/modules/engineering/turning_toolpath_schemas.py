@@ -248,3 +248,31 @@ class SyntheticTurningExecutionResult(_SyntheticContract):
         if success != verified:
             raise ValueError("synthetic success requires exactly declared-boundary PASS")
         return self
+
+
+class TurningQuantizationReport(_SyntheticContract):
+    """Declared numeric X/R consistency only; no text provenance or boundary proof."""
+
+    original_radius_mm: float = Field(ge=0)
+    programmed_x_diameter_mm: float = Field(ge=0)
+    reconstructed_radius_mm: float = Field(ge=0)
+    radial_deviation_mm: float
+    is_boundary_safe: Literal[False] = False
+    boundary_status: Literal["NOT_EVALUATED"] = "NOT_EVALUATED"
+    limitations: tuple[Literal["NUMERICAL_QUANTIZATION_CHECK_ONLY"]] = (
+        "NUMERICAL_QUANTIZATION_CHECK_ONLY",
+    )
+
+    @model_validator(mode="after")
+    def validate_numeric_consistency(self) -> TurningQuantizationReport:
+        reconstructed = self.programmed_x_diameter_mm / 2.0
+        if self.programmed_x_diameter_mm > 0.0 and reconstructed == 0.0:
+            raise ValueError("positive diameter underflowed during radius reconstruction")
+        # Compare the declared binary-float operations exactly, without an absolute
+        # epsilon that can hide a small coordinate or erase a signed deviation.
+        if self.reconstructed_radius_mm != reconstructed:
+            raise ValueError("reconstructed radius must equal declared diameter / 2")
+        expected_deviation = reconstructed - self.original_radius_mm
+        if not math.isfinite(expected_deviation) or self.radial_deviation_mm != expected_deviation:
+            raise ValueError("radial deviation must equal reconstructed minus original radius")
+        return self

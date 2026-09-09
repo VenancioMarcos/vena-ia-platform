@@ -1,17 +1,16 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-STAB-010
-**Estado:** auditoria/consolidação validadas; commit/envio como próximos passos
+**Missão:** CTO-CODEX-EXEC-014
+**Estado:** revisor aceitou staging; concluir commit AUTO-012A e revalidar
 **Data:** 2026-09-09
 **Branch:** codex/v3.1-first-controlled-test-path
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Consolidar marco documental v3.2.0-turning-synthetic-alpha, auditar commits/árvore
-e executar suíte final. [Registro](CTO-CODEX-STAB-010.md). Nenhum bump runtime,
-tag/release ou publicação; CONTROLLER_PROFILE_UNRESOLVED. Após commit, enviar
-relatório e aguardar orientação real do CTO sobre encerramento do marco.
+Schema numérico de reconstrução radial/desvio, sem NC. [Registro](CTO-CODEX-AUTO-012.md).
+Ajuste false/NOT_EVALUATED confirmado pelo CTO; 21 testes específicos;
+ausência de Z/zonas/trajetória impede alegação física. Baseline dc75997.
 
 ## Continuidade obrigatória
 

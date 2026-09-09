@@ -362,3 +362,14 @@ release ou alteração dos manifests/runtime 3.1.0. O marco cobre somente os
 incrementos CAD/CAM/verificador/orquestrador/pré-requisitos já delimitados.
 CONTROLLER_PROFILE_UNRESOLVED continua bloqueando emissão NC de torno; nenhum
 controle físico, publicação ou aprovação G9. Auditoria em ../cto/CTO-CODEX-STAB-010.md.
+
+
+## Incremento técnico aprovado — CTO-CODEX-AUTO-012A
+
+Após HOLD-011, o CTO emitiu AUTO-012 e acolheu o ajuste de segurança:
+AUTO-012A acrescenta apenas TurningQuantizationReport, declaração numérica de
+X em diâmetro, reconstrução X/2 e desvio radial assinado (reconstructed-original).
+R/X são finitos não negativos; is_boundary_safe=false, boundary_status=
+NOT_EVALUATED e limitação literal NUMERICAL_QUANTIZATION_CHECK_ONLY.
+Não há Z/zonas/trajectória, quantizador textual, NC, controlador homologado ou
+integração Digital Thread. Coerência aritmética não significa segurança física.

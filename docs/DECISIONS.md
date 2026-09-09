@@ -1576,3 +1576,17 @@ Nenhum emissor de torno implementado; detalhes no incremento do ADR-0037.
 CTO aprovou POST-009A e pediu consolidação documental v3.2.0-turning-synthetic-alpha.
 Rótulo local NON_PRODUCTION, sem tag/release/bump de manifests ou publicação.
 API continua 3.1.0; emissão de torno bloqueada e dados reais pendentes.
+
+
+### DEC-047 — AUTO-012 em revisão de contrato
+
+Nova ordem retoma schema numérico após HOLD-011. Campo is_boundary_safe carece
+de fronteiras/trajectória; proposta de false/NOT_EVALUATED enviada ao CTO.
+Nenhuma emissão NC ou integração ao Digital Thread.
+
+
+### DEC-047 — AUTO-012A aprovada tecnicamente
+
+CTO acolheu integralmente o conflito e substituiu AUTO-012 por AUTO-012A.
+Contrato numérico isolado, is_boundary_safe=false/NOT_EVALUATED e limitações
+fixas; retomada local sem NC ou publicação, conforme incremento ADR-0037.
