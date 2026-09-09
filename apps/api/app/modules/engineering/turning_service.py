@@ -16,6 +16,7 @@ from app.modules.cad.profile_extractor import TurningDatum, extract_turning_prof
 from app.modules.engineering.turning_planner import (
     SyntheticTurningPlanningError, generate_turning_roughing_plan,
 )
+from app.modules.engineering.turning_quantization import evaluate_plan_diameter_quantization
 from app.modules.engineering.turning_schemas import TurningStockCylinder
 from app.modules.engineering.turning_toolpath_schemas import (
     SyntheticTurningExecutionResult, SyntheticTurningMetadata, SyntheticTurningParameters,
@@ -38,6 +39,7 @@ class _Inputs(BaseModel):
     tool_envelope: TurningToolEnvelope2D
     exclusion_zones: tuple[TurningStaticExclusionZone, ...] = Field(max_length=128)
     evaluated_at_utc: UtcTimestamp
+    quantization_decimal_places: int = Field(ge=1, le=6)
 
 
 def _parameter_digest(inputs: _Inputs) -> str:
@@ -46,7 +48,7 @@ def _parameter_digest(inputs: _Inputs) -> str:
     data["brep_unit_scale"] = scale if math.isfinite(scale) else {
         "non_finite": "NaN" if math.isnan(scale) else ("+Infinity" if scale > 0 else "-Infinity"),
     }
-    data["schema_version"] = "synthetic-turning/v1"
+    data["schema_version"] = "synthetic-turning/v2"
     canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), allow_nan=False)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
@@ -89,6 +91,7 @@ def orchestrate_synthetic_turning_pipeline(
     tool_envelope: TurningToolEnvelope2D,
     exclusion_zones: tuple[TurningStaticExclusionZone, ...],
     evaluated_at_utc: datetime,
+    quantization_decimal_places: int = 3,
 ) -> SyntheticTurningExecutionResult:
     """Same inputs/time/binding yield the same local synthetic result.
 
@@ -101,11 +104,12 @@ def orchestrate_synthetic_turning_pipeline(
         angular_tolerance_rad=angular_tolerance_rad,
         datum=TurningDatum.model_validate(datum.model_dump()), stock=stock, params=params,
         fixture=fixture, tool_envelope=tool_envelope, exclusion_zones=exclusion_zones,
-        evaluated_at_utc=evaluated_at_utc,
+        evaluated_at_utc=evaluated_at_utc, quantization_decimal_places=quantization_decimal_places,
     )
     if len({zone.zone_id for zone in inputs.exclusion_zones}) != len(inputs.exclusion_zones):
         raise ValueError("declared zone ids must be unique")
     metadata = SyntheticTurningMetadata(
+        quantization_decimal_places=inputs.quantization_decimal_places,
         evaluated_at_utc=inputs.evaluated_at_utc, parameters_digest_sha256=_parameter_digest(inputs),
         brep_serialization_digest_sha256=None, brep_serialization_format=None,
     )
@@ -124,6 +128,7 @@ def orchestrate_synthetic_turning_pipeline(
             profile=None, plan=None, verification=None, metadata=metadata,
         )
     metadata = SyntheticTurningMetadata(
+        quantization_decimal_places=inputs.quantization_decimal_places,
         evaluated_at_utc=inputs.evaluated_at_utc, parameters_digest_sha256=metadata.parameters_digest_sha256,
         brep_serialization_digest_sha256=digest,
         brep_serialization_format="OCCT_BREP_ASCII_V3_NO_TRIANGLES_NO_NORMALS",
@@ -168,9 +173,26 @@ def orchestrate_synthetic_turning_pipeline(
             pipeline_status="BOUNDARY_VERIFICATION_FAILED", failure_reason="BOUNDARY_VERIFICATION_EXCEPTION",
             profile=profile, plan=plan, verification=None, metadata=metadata,
         )
-    success = verification.declared_boundaries_passed and verification.boundary_status == "PASS"
-    return SyntheticTurningExecutionResult(
-        pipeline_status="SUCCESS_SYNTHETIC" if success else "BOUNDARY_VERIFICATION_FAILED",
-        failure_reason=None if success else verification.boundary_status,
-        profile=profile, plan=plan, verification=verification, metadata=metadata,
-    )
+    if not (verification.declared_boundaries_passed and verification.boundary_status == "PASS"):
+        return SyntheticTurningExecutionResult(
+            pipeline_status="BOUNDARY_VERIFICATION_FAILED", failure_reason=verification.boundary_status,
+            profile=profile, plan=plan, verification=verification, metadata=metadata,
+        )
+    try:
+        quantization = evaluate_plan_diameter_quantization(plan, inputs.quantization_decimal_places)
+        serialized = json.dumps(quantization.model_dump(mode="json"), sort_keys=True,
+                                separators=(",", ":"), allow_nan=False)
+        quantified_metadata = SyntheticTurningMetadata.model_validate({
+            **metadata.model_dump(),
+            "quantization_digest_sha256": hashlib.sha256(serialized.encode("utf-8")).hexdigest(),
+        })
+        return SyntheticTurningExecutionResult(
+            pipeline_status="SUCCESS_SYNTHETIC", failure_reason=None,
+            profile=profile, plan=plan, verification=verification, metadata=quantified_metadata,
+            quantization=quantization,
+        )
+    except Exception:
+        return SyntheticTurningExecutionResult(
+            pipeline_status="QUANTIZATION_FAILED", failure_reason="QUANTIZATION_EVALUATION_FAILED",
+            profile=profile, plan=plan, verification=verification, metadata=metadata,
+        )

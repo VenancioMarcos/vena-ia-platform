@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.17
+**Versão:** 2.18
 **Última atualização:** 2026-09-09
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-09
 
-- **Handoff CTO:** AUTO-015 aprovada pelo Gemini por relatório no commit ebbe37e: 592 passed/2 skipped. [AUTO-016](docs/cto/CTO-CODEX-AUTO-016.md) implementa agregado numérico dos extremos de planos sintéticos: contagem N de movimentos e 2N relatórios ordenados; extremos assinados; vazio com zeros. 22 testes novos PASS, Ruff/mypy PASS193 fontes; regressão completa 614 passed/2 skipped em 118.57 s. is_boundary_safe=false/NOT_EVALUATED; sem NC, fronteiras físicas ou Digital Thread. Marco sintético permanece local, API/manifests 3.1.0. Após commit: enviar relatório, pedir e aguardar nova ordem real.
+- **Handoff CTO:** AUTO-016 aprovada por relatório em 770ac7b (614 pass/2 skips). [AUTO-017](docs/cto/CTO-CODEX-AUTO-017.md) integra quantização como quarto estágio interno. Contrato synthetic-turning/v2 exige sumário no sucesso, valida precisão/raios/contagem/digest e classifica falha específica sem sumário parcial. 50 testes E2E PASS (16 novos); Ruff/mypy PASS193 fontes; regressão completa 630 passed/2 skipped em 137.10 s. Nenhum NC, fronteira física ou Digital Thread. API/manifests 3.1.0. Após commit: enviar relatório, pedir e aguardar nova ordem real.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

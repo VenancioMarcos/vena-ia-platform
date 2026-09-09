@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-AUTO-017
+
+* Quantização agregada como quarto estágio interno, com precisão em parâmetros,
+  digest do sumário e falha explícita. Contrato synthetic-turning/v2 exige
+  quantização no sucesso; API/runtime continuam 3.1.0, sem NC/autoridade física.
+
 ### Added — CTO-CODEX-AUTO-016
 
 * Sumário numérico dos dois extremos por movimento de plano sintético,

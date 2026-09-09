@@ -38,3 +38,9 @@ Nenhuma emissão NC, fronteira física ou integração Digital Thread.
 Commit local, enviar relatório com SHA real e pedir/aguardar próxima ordem.
 NON_PRODUCTION; G9=PENDING_AUTHORITATIVE_REVIEW; PHYSICAL_USE_AUTHORIZED=false;
 CONTROLLER_PROFILE_UNRESOLVED; sem Git de rede.
+
+## Parecer e próxima ordem
+
+Commit 770ac7bc46228e93b657b6aa29de4be7c82d80ac, árvore limpa, enviado e
+aprovado pelo Gemini por relatório. Recebida AUTO-017: integrar quarto estágio
+numérico ao orquestrador com precisão e digest, sem NC/autoridade.

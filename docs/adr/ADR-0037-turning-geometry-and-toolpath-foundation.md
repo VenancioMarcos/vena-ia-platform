@@ -389,3 +389,10 @@ Após aprovação AUTO-015 em ebbe37e, agregar ambos os extremos em ordem
 start/end por movimento; contagem de movimentos e exatamente 2N relatórios.
 Máximo positivo/mínimo negativo incluem zero; validação estrita e falha total
 em ponto inválido. Sem quantização de Z, prova de material ou fronteiras.
+
+### AUTO-017 — Quarto estágio numérico (2026-09-09)
+
+Integrar quantização apenas após fronteiras declaradas PASS. Resultado local
+synthetic-turning/v2 exige sumário no sucesso; QUANTIZATION_FAILED preserva
+artefatos anteriores. Precisão em parâmetros/metadata e hash canônico do sumário;
+validar vínculo de contagem/raios/precisão/hash, sem autoridade física ou NC.

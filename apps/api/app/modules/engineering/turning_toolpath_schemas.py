@@ -178,78 +178,6 @@ UtcTimestamp = Annotated[datetime, AfterValidator(_require_utc)]
 Sha256Digest = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 
 
-class SyntheticTurningMetadata(_SyntheticContract):
-    """Local reproducibility metadata only; neither signed nor trusted authority."""
-
-    schema_version: Literal["synthetic-turning/v1"] = "synthetic-turning/v1"
-    evaluated_at_utc: UtcTimestamp
-    parameters_digest_sha256: Sha256Digest
-    brep_serialization_digest_sha256: Sha256Digest | None
-    brep_serialization_format: Literal["OCCT_BREP_ASCII_V3_NO_TRIANGLES_NO_NORMALS"] | None
-    occt_binding_version: str | None = Field(default=None, min_length=1, max_length=100)
-    limitations: tuple[
-        Literal["NO_CANONICAL_GEOMETRIC_IDENTITY"],
-        Literal["NO_DIGITAL_THREAD_INTEGRATION"],
-        Literal["NO_PHYSICAL_AUTHORITY"],
-    ] = ("NO_CANONICAL_GEOMETRIC_IDENTITY", "NO_DIGITAL_THREAD_INTEGRATION", "NO_PHYSICAL_AUTHORITY")
-
-    @model_validator(mode="after")
-    def validate_provenance(self) -> SyntheticTurningMetadata:
-        if self.brep_serialization_digest_sha256 is not None and (
-            self.brep_serialization_format is None or self.occt_binding_version is None
-        ):
-            raise ValueError("BRep digest requires serialization format and binding version")
-        return self
-
-
-class SyntheticTurningExecutionResult(_SyntheticContract):
-    pipeline_status: Literal[
-        "SUCCESS_SYNTHETIC", "CAD_EXTRACTION_FAILED", "PLANNING_FAILED", "BOUNDARY_VERIFICATION_FAILED",
-    ]
-    failure_reason: str | None = Field(min_length=1, max_length=255)
-    profile: TurningProfile2D | None
-    plan: TurningToolpathPlan | None
-    verification: TurningVerificationReport | None
-    metadata: SyntheticTurningMetadata
-    is_physical_ready: Literal[False] = False
-    physical_use_authorized: Literal[False] = False
-    executable_output: Literal[False] = False
-    emission_status: Literal["CONTROLLER_PROFILE_UNRESOLVED"] = "CONTROLLER_PROFILE_UNRESOLVED"
-
-    @model_validator(mode="after")
-    def validate_stages(self) -> SyntheticTurningExecutionResult:
-        success = self.pipeline_status == "SUCCESS_SYNTHETIC"
-        if success != (self.failure_reason is None):
-            raise ValueError("success and failure_reason must agree")
-        if self.pipeline_status == "CAD_EXTRACTION_FAILED":
-            if self.profile is not None or self.plan is not None or self.verification is not None:
-                raise ValueError("CAD failure cannot include later-stage artifacts")
-            return self
-        if self.profile is None or self.metadata.brep_serialization_digest_sha256 is None:
-            raise ValueError("later stages require profile and serialized BRep provenance")
-        if self.pipeline_status == "PLANNING_FAILED":
-            if self.plan is not None or self.verification is not None:
-                raise ValueError("planning failure cannot include later-stage artifacts")
-            return self
-        if self.plan is None:
-            raise ValueError("verification stage requires plan")
-        canonical = json.dumps(self.profile.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
-        expected_id = "synthetic-profile:sha256:" + hashlib.sha256(canonical.encode()).hexdigest()
-        if self.plan.profile_id != expected_id:
-            raise ValueError("plan must reference the included synthetic profile")
-        move_count = sum(len(operation.moves) for operation in self.plan.operations)
-        if success and move_count == 0:
-            raise ValueError("empty plans cannot have successful boundary evaluation")
-        if self.verification is not None and any(
-            index >= move_count for index in self.verification.violating_moves
-        ):
-            raise ValueError("verification indices must refer to included plan movements")
-        verified = self.verification is not None and self.verification.declared_boundaries_passed
-        if success != verified:
-            raise ValueError("synthetic success requires exactly declared-boundary PASS")
-        return self
-
-
 class TurningQuantizationReport(_SyntheticContract):
     """Declared numeric X/R consistency only; no text provenance or boundary proof."""
 
@@ -301,4 +229,97 @@ class TurningPlanQuantizationSummary(_SyntheticContract):
         if (self.max_positive_radial_deviation_mm != max(0.0, positive)
                 or self.max_negative_radial_deviation_mm != min(0.0, negative)):
             raise ValueError("aggregate extrema must match endpoint reports")
+        return self
+
+
+class SyntheticTurningMetadata(_SyntheticContract):
+    """Local reproducibility metadata only; neither signed nor trusted authority."""
+
+    schema_version: Literal["synthetic-turning/v2"] = "synthetic-turning/v2"
+    evaluated_at_utc: UtcTimestamp
+    parameters_digest_sha256: Sha256Digest
+    quantization_decimal_places: int = Field(default=3, ge=1, le=6)
+    quantization_digest_sha256: Sha256Digest | None = None
+    brep_serialization_digest_sha256: Sha256Digest | None
+    brep_serialization_format: Literal["OCCT_BREP_ASCII_V3_NO_TRIANGLES_NO_NORMALS"] | None
+    occt_binding_version: str | None = Field(default=None, min_length=1, max_length=100)
+    limitations: tuple[
+        Literal["NO_CANONICAL_GEOMETRIC_IDENTITY"],
+        Literal["NO_DIGITAL_THREAD_INTEGRATION"],
+        Literal["NO_PHYSICAL_AUTHORITY"],
+    ] = ("NO_CANONICAL_GEOMETRIC_IDENTITY", "NO_DIGITAL_THREAD_INTEGRATION", "NO_PHYSICAL_AUTHORITY")
+
+    @model_validator(mode="after")
+    def validate_provenance(self) -> SyntheticTurningMetadata:
+        if self.brep_serialization_digest_sha256 is not None and (
+            self.brep_serialization_format is None or self.occt_binding_version is None
+        ):
+            raise ValueError("BRep digest requires serialization format and binding version")
+        return self
+
+
+class SyntheticTurningExecutionResult(_SyntheticContract):
+    pipeline_status: Literal[
+        "SUCCESS_SYNTHETIC", "CAD_EXTRACTION_FAILED", "PLANNING_FAILED", "BOUNDARY_VERIFICATION_FAILED",
+        "QUANTIZATION_FAILED",
+    ]
+    failure_reason: str | None = Field(min_length=1, max_length=255)
+    profile: TurningProfile2D | None
+    plan: TurningToolpathPlan | None
+    verification: TurningVerificationReport | None
+    metadata: SyntheticTurningMetadata
+    quantization: TurningPlanQuantizationSummary | None = None
+    is_physical_ready: Literal[False] = False
+    physical_use_authorized: Literal[False] = False
+    executable_output: Literal[False] = False
+    emission_status: Literal["CONTROLLER_PROFILE_UNRESOLVED"] = "CONTROLLER_PROFILE_UNRESOLVED"
+
+    @model_validator(mode="after")
+    def validate_stages(self) -> SyntheticTurningExecutionResult:
+        success = self.pipeline_status == "SUCCESS_SYNTHETIC"
+        if success != (self.failure_reason is None):
+            raise ValueError("success and failure_reason must agree")
+        if success != (self.quantization is not None):
+            raise ValueError("only success requires quantization")
+        if success != (self.metadata.quantization_digest_sha256 is not None):
+            raise ValueError("quantization digest must accompany successful quantization")
+        if self.pipeline_status == "CAD_EXTRACTION_FAILED":
+            if self.profile is not None or self.plan is not None or self.verification is not None:
+                raise ValueError("CAD failure cannot include later-stage artifacts")
+            return self
+        if self.profile is None or self.metadata.brep_serialization_digest_sha256 is None:
+            raise ValueError("later stages require profile and serialized BRep provenance")
+        if self.pipeline_status == "PLANNING_FAILED":
+            if self.plan is not None or self.verification is not None:
+                raise ValueError("planning failure cannot include later-stage artifacts")
+            return self
+        if self.plan is None:
+            raise ValueError("verification stage requires plan")
+        canonical = json.dumps(self.profile.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
+        expected_id = "synthetic-profile:sha256:" + hashlib.sha256(canonical.encode()).hexdigest()
+        if self.plan.profile_id != expected_id:
+            raise ValueError("plan must reference the included synthetic profile")
+        move_count = sum(len(operation.moves) for operation in self.plan.operations)
+        quantified_stage = success or self.pipeline_status == "QUANTIZATION_FAILED"
+        if quantified_stage and move_count == 0:
+            raise ValueError("empty plans cannot have successful boundary evaluation")
+        if self.verification is not None and any(
+            index >= move_count for index in self.verification.violating_moves
+        ):
+            raise ValueError("verification indices must refer to included plan movements")
+        verified = self.verification is not None and self.verification.declared_boundaries_passed
+        if quantified_stage != verified:
+            raise ValueError("quantization stage requires exactly declared-boundary PASS")
+        if self.quantization is not None:
+            summary = self.quantization
+            radii = tuple(point[0] for operation in self.plan.operations for move in operation.moves
+                          for point in (move.start_point, move.end_point))
+            if (summary.evaluated_moves_count != move_count
+                    or tuple(r.original_radius_mm for r in summary.move_reports) != radii
+                    or summary.decimal_places != self.metadata.quantization_decimal_places):
+                raise ValueError("quantization must correspond to plan endpoints and precision")
+            serialized = json.dumps(summary.model_dump(mode="json"), sort_keys=True,
+                                    separators=(",", ":"), allow_nan=False)
+            if hashlib.sha256(serialized.encode("utf-8")).hexdigest() != self.metadata.quantization_digest_sha256:
+                raise ValueError("quantization digest must match included summary")
         return self

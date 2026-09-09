@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import math
+import hashlib
+import json
 from datetime import UTC, datetime, timedelta, timezone
 from functools import lru_cache
 from pathlib import Path
@@ -44,6 +46,8 @@ def _inputs(**updates: Any) -> dict[str, Any]:
 
 def _run(**updates: Any) -> SyntheticTurningExecutionResult:
     result = service.orchestrate_synthetic_turning_pipeline(**_inputs(**updates))
+    if result.pipeline_status != "SUCCESS_SYNTHETIC":
+        assert result.quantization is None and result.metadata.quantization_digest_sha256 is None
     assert not result.is_physical_ready and not result.physical_use_authorized
     assert not result.executable_output and result.emission_status == "CONTROLLER_PROFILE_UNRESOLVED"
     return result
@@ -57,6 +61,12 @@ def test_e2e_real_step_profile_plan_and_boundaries(name: str, minimum_radius: fl
     assert result.profile is not None and result.plan is not None and result.verification is not None
     assert result.verification.declared_boundaries_passed and not result.verification.is_verified
     assert result.verification.collision_status == "NOT_VALIDATED" and not result.plan.is_collision_free
+    assert result.quantization is not None
+    move_count = sum(len(op.moves) for op in result.plan.operations)
+    assert result.quantization.evaluated_moves_count == move_count
+    assert len(result.quantization.move_reports) == 2 * move_count
+    assert result.metadata.schema_version == "synthetic-turning/v2"
+    assert result.metadata.quantization_decimal_places == 3
     assert result.plan.operations[-1].passes_count > 1
     assert min(m.end_point[0] for m in result.plan.operations[-1].moves) == minimum_radius
     assert result.metadata.brep_serialization_digest_sha256 is not None
@@ -161,6 +171,7 @@ def test_actual_brep_units_are_explicit(scale: float) -> None:
     ("extract_turning_profile", "CAD_EXTRACTION_FAILED"),
     ("generate_turning_roughing_plan", "PLANNING_FAILED"),
     ("verify_toolpath_boundaries", "BOUNDARY_VERIFICATION_FAILED"),
+    ("evaluate_plan_diameter_quantization", "QUANTIZATION_FAILED"),
 ])
 def test_stage_exceptions_fail_closed_without_native_details(
     stage: str, status: str, monkeypatch: pytest.MonkeyPatch,
@@ -212,3 +223,84 @@ def test_metadata_and_cross_artifact_forgery_rejected() -> None:
                     {"brep_serialization_format": None}):
         with pytest.raises(ValidationError):
             SyntheticTurningMetadata.model_validate({**result.metadata.model_dump(), **changes})
+
+
+@pytest.mark.parametrize("precision", [True, 0, 7, 3.0, "3"])
+def test_quantization_precision_rejected_before_cad(precision: Any, monkeypatch: pytest.MonkeyPatch) -> None:
+    def forbidden(*args: Any, **kwargs: Any) -> None:
+        pytest.fail("invalid precision must not reach geometry")
+    monkeypatch.setattr(service, "_copy_and_serialize", forbidden)
+    with pytest.raises(ValidationError):
+        _run(quantization_decimal_places=precision)
+
+
+def test_precision_and_quantization_digests_are_bound() -> None:
+    first, repeat = _run(quantization_decimal_places=2), _run(quantization_decimal_places=2)
+    changed = _run(quantization_decimal_places=4)
+    assert first == repeat and first.quantization is not None
+    assert first.metadata.parameters_digest_sha256 != changed.metadata.parameters_digest_sha256
+    assert first.metadata.quantization_digest_sha256 != changed.metadata.quantization_digest_sha256
+    assert first.metadata.brep_serialization_digest_sha256 == changed.metadata.brep_serialization_digest_sha256
+    canonical = json.dumps(first.quantization.model_dump(mode="json"), sort_keys=True,
+                           separators=(",", ":"), allow_nan=False)
+    assert first.metadata.quantization_digest_sha256 == hashlib.sha256(canonical.encode()).hexdigest()
+
+
+@pytest.mark.parametrize("kind", ["cad", "planning", "boundary"])
+def test_earlier_failures_do_not_evaluate_quantization(kind: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    def forbidden(*args: Any, **kwargs: Any) -> None:
+        pytest.fail("earlier failure must not reach quantization")
+    monkeypatch.setattr(service, "evaluate_plan_diameter_quantization", forbidden)
+    updates: dict[str, Any] = {}
+    if kind == "cad":
+        updates["step_brep_solid"] = _shape("pure_prism")
+    elif kind == "planning":
+        updates["stock"] = TurningStockCylinder(diameter_mm=40.0, length_mm=110.0, face_allowance_mm=3.0)
+    else:
+        updates["fixture"] = _inputs()["fixture"].model_copy(update={"z_chuck_plane_mm": -50.0})
+    result = _run(**updates)
+    assert result.quantization is None
+
+
+@pytest.mark.parametrize("kind", ["missing", "hash", "precision", "radii", "early"])
+def test_quantization_result_cross_artifact_forgery(kind: str) -> None:
+    result = _run()
+    assert result.quantization is not None
+    updates: dict[str, Any] = {}
+    if kind == "missing":
+        updates["quantization"] = None
+    elif kind == "hash":
+        updates["metadata"] = result.metadata.model_copy(update={"quantization_digest_sha256": "0"*64})
+    elif kind == "precision":
+        updates["metadata"] = result.metadata.model_copy(update={"quantization_decimal_places": 5})
+    elif kind == "early":
+        updates.update(pipeline_status="BOUNDARY_VERIFICATION_FAILED", failure_reason="failure")
+    else:
+        # Internally coherent replacement of both point reports and their digest
+        # still cannot be paired with another plan's original endpoint radii.
+        data = result.quantization.model_dump()
+        reports = list(data["move_reports"])
+        reports[0] = dict(reports[0], original_radius_mm=1.0, programmed_x_diameter_mm=2.0,
+                          reconstructed_radius_mm=1.0, radial_deviation_mm=0.0)
+        data["move_reports"] = tuple(reports)
+        summary = type(result.quantization).model_validate(data)
+        canonical = json.dumps(summary.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
+        updates["quantization"] = summary
+        updates["metadata"] = result.metadata.model_copy(update={
+            "quantization_digest_sha256": hashlib.sha256(canonical.encode()).hexdigest()})
+    with pytest.raises(ValidationError):
+        SyntheticTurningExecutionResult.model_validate(result.model_copy(update=updates))
+
+
+def test_invalid_quantizer_output_aborts_with_prior_artifacts(monkeypatch: pytest.MonkeyPatch) -> None:
+    first = _run()
+    assert first.quantization is not None
+    def forged(*args: Any, **kwargs: Any) -> Any:
+        return first.quantization.model_copy(update={"decimal_places": 6})
+    monkeypatch.setattr(service, "evaluate_plan_diameter_quantization", forged)
+    result = _run()
+    assert result.pipeline_status == "QUANTIZATION_FAILED"
+    assert result.failure_reason == "QUANTIZATION_EVALUATION_FAILED"
+    assert result.plan is not None and result.profile is not None and result.verification is not None
+    assert result.verification.declared_boundaries_passed
+    assert result.quantization is None and result.metadata.quantization_digest_sha256 is None

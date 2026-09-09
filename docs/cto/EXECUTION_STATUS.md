@@ -1,5 +1,10 @@
 # Estado de execução CTO
 
+## 2026-09-09 — AUTO-017
+
+AUTO-016 aprovada em 770ac7b por relatório. Quarto estágio implementado,
+50 testes E2E PASS (16 novos); Ruff/mypy PASS193 fontes. Regressão completa 630 passed/2 skipped em 137.10 s.
+
 ## 2026-09-09 — AUTO-016
 
 AUTO-015 aprovada em ebbe37e por relatório, árvore limpa. Agregado de planos

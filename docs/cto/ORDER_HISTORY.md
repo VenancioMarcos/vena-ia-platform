@@ -663,3 +663,9 @@ local; nenhuma emissão NC. Próximo passo: entregar e aguardar resposta real.
 Gemini aprovou ebbe37e por relatório com 592 pass/2 skips e emitiu AUTO-016:
 contrato e avaliador agregado de extremos de planos, sem NC/fronteiras físicas.
 Contagem N movimentos corresponde a 2N relatórios ordenados start/end.
+
+## 2026-09-09 — AUTO-016 aprovada; AUTO-017
+
+Gemini aprovou 770ac7b por relatório e ordenou integração do agregado ao
+orquestrador, precisão no digest dos parâmetros e hash do sumário. Contrato
+local v2 para distinguir sucesso obrigatório de quatro estágios. Sem NC.

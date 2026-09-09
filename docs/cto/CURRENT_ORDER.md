@@ -1,17 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-016
-**Estado:** avaliador implementado; agregado implementado; regressão completa 614 passed/2 skipped em 118.57 s
+**Missão:** CTO-CODEX-AUTO-017
+**Estado:** integração implementada; 630 passed/2 skipped; pronto para commit/envio
 **Data:** 2026-09-09
 **Branch:** codex/v3.1-first-controlled-test-path
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Agregado numérico de extremos de planos sintéticos. [Registro](CTO-CODEX-AUTO-016.md).
-AUTO-015 aprovada por relatório no commit ebbe37e, 592 pass/2 skips.
-AUTO-016 preserva dois relatórios por movimento, ordem start/end e extremos
-assinados. Sem quantização de Z ou avaliação de fronteiras.
+Quarto estágio numérico no orquestrador. [Registro](CTO-CODEX-AUTO-017.md).
+AUTO-016 aprovada por relatório em 770ac7b, 614 pass/2 skips.
+Contrato synthetic-turning/v2 exige quantização no sucesso; falhas preservam
+artefatos anteriores e não expõem sumário parcial. Sem NC/autoridade física.
 
 ## Continuidade obrigatória
 
