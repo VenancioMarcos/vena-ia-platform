@@ -607,3 +607,18 @@ coleção explícita e metadados imutáveis enviado antes de implementar.
 Refinamentos técnicos aprovados integralmente pelo CTO; CAM-008A substitui
 CAM-008: orquestrador sintético com timestamp/tolerâncias/zonas explícitos e
 metadados imutáveis de serialização BRep. 34 testes E2E PASS, regressão em curso.
+
+
+## 2026-09-09 — CAM-008A aprovada; conflito POST-009
+
+CTO aprovou 5f50559 por relatório e pediu pós-processador. Codex registrou
+reintrodução de dialeto universal já rejeitado pelo ADR-0037, falta de F,
+referências físicas e revalidação da quantização. Proposta POST-009A documental
+enviada; emissor não implementado. Aguardando decisão técnica.
+
+
+## 2026-09-09 — POST-009 cancelada; POST-009A documental
+
+CTO acolheu integralmente o conflito e cancelou a emissão NC. POST-009A
+autoriza matriz/template de pré-requisitos, nenhuma implementação de pós.
+Documento concluído; suíte exigida 548 pass/2 skips, sem código de produto alterado.

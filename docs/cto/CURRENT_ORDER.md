@@ -1,17 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-CAM-008A
-**Estado:** CAM-008A implementada e validada; commit/envio como próximos passos
+**Missão:** CTO-CODEX-POST-009A
+**Estado:** entrega documental validada; commit/envio como próximos passos
 **Data:** 2026-09-09
 **Branch:** codex/v3.1-first-controlled-test-path
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Orquestrador interno CAD -> plano -> verificação -> relatório sintético, sem
-endpoint, persistência ou NC. [Registro](CTO-CODEX-CAM-008.md). Contrato ajustado
-confirmado integralmente pelo CTO; CAM-008A substitui CAM-008. 34 testes E2E PASS;
-Ruff/mypy PASS em 192 fontes. Suíte completa 548 passed/2 skipped em 122.35 s; baseline f55534a.
+POST-009 cancelada; POST-009A estritamente documental confirmada pelo CTO.
+[Entrega](CTO-CODEX-POST-009.md) e [matriz/template](../engineering/TURNING_CONTROLLER_PREREQUISITES.md)
+concluídos. Nenhum emissor NC; CONTROLLER_PROFILE_UNRESOLVED. Suíte exigida
+548 passed/2 skipped em 170.51 s; Ruff/mypy PASS. Commit/envio como próximos passos.
 
 ## Continuidade obrigatória
 

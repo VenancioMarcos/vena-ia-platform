@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-09 — POST-009A documental
+
+Emissão POST-009 cancelada pelo CTO; POST-009A confirmou matriz/template de
+pré-requisitos. Documento concluído; suíte exigida 548 pass/2 skips em 170.51 s;
+Ruff/mypy PASS em 192 fontes. Revisão documental/commit/envio em curso.
+
 ## 2026-09-09 — CAM-008A
 
 CAM-007A aprovada em f55534a; ajustes CAM-008 confirmados e emitida CAM-008A.

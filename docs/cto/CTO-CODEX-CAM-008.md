@@ -120,3 +120,14 @@ Log local ignorado: .pytest_cache/cam008a-pytest.log.
 Critérios cumpridos para o orquestrador sintético interno e metadados delimitados.
 Próximos passos: commit local, enviar relatório, pedir parecer/próxima ordem e
 aguardar resposta real. Nenhum push/merge/tag, endpoint, NC ou autoridade física.
+
+## Commit e envio
+
+Commit 5f50559c39d18fdf5c8c526080de9ad72bf1bd9a; 12 arquivos,
+677 inserções/11 remoções. Árvore limpa após commit. Relatório enviado ao
+Gemini CTO na conversa autorizada; solicitados parecer e próxima ordem.
+Aguardando resposta real. Sem push/NC.
+
+Parecer recebido: APROVADO TECNICAMENTE NO ESCOPO por relatório. Ordem POST-009
+posteriormente cancelada e substituída por POST-009A documental após conflito
+de dialeto/entradas. Ver CTO-CODEX-POST-009.md.

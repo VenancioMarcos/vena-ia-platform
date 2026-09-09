@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.12
+**Versão:** 2.13
 **Última atualização:** 2026-09-09
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-09
 
-- **Handoff CTO:** CAM-007A (f55534a, 514 pass/2 skips) aprovada tecnicamente no escopo por relatório. CAM-008 ajustada e substituída pelo CTO por [CAM-008A](docs/cto/CTO-CODEX-CAM-008.md): orquestrador interno CAD/plano/verificador sintético, timestamp UTC explícito e metadados imutáveis. Implementado; suíte 548 passed/2 skipped em 122.35 s (34 novos), Ruff/mypy PASS em 192 fontes. Sem autoridade física, NC ou Digital Thread integrado. Após validar: commit local, enviar relatório, pedir/aguardar nova ordem e continuar escopo autorizado.
+- **Handoff CTO:** CAM-008A (5f50559, 548 pass/2 skips) aprovada tecnicamente no escopo por relatório. CTO acolheu conflito de POST-009, cancelou emissão NC e emitiu [POST-009A](docs/cto/CTO-CODEX-POST-009.md), documental. Matriz de pré-requisitos de controlador, lacunas e template concluídos em docs/engineering/TURNING_CONTROLLER_PREREQUISITES.md; nenhum controlador/dado físico inferido. Regressão exigida: 548 passed/2 skipped em 170.51 s; Ruff/mypy PASS em 192 fontes. CONTROLLER_PROFILE_UNRESOLVED, sem emissor de torno. Após revisão documental: commit local, enviar relatório e pedir/aguardar nova ordem real.
 
 - Linha v3.1.0 NON_PRODUCTION; main remota verificada em 64ac3b8. PR #31 Draft em d798417; 052cb8e local, pendente de push.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

@@ -336,3 +336,20 @@ Falhas CAD/planejamento/verificação abortam os estágios seguintes. Só há
 SUCCESS_SYNTHETIC com perfil, plano e relatório PASS de fronteiras declaradas;
 NOT_EVALUATED não é sucesso. is_physical_ready/physical_use_authorized/
 executable_output=false em todos os casos; controlador permanece não resolvido.
+
+
+## Decisão técnica — CTO-CODEX-POST-009A
+
+Em 2026-09-09, o CTO acolheu integralmente o conflito POST-009, cancelou a emissão
+NC e substituiu a missão por POST-009A, estritamente documental. O pacote
+[pré-requisitos do controlador](../engineering/TURNING_CONTROLLER_PREREQUISITES.md)
+especifica identidade/manual aplicáveis, semântica real de códigos, valores de
+processo, referência de ferramenta/compensação, setup/material remanescente,
+trajetórias completas e reverificação após quantização. Nenhum valor real foi
+inferido. Códigos citados são itens de investigação, não cabeçalho aprovado.
+
+CTRL/TOOL/SETUP/PATH/POST exigem evidência e revisão; família genérica, formulário
+preenchido, hash ou SUCCESS_SYNTHETIC não promovem autoridade. Permanece
+CONTROLLER_PROFILE_UNRESOLVED e sem pós-processador de torno. Um próximo marco
+possível é a revisão documental de pacote real fornecido por fonte autorizada;
+implementação de candidato e G9/operação física continuam marcos separados.

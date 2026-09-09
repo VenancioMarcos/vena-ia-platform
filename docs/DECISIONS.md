@@ -1554,3 +1554,18 @@ Sem integrar ao Digital Thread vigente ou habilitar NC/autoridade física.
 Ajustes de CAM-008 confirmados integralmente; CTO emitiu CAM-008A.
 Orquestração sintética interna, metadados imutáveis/replay explícito conforme
 incremento no ADR-0037. Sem integração no Digital Thread vigente ou NC.
+
+
+### DEC-047 — POST-009 em revisão técnica
+
+Cabeçalho universal e emissão sem perfil de controlador resolvido contradizem
+ADR-0037. Sem F/recuo/ferramenta/material e validação do arredondamento, não
+implementar emissor. Proposta de pacote documental POST-009A enviada ao CTO.
+
+
+### DEC-047 — POST-009A aprovada tecnicamente
+
+CTO acolheu integralmente o conflito, cancelou a emissão POST-009 e autorizou
+POST-009A documental. Matriz/template em engineering/TURNING_CONTROLLER_PREREQUISITES.md.
+Sem perfil real/manual/dados revisados, CONTROLLER_PROFILE_UNRESOLVED permanece.
+Nenhum emissor de torno implementado; detalhes no incremento do ADR-0037.

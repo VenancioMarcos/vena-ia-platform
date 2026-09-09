@@ -8,6 +8,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Documentation — CTO-CODEX-POST-009A
+
+* Matriz de pré-requisitos/lacunas e template de coleta técnica de controlador,
+  processo, ferramenta/setup e quantização; emissão NC continua bloqueada.
+* POST-009 cancelada pelo CTO após conflito com dialeto universal e entradas
+  ausentes. Nenhum emissor, valor físico ou aprovação inventado.
+
 ### Added — CTO-CODEX-CAM-008A
 
 * Orquestrador interno une BRep/perfil/plano/verificação em resultado sintético
