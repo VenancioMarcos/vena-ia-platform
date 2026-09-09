@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-09 — STAB-010
+
+POST-009A aprovada em f3fb048; auditoria/consolidação documental local em curso.
+Marco v3.2.0-turning-synthetic-alpha sem release/tag ou bump runtime 3.1.0.
+476 arquivos rastreados sem assinaturas pesquisadas; quatro espaços históricos
+em linhas vazias corrigidos. Suíte final 548 pass/2 skips em 152.26 s;
+Ruff/mypy PASS em 192 fontes. Commit/envio como próximos passos.
+
 ## 2026-09-09 — POST-009A documental
 
 Emissão POST-009 cancelada pelo CTO; POST-009A confirmou matriz/template de

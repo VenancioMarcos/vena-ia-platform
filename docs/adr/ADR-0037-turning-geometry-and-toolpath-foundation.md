@@ -353,3 +353,12 @@ preenchido, hash ou SUCCESS_SYNTHETIC não promovem autoridade. Permanece
 CONTROLLER_PROFILE_UNRESOLVED e sem pós-processador de torno. Um próximo marco
 possível é a revisão documental de pacote real fornecido por fonte autorizada;
 implementação de candidato e G9/operação física continuam marcos separados.
+
+
+## Marco documental local — CTO-CODEX-STAB-010
+
+Fundação sintética consolidada como v3.2.0-turning-synthetic-alpha, sem tag,
+release ou alteração dos manifests/runtime 3.1.0. O marco cobre somente os
+incrementos CAD/CAM/verificador/orquestrador/pré-requisitos já delimitados.
+CONTROLLER_PROFILE_UNRESOLVED continua bloqueando emissão NC de torno; nenhum
+controle físico, publicação ou aprovação G9. Auditoria em ../cto/CTO-CODEX-STAB-010.md.

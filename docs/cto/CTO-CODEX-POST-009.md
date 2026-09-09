@@ -79,3 +79,13 @@ Exemplos de arredondamento são matemática decimal, não tolerâncias de máqui
 O preenchimento do documento não libera candidato NC, runtime ou G9.
 
 Commit solicitado: docs(turning): document controller prerequisites and postprocessor gap matrix.
+
+## Commit e envio
+
+Commit f3fb048b79bffd35782207e4de00cf620546003b; 10 arquivos,
+393 inserções/8 remoções. Árvore limpa após commit. Envio ao CTO realizado
+após verificar que a primeira tentativa de preenchimento falhou sem envio.
+Solicitados parecer e próxima ordem; aguardando resposta real. Sem push/NC.
+
+Parecer recebido: APROVADO TECNICAMENTE NO ESCOPO por relatório. STAB-010
+emitida para auditoria e consolidação de marco documental local.

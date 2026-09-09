@@ -1569,3 +1569,10 @@ CTO acolheu integralmente o conflito, cancelou a emissão POST-009 e autorizou
 POST-009A documental. Matriz/template em engineering/TURNING_CONTROLLER_PREREQUISITES.md.
 Sem perfil real/manual/dados revisados, CONTROLLER_PROFILE_UNRESOLVED permanece.
 Nenhum emissor de torno implementado; detalhes no incremento do ADR-0037.
+
+
+### DEC-047 — STAB-010: marco sintético local
+
+CTO aprovou POST-009A e pediu consolidação documental v3.2.0-turning-synthetic-alpha.
+Rótulo local NON_PRODUCTION, sem tag/release/bump de manifests ou publicação.
+API continua 3.1.0; emissão de torno bloqueada e dados reais pendentes.

@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.13
+**Versão:** 2.14
 **Última atualização:** 2026-09-09
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,12 +29,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-09
 
-- **Handoff CTO:** CAM-008A (5f50559, 548 pass/2 skips) aprovada tecnicamente no escopo por relatório. CTO acolheu conflito de POST-009, cancelou emissão NC e emitiu [POST-009A](docs/cto/CTO-CODEX-POST-009.md), documental. Matriz de pré-requisitos de controlador, lacunas e template concluídos em docs/engineering/TURNING_CONTROLLER_PREREQUISITES.md; nenhum controlador/dado físico inferido. Regressão exigida: 548 passed/2 skipped em 170.51 s; Ruff/mypy PASS em 192 fontes. CONTROLLER_PROFILE_UNRESOLVED, sem emissor de torno. Após revisão documental: commit local, enviar relatório e pedir/aguardar nova ordem real.
+- **Handoff CTO:** POST-009A (f3fb048) aprovada tecnicamente no escopo por relatório. [STAB-010](docs/cto/CTO-CODEX-STAB-010.md) consolida o marco documental local **v3.2.0-turning-synthetic-alpha — NON_PRODUCTION**: CAD/perfil, planejador 2D, verificador de fronteiras, orquestrador E2E e pré-requisitos de controlador concluídos no escopo sintético. API/manifests continuam 3.1.0; nenhum tag/release/push. Auditoria de 476 arquivos rastreados sem assinaturas pesquisadas de segredos; quatro espaços em linhas vazias históricas corrigidos. Suíte final 548 passed/2 skipped em 152.26 s; Ruff/mypy PASS em 192 fontes. CONTROLLER_PROFILE_UNRESOLVED, sem emissor NC de torno ou autoridade física. Após commit local, enviar relatório e aguardar orientação real do CTO.
 
-- Linha v3.1.0 NON_PRODUCTION; main remota verificada em 64ac3b8. PR #31 Draft em d798417; 052cb8e local, pendente de push.
+- Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.
 - Backend/API 3.1.0; modelos SQLAlchemy em apps/api por DEC-011. Migration registrada e61c4f8a2b90; nenhuma migration executada nesta auditoria.
-- Repositório PUBLIC confirmado diretamente. Nenhuma mudança de visibilidade ou publicação realizada.
+- Repositório PUBLIC confirmado na auditoria DIAG-001; não reconsultado na STAB-010. Nenhuma mudança de visibilidade ou publicação realizada.
 - CTO-CODEX-DIAG-001 concluída em docs/cto/CTO-CODEX-DIAG-001.md: 399 passed, 2 skipped em 258.95 s; Ruff/mypy PASS em Python 3.14.6 experimental. Varredura limitada: 1828 blobs/226 commits, sem assinaturas pesquisadas de credenciais; não certifica ausência absoluta de segredos.
 - Diagnóstico enviado ao Gemini após autorização específica do proprietário; parecer AR recebido. CTO-CODEX-FIX-002 corrige igualdade de compatibilidade, adiciona regressão e reforça .gitignore. Validação: 402 passed, 2 skipped em 118.07 s; Ruff/mypy PASS. Ver docs/cto/CTO-CODEX-FIX-002.md. Commit somente local, sem push.
 - G9 pendente; PHYSICAL_USE_AUTHORIZED=false. Sem machine-send, DNC, transferência NC, cycle start ou deploy.

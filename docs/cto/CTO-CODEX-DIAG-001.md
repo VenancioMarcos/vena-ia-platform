@@ -224,13 +224,13 @@ index 9273617..9343f0e 100644
 +    )
 +    _metre = re.compile(r"SI_UNIT\s*\(\s*\$\s*,\s*\.METRE\.\s*\)", re.IGNORECASE)
 +    _inch = re.compile(r"CONVERSION_BASED_UNIT\s*\(\s*'INCH'", re.IGNORECASE)
- 
+
      def parse(self, content: bytes) -> StepAnalysis:
          if not content.startswith(b"ISO-10303-21;"):
 @@ -96,13 +101,12 @@ class StepTextParser:
              maximum=tuple(max(axis) for axis in axes),  # type: ignore[arg-type]
          )
- 
+
 -    @staticmethod
 -    def _length_unit(text: str) -> str:
 -        normalized = text.upper()
@@ -252,8 +252,8 @@ index aff2f5f..0afd670 100644
 +++ b/apps/api/tests/test_cad.py
 @@ -41,6 +41,18 @@ def test_step_parser_extracts_metadata_and_envelope() -> None:
      assert result.volume is None
- 
- 
+
+
 +def test_step_parser_accepts_standard_whitespace_in_length_unit() -> None:
 +    content = (
 +        b"ISO-10303-21;\nDATA;\n"
