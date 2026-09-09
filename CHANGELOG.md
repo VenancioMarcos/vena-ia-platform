@@ -8,6 +8,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-CAM-007A
+
+* Verificador independente contínuo de segmentos contra plano axial conservador
+  e zonas estáticas declaradas, com AABB local explícita e aritmética racional.
+* Schemas estritos e relatório limitado a fronteiras sintéticas; is_verified=false,
+  sem validação de stock/material, ferramenta real, autoridade física ou NC.
+
 ### Added — CTO-CODEX-CAM-006A
 
 * Planejamento sintético de passes radiais/axiais com stock/sobremetais explícitos,

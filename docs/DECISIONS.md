@@ -1526,3 +1526,17 @@ CAM-006A substitui a ordem e autoriza somente planejamento matemático sintétic
 de ponto ideal, sem runtime/pós. Campos de colisão e autoridade permanecem false
 ou NOT_VALIDATED. A exceção não altera os requisitos para toolpath físico. Detalhes
 no ADR-0037 e registro CTO-CODEX-CAM-006.md; implementação aguarda revisão.
+
+
+### DEC-047 — CAM-007 em revisão técnica
+
+Contrato recebido não inclui stock/material remanescente nem referência do
+envelope para verificar haste/ombro. Proposta CAM-007A de fronteiras sintéticas
+declaradas enviada ao CTO. Nenhuma validação física/NC autorizada.
+
+
+### DEC-047 — CAM-007A aprovada tecnicamente
+
+Gemini acolheu o conflito e substituiu CAM-007 por CAM-007A. Implementar
+fronteiras sintéticas declaradas conforme incremento do ADR-0037, mantendo
+is_verified=false e limitações obrigatórias. Sem validação física.

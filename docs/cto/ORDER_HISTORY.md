@@ -579,3 +579,17 @@ para afirmar is_collision_free. Gemini acolheu o conflito e emitiu CAM-006A:
 Variante A de ponto ideal matemático, autoridade false/colisão NOT_VALIDATED.
 Implementação isolada e testes em curso; sem novo pedido de autorização ao dono
 para esta decisão técnica. Ordem CAM-006 original não deve ser executada.
+
+
+## 2026-09-09 — CAM-006A aprovada; CAM-007 em revisão
+
+Gemini aprovou AR a entrega d3785d3 por relatório e emitiu CAM-007. Codex
+apontou ausência de stock/perfil/material e referência de ferramenta para
+interferência; proposta CAM-007A enviada. Aguardando decisão técnica.
+
+
+## 2026-09-09 — CAM-007 substituída por CAM-007A
+
+Gemini aceitou integralmente a objeção técnica. Ordem CAM-007A: fronteiras
+sintéticas declaradas, is_verified=false, verificação contínua de todos os
+segmentos, local apenas. Implementação e 29 testes específicos aprovados.

@@ -1,7 +1,7 @@
 # Registro de execução — CTO-CODEX-CAM-006
 
 **Missão vigente:** CTO-CODEX-CAM-006A (substitui CAM-006).
-**Estado:** implementada e validada; commit e entrega pendentes.
+**Estado:** commit d3785d3 entregue ao CTO; aguardando parecer e próxima ordem.
 
 ## Objetivo
 
@@ -100,3 +100,14 @@ resumo de warnings, sem CI remoto. Log local ignorado:
 Critérios atendidos no escopo CAM-006A sintético: passes e sobremetais testados,
 limites fechados e autoridade/colisão não promovidas. Commit local e envio ao
 CTO são os próximos passos; solicitar parecer e aguardar nova ordem.
+
+
+## Commit e envio
+
+Commit d3785d3bffa16189ff1e478957307988127ea0c4, 12 arquivos,
+587 inserções/10 remoções. Working tree limpa após commit. Entrega enviada ao
+Gemini na conversa CTO autorizada; solicitados parecer e nova ordem. Aguardando
+resposta real. Sem push ou NC.
+
+Parecer posterior recebido: AR por relatório. CAM-007 emitida e substituída por
+CAM-007A após objeção técnica do Codex; ver registro CTO-CODEX-CAM-007.md.

@@ -1,10 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-09 — CAM-007A
+
+CAM-006A entregue d3785d3 e aprovada AR. Conflito CAM-007 acolhido pelo CTO,
+substituído por CAM-007A. Verificador de fronteiras sintéticas implementado;
+29 testes específicos passaram; suíte 514 passed/2 skipped em 130.95 s.
+Ruff/mypy PASS em 191 fontes. Commit/envio ao CTO como próximos passos. Sem claim de colisão física, NC ou integração.
+
 ## 2026-09-09 — CAM-006A
 
 Variante sintética de ponto ideal autorizada pelo CTO e implementada.
 Colisão NOT_VALIDATED e autoridade false. Suíte final 485 pass/2 skips em
-131.63 s; 16 testes novos. Ruff/mypy PASS em 190 fontes. Commit/envio pendentes.
+131.63 s; 16 testes novos. Ruff/mypy PASS em 190 fontes. Commit d3785d3 enviado e aprovado AR por relatório.
 
 ## 2026-09-09 — CAM-006 recebida
 

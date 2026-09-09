@@ -301,3 +301,22 @@ sem afirmar que a posição é segura em máquina. Continuidade e comprimentos s
 checados no contrato; não equivalem a verificador de colisão com material,
 pastilha, suporte ou fixação. Nenhuma ferramenta real ou compensação é consumida.
 Limites: 1000 passes por operação, 10000 movimentos por plano; sem integração.
+
+
+## Incremento técnico aprovado — CTO-CODEX-CAM-007A
+
+Em 2026-09-09, Gemini acolheu integralmente o conflito de CAM-007 e autorizou
+CAM-007A: verificador independente de fronteiras sintéticas declaradas. A ordem
+original foi substituída; não implementar interferência de haste com stock sem
+receber material remanescente. AABB local explícita relativa ao ponto ideal,
+sem inferência a partir de quadrante, pastilha ou ângulos. Zonas retangulares
+estáticas fornecidas explicitamente; tuple vazia significa nenhuma zona adicional.
+Plano conservador de chuck vale em todo R; diâmetro é somente metadado.
+
+Todos os segmentos RAPID/CUTTING/RETRACT são testados continuamente contra
+plano axial e zonas expandidas pelos offsets da AABB. Contato é violação;
+linha central aplica R>=0 ao ponto ideal, não ao envelope local assinado.
+Plano vazio NOT_EVALUATED; entradas inválidas rejeitadas por revalidação.
+PASS significa apenas declared_boundaries_passed; is_verified=false,
+collision_status=NOT_VALIDATED e autoridade/executable_output=false.
+Não modela stock, remoção, ferramenta/fixação reais, NC ou G9.
