@@ -8,6 +8,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-AUTO-016
+
+* Sumário numérico dos dois extremos por movimento de plano sintético,
+  com contagem/extremos coerentes e revalidação profunda. Sem emissão NC.
+
 ### Added — CTO-CODEX-AUTO-015
 
 * Avaliador puro de quantização de diâmetro, precisão 1..6 e ROUND_HALF_UP

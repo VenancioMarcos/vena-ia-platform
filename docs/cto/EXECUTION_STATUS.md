@@ -1,5 +1,10 @@
 # Estado de execução CTO
 
+## 2026-09-09 — AUTO-016
+
+AUTO-015 aprovada em ebbe37e por relatório, árvore limpa. Agregado de planos
+implementado, 22 testes novos PASS; Ruff/mypy PASS193 fontes. Regressão completa 614 passed/2 skipped em 118.57 s; commit/envio como próximos passos.
+
 ## 2026-09-09 — AUTO-015
 
 EXEC-014 concluída em 70e4d13, árvore limpa e 569 pass/2 skips em 128.86 s;

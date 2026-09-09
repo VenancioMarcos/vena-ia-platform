@@ -382,3 +382,10 @@ módulo isolado, sem NC. Política: X=2*R binário, Decimal.from_float exato e
 ROUND_HALF_UP em contexto local independente, 1..6 casas (default sintético 3).
 Rejeitar overflow e desaparecimento de X positivo; relatório existente permanece
 false/NOT_EVALUATED. Não afirma equivalência com decimal ideal ou controlador.
+
+### AUTO-016 — Agregado numérico de extremos (2026-09-09)
+
+Após aprovação AUTO-015 em ebbe37e, agregar ambos os extremos em ordem
+start/end por movimento; contagem de movimentos e exatamente 2N relatórios.
+Máximo positivo/mínimo negativo incluem zero; validação estrita e falha total
+em ponto inválido. Sem quantização de Z, prova de material ou fronteiras.

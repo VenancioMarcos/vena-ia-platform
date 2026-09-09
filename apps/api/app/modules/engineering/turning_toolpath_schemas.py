@@ -276,3 +276,29 @@ class TurningQuantizationReport(_SyntheticContract):
         if not math.isfinite(expected_deviation) or self.radial_deviation_mm != expected_deviation:
             raise ValueError("radial deviation must equal reconstructed minus original radius")
         return self
+
+
+class TurningPlanQuantizationSummary(_SyntheticContract):
+    """Two ordered endpoint reports per move; numeric extrema, no boundary proof."""
+
+    decimal_places: int = Field(ge=1, le=6)
+    evaluated_moves_count: int = Field(ge=0, le=10_000)
+    max_positive_radial_deviation_mm: float = Field(ge=0)
+    max_negative_radial_deviation_mm: float = Field(le=0)
+    move_reports: tuple[TurningQuantizationReport, ...] = Field(max_length=20_000)
+    is_boundary_safe: Literal[False] = False
+    boundary_status: Literal["NOT_EVALUATED"] = "NOT_EVALUATED"
+    limitations: tuple[Literal["NUMERICAL_QUANTIZATION_AGGREGATE_ONLY"]] = (
+        "NUMERICAL_QUANTIZATION_AGGREGATE_ONLY",
+    )
+
+    @model_validator(mode="after")
+    def validate_aggregate(self) -> TurningPlanQuantizationSummary:
+        if len(self.move_reports) != 2 * self.evaluated_moves_count:
+            raise ValueError("each evaluated move requires start and end reports")
+        positive = max((r.radial_deviation_mm for r in self.move_reports), default=0.0)
+        negative = min((r.radial_deviation_mm for r in self.move_reports), default=0.0)
+        if (self.max_positive_radial_deviation_mm != max(0.0, positive)
+                or self.max_negative_radial_deviation_mm != min(0.0, negative)):
+            raise ValueError("aggregate extrema must match endpoint reports")
+        return self

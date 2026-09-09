@@ -58,3 +58,9 @@ binário; magnitudes extremas não representam uma grade decimal fina. Não há
 promessa de tokens com casas/zeros, exatidão decimal, tolerância física ou
 proveniência de programa. Precisão/política estão na função e nesta decisão,
 não são novos campos do schema. Critérios do escopo sintético atendidos.
+
+## Parecer e continuidade
+
+Commit ebbe37e980c06e18bcf3a1efe75b34ef41905645, árvore limpa; relatório
+enviado e aprovado pelo Gemini por relatório, sem inspeção independente.
+Recebida AUTO-016: agregar quantização dos extremos de planos sintéticos.

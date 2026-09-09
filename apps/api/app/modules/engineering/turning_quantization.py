@@ -3,7 +3,9 @@
 import math
 from decimal import Context, Decimal, ROUND_HALF_UP, localcontext
 
-from app.modules.engineering.turning_toolpath_schemas import TurningQuantizationReport
+from app.modules.engineering.turning_toolpath_schemas import (
+    TurningPlanQuantizationSummary, TurningQuantizationReport, TurningToolpathPlan,
+)
 
 
 def evaluate_diameter_quantization(
@@ -37,4 +39,30 @@ def evaluate_diameter_quantization(
     return TurningQuantizationReport(
         original_radius_mm=original_radius_mm, programmed_x_diameter_mm=diameter,
         reconstructed_radius_mm=radius, radial_deviation_mm=radius - original_radius_mm,
+    )
+
+
+def evaluate_plan_diameter_quantization(
+    plan: TurningToolpathPlan, decimal_places: int = 3,
+) -> TurningPlanQuantizationSummary:
+    """Evaluate start/end radii in operation/move order, retaining shared endpoints."""
+    if type(decimal_places) is not int or not 1 <= decimal_places <= 6:
+        raise ValueError("decimal_places must be an integer from 1 to 6")
+    validated = TurningToolpathPlan.model_validate(plan)
+    reports = tuple(
+        evaluate_diameter_quantization(point[0], decimal_places)
+        for operation in validated.operations
+        for move in operation.moves
+        for point in (move.start_point, move.end_point)
+    )
+    return TurningPlanQuantizationSummary(
+        decimal_places=decimal_places,
+        evaluated_moves_count=sum(len(operation.moves) for operation in validated.operations),
+        max_positive_radial_deviation_mm=max(
+            0.0, max((r.radial_deviation_mm for r in reports), default=0.0),
+        ),
+        max_negative_radial_deviation_mm=min(
+            0.0, min((r.radial_deviation_mm for r in reports), default=0.0),
+        ),
+        move_reports=reports,
     )

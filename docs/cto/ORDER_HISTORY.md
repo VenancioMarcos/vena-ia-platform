@@ -657,3 +657,9 @@ Commit 70e4d13 efetivado pelo revisor normal, árvore limpa; revalidação
 569 pass/2 skips em 128.86 s. Gemini aprovou por relatório e emitiu AUTO-015:
 avaliador matemático puro de diâmetro, precisão 1..6, testes completos e commit
 local; nenhuma emissão NC. Próximo passo: entregar e aguardar resposta real.
+
+## 2026-09-09 — AUTO-015 aprovada; AUTO-016
+
+Gemini aprovou ebbe37e por relatório com 592 pass/2 skips e emitiu AUTO-016:
+contrato e avaliador agregado de extremos de planos, sem NC/fronteiras físicas.
+Contagem N movimentos corresponde a 2N relatórios ordenados start/end.

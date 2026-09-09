@@ -1597,3 +1597,10 @@ fixas; retomada local sem NC ou publicação, conforme incremento ADR-0037.
 EXEC-014 concluiu commit 70e4d13 e revalidação 569 pass/2 skips. CTO aprovou
 e emitiu AUTO-015, função numérica isolada; política no ADR-0037. Sem NC
 ou promoção do contrato a segurança de fronteira.
+
+### AUTO-016 — Agregado numérico de extremos (2026-09-09)
+
+Após aprovação AUTO-015 em ebbe37e, agregar ambos os extremos em ordem
+start/end por movimento; contagem de movimentos e exatamente 2N relatórios.
+Máximo positivo/mínimo negativo incluem zero; validação estrita e falha total
+em ponto inválido. Sem quantização de Z, prova de material ou fronteiras.

@@ -1,17 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-015
-**Estado:** avaliador implementado; 592 passed/2 skipped; pronto para commit e envio
+**Missão:** CTO-CODEX-AUTO-016
+**Estado:** avaliador implementado; agregado implementado; regressão completa 614 passed/2 skipped em 118.57 s
 **Data:** 2026-09-09
 **Branch:** codex/v3.1-first-controlled-test-path
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Função pura de quantização de diâmetro, sem NC. [Registro](CTO-CODEX-AUTO-015.md).
-EXEC-014 aprovada por relatório no commit 70e4d13; 569 pass/2 skips.
-AUTO-015 implementa ROUND_HALF_UP sobre o valor binário exato de 2*R,
-precisão estrita 1..6 e contexto Decimal independente. Autoridade permanece false.
+Agregado numérico de extremos de planos sintéticos. [Registro](CTO-CODEX-AUTO-016.md).
+AUTO-015 aprovada por relatório no commit ebbe37e, 592 pass/2 skips.
+AUTO-016 preserva dois relatórios por movimento, ordem start/end e extremos
+assinados. Sem quantização de Z ou avaliação de fronteiras.
 
 ## Continuidade obrigatória
 
