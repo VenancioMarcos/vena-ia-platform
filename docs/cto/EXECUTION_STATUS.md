@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-10 — AUTO-024/A
+
+Configuração ESLint local e escopo lib/tests concluídos; lint exit0 com um warning
+preexistente de cleanup React Hooks. CTO acolheu ressalva AR, backlog WEB-LINT-001.
+98 regras confirmadas nos cinco arquivos turning, sem ignorá-los. tsc PASS;
+regressão 658 passed/2 skipped em129.69s. Nenhum pacote/backend/contrato alterado.
+Próximo passo: commit local, relatório e aguardar parecer/nova ordem real.
+
 ## 2026-09-10 — AUTO-023/A validada, aguardando entrega/parecer
 
 AUTO-023A aprovada pelo CTO: normalização PERSON/ORGANIZATION apenas nas fixtures

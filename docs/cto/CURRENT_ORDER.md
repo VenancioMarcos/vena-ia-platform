@@ -1,18 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-023
-**Estado:** IMPLEMENTED_VALIDATED_AWAITING_CTO
+**Missão:** CTO-CODEX-AUTO-024/A
+**Estado:** VALIDATED_WITH_WARNING_AWAITING_CTO
 **Data:** 2026-09-10
 **Branch:** codex/v3.1-first-controlled-test-path
-**Baseline técnico/documental:** f6335c3e1d6dc01c51a1ceb7b2d40732cb6d5b9e (20 commits locais).
+**Baseline técnico/documental:** 870ffa2dfe4bf68db843bff73b1df436de17c802 (21 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-AUTO-023 com ajuste AUTO-023A aprovado: tipos TypeScript e três fixtures reais,
-normalização administrativa STEP; sem endpoint ou visualizador. Regressão final
-658 passed/2 skipped em 107.25 s; tsc/replay/Ruff/mypy PASS. Lint pendente de tooling. [Registro AUTO-023](CTO-CODEX-AUTO-023.md). Validar checagens web e
-Python, commit local, enviar relatório e aguardar parecer/próxima ordem real.
+AUTO-024/A: configurar ESLint com pacotes existentes e cobrir app/components/lib/tests.
+Sem alterar backend/contratos/dependências. Validar lint, TypeScript e regressão
+Python; registrar entrega, enviar parecer ao CTO e aguardar próxima ordem real.
 
 ## Continuidade obrigatória
 

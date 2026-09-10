@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Fixed — AUTO-024/A local web lint configuration
+
+* Configure installed Next/TypeScript ESLint presets and explicitly include
+  app/components/lib/tests. Lint exits zero; preexisting React Hooks cleanup
+  warning remains tracked as WEB-LINT-001 without suppressing the rule.
+
 ### Added — AUTO-023 synthetic turning web contracts
 
 * Readonly TypeScript mirror of synthetic-turning/v3 with seven discriminated

@@ -718,3 +718,11 @@ runtime, geometria, tolerâncias ou comparação exata de fixtures. Achado demon
 limite das auditorias por assinatura: histórico/bundle antigos ainda contêm
 metadados ambientais; nenhuma limpeza de histórico ou rede foi autorizada.
 Lint web permanece pendência separada; typecheck local não equivale a lint PASS.
+
+
+## 2026-09-10 — AUTO-023/A aprovada; AUTO-024/A
+
+Após autorização expressa do proprietário, relatório completo enviado ao Gemini
+com recebimento verificado. CTO aprovou 870ffa2 por relatório, acolheu lint pendente
+e emitiu AUTO-024/A: apenas configuração de lint web, sem dependências/backend/
+contratos, validar lint/tsc/pytest. Aguarda entrega e próxima ordem real.
