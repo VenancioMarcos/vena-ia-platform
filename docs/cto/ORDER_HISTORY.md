@@ -686,3 +686,9 @@ Integração autorizada do quinto estágio v3, sem NC ou autoridade física.
 Gemini aprovou84492a5 por relatório e retificou alegações ilustrativas de NC/
 homologação. Ordenou dossiê/consolidação documental dos cinco estágios e17
 commits, regressão e commit local; pedir/aguardar parecer de fechamento.
+
+## 2026-09-10 — AUTO-020 aprovada; AUTO-021
+
+Baseline bcf3313 aprovado por relatório; CTO ordenou transição documental para
+STANDBY_AWAITING_UPSTREAM_SYNC. Aguardar deliberação do proprietário sobre
+sincronização remota/frente Web-CAD. Nenhuma feature/publicação autorizada.

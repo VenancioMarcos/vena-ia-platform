@@ -1,17 +1,18 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-020
-**Estado:** dossiê documental concluído; 658 passed/2 skipped; pronto para commit/envio
+**Missão:** CTO-CODEX-AUTO-021
+**Estado:** STANDBY_AWAITING_UPSTREAM_SYNC
 **Data:** 2026-09-10
 **Branch:** codex/v3.1-first-controlled-test-path
+**Baseline técnico/documental:** bcf3313fdb2e67db91ae18fb9c3002a4f5c5b399 (18 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Consolidação documental local dos cinco estágios. [Registro](CTO-CODEX-AUTO-020.md).
-AUTO-019A aprovada por relatório em 84492a5, 658 pass/2 skips.
-Dossiê contém inventário dos 17 commits, estados/artefatos/limites e pré-requisitos.
-Sem alteração de cálculo, testes ou runtime; sem NC/autoridade ou Git de rede.
+Marco v3.2.0-turning-synthetic-alpha consolidado e aprovado por relatório.
+Suíte 658 passed/2 skipped; Ruff/mypy PASS. Aguardar decisão do proprietário
+sobre sincronização remota e abertura da frente Web/CAD. Nenhuma nova feature
+ou publicação por inferência. Este commit de transição é documental.
 
 ## Continuidade obrigatória
 

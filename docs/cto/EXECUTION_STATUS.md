@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-10 — AUTO-021
+
+Status: STANDBY_AWAITING_UPSTREAM_SYNC.
+Baseline: bcf3313fdb2e67db91ae18fb9c3002a4f5c5b399 (18 commits locais).
+AUTO-020 aprovada por relatório; dossiê de cinco estágios consolidado.
+Objetivo/escopo: registrar transição e aguardar deliberação sobre sincronização
+remota/frente Web-CAD. Arquivos: CURRENT_ORDER/EXECUTION_STATUS, CONTEXT e
+histórico/registro da aprovação. Critério: somente documentação e árvore limpa
+após commit. Código e suíte658/2 preservados; diff como validação da transição.
+Próximo passo: confirmar commit/árvore ao CTO e aguardar orientação real.
+
+
 ## 2026-09-10 — AUTO-020
 
 AUTO-019A aprovada em84492a5 por relatório; ilustrações externas retificadas pelo CTO.

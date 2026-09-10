@@ -31,3 +31,9 @@ inventário de 17 commits, cinco estágios, contratos/falhas/limites documentado
 
 Finalizar evidências, commit local de consolidação e enviar ao CTO; pedir e
 aguardar parecer real sobre fechamento/próxima ordem. Sem Git de rede ou CNC.
+
+## Aprovação e transição
+
+Commit bcf3313fdb2e67db91ae18fb9c3002a4f5c5b399, árvore limpa, entregue ao
+Gemini e aprovado por relatório. Recebida AUTO-021 para registrar espera por
+deliberação sobre sincronização/frente Web-CAD, sem nova implementação.
