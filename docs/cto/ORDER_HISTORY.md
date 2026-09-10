@@ -674,3 +674,9 @@ local v2 para distinguir sucesso obrigatório de quatro estágios. Sem NC.
 
 Gemini aprovou 6d4665a por relatório e ordenou reconstrução de R quantizado
 com Z original e reverificação contínua, sem integrar ao E2E ou emitir NC.
+
+## 2026-09-09 — AUTO-018 aprovada; AUTO-019A
+
+Gemini aprovou c28405d por relatório. AUTO-019 substituída pela AUTO-019A após
+acolher falha de reconstrução/verificação distinta de colisão comprovada.
+Integração autorizada do quinto estágio v3, sem NC ou autoridade física.

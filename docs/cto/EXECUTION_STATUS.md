@@ -1,5 +1,10 @@
 # Estado de execução CTO
 
+## 2026-09-09 — AUTO-019A
+
+AUTO-018 aprovada em c28405d; ajuste AUTO-019A acolhido pelo CTO. Quinto estágio
+implementado, 62 testes E2E PASS (12 novos); Ruff/mypy PASS193 fontes. Regressão completa 658 passed/2 skipped em 128.60 s, concluída em 2026-09-10.
+
 ## 2026-09-09 — AUTO-018
 
 AUTO-017 aprovada em 6d4665a por relatório. Reconstrução/reverificação

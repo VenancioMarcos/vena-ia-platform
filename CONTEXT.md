@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.19
-**Última atualização:** 2026-09-09
+**Versão:** 2.20
+**Última atualização:** 2026-09-10
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-09
 
-- **Handoff CTO:** AUTO-017 aprovada por relatório em 6d4665a (630 pass/2 skips). [AUTO-018](docs/cto/CTO-CODEX-AUTO-018.md) reconstrói apenas raios quantizados, mantém Z, recalcula corte e reverifica fronteiras declaradas. Segmentos colapsados rejeitados; wrapper isolado do E2E. 16 testes novos PASS; Ruff/mypy PASS193 fontes; regressão completa 646 passed/2 skipped em 118.55 s. Orquestrador permanece synthetic-turning/v2, API/manifests 3.1.0. Após commit: enviar relatório, pedir e aguardar nova ordem real.
+- **Handoff CTO:** AUTO-018 aprovada por relatório em c28405d (646 pass/2 skips). [AUTO-019A](docs/cto/CTO-CODEX-AUTO-019.md) integra quinto estágio radial sob synthetic-turning/v3: falha de reconstrução/verificação distinta de violação real, artefatos preservados conforme estágio, correspondência R/Z/IDs/tipos/contagens e digest validados. 62 testes E2E PASS (12 novos), Ruff/mypy PASS193 fontes; regressão completa 658 passed/2 skipped em 128.60 s. Z permanece original; nenhum NC/autoridade física. API/manifests 3.1.0. Após commit: enviar relatório, pedir e aguardar nova ordem real.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

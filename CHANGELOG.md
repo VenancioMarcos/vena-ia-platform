@@ -8,6 +8,12 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-AUTO-019A
+
+* Quinto estágio de reverificação radial no contrato synthetic-turning/v3,
+  com falha interna distinta de violação real, seis artefatos no sucesso/violação
+  e quatro na falha interna; vínculos geométricos e digest conferidos. Sem NC.
+
 ### Added — CTO-CODEX-AUTO-018
 
 * Reconstrução radial quantizada e reverificação contínua de fronteiras

@@ -235,11 +235,12 @@ class TurningPlanQuantizationSummary(_SyntheticContract):
 class SyntheticTurningMetadata(_SyntheticContract):
     """Local reproducibility metadata only; neither signed nor trusted authority."""
 
-    schema_version: Literal["synthetic-turning/v2"] = "synthetic-turning/v2"
+    schema_version: Literal["synthetic-turning/v3"] = "synthetic-turning/v3"
     evaluated_at_utc: UtcTimestamp
     parameters_digest_sha256: Sha256Digest
     quantization_decimal_places: int = Field(default=3, ge=1, le=6)
     quantization_digest_sha256: Sha256Digest | None = None
+    quantized_verification_digest_sha256: Sha256Digest | None = None
     brep_serialization_digest_sha256: Sha256Digest | None
     brep_serialization_format: Literal["OCCT_BREP_ASCII_V3_NO_TRIANGLES_NO_NORMALS"] | None
     occt_binding_version: str | None = Field(default=None, min_length=1, max_length=100)
@@ -261,7 +262,7 @@ class SyntheticTurningMetadata(_SyntheticContract):
 class SyntheticTurningExecutionResult(_SyntheticContract):
     pipeline_status: Literal[
         "SUCCESS_SYNTHETIC", "CAD_EXTRACTION_FAILED", "PLANNING_FAILED", "BOUNDARY_VERIFICATION_FAILED",
-        "QUANTIZATION_FAILED",
+        "QUANTIZATION_FAILED", "QUANTIZED_VERIFICATION_FAILED", "QUANTIZED_BOUNDARY_VIOLATION",
     ]
     failure_reason: str | None = Field(min_length=1, max_length=255)
     profile: TurningProfile2D | None
@@ -269,6 +270,8 @@ class SyntheticTurningExecutionResult(_SyntheticContract):
     verification: TurningVerificationReport | None
     metadata: SyntheticTurningMetadata
     quantization: TurningPlanQuantizationSummary | None = None
+    quantized_plan: TurningToolpathPlan | None = None
+    quantized_verification: TurningVerificationReport | None = None
     is_physical_ready: Literal[False] = False
     physical_use_authorized: Literal[False] = False
     executable_output: Literal[False] = False
@@ -279,9 +282,20 @@ class SyntheticTurningExecutionResult(_SyntheticContract):
         success = self.pipeline_status == "SUCCESS_SYNTHETIC"
         if success != (self.failure_reason is None):
             raise ValueError("success and failure_reason must agree")
-        if success != (self.quantization is not None):
-            raise ValueError("only success requires quantization")
-        if success != (self.metadata.quantization_digest_sha256 is not None):
+        has_quantization = success or self.pipeline_status in {
+            "QUANTIZED_VERIFICATION_FAILED", "QUANTIZED_BOUNDARY_VIOLATION",
+        }
+        has_reverification = success or self.pipeline_status == "QUANTIZED_BOUNDARY_VIOLATION"
+        if has_reverification != (self.quantized_plan is not None) or has_reverification != (
+            self.quantized_verification is not None
+        ) or has_reverification != (self.metadata.quantized_verification_digest_sha256 is not None):
+            raise ValueError("completed reverification requires both artifacts and digest")
+        if (self.pipeline_status == "QUANTIZED_VERIFICATION_FAILED"
+                and self.failure_reason != "QUANTIZED_RECONSTRUCTION_OR_VERIFICATION_FAILED"):
+            raise ValueError("quantized evaluation failure requires its fixed reason")
+        if has_quantization != (self.quantization is not None):
+            raise ValueError("quantization artifacts must match completed fourth stage")
+        if has_quantization != (self.metadata.quantization_digest_sha256 is not None):
             raise ValueError("quantization digest must accompany successful quantization")
         if self.pipeline_status == "CAD_EXTRACTION_FAILED":
             if self.profile is not None or self.plan is not None or self.verification is not None:
@@ -300,7 +314,7 @@ class SyntheticTurningExecutionResult(_SyntheticContract):
         if self.plan.profile_id != expected_id:
             raise ValueError("plan must reference the included synthetic profile")
         move_count = sum(len(operation.moves) for operation in self.plan.operations)
-        quantified_stage = success or self.pipeline_status == "QUANTIZATION_FAILED"
+        quantified_stage = has_quantization or self.pipeline_status == "QUANTIZATION_FAILED"
         if quantified_stage and move_count == 0:
             raise ValueError("empty plans cannot have successful boundary evaluation")
         if self.verification is not None and any(
@@ -322,4 +336,31 @@ class SyntheticTurningExecutionResult(_SyntheticContract):
                                     separators=(",", ":"), allow_nan=False)
             if hashlib.sha256(serialized.encode("utf-8")).hexdigest() != self.metadata.quantization_digest_sha256:
                 raise ValueError("quantization digest must match included summary")
+        if self.quantized_plan is not None and self.quantized_verification is not None:
+            rebuilt, report = self.quantized_plan, self.quantized_verification
+            if self.quantization is None:
+                raise ValueError("reverification requires quantization")
+            if rebuilt.profile_id != self.plan.profile_id or len(rebuilt.operations) != len(self.plan.operations):
+                raise ValueError("quantized plan identity and operations must match nominal")
+            endpoints = iter(self.quantization.move_reports)
+            for nominal_op, quantized_op in zip(self.plan.operations, rebuilt.operations):
+                if ((nominal_op.operation_id, nominal_op.operation_type, nominal_op.passes_count,
+                     len(nominal_op.moves)) != (quantized_op.operation_id, quantized_op.operation_type,
+                                              quantized_op.passes_count, len(quantized_op.moves))):
+                    raise ValueError("quantized operation must preserve identity, passes and moves")
+                for nominal, quantized in zip(nominal_op.moves, quantized_op.moves):
+                    expected_start = (next(endpoints).reconstructed_radius_mm, nominal.start_point[1])
+                    expected_end = (next(endpoints).reconstructed_radius_mm, nominal.end_point[1])
+                    if (quantized.start_point != expected_start or quantized.end_point != expected_end
+                            or quantized.motion_type != nominal.motion_type
+                            or quantized.feed_rate_type != nominal.feed_rate_type):
+                        raise ValueError("quantized movement must match reconstructed R and nominal Z/type")
+            if any(index >= move_count for index in report.violating_moves):
+                raise ValueError("quantized violation indices must refer to movements")
+            if report.boundary_status == "NOT_EVALUATED" or success != report.declared_boundaries_passed:
+                raise ValueError("success requires PASS; violation requires actual violation report")
+            serialized = json.dumps(report.model_dump(mode="json"), sort_keys=True,
+                                    separators=(",", ":"), allow_nan=False)
+            if hashlib.sha256(serialized.encode("utf-8")).hexdigest() != self.metadata.quantized_verification_digest_sha256:
+                raise ValueError("quantized verification digest must match report")
         return self

@@ -1,17 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-018
-**Estado:** reconstrução/reverificação implementadas; 646 passed/2 skipped; pronto para commit/envio
+**Missão:** CTO-CODEX-AUTO-019A
+**Estado:** quinto estágio implementado; 658 passed/2 skipped; pronto para commit/envio
 **Data:** 2026-09-09
 **Branch:** codex/v3.1-first-controlled-test-path
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Reconstrução radial e reverificação de fronteiras declaradas. [Registro](CTO-CODEX-AUTO-018.md).
-AUTO-017 aprovada por relatório em 6d4665a, 630 pass/2 skips.
-Preservar Z/IDs/tipos/contagens; rejeitar segmentos colapsados. Wrapper isolado
-do E2E; nenhum NC ou alegação física.
+Quinto estágio de reverificação radial com falhas distintas. [Registro](CTO-CODEX-AUTO-019.md).
+AUTO-018 aprovada por relatório em c28405d, 646 pass/2 skips.
+AUTO-019A acolhe falha de reconstrução distinta de violação. Contrato v3,
+seis artefatos no sucesso/violação e quatro na falha do quinto estágio.
 
 ## Continuidade obrigatória
 

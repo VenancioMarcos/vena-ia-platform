@@ -402,3 +402,9 @@ validar vínculo de contagem/raios/precisão/hash, sem autoridade física ou NC.
 Reconstruir apenas R, preservar Z/IDs/tipos/contagens; recalcular comprimento
 de corte e rejeitar segmentos colapsados. Reutilizar verificador de fronteiras
 declaradas sem promover PASS a segurança física ou NC. Wrapper isolado do E2E.
+
+### AUTO-019A — Quinto estágio e falhas distintas (2026-09-09)
+
+CTO acolheu separar falha de reconstrução/verificação de violação real. Contrato
+v3 exige seis artefatos no sucesso e na violação; falha interna preserva quatro
+sem fabricar relatório/plano posterior. Validar vínculos e digest; Z original.

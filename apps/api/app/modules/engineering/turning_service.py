@@ -16,7 +16,9 @@ from app.modules.cad.profile_extractor import TurningDatum, extract_turning_prof
 from app.modules.engineering.turning_planner import (
     SyntheticTurningPlanningError, generate_turning_roughing_plan,
 )
-from app.modules.engineering.turning_quantization import evaluate_plan_diameter_quantization
+from app.modules.engineering.turning_quantization import (
+    evaluate_plan_diameter_quantization, verify_quantized_plan_boundaries,
+)
 from app.modules.engineering.turning_schemas import TurningStockCylinder
 from app.modules.engineering.turning_toolpath_schemas import (
     SyntheticTurningExecutionResult, SyntheticTurningMetadata, SyntheticTurningParameters,
@@ -48,7 +50,7 @@ def _parameter_digest(inputs: _Inputs) -> str:
     data["brep_unit_scale"] = scale if math.isfinite(scale) else {
         "non_finite": "NaN" if math.isnan(scale) else ("+Infinity" if scale > 0 else "-Infinity"),
     }
-    data["schema_version"] = "synthetic-turning/v2"
+    data["schema_version"] = "synthetic-turning/v3"
     canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), allow_nan=False)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
@@ -186,8 +188,9 @@ def orchestrate_synthetic_turning_pipeline(
             **metadata.model_dump(),
             "quantization_digest_sha256": hashlib.sha256(serialized.encode("utf-8")).hexdigest(),
         })
-        return SyntheticTurningExecutionResult(
-            pipeline_status="SUCCESS_SYNTHETIC", failure_reason=None,
+        checkpoint = SyntheticTurningExecutionResult(
+            pipeline_status="QUANTIZED_VERIFICATION_FAILED",
+            failure_reason="QUANTIZED_RECONSTRUCTION_OR_VERIFICATION_FAILED",
             profile=profile, plan=plan, verification=verification, metadata=quantified_metadata,
             quantization=quantization,
         )
@@ -196,3 +199,24 @@ def orchestrate_synthetic_turning_pipeline(
             pipeline_status="QUANTIZATION_FAILED", failure_reason="QUANTIZATION_EVALUATION_FAILED",
             profile=profile, plan=plan, verification=verification, metadata=metadata,
         )
+    try:
+        quantized_plan, quantized_verification = verify_quantized_plan_boundaries(
+            plan, inputs.fixture, inputs.tool_envelope, inputs.exclusion_zones,
+            inputs.quantization_decimal_places,
+        )
+        serialized = json.dumps(quantized_verification.model_dump(mode="json"), sort_keys=True,
+                                separators=(",", ":"), allow_nan=False)
+        final_metadata = SyntheticTurningMetadata.model_validate({
+            **quantified_metadata.model_dump(),
+            "quantized_verification_digest_sha256": hashlib.sha256(serialized.encode("utf-8")).hexdigest(),
+        })
+        passed = quantized_verification.declared_boundaries_passed
+        return SyntheticTurningExecutionResult(
+            pipeline_status="SUCCESS_SYNTHETIC" if passed else "QUANTIZED_BOUNDARY_VIOLATION",
+            failure_reason=None if passed else quantized_verification.boundary_status,
+            profile=profile, plan=plan, verification=verification, quantization=quantization,
+            quantized_plan=quantized_plan, quantized_verification=quantized_verification,
+            metadata=final_metadata,
+        )
+    except Exception:
+        return checkpoint
