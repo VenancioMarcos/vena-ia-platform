@@ -1,17 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-019A
-**Estado:** quinto estágio implementado; 658 passed/2 skipped; pronto para commit/envio
-**Data:** 2026-09-09
+**Missão:** CTO-CODEX-AUTO-020
+**Estado:** dossiê documental concluído; 658 passed/2 skipped; pronto para commit/envio
+**Data:** 2026-09-10
 **Branch:** codex/v3.1-first-controlled-test-path
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Quinto estágio de reverificação radial com falhas distintas. [Registro](CTO-CODEX-AUTO-019.md).
-AUTO-018 aprovada por relatório em c28405d, 646 pass/2 skips.
-AUTO-019A acolhe falha de reconstrução distinta de violação. Contrato v3,
-seis artefatos no sucesso/violação e quatro na falha do quinto estágio.
+Consolidação documental local dos cinco estágios. [Registro](CTO-CODEX-AUTO-020.md).
+AUTO-019A aprovada por relatório em 84492a5, 658 pass/2 skips.
+Dossiê contém inventário dos 17 commits, estados/artefatos/limites e pré-requisitos.
+Sem alteração de cálculo, testes ou runtime; sem NC/autoridade ou Git de rede.
 
 ## Continuidade obrigatória
 

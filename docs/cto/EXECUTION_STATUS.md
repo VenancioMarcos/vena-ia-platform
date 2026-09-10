@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-10 — AUTO-020
+
+AUTO-019A aprovada em84492a5 por relatório; ilustrações externas retificadas pelo CTO.
+Dossiê/continuidade consolidados; 487 arquivos auditados com limites registrados.
+Ruff/mypy PASS193 fontes; regressão 658 passed/2 skipped em161.38s. Código/testes/manifests inalterados.
+
 ## 2026-09-09 — AUTO-019A
 
 AUTO-018 aprovada em c28405d; ajuste AUTO-019A acolhido pelo CTO. Quinto estágio

@@ -8,40 +8,6 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
-### Added — CTO-CODEX-AUTO-019A
-
-* Quinto estágio de reverificação radial no contrato synthetic-turning/v3,
-  com falha interna distinta de violação real, seis artefatos no sucesso/violação
-  e quatro na falha interna; vínculos geométricos e digest conferidos. Sem NC.
-
-### Added — CTO-CODEX-AUTO-018
-
-* Reconstrução radial quantizada e reverificação contínua de fronteiras
-  declaradas; Z mantido e movimentos colapsados rejeitados, sem NC/autoridade.
-
-### Added — CTO-CODEX-AUTO-017
-
-* Quantização agregada como quarto estágio interno, com precisão em parâmetros,
-  digest do sumário e falha explícita. Contrato synthetic-turning/v2 exige
-  quantização no sucesso; API/runtime continuam 3.1.0, sem NC/autoridade física.
-
-### Added — CTO-CODEX-AUTO-016
-
-* Sumário numérico dos dois extremos por movimento de plano sintético,
-  com contagem/extremos coerentes e revalidação profunda. Sem emissão NC.
-
-### Added — CTO-CODEX-AUTO-015
-
-* Avaliador puro de quantização de diâmetro, precisão 1..6 e ROUND_HALF_UP
-  do valor binário exato em contexto Decimal independente; sem emissão NC.
-* Rejeição de overflow e perda de diâmetro positivo para zero na resolução.
-
-### Added — CTO-CODEX-AUTO-012A
-
-* Contrato numérico estrito de reconstrução radial/desvio assinado, sem
-  avaliação de fronteira ou formatter NC. is_boundary_safe=false/NOT_EVALUATED.
-* Trabalho local retomado após HOLD-011, sem promover o marco sintético a release.
-
 ### Fixed — TASK-V31-007B STEP browser MIME compatibility
 * STEP/STP uploads now accept the browser-observed generic
   `application/octet-stream` representation only when the extension is `.step` or
@@ -89,6 +55,46 @@ Marco documental LOCAL consolidado por CTO-CODEX-STAB-010. Sem tag, release,
 push, merge ou publicação. API e manifests continuam em 3.1.0; este rótulo não
 representa versão executada ou release distribuída. Controlador não resolvido,
 sem pós/emissão NC de torneamento, integração runtime ou autoridade física.
+
+### Consolidation — CTO-CODEX-AUTO-020 — 2026-09-10
+
+* Dossiê local dos cinco estágios sob synthetic-turning/v3, inventário dos17
+  commits anteriores e distinção de falha interna/violação comprovada. Sem tag/release.
+* Z permanece original; nenhuma homologação de controlador ou emissão NC de torno.
+
+### Added — CTO-CODEX-AUTO-019A
+
+* Quinto estágio de reverificação radial no contrato synthetic-turning/v3,
+  com falha interna distinta de violação real, seis artefatos no sucesso/violação
+  e quatro na falha interna; vínculos geométricos e digest conferidos. Sem NC.
+
+### Added — CTO-CODEX-AUTO-018
+
+* Reconstrução radial quantizada e reverificação contínua de fronteiras
+  declaradas; Z mantido e movimentos colapsados rejeitados, sem NC/autoridade.
+
+### Added — CTO-CODEX-AUTO-017
+
+* Quantização agregada como quarto estágio interno, com precisão em parâmetros,
+  digest do sumário e falha explícita. Contrato synthetic-turning/v2 exige
+  quantização no sucesso; API/runtime continuam 3.1.0, sem NC/autoridade física.
+
+### Added — CTO-CODEX-AUTO-016
+
+* Sumário numérico dos dois extremos por movimento de plano sintético,
+  com contagem/extremos coerentes e revalidação profunda. Sem emissão NC.
+
+### Added — CTO-CODEX-AUTO-015
+
+* Avaliador puro de quantização de diâmetro, precisão 1..6 e ROUND_HALF_UP
+  do valor binário exato em contexto Decimal independente; sem emissão NC.
+* Rejeição de overflow e perda de diâmetro positivo para zero na resolução.
+
+### Added — CTO-CODEX-AUTO-012A
+
+* Contrato numérico estrito de reconstrução radial/desvio assinado, sem
+  avaliação de fronteira ou formatter NC. is_boundary_safe=false/NOT_EVALUATED.
+* Trabalho local retomado após HOLD-011, sem promover o marco sintético a release.
 
 ### Stabilization
 

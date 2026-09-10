@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.20
+**Versão:** 2.21
 **Última atualização:** 2026-09-10
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -27,9 +27,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-### 3.1 Síntese vigente — 2026-09-09
+### 3.1 Síntese vigente — 2026-09-10
 
-- **Handoff CTO:** AUTO-018 aprovada por relatório em c28405d (646 pass/2 skips). [AUTO-019A](docs/cto/CTO-CODEX-AUTO-019.md) integra quinto estágio radial sob synthetic-turning/v3: falha de reconstrução/verificação distinta de violação real, artefatos preservados conforme estágio, correspondência R/Z/IDs/tipos/contagens e digest validados. 62 testes E2E PASS (12 novos), Ruff/mypy PASS193 fontes; regressão completa 658 passed/2 skipped em 128.60 s. Z permanece original; nenhum NC/autoridade física. API/manifests 3.1.0. Após commit: enviar relatório, pedir e aguardar nova ordem real.
+- **Handoff CTO:** AUTO-019A aprovada por relatório em 84492a5 (658 pass/2 skips). [AUTO-020](docs/cto/CTO-CODEX-AUTO-020.md) consolida o [dossiê alpha](docs/modules/engineering/TURNING_SYNTHETIC_ALPHA_REPORT.md) de cinco estágios sob synthetic-turning/v3: extração, planejamento, fronteiras nominais, quantização numérica e reverificação radial. Marco v3.2.0-turning-synthetic-alpha estritamente documental/local, API/manifests 3.1.0. 17 commits anteriores inventariados; código/testes/manifests inalterados na consolidação. Ruff/mypy PASS193 fontes; regressão 658 passed/2 skipped em161.38s. Z original, sem NC de torno ou autoridade física. Após commit: enviar e aguardar parecer/próxima ordem real.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

@@ -680,3 +680,9 @@ com Z original e reverificação contínua, sem integrar ao E2E ou emitir NC.
 Gemini aprovou c28405d por relatório. AUTO-019 substituída pela AUTO-019A após
 acolher falha de reconstrução/verificação distinta de colisão comprovada.
 Integração autorizada do quinto estágio v3, sem NC ou autoridade física.
+
+## 2026-09-10 — AUTO-019A aprovada; AUTO-020
+
+Gemini aprovou84492a5 por relatório e retificou alegações ilustrativas de NC/
+homologação. Ordenou dossiê/consolidação documental dos cinco estágios e17
+commits, regressão e commit local; pedir/aguardar parecer de fechamento.

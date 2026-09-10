@@ -408,3 +408,9 @@ declaradas sem promover PASS a segurança física ou NC. Wrapper isolado do E2E.
 CTO acolheu separar falha de reconstrução/verificação de violação real. Contrato
 v3 exige seis artefatos no sucesso e na violação; falha interna preserva quatro
 sem fabricar relatório/plano posterior. Validar vínculos e digest; Z original.
+
+### AUTO-020 — Consolidação documental (2026-09-10)
+
+Cinco estágios sob synthetic-turning/v3 consolidados em dossiê local. Marco
+alpha não é tag/release, homologação ou autoridade. API/manifests3.1.0, Z nominal,
+sem alteração de cálculo ou testes. Ilustrações externas não representam produto.
