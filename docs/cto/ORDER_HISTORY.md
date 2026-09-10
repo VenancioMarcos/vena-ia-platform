@@ -692,3 +692,11 @@ commits, regressão e commit local; pedir/aguardar parecer de fechamento.
 Baseline bcf3313 aprovado por relatório; CTO ordenou transição documental para
 STANDBY_AWAITING_UPSTREAM_SYNC. Aguardar deliberação do proprietário sobre
 sincronização remota/frente Web-CAD. Nenhuma feature/publicação autorizada.
+
+
+## 2026-09-10 — AUTO-021 aprovada; AUTO-022
+
+Gemini aprovou 6eecfa6 e, após solicitação de continuidade, emitiu AUTO-022:
+auditoria dos 19 commits, bundle incremental local e checklist pré-sincronização.
+Proibidos Git de rede, publicação e mudança de código. Entrega preparada com
+658 passed/2 skipped; solicitar e aguardar parecer real após commit local.

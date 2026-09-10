@@ -64,3 +64,8 @@ tmp/
 *.step.tmp
 *.stp.tmp
 *.nc.tmp
+
+# Local CNC outputs and repository contingency bundles
+*.nc
+*.gcode
+*.bundle
