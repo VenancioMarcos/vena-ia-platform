@@ -414,3 +414,26 @@ sem fabricar relatório/plano posterior. Validar vínculos e digest; Z original.
 Cinco estágios sob synthetic-turning/v3 consolidados em dossiê local. Marco
 alpha não é tag/release, homologação ou autoridade. API/manifests3.1.0, Z nominal,
 sem alteração de cálculo ou testes. Ilustrações externas não representam produto.
+
+
+### AUTO-023 — Espelho web do contrato sintético v3 (2026-09-10)
+
+Após aprovação AUTO-022 em f6335c3, CTO autorizou somente tipos web e fixtures.
+Espelho readonly da serialização completa em apps/web/lib/turning-contracts.ts;
+união discriminada de sete estados, presenças/nulos, flags false e metadados por
+estágio. Aliases da terminologia da missão não alteram nomes de campos Python.
+Três fixtures exportadas e revalidadas a partir dos casos E2E reais, com replay.
+Sem validação geométrica/runtime TypeScript, endpoint, visualizador, dependência,
+NC ou alteração de backend. readonly não congela objetos em runtime; números e
+hashes exigem validação independente ao consumir dados externos no futuro.
+
+
+### AUTO-023A — Metadados administrativos STEP (2026-09-10)
+
+CTO acolheu a falha reprodutível e autorizou normalizar exclusivamente entidades
+PERSON/ORGANIZATION geradas nas fixtures sintéticas. Dois AP203 regenerados;
+AP214 e conteúdo fora dessas entidades idênticos ao baseline. Sem alteração de
+runtime, geometria, tolerâncias ou comparação exata de fixtures. Achado demonstra
+limite das auditorias por assinatura: histórico/bundle antigos ainda contêm
+metadados ambientais; nenhuma limpeza de histórico ou rede foi autorizada.
+Lint web permanece pendência separada; typecheck local não equivale a lint PASS.

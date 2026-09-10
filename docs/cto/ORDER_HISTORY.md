@@ -700,3 +700,21 @@ Gemini aprovou 6eecfa6 e, após solicitação de continuidade, emitiu AUTO-022:
 auditoria dos 19 commits, bundle incremental local e checklist pré-sincronização.
 Proibidos Git de rede, publicação e mudança de código. Entrega preparada com
 658 passed/2 skipped; solicitar e aguardar parecer real após commit local.
+
+
+## 2026-09-10 — AUTO-022 aprovada; AUTO-023
+
+Gemini aprovou f6335c3 por relatório e emitiu AUTO-023: espelho TypeScript do
+contrato synthetic-turning/v3 e três fixtures reais. Sem backend, visualizador,
+rede ou nova dependência. Continuar a execução local e aguardar parecer após entrega.
+
+
+### AUTO-023A — Metadados administrativos STEP (2026-09-10)
+
+CTO acolheu a falha reprodutível e autorizou normalizar exclusivamente entidades
+PERSON/ORGANIZATION geradas nas fixtures sintéticas. Dois AP203 regenerados;
+AP214 e conteúdo fora dessas entidades idênticos ao baseline. Sem alteração de
+runtime, geometria, tolerâncias ou comparação exata de fixtures. Achado demonstra
+limite das auditorias por assinatura: histórico/bundle antigos ainda contêm
+metadados ambientais; nenhuma limpeza de histórico ou rede foi autorizada.
+Lint web permanece pendência separada; typecheck local não equivale a lint PASS.

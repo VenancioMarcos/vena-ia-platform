@@ -165,4 +165,7 @@ def test_fixture_generator_is_reproducible(tmp_path: Path) -> None:
         assert regenerated.read_bytes() == fixture.read_bytes()
         content = regenerated.read_bytes()
         assert b"2026-09-09T00:00:00" in content
+        if b" = PERSON(" in content:
+            assert b"PERSON('OCCT_GENERATOR','', 'VENA_IA_SYNTHETIC',$,$,$);" in content
+            assert b"ORGANIZATION('VENA_IA_SYNTHETIC','Synthetic fixtures','');" in content
         assert StepTextParser().parse(content).length_unit == "mm"

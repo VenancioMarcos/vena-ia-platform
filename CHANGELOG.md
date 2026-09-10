@@ -8,6 +8,16 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — AUTO-023 synthetic turning web contracts
+
+* Readonly TypeScript mirror of synthetic-turning/v3 with seven discriminated
+  states, explicit nullability and false physical/output flags.
+* Three fixtures from real Python E2E runs with Pydantic validation and replay;
+  static rejection probes and exhaustive narrowing for future web consumers.
+* No new endpoint, viewer, backend contract, dependency or CNC emission.
+* AUTO-023A normalizes synthetic STEP PERSON/ORGANIZATION metadata; retains exact
+  fixture reproducibility checks without changing geometry or backend runtime.
+
 ### Fixed — TASK-V31-007B STEP browser MIME compatibility
 * STEP/STP uploads now accept the browser-observed generic
   `application/octet-stream` representation only when the extension is `.step` or

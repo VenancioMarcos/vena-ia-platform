@@ -47,6 +47,15 @@ def generate(output: Path) -> None:
                       "('Vena_IA synthetic fixture'),(''), 'OCCT fixture generator','','');")
             content, count = re.subn(r"FILE_NAME\s*\(.*?;", header, content, count=1, flags=re.S)
             assert count == 1
+            # AP203 administrative entities also inherit host/user information.
+            # Only synthetic fixture metadata is normalized; preserve entity IDs
+            # and all geometry/topology records verbatim.
+            content = re.sub(r"^(#[0-9]+ = )PERSON\(.*?\);",
+                             r"\1PERSON('OCCT_GENERATOR','', 'VENA_IA_SYNTHETIC',$,$,$);",
+                             content, flags=re.M | re.S)
+            content = re.sub(r"^(#[0-9]+ = )ORGANIZATION\(.*?\);",
+                             r"\1ORGANIZATION('VENA_IA_SYNTHETIC','Synthetic fixtures','');",
+                             content, flags=re.M | re.S)
             # AP203 also embeds creation date/time entities outside the header.
             content = re.sub(r"CALENDAR_DATE\([^)]*\)", "CALENDAR_DATE(2026,9,9)", content)
             content = re.sub(r"LOCAL_TIME\([^,]+,[^,]+,[^,]+,(#[0-9]+)\)",

@@ -1,18 +1,18 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-022
-**Estado:** READY_FOR_UPSTREAM_SYNC
+**Missão:** CTO-CODEX-AUTO-023
+**Estado:** IMPLEMENTED_VALIDATED_AWAITING_CTO
 **Data:** 2026-09-10
 **Branch:** codex/v3.1-first-controlled-test-path
-**Baseline técnico/documental:** 6eecfa6330709379e203d18b5dfc517516989a2f (19 commits no bundle; AUTO-022 adicional).
+**Baseline técnico/documental:** f6335c3e1d6dc01c51a1ceb7b2d40732cb6d5b9e (20 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Auditoria dos 19 commits e bundle incremental verificado; checklist em
-[SYNC_CHECKLIST_UPSTREAM.md](SYNC_CHECKLIST_UPSTREAM.md). Suíte 658 passed,
-2 skipped em 159.81 s; Ruff/mypy PASS. Prontidão local documental, não autorização
-para push. Enviar relatório AUTO-022 e aguardar parecer/próxima ordem real.
+AUTO-023 com ajuste AUTO-023A aprovado: tipos TypeScript e três fixtures reais,
+normalização administrativa STEP; sem endpoint ou visualizador. Regressão final
+658 passed/2 skipped em 107.25 s; tsc/replay/Ruff/mypy PASS. Lint pendente de tooling. [Registro AUTO-023](CTO-CODEX-AUTO-023.md). Validar checagens web e
+Python, commit local, enviar relatório e aguardar parecer/próxima ordem real.
 
 ## Continuidade obrigatória
 

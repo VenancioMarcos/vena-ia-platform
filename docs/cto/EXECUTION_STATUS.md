@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-10 — AUTO-023/A validada, aguardando entrega/parecer
+
+AUTO-023A aprovada pelo CTO: normalização PERSON/ORGANIZATION apenas nas fixtures
+sintéticas; dois AP203 alterados, AP214 e geometria idênticos. Teste pontual PASS.
+Regressão final 658 passed/2 skipped em 107.25 s, eliminada falha inicial.
+TypeScript PASS com 12 rejeições esperadas; replay Pydantic PASS nos três casos;
+Ruff/mypy PASS193. Lint existente sem configuração, exit1, pendência acolhida.
+Próximo passo: commit local, enviar relatório conclusivo e aguardar nova ordem real.
+
 ## 2026-09-10 — AUTO-022
 
 Status: READY_FOR_UPSTREAM_SYNC (local, sem autorização de publicação).
