@@ -1,5 +1,10 @@
 # Estado de execução CTO
 
+## 2026-09-09 — AUTO-018
+
+AUTO-017 aprovada em 6d4665a por relatório. Reconstrução/reverificação
+implementadas, 16 testes novos PASS; Ruff/mypy PASS193 fontes. Regressão completa 646 passed/2 skipped em 118.55 s.
+
 ## 2026-09-09 — AUTO-017
 
 AUTO-016 aprovada em 770ac7b por relatório. Quarto estágio implementado,

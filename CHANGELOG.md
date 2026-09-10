@@ -8,6 +8,11 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CTO-CODEX-AUTO-018
+
+* Reconstrução radial quantizada e reverificação contínua de fronteiras
+  declaradas; Z mantido e movimentos colapsados rejeitados, sem NC/autoridade.
+
 ### Added — CTO-CODEX-AUTO-017
 
 * Quantização agregada como quarto estágio interno, com precisão em parâmetros,

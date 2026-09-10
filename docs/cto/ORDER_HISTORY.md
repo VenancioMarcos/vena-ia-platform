@@ -669,3 +669,8 @@ Contagem N movimentos corresponde a 2N relatórios ordenados start/end.
 Gemini aprovou 770ac7b por relatório e ordenou integração do agregado ao
 orquestrador, precisão no digest dos parâmetros e hash do sumário. Contrato
 local v2 para distinguir sucesso obrigatório de quatro estágios. Sem NC.
+
+## 2026-09-09 — AUTO-017 aprovada; AUTO-018
+
+Gemini aprovou 6d4665a por relatório e ordenou reconstrução de R quantizado
+com Z original e reverificação contínua, sem integrar ao E2E ou emitir NC.

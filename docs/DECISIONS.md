@@ -1611,3 +1611,9 @@ Integrar quantização apenas após fronteiras declaradas PASS. Resultado local
 synthetic-turning/v2 exige sumário no sucesso; QUANTIZATION_FAILED preserva
 artefatos anteriores. Precisão em parâmetros/metadata e hash canônico do sumário;
 validar vínculo de contagem/raios/precisão/hash, sem autoridade física ou NC.
+
+### AUTO-018 — Reconstrução radial e reverificação (2026-09-09)
+
+Reconstruir apenas R, preservar Z/IDs/tipos/contagens; recalcular comprimento
+de corte e rejeitar segmentos colapsados. Reutilizar verificador de fronteiras
+declaradas sem promover PASS a segurança física ou NC. Wrapper isolado do E2E.

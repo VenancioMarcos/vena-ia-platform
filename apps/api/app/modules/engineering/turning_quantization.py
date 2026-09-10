@@ -4,8 +4,12 @@ import math
 from decimal import Context, Decimal, ROUND_HALF_UP, localcontext
 
 from app.modules.engineering.turning_toolpath_schemas import (
-    TurningPlanQuantizationSummary, TurningQuantizationReport, TurningToolpathPlan,
+    TurningChuckFixture, TurningMotionType, TurningOperationPlan,
+    TurningPlanQuantizationSummary, TurningQuantizationReport, TurningStaticExclusionZone,
+    TurningToolEnvelope2D, TurningToolpathMove, TurningToolpathPlan, TurningVerificationReport,
 )
+
+from app.modules.engineering.turning_verifier import verify_toolpath_boundaries
 
 
 def evaluate_diameter_quantization(
@@ -66,3 +70,40 @@ def evaluate_plan_diameter_quantization(
         ),
         move_reports=reports,
     )
+
+
+def reconstruct_quantized_toolpath_plan(
+    plan: TurningToolpathPlan, decimal_places: int = 3,
+) -> TurningToolpathPlan:
+    """Reconstruct only radii; reject collapsed moves rather than dropping them."""
+    validated = TurningToolpathPlan.model_validate(plan)
+    summary = evaluate_plan_diameter_quantization(validated, decimal_places)
+    endpoints = iter(summary.move_reports)
+    operations = []
+    for operation in validated.operations:
+        moves = tuple(TurningToolpathMove(
+            start_point=(next(endpoints).reconstructed_radius_mm, move.start_point[1]),
+            end_point=(next(endpoints).reconstructed_radius_mm, move.end_point[1]),
+            motion_type=move.motion_type, feed_rate_type=move.feed_rate_type,
+        ) for move in operation.moves)
+        operations.append(TurningOperationPlan(
+            operation_id=operation.operation_id, operation_type=operation.operation_type,
+            passes_count=operation.passes_count, moves=moves,
+        ))
+    length = math.fsum(math.dist(move.start_point, move.end_point)
+                       for operation in operations for move in operation.moves
+                       if move.motion_type == TurningMotionType.CUTTING)
+    return TurningToolpathPlan(
+        profile_id=validated.profile_id, operations=tuple(operations), total_cutting_length_mm=length,
+    )
+
+
+def verify_quantized_plan_boundaries(
+    original_plan: TurningToolpathPlan, fixture: TurningChuckFixture,
+    tool: TurningToolEnvelope2D, exclusion_zones: tuple[TurningStaticExclusionZone, ...],
+    decimal_places: int = 3,
+) -> tuple[TurningToolpathPlan, TurningVerificationReport]:
+    """Check declared boundaries with quantized R and unchanged Z; no NC claim."""
+    reconstructed = reconstruct_quantized_toolpath_plan(original_plan, decimal_places)
+    report = verify_toolpath_boundaries(reconstructed, fixture, tool, exclusion_zones)
+    return reconstructed, report
