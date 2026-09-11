@@ -1,17 +1,16 @@
 # Ordem CTO atual
 
-**Missão:** TASK-LOCAL-031
-**Estado:** VALIDATED_AWAITING_CTO
+**Missão:** TASK-LOCAL-032
+**Estado:** STANDBY_WEB_BASELINE_CONSOLIDATED
 **Data:** 2026-09-11
-**Baseline:** e4da6adbed01d4656c8ba068b3eb142f5144c82d (29 commits locais).
+**Baseline:** 103dd0ec96ca809882d279885790781cdfa86caf (30 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-030 aceita em e4da6ad.031 validada: cleanup estável sem supressão, CSS para
-motivo longo e QA em375x667/390x844/768x1024.41 web PASS;Python658/2 em168.24s;
-tsc/Ruff/diff PASS;lint zero warnings. WEB-LINT-001 resolvido com limites
-explícitos do harness. Ver TASK-LOCAL-031.md. Relatório ainda a enviar ao CTO.
+031 aprovada A;032 consolida dossiê documental do marco v3.2.0-turning-web-alpha.
+Sem mudança funcional; runtime3.1.0. Ver TASK-LOCAL-032.md para verificações.
+Não autoriza sincronização upstream. Relatório032 e parecer ainda pendentes.
 
 ## Continuidade obrigatória
 

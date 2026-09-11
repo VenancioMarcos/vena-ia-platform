@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-11 — TASK-LOCAL-032
+
+STANDBY_WEB_BASELINE_CONSOLIDATED.031 aprovada em103dd0e;032 consolida
+marco documental v3.2.0-turning-web-alpha.41 web PASS,Python658/2 em195.53s;
+tsc/Ruff/diff PASS;lint limpo. Ver TASK-LOCAL-032.md.
+Sem mudança de runtime, publicação ou autoridade física;parecer032 pendente.
+
 ## 2026-09-11 — TASK-LOCAL-031
 
 030 aceita em e4da6ad. Cleanup e CSS corrigidos;41 web PASS,Python658/2 em168.24s;

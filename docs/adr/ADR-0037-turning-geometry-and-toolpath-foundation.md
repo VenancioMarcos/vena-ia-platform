@@ -480,3 +480,9 @@ finalidade de demonstração local, não controle de acesso. Fixtures sintética
 Ajuste CSS de quebra de motivos longos preserva projeção métrica uniforme e canvas
 640x400; QA Mobile/Tablet sem overflow. Sem mudança arquitetural, contrato ou
 autoridade. Cleanup de projeto e limites do harness registrados na missão031.
+
+### TASK-LOCAL-032 — Marco documental web (2026-09-11)
+
+v3.2.0-turning-web-alpha referencia a camada sintética consolidada em103dd0e.
+Dossiê em docs/modules/web/TURNING_WEB_ALPHA_REPORT.md. Sem nova arquitetura,
+versão runtime, tag, homologação ou autoridade física.

@@ -8,6 +8,15 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — v3.2.0-turning-web-alpha documentary milestone
+
+* Consolidate local synthetic 2D turning contracts, projection, SVG, fixture
+  selector and sandbox page; report architecture, 41 web tests and mobile QA.
+* Resolve WEB-LINT-001 without lint suppression; document cleanup harness limits.
+* STANDBY_WEB_BASELINE_CONSOLIDATED is a local documentation checkpoint;
+  runtime remains3.1.0. No tag, release, upstream synchronization or physical authority.
+
+
 ### Fixed — AUTO-024/A local web lint configuration
 
 * Configure installed Next/TypeScript ESLint presets and explicitly include

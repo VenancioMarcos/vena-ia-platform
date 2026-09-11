@@ -793,3 +793,9 @@ Sem API/backend/manifests/Git de rede/publicação. Enviar VTP e aguardar ordem 
 CTO aprovou030 em e4da6ad e emitiu031. Ordem formal acrescenta três viewports,
 pytest/Ruff ao escopo compacto. Execução local validada,ver TASK-LOCAL-031.md.
 Próximo: enviar relatório e aguardar parecer real; nenhuma aprovação031 presumida.
+
+## 2026-09-11 — TASK-LOCAL-032
+
+CTO aprovou031 em103dd0e e ordenou consolidar documentação e repetir suítes.
+Marco v3.2.0-turning-web-alpha somente documental, sem tag ou Git remoto.
+Relatar032 após validação e aguardar parecer real.

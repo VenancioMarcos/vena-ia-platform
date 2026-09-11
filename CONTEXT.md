@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.21
+**Versão:** 2.22
 **Última atualização:** 2026-09-11
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-11
 
-- **Handoff CTO:** 030 aceita em e4da6ad.031 validada: lint sem avisos,41 testes web PASS,Python658/2 em168.24s,tsc/Ruff/diff PASS. QA nove casos Mobile/Tablet sem overflow; WEB-LINT-001 resolvido com limites documentados. Commit local, enviar VTP e aguardar parecer real;29 commits antes da entrega. Sem API/backend/publicação.
+- **Handoff CTO:** 031 aprovada em103dd0e. TASK-LOCAL-032 consolida documentalmente v3.2.0-turning-web-alpha: STANDBY_WEB_BASELINE_CONSOLIDATED. Baseline funcional41 web/658 Python aprovados,lint limpo; ver dossiê docs/modules/web/TURNING_WEB_ALPHA_REPORT.md e validação032. Sem tag/release/Git remoto; runtime3.1.0. Após commit,relatar e aguardar parecer real.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.
