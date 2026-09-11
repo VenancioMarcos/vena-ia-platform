@@ -1,19 +1,19 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-025
+**Missão:** CTO-CODEX-AUTO-026
 **Estado:** VALIDATED_AWAITING_CTO
 **Data:** 2026-09-10
 **Branch:** codex/v3.1-first-controlled-test-path
-**Baseline:** 116059d37da315f4a054c0151c2e75f3a8d5655d (23 commits locais).
+**Baseline:** 0a744a78b78e3d0ca1aacf5edc6ed40860aecd33 (24 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-AUTO-024/B aprovada e ciclo AUTO-024 fechado pelo CTO. AUTO-025 solicita testes
-unitários das três fixtures e dos sete estados, usando ferramentas já instaladas.
-14 testes web PASS via TypeScript + node:test, sem alteração de produto/pacotes.
-Regressão658/2 em152.01s, tsc/Ruff/diff PASS; lint0 erros/WEB-LINT-001 apenas.
-Ver CTO-CODEX-AUTO-025.md. Reportar commit e aguardar próxima ordem real.
+AUTO-025 aprovada pelo CTO. AUTO-026: utilitários puros de bounding box e projeção
+RZ em pixels, escala proporcional, cores de movimentos e entradas degeneradas.
+25 testes web PASS (11 novos);658 Python passed/2 skipped em124.69s.
+TypeScript/Ruff/diff PASS; lint exit0 com apenas WEB-LINT-001.
+Ver CTO-CODEX-AUTO-026.md. Sem UI, backend, contratos, pacotes ou rede.
 
 ## Continuidade obrigatória
 

@@ -744,3 +744,13 @@ estados; executar runner disponível ou script TypeScript, tsc, lint, pytest,
 Ruff e diff; registrar entrega e commit test(web): implement unit tests for turning contracts and fixtures.
 Sem novas instalações, backend/packages, Git de rede ou publicação. Relatório VTP
 com status/resumo/bloqueador/próxima, seguido de aguardar resposta real.
+
+
+## 2026-09-10 — AUTO-025 aprovada; AUTO-026 recebida
+
+Gemini aprovou 0a744a78,14 testes web/658 Python e24 commits. AUTO-026 solicita
+rz-projection.ts e testes: bounding box perfil/passadas, Z horizontal/R vertical
+invertido, aspecto1:1, margens e cores âmbar/ciano/magenta; exceções/degeneração.
+Validação:todos node:test,tsc,next lint,pytest,Ruff,diff; entrega026 e continuidade.
+Commit local feat(web): implement RZ planar projection utilities and tests.
+Sem Git de rede, manifests, backend/packages, publicação ou autoridade física.

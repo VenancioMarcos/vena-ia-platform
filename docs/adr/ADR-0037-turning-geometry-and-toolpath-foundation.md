@@ -437,3 +437,14 @@ runtime, geometria, tolerâncias ou comparação exata de fixtures. Achado demon
 limite das auditorias por assinatura: histórico/bundle antigos ainda contêm
 metadados ambientais; nenhuma limpeza de histórico ou rede foi autorizada.
 Lint web permanece pendência separada; typecheck local não equivale a lint PASS.
+
+
+### AUTO-026 — Utilitários puros de apresentação RZ (2026-09-10)
+
+Após aceite AUTO-025 em0a744a78, CTO solicitou bounding box e projeção planar.
+Funções puras web incluem perfil e endpoints de todos os movimentos; Z horizontal,
+R como raio vertical invertido, escala comum px/mm e padding. Vazio retorna null
+na coleta e usa janela unitária na projeção; ponto centralizado/linha conservada.
+Inválidos e overflow geram RangeError, sem ocultar dados defeituosos. Cores apenas
+categorizam movimentos; não são comandos NC. Sem UI/rede/backend/geometria física.
+Testes isolados via TypeScript instalado e node:test, sem pacote novo.

@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-10 — AUTO-026
+
+AUTO-025 em0a744a78 APROVADA. Utilitários RZ implementados,25 testes web PASS;
+regressão658/2 em124.69s;tsc/Ruff/diff PASS,lint0 erros/1 warning. Sem UI, backend
+ou manifests. Ver entrega026. Commit e relatório pendentes; aguardar resposta real.
+
+
 ## 2026-09-10 — AUTO-025
 
 AUTO-024/B em116059d3 APROVADA, ciclo fechado. Nova missão: testes web sem
