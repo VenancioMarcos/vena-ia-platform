@@ -726,3 +726,11 @@ Após autorização expressa do proprietário, relatório completo enviado ao Ge
 com recebimento verificado. CTO aprovou 870ffa2 por relatório, acolheu lint pendente
 e emitiu AUTO-024/A: apenas configuração de lint web, sem dependências/backend/
 contratos, validar lint/tsc/pytest. Aguarda entrega e próxima ordem real.
+
+
+## 2026-09-10 — AUTO-024/A acolhida; AUTO-024/B
+
+CTO recebeu d541dc0 e acolheu ressalva WEB-LINT-001. Instrução final AUTO-024/B
+solicita registro formal no backlog sem apps/regras/rede. Cabeçalho AUTO-025 e
+contagem21 do parecer são inconsistentes com instrução/estado: base real22 commits
+antes deste registro. Seguir AUTO-024/B e relatar correção da contagem.

@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-10 — AUTO-024/B
+
+AUTO-024/A em d541dc0 acolhida com ressalva, sem bloqueador. Item WEB-LINT-001
+formalizado em docs/cto/WEB-LINT-001.md, incluindo evidência, escopo e aceitação
+futura. Somente documentação; sem nova implementação ou testes redundantes.
+Verificar árvore limpa após commit e reportar ao CTO para fechamento do ciclo.
+
 ## 2026-09-10 — AUTO-024/A
 
 Configuração ESLint local e escopo lib/tests concluídos; lint exit0 com um warning

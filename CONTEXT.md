@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-10
 
-- **Handoff CTO:** Relatório AUTO-023/A em870ffa2 enviado após autorização expressa do proprietário e aprovado pelo Gemini. **AUTO-024/A validada com ressalva:** configuração ESLint existente cobre lib/tests, lint exit0 com um warning React Hooks preexistente (backlog WEB-LINT-001), tsc PASS e 658 passed/2 skipped em129.69s. CTO acolheu ressalva condicionada à regressão, agora verde. [Registro AUTO-024](docs/cto/CTO-CODEX-AUTO-024.md). Sem pacote/backend/contrato/rede alterado. Enviar relatório e aguardar parecer/nova ordem real.
+- **Handoff CTO:** AUTO-024/A emd541dc0 acolhida com ressalva pelo Gemini; lint exit0, um warning, tsc PASS e 658 passed/2 skipped em129.69s. **AUTO-024/B:** [WEB-LINT-001](docs/cto/WEB-LINT-001.md) formalizado como backlog, sem correção de produto. Somente documentação, baseline técnico preservado. Reportar commit de fechamento e aguardar parecer/próxima ordem real. Contagem real antes do registro:22 commits locais sobre d798417.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.
