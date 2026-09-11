@@ -762,3 +762,12 @@ AUTO-026 em32e1df8 acolhida AR no parecer final. Resposta contém início incomp
 AUTO-027 React, seguido de instrução completa TASK-LOCAL-027: testes de R/Z zero,
 linhas degeneradas,padding e tolerância<=1e-5. Seguir instrução final; sem UI.
 Critérios:pytest/web/tsc PASS,árvore limpa,novo VTP. Sem backend/configuração/rede.
+
+
+## 2026-09-10 — TASK-LOCAL-028
+
+027 em82228f7 aceita;028 completa recebida:TurningProfile2D React/SVG puro com
+plan/width/height/className, projeção026, eixos/cor/fallback. SSR via node:test,
+tsc,lint,pytest,Ruff,diff. Commit feat(web): implement TurningProfile2D pure SVG component and tests.
+Sem efeitos/rede/backend/manifests. Registrar VTP e aguardar ordem real.
+Ressalva ao parecer: testes não provam blindagem universal nem precisão física.

@@ -448,3 +448,12 @@ na coleta e usa janela unitária na projeção; ponto centralizado/linha conserv
 Inválidos e overflow geram RangeError, sem ocultar dados defeituosos. Cores apenas
 categorizam movimentos; não são comandos NC. Sem UI/rede/backend/geometria física.
 Testes isolados via TypeScript instalado e node:test, sem pacote novo.
+
+
+### TASK-LOCAL-028 — Apresentação SVG isolada (2026-09-10)
+
+CTO autorizou componente puro após027. Recebe plano tipado e viewport, usa
+projeção026 e apresenta movimentos coloridos. Referências R/Z indicam direções;
+não simulam origem física. Fallback sem trajetórias quando vazio/inválido.
+Sem rota, efeitos, API ou autoridade. Testes ReactDOM SSR com dependências já
+instaladas verificam estrutura; não equivalem a QA visual ou homologação CNC.

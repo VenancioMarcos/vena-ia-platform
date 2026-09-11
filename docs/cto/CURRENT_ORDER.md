@@ -1,16 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** TASK-LOCAL-027
+**Missão:** TASK-LOCAL-028
 **Estado:** VALIDATED_AWAITING_CTO
 **Data:** 2026-09-10
-**Baseline:** 32e1df8b719c5ce1f59065bc138d531fb0a93ca1 (25 commits locais).
+**Baseline:** 82228f7b7eea1579b850ecf456b7d9a093c062ff (26 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Parecer final AUTO-026 AR. TASK-LOCAL-027 substitui trecho inicial incompleto
-AUTO-027 React. Testes numéricos R/Z próximos de zero, degeneração e padding.
-29 testes web e tsc PASS; regressão Python658 passed,2 skipped,0 failed em129.58s;diff PASS. Ver TASK-LOCAL-027.md.
+TASK-LOCAL-027 aceita. TASK-LOCAL-028 completa solicita componente React SVG puro,
+plan/width/height/className, cores por movimento, eixos e fallback, testes SSR.
+34 testes web PASS; Python658/2 em135.88s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001. Ver TASK-LOCAL-028.md.
+Sem efeitos/rede, integração de rota, backend ou manifests.
 
 ## Continuidade obrigatória
 

@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-10 — TASK-LOCAL-028
+
+027 aceita em82228f7. Componente SVG puro implementado;34 testes web PASS,
+Python658/2 em135.88s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001. Sem rota/efeitos/rede. Ver TASK-LOCAL-028.md.
+
+
 ## 2026-09-10 — TASK-LOCAL-027
 
 Parecer final026 AR; instrução final027 limitada a testes numéricos.29 web/tsc
