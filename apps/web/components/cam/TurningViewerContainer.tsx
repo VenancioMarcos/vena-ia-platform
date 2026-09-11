@@ -39,7 +39,7 @@ export function TurningViewerContainer({ initialSelection = "CYLINDER_SUCCESS" }
       <span className="rounded bg-slate-800 px-2 py-1">PHYSICAL_USE_AUTHORIZED: FALSE</span>
       <span className="rounded bg-slate-800 px-2 py-1">G9: PENDENTE</span>
     </div>
-    <div aria-live="polite">
+    <div aria-live="polite" className="min-w-0 break-words">
       <dl className="grid gap-2 text-sm">
         <div><dt className="inline text-slate-400">Status: </dt><dd className="inline">{result.pipeline_status}</dd></div>
         <div><dt className="inline text-slate-400">Plano exibido: </dt><dd className="inline">Quantizado</dd></div>

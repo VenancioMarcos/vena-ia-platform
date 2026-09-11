@@ -474,3 +474,9 @@ CTO autorizou integrar contêiner029 em /cam/turning. Página estática com avis
 explícito de inspeção sintética e operação física desautorizada. Nenhuma rota API,
 fetch ou publicação. Rota não cria barreira de autenticação; caráter interno é
 finalidade de demonstração local, não controle de acesso. Fixtures sintéticas.
+
+### TASK-LOCAL-031 — Responsividade (2026-09-11)
+
+Ajuste CSS de quebra de motivos longos preserva projeção métrica uniforme e canvas
+640x400; QA Mobile/Tablet sem overflow. Sem mudança arquitetural, contrato ou
+autoridade. Cleanup de projeto e limites do harness registrados na missão031.

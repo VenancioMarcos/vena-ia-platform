@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-11
 
-- **Handoff CTO:** TASK-LOCAL-029 em49a8320 aceita. TASK-LOCAL-030 validada:página local /cam/turning com38 testes web PASS. Sem API/backend/publicação. Python658/2 em354.71s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001;QA navegador PASS para seleção e desktop. Commit,relatar e aguardar ordem real.28 commits antes da entrega;WEB-LINT-001 aberto.
+- **Handoff CTO:** 030 aceita em e4da6ad.031 validada: lint sem avisos,41 testes web PASS,Python658/2 em168.24s,tsc/Ruff/diff PASS. QA nove casos Mobile/Tablet sem overflow; WEB-LINT-001 resolvido com limites documentados. Commit local, enviar VTP e aguardar parecer real;29 commits antes da entrega. Sem API/backend/publicação.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

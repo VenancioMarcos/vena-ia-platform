@@ -1,17 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** TASK-LOCAL-030
+**Missão:** TASK-LOCAL-031
 **Estado:** VALIDATED_AWAITING_CTO
 **Data:** 2026-09-11
-**Baseline:** 49a8320821bb57281a8efc6c97a9e728de1809e8 (28 commits locais).
+**Baseline:** e4da6adbed01d4656c8ba068b3eb142f5144c82d (29 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-029 aceita.030 solicita página /cam/turning com título/disclaimer e contêiner029.
-38 testes web PASS; Python658/2 em354.71s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001.
-QA navegador confirmou troca dos cenários e apresentação desktop. Ver TASK-LOCAL-030.md.
-Sem API/fetch/backend/manifests ou publicação.
+030 aceita em e4da6ad.031 validada: cleanup estável sem supressão, CSS para
+motivo longo e QA em375x667/390x844/768x1024.41 web PASS;Python658/2 em168.24s;
+tsc/Ruff/diff PASS;lint zero warnings. WEB-LINT-001 resolvido com limites
+explícitos do harness. Ver TASK-LOCAL-031.md. Relatório ainda a enviar ao CTO.
 
 ## Continuidade obrigatória
 

@@ -787,3 +787,9 @@ Reconstrução retém plano nominal; instrução de ausência aplica-se a quanti
 container029, layout responsivo;teste SSR,node:test,tsc,lint,pytest,Ruff,diff.
 Commit feat(web): integrate CAM turning inspector sandbox page and tests.
 Sem API/backend/manifests/Git de rede/publicação. Enviar VTP e aguardar ordem real.
+
+## 2026-09-11 — TASK-LOCAL-031
+
+CTO aprovou030 em e4da6ad e emitiu031. Ordem formal acrescenta três viewports,
+pytest/Ruff ao escopo compacto. Execução local validada,ver TASK-LOCAL-031.md.
+Próximo: enviar relatório e aguardar parecer real; nenhuma aprovação031 presumida.

@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-11 — TASK-LOCAL-031
+
+030 aceita em e4da6ad. Cleanup e CSS corrigidos;41 web PASS,Python658/2 em168.24s;
+tsc/Ruff/diff PASS;lint limpo. QA nove casos responsivos PASS. Ver TASK-LOCAL-031.md.
+Relatório ao CTO e parecer ainda pendentes.
+
 ## 2026-09-11 — TASK-LOCAL-030
 
 029 aceita em49a8320. Página local implementada;38 testes web PASS; Python658/2 em354.71s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001.
