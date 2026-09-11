@@ -810,3 +810,9 @@ Relatar e aguardar parecer real após validação.
 
 033 aprovada em6af8df2;CTO ordena prontidão documental e três opções futuras.
 Sem deliberação presumida ou monitoramento em background. Relatar e aguardar.
+
+## 2026-09-11 — TASK-LOCAL-035
+
+CTO aprovou034 em e2f3c92. Proprietário autorizou expressamente a Rota 1: dry-run,
+push real da branch dedicada, preparação do PR e governança. Repositório confirmado
+PUBLIC; PR Draft #31 existente foi preservado. Sem autorização de merge ou release.

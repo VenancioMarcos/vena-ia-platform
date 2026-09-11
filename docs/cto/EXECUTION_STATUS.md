@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-11 — TASK-LOCAL-035
+
+`UPSTREAM_SYNC_COMPLETED_AWAITING_PR_REVIEW`. Proprietário autorizou Rota 1.
+Dry-run e push inicial dos 33 commits PASS; remoto confirmou `e2f3c92` na branch
+dedicada do repositório PUBLIC. PR Draft #31 preservado; checks Backend, Frontend
+e Runtime Policy iniciados. Registro documental035 é o 34º e integra o push
+complementar. Sem merge/tag/release/deploy; ver TASK-LOCAL-035.md.
+
 ## 2026-09-11 — TASK-LOCAL-034
 
 STANDBY_MONITORED_AWAITING_OWNER_DELIBERATION. Baseline32 commits até6af8df2;

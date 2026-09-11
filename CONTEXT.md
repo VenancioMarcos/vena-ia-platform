@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-11
 
-- **Handoff CTO:** 033 aprovada em6af8df2 (32 commits).034 registra STANDBY_MONITORED_AWAITING_OWNER_DELIBERATION;registro será33º,bundle permanece31 até b057c88. Opções futuras:sincronização upstream,ingestão CAD dinâmica ou especificação de perfil CNC;nenhuma escolhida. Espera nesta sessão,sem automação de background. Ver TASK-LOCAL-034;relatar e aguardar parecer real.
+- **Handoff CTO:** 034 aprovada em `e2f3c92` (33 commits). Proprietário autorizou a Rota 1/TASK-LOCAL-035. Dry-run e push inicial para a branch dedicada no repositório PUBLIC passaram; SHA remoto `e2f3c92`. PR Draft #31 preservado e checks remotos iniciados. Registro035 será o 34º commit e também será enviado. Sem merge/tag/release/deploy; G9 e autoridade física permanecem bloqueados.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

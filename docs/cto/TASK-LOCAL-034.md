@@ -48,3 +48,10 @@ Nenhuma credencial,conexão remota,upload CAD ou integração física foi inicia
 
 Commit local,relatar ao CTO,solicitar parecer e aguardar instrução real.
 G9 pendente;PHYSICAL_USE_AUTHORIZED=false;sem machine-send/DNC/NC-transfer/cycle-start.
+
+## Parecer e deliberação recebidos
+
+O CTO aprovou a entrega `e2f3c92d5c7158b20a9375e4c6130f0c8cb30287`.
+O proprietário escolheu e autorizou expressamente a Rota 1, incluindo dry-run,
+push real da branch dedicada, preparação do PR e atualização da governança.
+TASK-LOCAL-035 iniciada; nenhuma autorização de merge, tag, release ou deploy.

@@ -1,17 +1,18 @@
 # Ordem CTO atual
 
-**Missão:** TASK-LOCAL-034
-**Estado:** STANDBY_MONITORED_AWAITING_OWNER_DELIBERATION
+**Missão:** TASK-LOCAL-035
+**Estado:** UPSTREAM_SYNC_COMPLETED_AWAITING_PR_REVIEW
 **Data:** 2026-09-11
-**Baseline:** 6af8df28015191497f88c608d3d81e5d13194ce3 (32 commits locais).
+**Baseline inicial sincronizado:** e2f3c92d5c7158b20a9375e4c6130f0c8cb30287 (33 commits sobre d798417).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-033 aprovada;034 registra prontidão e opções futuras,sem escolher ou executá-las.
-Baseline32 commits,registro034 será33º;bundle continua31 até b057c88.
-Espera ativa nesta sessão;nenhuma automação/monitoramento em background configurado.
-Parecer034 pendente. Ver TASK-LOCAL-034.md.
+034 aprovada e Rota 1 expressamente autorizada pelo proprietário. Dry-run e push
+inicial concluídos na branch dedicada; remoto confirmou `e2f3c92`. Repositório
+continua PUBLIC. PR Draft #31 preservado e checks em andamento. O commit
+documental035 é o 34º e integra o push complementar da missão.
+Ver TASK-LOCAL-035.md. Sem merge, tag, release, deploy ou autoridade física.
 
 ## Rotas futuras para deliberação do proprietário
 
@@ -23,8 +24,8 @@ Parecer034 pendente. Ver TASK-LOCAL-034.md.
 3. Perfil CNC real: coletar requisitos de comando/cinemática e revisão técnica
    para futura especificação do pós-processador. Não abre G9 nem autoriza máquina.
 
-As opções foram propostas pelo CTO e não constituem escolha do proprietário.
-Nenhuma credencial,conexão remota,upload CAD ou integração física foi iniciada.
+O proprietário escolheu a Rota 1 em 2026-09-11. Rotas 2 e 3 permanecem apenas
+documentadas; nenhum upload CAD ou integração física foi iniciado.
 
 ## Continuidade obrigatória
 
@@ -34,6 +35,7 @@ autorização do proprietário, continuar. Não encerrar apenas por receber nova
 Confirmar no histórico da conversa se o envio já ocorreu antes de repetir mensagem.
 Atualizar este arquivo, CONTEXT e histórico após cada parecer/ordem.
 
-Sem push/merge/tag/publicação/deploy nesta autorização. NON_PRODUCTION;
+Push da branch dedicada autorizado e executado na TASK-LOCAL-035. Sem merge,
+tag, release ou deploy nesta autorização. NON_PRODUCTION;
 G9=PENDING_AUTHORITATIVE_REVIEW; PHYSICAL_USE_AUTHORIZED=false. Contas, credenciais,
 custos, acessos externos e operação CNC não são delegados ao AI-CTO.
