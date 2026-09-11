@@ -1,18 +1,16 @@
 # Ordem CTO atual
 
-**Missão:** TASK-LOCAL-035
-**Estado:** UPSTREAM_SYNC_COMPLETED_AWAITING_PR_REVIEW
+**Missão:** TASK-LOCAL-037
+**Estado:** CI_MINIO_REFERENCE_REMEDIATION_IN_PROGRESS
 **Data:** 2026-09-11
 **Baseline inicial sincronizado:** e2f3c92d5c7158b20a9375e4c6130f0c8cb30287 (33 commits sobre d798417).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-034 aprovada e Rota 1 expressamente autorizada pelo proprietário. Dry-run e push
-inicial concluídos na branch dedicada; remoto confirmou `e2f3c92`. Repositório
-continua PUBLIC. PR Draft #31 preservado e checks em andamento. O commit
-documental035 é o 34º e integra o push complementar da missão.
-Ver TASK-LOCAL-035.md. Sem merge, tag, release, deploy ou autoridade física.
+036 acolhida R: Backend CI falhou no pull pelo host Docker Hub após suas validações
+passarem.037 autoriza trocar exclusivamente para `quay.io/minio/minio`, mantendo
+release/digest, validar YAML/diff, commit/push e monitorar PR #31. Sem merge.
 
 ## Rotas futuras para deliberação do proprietário
 

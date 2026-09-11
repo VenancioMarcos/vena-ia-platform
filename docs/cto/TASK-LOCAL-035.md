@@ -54,3 +54,10 @@ emission_status=CONTROLLER_PROFILE_UNRESOLVED.
 
 Atualizar a descrição do PR Draft, aguardar os checks e encaminhar VTP ao CTO.
 Não fazer merge, tag, release ou deploy.
+
+## Parecer e transição
+
+CTO aprovou a sincronização com ressalva operacional (AR) em `08cabbe`, restrita
+aos checks então pendentes, e emitiu TASK-LOCAL-036. Resultado terminal: Frontend
+e Runtime Policy SUCCESS; Backend FAILURE após seus testes, no pull da imagem
+MinIO. Ver `TASK-LOCAL-036.md`. PR permanece Draft e nenhum merge foi realizado.

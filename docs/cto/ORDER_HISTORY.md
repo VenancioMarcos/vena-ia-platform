@@ -816,3 +816,15 @@ Sem deliberação presumida ou monitoramento em background. Relatar e aguardar.
 CTO aprovou034 em e2f3c92. Proprietário autorizou expressamente a Rota 1: dry-run,
 push real da branch dedicada, preparação do PR e governança. Repositório confirmado
 PUBLIC; PR Draft #31 existente foi preservado. Sem autorização de merge ou release.
+
+## 2026-09-11 — TASK-LOCAL-036
+
+CTO aprovou035 com ressalva pelos checks pendentes e ordenou monitoramento passivo.
+Frontend/Runtime Policy passaram; Backend falhou após testes no pull do MinIO
+fixado. Diagnóstico documentado sem correção, rerun, push adicional ou merge.
+
+## 2026-09-11 — TASK-LOCAL-037
+
+CTO acolheu036 como R de infraestrutura e autorizou correção estrita do host da
+imagem MinIO, preservando release/digest, seguida de commit, push e monitoramento.
+Sem lógica de produto, merge, tag, release ou deploy.

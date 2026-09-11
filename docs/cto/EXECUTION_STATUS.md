@@ -1,5 +1,18 @@
 # Estado de execução CTO
 
+## 2026-09-11 — TASK-LOCAL-037
+
+`CI_MINIO_REFERENCE_REMEDIATION_IN_PROGRESS`.036 acolhida R. Manifesto oficial
+Quay confirmou a mesma release e digest; host da imagem corrigido exclusivamente
+nos dois workflows e na matriz de suporte. Validação, commit/push e CI pendentes.
+
+## 2026-09-11 — TASK-LOCAL-036
+
+`REMOTE_CI_FAILURE_AWAITING_REMEDIATION_ORDER`. Frontend CI e Runtime Policy CI
+SUCCESS. Backend CI FAILURE no passo de iniciar MinIO: pull de imagem fixada
+negado/código125, depois de lint, mypy, migrations e pytest passarem. PR #31
+continua Draft em `08cabbe`; nenhuma correção, rerun, push ou merge. Ver036.
+
 ## 2026-09-11 — TASK-LOCAL-035
 
 `UPSTREAM_SYNC_COMPLETED_AWAITING_PR_REVIEW`. Proprietário autorizou Rota 1.
