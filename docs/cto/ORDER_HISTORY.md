@@ -771,3 +771,11 @@ plan/width/height/className, projeção026, eixos/cor/fallback. SSR via node:tes
 tsc,lint,pytest,Ruff,diff. Commit feat(web): implement TurningProfile2D pure SVG component and tests.
 Sem efeitos/rede/backend/manifests. Registrar VTP e aguardar ordem real.
 Ressalva ao parecer: testes não provam blindagem universal nem precisão física.
+
+
+## 2026-09-10 — TASK-LOCAL-029
+
+028 emcd14b92 aceita.029 solicita contêiner use client/useState, seleção das três
+fixtures locais, metadados, badges e SVG ou mensagem de plano ausente. SSR,
+tsc,lint,pytest,Ruff,diff e commit local. Não criar rota/HTTP/backend/manifests.
+Reconstrução retém plano nominal; instrução de ausência aplica-se a quantized_plan.

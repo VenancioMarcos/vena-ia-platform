@@ -1,5 +1,10 @@
 # Estado de execução CTO
 
+## 2026-09-11 — TASK-LOCAL-029
+
+028 aceita emcd14b92. Seletor local e37 testes web PASS; Python658/2 em133.49s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001. Sem substituição silenciosa do plano quantizado ausente. Ver029.
+
+
 ## 2026-09-10 — TASK-LOCAL-028
 
 027 aceita em82228f7. Componente SVG puro implementado;34 testes web PASS,

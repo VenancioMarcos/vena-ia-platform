@@ -457,3 +457,12 @@ projeção026 e apresenta movimentos coloridos. Referências R/Z indicam direç�
 não simulam origem física. Fallback sem trajetórias quando vazio/inválido.
 Sem rota, efeitos, API ou autoridade. Testes ReactDOM SSR com dependências já
 instaladas verificam estrutura; não equivalem a QA visual ou homologação CNC.
+
+
+### TASK-LOCAL-029 — Contêiner local de fixtures (2026-09-10)
+
+CTO autorizou seletor cliente isolado sem rota/HTTP. Dados importados das três
+fixtures tipadas existentes; estado useState. Exibe plano quantizado e suas
+contagens/unidades. Falha de reconstrução não deve exibir plano nominal como
+se fosse reconstruído. initialSelection opcional somente inicializa o estado;
+SSR cobre as três opções, sem alegar prova de interação browser. Flags preservadas.
