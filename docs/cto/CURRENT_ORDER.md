@@ -1,19 +1,16 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-026
+**Missão:** TASK-LOCAL-027
 **Estado:** VALIDATED_AWAITING_CTO
 **Data:** 2026-09-10
-**Branch:** codex/v3.1-first-controlled-test-path
-**Baseline:** 0a744a78b78e3d0ca1aacf5edc6ed40860aecd33 (24 commits locais).
+**Baseline:** 32e1df8b719c5ce1f59065bc138d531fb0a93ca1 (25 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-AUTO-025 aprovada pelo CTO. AUTO-026: utilitários puros de bounding box e projeção
-RZ em pixels, escala proporcional, cores de movimentos e entradas degeneradas.
-25 testes web PASS (11 novos);658 Python passed/2 skipped em124.69s.
-TypeScript/Ruff/diff PASS; lint exit0 com apenas WEB-LINT-001.
-Ver CTO-CODEX-AUTO-026.md. Sem UI, backend, contratos, pacotes ou rede.
+Parecer final AUTO-026 AR. TASK-LOCAL-027 substitui trecho inicial incompleto
+AUTO-027 React. Testes numéricos R/Z próximos de zero, degeneração e padding.
+29 testes web e tsc PASS; regressão Python658 passed,2 skipped,0 failed em129.58s;diff PASS. Ver TASK-LOCAL-027.md.
 
 ## Continuidade obrigatória
 

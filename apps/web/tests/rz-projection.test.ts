@@ -116,3 +116,51 @@ test("motion colors distinguish rapid, cutting and retract", () => {
   assert.equal(getMotionColor("CUTTING"), "#06b6d4");
   assert.equal(getMotionColor("RETRACT"), "#d946ef");
 });
+
+test("near-zero coordinates preserve metric offsets within 1e-9 pixels", () => {
+  const view = createRzProjection({ minR: 0, maxR: 1, minZ: -1, maxZ: 1 }, { width: 220, height: 120, padding: 10 });
+  for (const delta of [0, 1e-12, 1e-9, 1e-6]) {
+    const [x, y] = view.project([delta, delta]);
+    assert.ok(Math.abs(x - (110 + delta * 100)) <= 1e-9);
+    assert.ok(Math.abs(y - (110 - delta * 100)) <= 1e-9);
+  }
+});
+
+test("screen coordinates recover engineering coordinates within 1e-10 mm", () => {
+  const bounds = { minR: 0, maxR: 37.125, minZ: -103.75, maxZ: 4.5 };
+  const view = createRzProjection(bounds, { width: 731, height: 389, padding: 17.25 });
+  const anchor = view.project([bounds.minR, bounds.minZ]);
+  for (const r of [0, 1e-12, 12.3456789, 37.125]) for (const z of [-103.75, -1e-12, 0, 4.5]) {
+    const [x, y] = view.project([r, z]);
+    assert.ok(Math.abs(bounds.minZ + (x - anchor[0]) / view.scale - z) <= 1e-10);
+    assert.ok(Math.abs(bounds.minR + (anchor[1] - y) / view.scale - r) <= 1e-10);
+  }
+});
+
+test("near-zero single lines remain centered without inventing radial or axial span", () => {
+  const horizontal = createRzProjection({ minR: 0, maxR: 0, minZ: -1e-9, maxZ: 1e-9 }, { width: 3, height: 3, padding: 1 });
+  const vertical = createRzProjection({ minR: 0, maxR: 2e-9, minZ: 0, maxZ: 0 }, { width: 3, height: 3, padding: 1 });
+  for (const [actual, expected] of [
+    [horizontal.project([0, -1e-9]), [1, 1.5]],
+    [horizontal.project([0, 1e-9]), [2, 1.5]],
+    [vertical.project([0, 0]), [1.5, 2]],
+    [vertical.project([2e-9, 0]), [1.5, 1]],
+  ]) actual.forEach((value, index) => assert.ok(Math.abs(value - expected[index]) <= 1e-12));
+});
+
+test("low-resolution padding boundary fails explicitly and just-below remains finite", () => {
+  for (const size of [1, 2, 16, 32]) {
+    for (const padding of [size / 2, size, Number.MAX_VALUE]) {
+      assert.throws(() => createRzProjection(null, { width: size, height: size, padding }), RangeError);
+    }
+    const padding = size / 2 - 1e-6;
+    const view = createRzProjection(null, { width: size, height: size, padding });
+    for (const point of [view.project([0, 0]), view.project([1, 1])]) {
+      point.forEach(value => {
+        assert.ok(Number.isFinite(value));
+        assert.ok(value >= padding - 1e-12 && value <= size - padding + 1e-12);
+      });
+    }
+  }
+  assert.throws(() => createRzProjection(null, { width: 16, height: 16 }), RangeError);
+});

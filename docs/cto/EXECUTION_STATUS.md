@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-10 — TASK-LOCAL-027
+
+Parecer final026 AR; instrução final027 limitada a testes numéricos.29 web/tsc
+PASS,Python658 passed,2 skipped,0 failed em129.58s;diff PASS. Ver TASK-LOCAL-027.md.
+
+
 ## 2026-09-10 — AUTO-026
 
 AUTO-025 em0a744a78 APROVADA. Utilitários RZ implementados,25 testes web PASS;

@@ -754,3 +754,11 @@ invertido, aspecto1:1, margens e cores âmbar/ciano/magenta; exceções/degenera
 Validação:todos node:test,tsc,next lint,pytest,Ruff,diff; entrega026 e continuidade.
 Commit local feat(web): implement RZ planar projection utilities and tests.
 Sem Git de rede, manifests, backend/packages, publicação ou autoridade física.
+
+
+## 2026-09-10 — TASK-LOCAL-027
+
+AUTO-026 em32e1df8 acolhida AR no parecer final. Resposta contém início incompleto
+AUTO-027 React, seguido de instrução completa TASK-LOCAL-027: testes de R/Z zero,
+linhas degeneradas,padding e tolerância<=1e-5. Seguir instrução final; sem UI.
+Critérios:pytest/web/tsc PASS,árvore limpa,novo VTP. Sem backend/configuração/rede.
