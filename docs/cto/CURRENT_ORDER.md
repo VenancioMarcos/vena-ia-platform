@@ -1,19 +1,19 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-024/B
-**Estado:** DOCUMENTED_AWAITING_CTO
+**Missão:** CTO-CODEX-AUTO-025
+**Estado:** VALIDATED_AWAITING_CTO
 **Data:** 2026-09-10
 **Branch:** codex/v3.1-first-controlled-test-path
-**Baseline técnico/documental:** d541dc0ca12928a230c0f772c68254777794c1e2 (22 commits locais).
+**Baseline:** 116059d37da315f4a054c0151c2e75f3a8d5655d (23 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-Registrar [WEB-LINT-001](WEB-LINT-001.md), sem alterar apps/, regras ou pacotes.
-AUTO-024/A acolhida com ressalva; baseline658/2, tsc PASS e lint exit0 preservado.
-Relatar commit documental para fechamento do ciclo e aguardar parecer real.
-Cabeçalho AUTO-025 no parecer foi seguido de instrução explícita AUTO-024/B;
-este registro segue o identificador da instrução efetiva.
+AUTO-024/B aprovada e ciclo AUTO-024 fechado pelo CTO. AUTO-025 solicita testes
+unitários das três fixtures e dos sete estados, usando ferramentas já instaladas.
+14 testes web PASS via TypeScript + node:test, sem alteração de produto/pacotes.
+Regressão658/2 em152.01s, tsc/Ruff/diff PASS; lint0 erros/WEB-LINT-001 apenas.
+Ver CTO-CODEX-AUTO-025.md. Reportar commit e aguardar próxima ordem real.
 
 ## Continuidade obrigatória
 

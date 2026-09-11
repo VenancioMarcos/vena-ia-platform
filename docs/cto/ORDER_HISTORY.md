@@ -734,3 +734,13 @@ CTO recebeu d541dc0 e acolheu ressalva WEB-LINT-001. Instrução final AUTO-024/
 solicita registro formal no backlog sem apps/regras/rede. Cabeçalho AUTO-025 e
 contagem21 do parecer são inconsistentes com instrução/estado: base real22 commits
 antes deste registro. Seguir AUTO-024/B e relatar correção da contagem.
+
+
+## 2026-09-10 — AUTO-024/B aprovada; AUTO-025 recebida
+
+Gemini aprovou 116059d3 e confirmou23 commits locais, encerrando AUTO-024.
+AUTO-025: criar testes locais das três fixtures e narrowing/predicados dos sete
+estados; executar runner disponível ou script TypeScript, tsc, lint, pytest,
+Ruff e diff; registrar entrega e commit test(web): implement unit tests for turning contracts and fixtures.
+Sem novas instalações, backend/packages, Git de rede ou publicação. Relatório VTP
+com status/resumo/bloqueador/próxima, seguido de aguardar resposta real.

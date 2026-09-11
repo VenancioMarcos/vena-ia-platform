@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-10 — AUTO-025
+
+AUTO-024/B em116059d3 APROVADA, ciclo fechado. Nova missão: testes web sem
+instalações/backend/produto. 14 testes via TypeScript + node:test PASS; regressão658/2 em152.01s; tsc/Ruff/diff
+PASS e lint0 erros/WEB-LINT-001 apenas. Ver CTO-CODEX-AUTO-025.md. Commit e
+relatório ao CTO pendentes, aguardar resposta real.
+
 ## 2026-09-10 — AUTO-024/B
 
 AUTO-024/A em d541dc0 acolhida com ressalva, sem bloqueador. Item WEB-LINT-001

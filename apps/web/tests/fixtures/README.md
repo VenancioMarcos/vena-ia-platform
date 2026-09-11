@@ -30,6 +30,22 @@ The readonly constants use `as const satisfies SyntheticTurningExecutionResult`.
 exhaustive narrowing across seven states. Run the existing web typecheck script
 or the installed TypeScript binary with --noEmit. These tests are not UI code.
 
+AUTO-025 adds 14 runtime checks using the installed TypeScript compiler and
+Node's built-in test runner, without an additional package. From `apps/web`:
+
+```powershell
+node node_modules/typescript/bin/tsc tests/turning-contracts.test.ts --outDir ../../temp/auto025-web-tests --module commonjs --target ES2020 --moduleResolution node --esModuleInterop --strict --skipLibCheck --noEmitOnError --typeRoots node_modules/@types --types node
+if ($LASTEXITCODE -eq 0) { node --test ../../temp/auto025-web-tests/tests/turning-contracts.test.js }
+```
+
+Output stays in ignored `temp/`. Checks cover JSON round trips, finite fixture
+numbers, restricted flags, quantization endpoint associations, and all seven
+branches of the existing exhaustive presentation probe. The four early failure
+samples are typed test constructions, not additional backend fixtures. The
+test-only status predicate assumes an already typed result; it cannot validate
+unknown JSON. Digest checks verify format, not authenticity or recomputation.
+The Python replay above remains the source-equivalence check.
+
 Aliases in turning-contracts.ts map mission vocabulary onto existing Python
 objects: TurningCutSegment = TurningToolpathMove (including RAPID/RETRACT),
 TurningToolpathOperation = TurningOperationPlan, TurningVerificationBoundaryReport
