@@ -1,17 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** TASK-LOCAL-029
+**Missão:** TASK-LOCAL-030
 **Estado:** VALIDATED_AWAITING_CTO
 **Data:** 2026-09-11
-**Baseline:** cd14b92d63740b608cabc1c02a1510ff063c212a (27 commits locais).
+**Baseline:** 49a8320821bb57281a8efc6c97a9e728de1809e8 (28 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-028 aceita.029 solicita contêiner cliente com seleção local das três fixtures,
-metadados e badges. Plano exibido quantizado, sem substituição nominal em falha.
-37 testes web PASS; Python658/2 em133.49s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001. Ver TASK-LOCAL-029.md.
-Sem rota/HTTP/backend/manifests.
+029 aceita.030 solicita página /cam/turning com título/disclaimer e contêiner029.
+38 testes web PASS; Python658/2 em354.71s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001.
+QA navegador confirmou troca dos cenários e apresentação desktop. Ver TASK-LOCAL-030.md.
+Sem API/fetch/backend/manifests ou publicação.
 
 ## Continuidade obrigatória
 

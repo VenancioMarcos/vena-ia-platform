@@ -779,3 +779,11 @@ Ressalva ao parecer: testes não provam blindagem universal nem precisão físic
 fixtures locais, metadados, badges e SVG ou mensagem de plano ausente. SSR,
 tsc,lint,pytest,Ruff,diff e commit local. Não criar rota/HTTP/backend/manifests.
 Reconstrução retém plano nominal; instrução de ausência aplica-se a quantized_plan.
+
+
+## 2026-09-11 — TASK-LOCAL-030
+
+029 aceita em49a8320.030 solicita /cam/turning com título/disclaimer exatos e
+container029, layout responsivo;teste SSR,node:test,tsc,lint,pytest,Ruff,diff.
+Commit feat(web): integrate CAM turning inspector sandbox page and tests.
+Sem API/backend/manifests/Git de rede/publicação. Enviar VTP e aguardar ordem real.

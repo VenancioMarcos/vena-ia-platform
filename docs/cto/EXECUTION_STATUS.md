@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-11 — TASK-LOCAL-030
+
+029 aceita em49a8320. Página local implementada;38 testes web PASS; Python658/2 em354.71s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001.
+QA desktop/seleção no navegador PASS;servidor temporário encerrado. Ver TASK-LOCAL-030.md.
+
+
 ## 2026-09-11 — TASK-LOCAL-029
 
 028 aceita emcd14b92. Seletor local e37 testes web PASS; Python658/2 em133.49s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001. Sem substituição silenciosa do plano quantizado ausente. Ver029.

@@ -466,3 +466,11 @@ fixtures tipadas existentes; estado useState. Exibe plano quantizado e suas
 contagens/unidades. Falha de reconstrução não deve exibir plano nominal como
 se fosse reconstruído. initialSelection opcional somente inicializa o estado;
 SSR cobre as três opções, sem alegar prova de interação browser. Flags preservadas.
+
+
+### TASK-LOCAL-030 — Página local de demonstração (2026-09-11)
+
+CTO autorizou integrar contêiner029 em /cam/turning. Página estática com aviso
+explícito de inspeção sintética e operação física desautorizada. Nenhuma rota API,
+fetch ou publicação. Rota não cria barreira de autenticação; caráter interno é
+finalidade de demonstração local, não controle de acesso. Fixtures sintéticas.
