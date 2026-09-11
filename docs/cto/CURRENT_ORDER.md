@@ -1,16 +1,17 @@
 # Ordem CTO atual
 
-**Missão:** TASK-LOCAL-032
-**Estado:** STANDBY_WEB_BASELINE_CONSOLIDATED
+**Missão:** TASK-LOCAL-033
+**Estado:** READY_FOR_UPSTREAM_SYNC_CONSOLIDATED
 **Data:** 2026-09-11
-**Baseline:** 103dd0ec96ca809882d279885790781cdfa86caf (30 commits locais).
+**Baseline:** b057c88ba80116a4583054756e921853fa14a183 (31 commits locais).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-031 aprovada A;032 consolida dossiê documental do marco v3.2.0-turning-web-alpha.
-Sem mudança funcional; runtime3.1.0. Ver TASK-LOCAL-032.md para verificações.
-Não autoriza sincronização upstream. Relatório032 e parecer ainda pendentes.
+032 aprovada A;033 gera bundle incremental dos31 commits até b057c88,ignorado.
+Checklist distingue pacote e commit documental033 adicional (32º).
+Sem Git remoto/publicação;READY é apenas prontidão documental local.
+Ver TASK-LOCAL-033.md;relatório e parecer033 ainda pendentes.
 
 ## Continuidade obrigatória
 

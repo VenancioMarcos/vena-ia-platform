@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-11
 
-- **Handoff CTO:** 031 aprovada em103dd0e. TASK-LOCAL-032 consolida documentalmente v3.2.0-turning-web-alpha: STANDBY_WEB_BASELINE_CONSOLIDATED. Baseline funcional41 web/658 Python aprovados,lint limpo; ver dossiê docs/modules/web/TURNING_WEB_ALPHA_REPORT.md e validação032. Sem tag/release/Git remoto; runtime3.1.0. Após commit,relatar e aguardar parecer real.
+- **Handoff CTO:** 032 aprovada em b057c88.033 prepara bundle incremental dos31 commits até b057c88;documentação033 será32º,fora do bundle. READY_FOR_UPSTREAM_SYNC_CONSOLIDATED apenas local;sem autorização de rede/publicação. Ver SYNC_CHECKLIST_UPSTREAM e TASK-LOCAL-033. Após commit,relatar e aguardar parecer real.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

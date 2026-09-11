@@ -1,4 +1,4 @@
-# Checklist de sincronização upstream — AUTO-022
+# Checklist de sincronização upstream — TASK-LOCAL-033
 
 Data: 2026-09-10. Preparação local; nenhum comando de rede abaixo foi executado.
 
@@ -13,6 +13,51 @@ não autorização para publicar ou operar máquinas.
 Origin local configurado: https://github.com/VenancioMarcos/vena-ia-platform.git.
 Branch: codex/v3.1-first-controlled-test-path. PR #31 Draft é referência histórica,
 não prova de estado remoto atual. API 3.1.0, contrato synthetic-turning/v3.
+
+## Pacote vigente — TASK-LOCAL-033
+
+Data:2026-09-11. READY_FOR_UPSTREAM_SYNC_CONSOLIDATED é estado documental local,
+não autorização de rede. Pacote congelado contém exatamente31 commits em
+d798417c11b2ce4f751d81cf1252250ed20fd030..b057c88ba80116a4583054756e921853fa14a183.
+O commit documental033 será o32º e não pertence ao bundle; não confundir contagem
+do pacote com HEAD após a entrega. Não se regenera o bundle autorreferenciando seu hash.
+
+### Frente web AUTO-023 a LOCAL-032
+
+| SHA | Mensagem |
+| --- | --- |
+| 870ffa2dfe4bf68db843bff73b1df436de17c802 | feat(web): define turning pipeline v3 TypeScript contracts and static fixtures |
+| d541dc0ca12928a230c0f772c68254777794c1e2 | chore(web): configure local lint coverage for turning contracts |
+| 116059d37da315f4a054c0151c2e75f3a8d5655d | docs(web): track React Hooks cleanup warning |
+| 0a744a78b78e3d0ca1aacf5edc6ed40860aecd33 | test(web): implement unit tests for turning contracts and fixtures |
+| 32e1df8b719c5ce1f59065bc138d531fb0a93ca1 | feat(web): implement RZ planar projection utilities and tests |
+| 82228f7b7eea1579b850ecf456b7d9a093c062ff | test(web): cover RZ projection numeric boundaries |
+| cd14b92d63740b608cabc1c02a1510ff063c212a | feat(web): implement TurningProfile2D pure SVG component and tests |
+| 49a8320821bb57281a8efc6c97a9e728de1809e8 | feat(web): implement TurningViewerContainer fixture selector and tests |
+| e4da6adbed01d4656c8ba068b3eb142f5144c82d | feat(web): integrate CAM turning inspector sandbox page and tests |
+| 103dd0ec96ca809882d279885790781cdfa86caf | fix(web): resolve WEB-LINT-001 hook cleanup and validate mobile layout |
+| b057c88ba80116a4583054756e921853fa14a183 | chore(web): consolidate v3.2.0-turning-web-alpha baseline documentation |
+
+### Contingência vigente
+
+Arquivo ignorado: temp/turning_synthetic_web_alpha_v3.2.bundle.
+SHA-256: c747e84efbdbdb09d6644d4fd2245c4dfce7917501503f326d28cc2d7da82e84.
+Ref HEAD: b057c88ba80116a4583054756e921853fa14a183. Pré-requisito:d798417c11b2ce4f751d81cf1252250ed20fd030.
+Criado por git bundle create com d798417..HEAD;git bundle verify PASS;
+list-heads corresponde ao HEAD congelado;check-ignore confirmou exclusão.
+É incremental: exige repositório-base confiável. Não inclui ignorados, bancos,
+infraestrutura ou objetos LFS externos. Hash confere bytes e não assinatura.
+Nenhuma restauração/importação ou conexão remota executada nesta missão.
+
+O pacote contém histórico anterior à normalização de metadados STEP AUTO023A;
+não houve reescrita de histórico nem nova certificação de ausência de segredos.
+A eventual sincronização deve considerar essas limitações e revisar o HEAD exato,
+inclusive o commit documental033 adicional. Nenhum envio foi realizado.
+
+## Histórico AUTO-022 — inventário e bundle anteriores
+
+A seção abaixo preserva o pacote antigo de19 commits e seus procedimentos como
+registro histórico; os valores vigentes são os da TASK-LOCAL-033 acima.
 
 ## Inventário do pacote congelado
 
