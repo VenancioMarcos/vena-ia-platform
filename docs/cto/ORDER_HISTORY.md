@@ -1028,3 +1028,19 @@ em falha fechada; nenhum push, G-code ou autoridade física foi adicionado.
 Ordem de consolidação documental, publicação da fundação CAM, abertura de Draft PR
 contra `main` e coleta do CI inicial. Nenhum merge, pós-processamento, emissão NC
 ou autoridade física está autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-077-PRE-MERGE
+
+O PR #39 foi retirado de Draft após Backend CI aprovado; estado `OPEN`,
+`MERGEABLE` e `CLEAN`. Nenhum merge ou alteração funcional ocorreu nessa missão.
+
+## 2026-09-12 — CTO-CODEX-AUTO-078-MERGE-AND-SYNC
+
+O PR #39 foi integrado por squash merge em `4ba57db`; branch remota removida e
+`main` alinhada com `origin/main`. Fundação CAM incorporada sem saída executável.
+
+## 2026-09-12 — CTO-CODEX-AUTO-079
+
+A Rota 2 do CAM implementa acabamento contínuo com compensação analítica do raio
+de ponta, sobremetal e limites geométricos fail-closed. `GROOVING`, pós-processamento,
+G-code e autoridade física permanecem fora do escopo.

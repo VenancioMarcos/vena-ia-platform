@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.36
+**Versão:** 2.37
 **Última atualização:** 2026-09-12
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-12
+
+- **Handoff CTO:** `CAM_ROTA_2_FINISHING_STRATEGY_IN_PROGRESS`. A branch
+  `codex/v4.1-cam-finishing-strategy` parte de `4ba57db` e estende o motor CAM com
+  um passe contínuo de `FINISHING`, offset normal pelo raio de ponta e sobremetal,
+  alcance projetado pelo ângulo da aresta e rejeição de concavidade incompatível.
+  Validação: 752 Python, 9 ignorados e checks estáticos; sem push ou saída executável.
 
 - **Handoff CTO:** `CAM_ROTA_1_STRATEGY_FOUNDATION_PR_OPEN_AWAITING_CI_AND_REVIEW`.
   A fundação CAM em `92d3651`, com governança consolidada, foi aprovada pelo CTO.

@@ -1,23 +1,22 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-076
-**Estado:** CAM_ROTA_1_STRATEGY_FOUNDATION_PR_OPEN_AWAITING_CI_AND_REVIEW
+**Missão:** CTO-CODEX-AUTO-079
+**Estado:** CAM_ROTA_2_FINISHING_STRATEGY_IN_PROGRESS
 **Data:** 2026-09-12
-**Branch:** `codex/v4.0-cam-turning-strategies-foundation`
-**Baseline da branch:** `3f2b19877c528cab0d080fcb1bc0756f4bef7390`
-**Commit funcional:** `92d3651`
+**Branch:** `codex/v4.1-cam-finishing-strategy`
+**Baseline da branch:** `4ba57db11809de4317b21e71e3029a98f9b6ed52`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O CTO aprovou a fundação CAM e autorizou publicar a branch e abrir Draft PR contra
-`main`. O pacote mantém faceamento e desbaste 2D analíticos; acabamento e canais
-permanecem em falha fechada e nenhum output é executável.
+O motor CAM agora planeja `FINISHING` contínuo para contornos RZ amostrados, com
+compensação 2D do raio de ponta, sobremetal e alcance angular da aresta. Concavidades
+incompatíveis falham fechado e `GROOVING` continua bloqueado.
 
 ## Continuidade
 
-Publicar a branch, abrir Draft PR, coletar o estado inicial do CI, enviar
-VTP-AUTO-076 ao CTO e aguardar a próxima ordem sem merge.
+Concluir o commit local autorizado, enviar VTP-AUTO-079 ao CTO e aguardar a próxima
+ordem sem push, endpoint, pós-processador ou geração de G-code.
 
 ## Limites permanentes
 

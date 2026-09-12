@@ -17,6 +17,10 @@ REVIEW_WARNINGS = (
     "ANALYTICAL_2D_REQUIRES_HUMAN_REVIEW",
     "NO_REAL_TOOL_FIXTURE_OR_COLLISION_VALIDATION",
 )
+FINISHING_WARNINGS = REVIEW_WARNINGS + (
+    "TOOL_CENTER_PATH_INCLUDES_2D_NOSE_RADIUS_COMPENSATION",
+    "FINISHING_VOLUME_REQUIRES_PRECUT_STOCK_MODEL",
+)
 
 
 class TurningStrategyValidationError(ValueError):
@@ -211,6 +215,182 @@ def _plan_roughing(request: TurningStrategyPlanRequest) -> TurningStrategyPlanRe
     )
 
 
+def _finishing_contour(request: TurningStrategyPlanRequest) -> tuple[RzPoint, ...]:
+    """Return the exposed front-to-rear profile without the axis closure."""
+    tolerance = request.linear_tolerance_mm
+    points = request.profile_data
+    surface_indices = [
+        index
+        for index, point in enumerate(points)
+        if point.r_mm > tolerance
+        and (
+            math.isclose(
+                point.z_mm,
+                request.bounding_box.max_z_mm,
+                abs_tol=tolerance,
+                rel_tol=0,
+            )
+            or math.isclose(
+                point.z_mm,
+                request.bounding_box.min_z_mm,
+                abs_tol=tolerance,
+                rel_tol=0,
+            )
+        )
+    ]
+    if len(surface_indices) < 2:
+        raise TurningStrategyValidationError("FINISHING_CONTOUR_BOUNDARIES_MISSING")
+
+    start, end = min(surface_indices), max(surface_indices)
+    contour = tuple(points[start : end + 1])
+    if contour[0].z_mm < contour[-1].z_mm:
+        contour = tuple(reversed(contour))
+    if not math.isclose(
+        contour[0].z_mm,
+        request.bounding_box.max_z_mm,
+        abs_tol=tolerance,
+        rel_tol=0,
+    ) or not math.isclose(
+        contour[-1].z_mm,
+        request.bounding_box.min_z_mm,
+        abs_tol=tolerance,
+        rel_tol=0,
+    ):
+        raise TurningStrategyValidationError("FINISHING_CONTOUR_INCOMPLETE")
+    if any(point.r_mm <= tolerance for point in contour):
+        raise TurningStrategyValidationError("FINISHING_CONTOUR_TOUCHES_AXIS")
+    if any(
+        following.z_mm > current.z_mm + tolerance
+        for current, following in zip(contour, contour[1:])
+    ):
+        raise TurningStrategyValidationError("FINISHING_CONTOUR_REQUIRES_REAR_APPROACH")
+    return contour
+
+
+def _unit_tangent(first: RzPoint, second: RzPoint) -> tuple[float, float]:
+    delta_r = second.r_mm - first.r_mm
+    delta_z = second.z_mm - first.z_mm
+    length = math.hypot(delta_r, delta_z)
+    if length <= 0:
+        raise TurningStrategyValidationError("FINISHING_CONTOUR_HAS_DEGENERATE_SEGMENT")
+    return delta_r / length, delta_z / length
+
+
+def _circumradius(
+    first: RzPoint,
+    middle: RzPoint,
+    last: RzPoint,
+) -> float:
+    first_length = math.hypot(
+        middle.r_mm - first.r_mm,
+        middle.z_mm - first.z_mm,
+    )
+    second_length = math.hypot(
+        last.r_mm - middle.r_mm,
+        last.z_mm - middle.z_mm,
+    )
+    chord = math.hypot(last.r_mm - first.r_mm, last.z_mm - first.z_mm)
+    twice_area = abs(
+        (middle.r_mm - first.r_mm) * (last.z_mm - middle.z_mm)
+        - (middle.z_mm - first.z_mm) * (last.r_mm - middle.r_mm)
+    )
+    if twice_area <= 1e-15:
+        return math.inf
+    return first_length * second_length * chord / (2.0 * twice_area)
+
+
+def _validate_finishing_clearance(
+    request: TurningStrategyPlanRequest,
+    contour: tuple[RzPoint, ...],
+) -> None:
+    """Reject concave profile curvature that the round tool nose cannot enter."""
+    tool_radius = request.tool.tip_radius_mm
+    tolerance = request.linear_tolerance_mm
+    edge_projection = abs(
+        math.sin(math.radians(request.tool.cutting_edge_angle_deg))
+    )
+    effective_edge_reach = request.tool.cutting_edge_length_mm * edge_projection
+    required_reach = tool_radius + request.finish_allowance_mm
+    if required_reach > effective_edge_reach + tolerance:
+        raise TurningStrategyValidationError("TOOL_GEOMETRY_UNDERCUT_COLLISION")
+    for first, middle, last in zip(contour, contour[1:], contour[2:]):
+        before = _unit_tangent(first, middle)
+        after = _unit_tangent(middle, last)
+        signed_turn = before[0] * after[1] - before[1] * after[0]
+        if signed_turn >= -tolerance:
+            continue
+        local_radius = _circumradius(first, middle, last)
+        if tool_radius > local_radius + tolerance:
+            raise TurningStrategyValidationError("TOOL_GEOMETRY_UNDERCUT_COLLISION")
+
+
+def _offset_vertex(
+    point: RzPoint,
+    previous_tangent: tuple[float, float] | None,
+    following_tangent: tuple[float, float] | None,
+    offset_mm: float,
+    tolerance: float,
+) -> RzPoint:
+    tangents = tuple(
+        tangent
+        for tangent in (previous_tangent, following_tangent)
+        if tangent is not None
+    )
+    normals = tuple((-tangent[1], tangent[0]) for tangent in tangents)
+    if len(normals) == 1:
+        direction_r, direction_z = normals[0]
+        scale = offset_mm
+    else:
+        summed_r = normals[0][0] + normals[1][0]
+        summed_z = normals[0][1] + normals[1][1]
+        length = math.hypot(summed_r, summed_z)
+        if length <= tolerance:
+            raise TurningStrategyValidationError("FINISHING_OFFSET_REVERSAL")
+        direction_r, direction_z = summed_r / length, summed_z / length
+        projection = direction_r * normals[1][0] + direction_z * normals[1][1]
+        if projection <= tolerance:
+            raise TurningStrategyValidationError("FINISHING_OFFSET_INTERFERENCE")
+        scale = offset_mm / projection
+    compensated_r = point.r_mm + direction_r * scale
+    compensated_z = point.z_mm + direction_z * scale
+    if compensated_r < -tolerance:
+        raise TurningStrategyValidationError("FINISHING_OFFSET_NEGATIVE_RADIUS")
+    return RzPoint(r_mm=max(0.0, compensated_r), z_mm=compensated_z)
+
+
+def _plan_finishing(request: TurningStrategyPlanRequest) -> TurningStrategyPlanResponse:
+    contour = _finishing_contour(request)
+    _validate_finishing_clearance(request, contour)
+    tangents = tuple(
+        _unit_tangent(first, second)
+        for first, second in zip(contour, contour[1:])
+    )
+    offset = request.tool.tip_radius_mm + request.finish_allowance_mm
+    compensated = tuple(
+        _offset_vertex(
+            point,
+            tangents[index - 1] if index else None,
+            tangents[index] if index < len(tangents) else None,
+            offset,
+            request.linear_tolerance_mm,
+        )
+        for index, point in enumerate(contour)
+    )
+    return TurningStrategyPlanResponse(
+        operation_type=TurningOperationType.FINISHING,
+        passes=(
+            MachiningPass(
+                sequence=1,
+                operation_type=TurningOperationType.FINISHING,
+                coordinates_rz_mm=compensated,
+                estimated_removed_volume_mm3=0.0,
+            ),
+        ),
+        material_removal_volume_mm3=0.0,
+        warnings=FINISHING_WARNINGS,
+    )
+
+
 def plan_turning_strategy(request: TurningStrategyPlanRequest) -> TurningStrategyPlanResponse:
     """Build a deterministic review-only 2D plan without machine or NC authority."""
     _validate_profile(request)
@@ -218,4 +398,6 @@ def plan_turning_strategy(request: TurningStrategyPlanRequest) -> TurningStrateg
         return _plan_facing(request)
     if request.operation_type == TurningOperationType.ROUGH_TURNING:
         return _plan_roughing(request)
+    if request.operation_type == TurningOperationType.FINISHING:
+        return _plan_finishing(request)
     raise TurningStrategyValidationError("OPERATION_NOT_IMPLEMENTED_IN_FOUNDATION")
