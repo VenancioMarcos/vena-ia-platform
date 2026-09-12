@@ -956,3 +956,19 @@ envelope e propaga avisos toleráveis à UI com revisão obrigatória. Validaç�
 Ordem de consolidação documental, publicação da branch dedicada, abertura de PR
 contra `main` e coleta do CI inicial. Nenhum merge, deploy, dependência de rede ou
 mudança de autoridade física está autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-064-PRE-MERGE
+
+O PR #36 foi retirado de Draft com ambos os CIs aprovados. A verificação confirmou
+`isDraft=false`, `OPEN`, `MERGEABLE` e `CLEAN`; nenhum merge ocorreu nessa missão.
+
+## 2026-09-12 — CTO-CODEX-AUTO-065-MERGE-AND-SYNC
+
+O PR #36 foi integrado por squash merge em `fce719a7` e a branch remota foi
+removida. `main` e `origin/main` ficaram alinhadas; limites físicos inalterados.
+
+## 2026-09-12 — CTO-CODEX-AUTO-066
+
+A Rota 5 Etapa 2 adiciona testes de sistema para uploads STEP concorrentes e para
+o teto de 15 MiB, com isolamento por proprietário, contrato revisável e limpeza
+determinística. Somente testes e governança; sem push, emissão ou autoridade física.

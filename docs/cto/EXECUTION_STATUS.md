@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-066
+
+`ROTA_5_STAGE_2_STRESS_TESTS_IN_PROGRESS`. Branch criada da `main` integrada em
+`fce719a7`. Testes de sistema cobrem quatro uploads STEP concorrentes com isolamento
+por proprietário e um upload no teto de 15 MiB, incluindo unicidade de jobs,
+contrato revisável e limpeza do sandbox. Validação aprovada: 740 Python, 9 ignorados,
+64 Web, TypeScript, lint, Ruff, mypy e diff. Commit local em curso; sem push ou
+autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-063
 
 `ROTA_5_CAD_HARDENING_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-062 aprovada no

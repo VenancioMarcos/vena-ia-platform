@@ -1,22 +1,22 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-063
-**Estado:** ROTA_5_CAD_HARDENING_PR_OPEN_AWAITING_CI_AND_REVIEW
+**Missão:** CTO-CODEX-AUTO-066
+**Estado:** ROTA_5_STAGE_2_STRESS_TESTS_IN_PROGRESS
 **Data:** 2026-09-12
-**Branch:** `codex/v3.5-cad-hardening-resilience`
-**Baseline da branch:** `e8774a7ccbd7517e7cf08c906b7ffcbbb5bdb954`
+**Branch:** `codex/v3.5-cad-e2e-stress-tests`
+**Baseline da branch:** `fce719a7b266ed4bf8e38a984f03e1f55ef57cac`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-A AUTO-062 foi aprovada no commit `db78731`: o perfil RZ falha fechado para
-geometria inválida e propaga avisos toleráveis à UI com revisão obrigatória. O gate
-atual é publicar a branch, abrir o PR e coletar o CI inicial.
+O PR #36 integrou a Etapa 1 da Rota 5 em `fce719a7`. A Etapa 2 testa o sistema sob
+uploads STEP concorrentes de proprietários distintos e no teto de 15 MiB,
+verificando isolamento, contrato revisável e limpeza determinística do sandbox.
 
 ## Continuidade
 
-Criar o commit documental, publicar a branch, abrir PR contra `main`, coletar o CI,
-enviar VTP-AUTO-063 ao CTO e aguardar a próxima ordem. Nenhum merge está autorizado.
+Concluir as suítes completas e criar commit local atômico, sem push. Enviar
+VTP-AUTO-066 ao CTO, solicitar parecer e aguardar a próxima ordem.
 
 ## Limites permanentes
 
