@@ -1,24 +1,24 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-044
-**Estado:** ROTA_2_STAGE_1_CONSOLIDATED_AWAITING_PR_AUTHORIZATION
+**Missão:** CTO-CODEX-AUTO-050
+**Estado:** ROTA_2_STAGE_2_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-12
-**Baseline inicial sincronizado:** `400d18af8235d7cac67965e28ba3eaa6bab43413` (merge do PR #31 na `main`).
-**Branch local:** `codex/v3.2-step-cad-ingestion-web`
+**Branch:** `codex/v3.2-step-async-dispatch`
+**Baseline:** `2d3da5d3b147939eb66572a79d901e2ae4f185a6` (merge do PR #32)
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
-## Escopo vigente
+## Estado vigente
 
-A Rota 2 Etapa 1 consolida, apenas no frontend, validação cliente de arquivos STEP,
-dropzone HTML5, extração textual limitada de metadados e card acessível de inspeção.
-O pacote permanece local e aguarda autorização específica antes de qualquer push ou
-Pull Request. Não há upload remoto, backend, geração NC ou autoridade física.
+A Etapa 2 implementa o serviço cliente assíncrono STEP e integra seu ciclo reativo
+à rota `/cam/turning`, com polling limitado e cancelamento explícito. A consolidação
+documental local está concluída; publicação da branch e abertura de Draft PR são os
+próximos gates. Nenhum backend, geração NC ou autoridade física integra a missão.
 
-## Validação e entrega
+## Continuidade
 
-AUTO-044 exige consolidar os registros AUTO-040 a AUTO-043, repetir a suíte web,
-TypeScript, lint e verificação de diff e criar um commit exclusivamente documental.
-Após a entrega, enviar VTP ao CTO, solicitar parecer e aguardar a próxima ordem.
+Criar o commit documental autorizado, publicar a branch dedicada, abrir o Draft PR,
+monitorar o CI inicial, enviar VTP-AUTO-050 ao CTO e aguardar a próxima ordem sem
+encerrar o fluxo. Nenhum merge está autorizado.
 
 ## Limites permanentes
 
@@ -26,6 +26,3 @@ Após a entrega, enviar VTP ao CTO, solicitar parecer e aguardar a próxima orde
 `PHYSICAL_USE_AUTHORIZED=FALSE`; `NO_HUMAN_REVIEW_BYPASS=TRUE`;
 `MACHINE_SEND=FALSE`; `DNC=FALSE`; `NC_TRANSFER=FALSE`; `CYCLE_START=FALSE`;
 `emission_status=CONTROLLER_PROFILE_UNRESOLVED`.
-
-Não realizar push, merge, tag, release, deploy, mudança de credenciais ou operação
-CNC sem o gate específico aplicável.

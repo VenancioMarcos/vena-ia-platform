@@ -871,3 +871,44 @@ AUTO-043 aprovada. Ordem de consolidação documental da Rota 2 Etapa 1, repeti�
 da suíte web, TypeScript, lint e diff, seguida de commit somente documental. Estado
 alvo: `ROTA_2_STAGE_1_CONSOLIDATED_AWAITING_PR_AUTHORIZATION`; nenhum push ou PR
 autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-045
+
+Após aprovação explícita do proprietário, a branch da Rota 2 Etapa 1 foi publicada
+até `139f1df` e o Draft PR #32 foi aberto contra `main`. Frontend CI aprovado em
+1m16s; PR `OPEN` e `MERGEABLE`, sem merge. CTO aprovou a entrega.
+
+## 2026-09-12 — CTO-CODEX-AUTO-046
+
+AUTO-045 aprovada. Ordem de standby monitorado com estado
+`PR_32_CI_GREEN_AWAITING_MAINTAINER_REVIEW`. Proibidos merge, retirada de Draft,
+novo push e alterações funcionais; aguardar decisão formal do proprietário ou
+mantenedor nesta sessão.
+
+## 2026-09-12 — CTO-CODEX-AUTO-047-PRE-MERGE
+
+Após autorização explícita do proprietário, o PR #32 foi retirado de Draft.
+Verificação confirmou `isDraft=false`, `OPEN` e `CLEAN`; nenhum merge ocorreu nessa
+missão. O CTO aprovou a transição.
+
+## 2026-09-12 — CTO-CODEX-AUTO-048
+
+O proprietário autorizou e executou por meio do Codex o merge do PR #32 na `main`,
+registrado em `2d3da5d`. AUTO-048 abre a Etapa 2 em branch dedicada para serviço
+cliente de despacho assíncrono STEP, sem backend, push ou autoridade física.
+
+## 2026-09-12 — CTO-CODEX-AUTO-049
+
+AUTO-048 aprovada no commit `cdceafd`. Ordem integra o ciclo visual de despacho ao
+card STEP e à rota `/cam/turning`, com estados explícitos, polling limitado e
+cancelamento via `AbortController`; sem backend, push, emissão NC ou autoridade
+física.
+
+AUTO-049 foi aprovada pelo CTO no commit `34e7c22`, com 59 testes web e regressão
+Python integral.
+
+## 2026-09-12 — CTO-CODEX-AUTO-050
+
+Ordem de consolidação documental da Etapa 2, publicação da branch dedicada,
+abertura de Draft PR contra `main` e monitoramento do CI inicial. Nenhum merge,
+backend, dependência de rede ou mudança de autoridade física está autorizado.

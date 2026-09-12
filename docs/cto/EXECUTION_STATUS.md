@@ -1,5 +1,45 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-050
+
+`ROTA_2_STAGE_2_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-049 aprovada pelo CTO no
+commit `34e7c22`. Etapa 2 consolidada: serviço cliente assíncrono STEP e ciclo
+reativo na rota `/cam/turning`; 59 testes web, TypeScript/lint, 727 testes Python,
+Ruff e diff aprovados. Commit documental em preparação; push e Draft PR pendentes
+do gate externo. Nenhum merge autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-049
+
+`ROTA_2_UI_ASYNC_DISPATCH_INTEGRATION_IN_PROGRESS`. AUTO-048 aprovada pelo CTO no
+commit `cdceafd`. Integração visual concluída com envio, fila, processamento,
+conclusão, falha e cancelamento. Validação: 59 testes web; TypeScript e lint limpos;
+727 testes Python aprovados, 9 ignorados; Ruff e diff aprovados. Sem push, backend
+ou autoridade física.
+
+## 2026-09-12 — CTO-CODEX-AUTO-048
+
+`ROTA_2_STAGE_2_ASYNC_DISPATCH_IN_PROGRESS`. PR #32 integrado pelo proprietário no
+merge `2d3da5d`; branch `codex/v3.2-step-async-dispatch` criada desse baseline.
+Serviço cliente tipado implementado com transporte injetável, timeout abortável e
+falhas estruturadas. Validação: 55 testes web; TypeScript e lint limpos; 727 testes
+Python aprovados, 9 ignorados; Ruff e diff check aprovados. Sem push, backend,
+emissão NC ou alteração dos limites físico-operacionais.
+
+## 2026-09-12 — CTO-CODEX-AUTO-046
+
+`PR_32_CI_GREEN_AWAITING_MAINTAINER_REVIEW`. AUTO-045 aprovada pelo CTO. Branch
+`codex/v3.2-step-cad-ingestion-web` e Draft PR #32 publicados até `139f1df`;
+Frontend CI `SUCCESS` em 1m16s. Standby monitorado ativo, sem merge, retirada de
+Draft, novo push ou mudança funcional.
+
+## 2026-09-12 — CTO-CODEX-AUTO-045
+
+`ROTA_2_STAGE_1_PR_OPEN_AWAITING_CI_AND_REVIEW`. Após aprovação explícita do
+proprietário, a branch foi publicada até `139f1df` e o Draft PR
+[#32](https://github.com/VenancioMarcos/vena-ia-platform/pull/32) foi aberto contra
+`main`. Estado inicial: `OPEN`, `MERGEABLE`; Frontend CI aprovado em 1m16s. Nenhum merge,
+tag, release, deploy ou autoridade física foi concedido.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-044
 
 `ROTA_2_STAGE_1_CONSOLIDATED_AWAITING_PR_AUTHORIZATION`. AUTO-043 aprovada pelo
