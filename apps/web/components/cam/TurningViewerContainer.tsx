@@ -8,6 +8,7 @@ import { reconstructionFailure } from "../../tests/fixtures/reconstruction-failu
 import { TurningProfile2D } from "./TurningProfile2D";
 import { StepUploadZone } from "./StepUploadZone";
 import { inspectStepGeometry, type StepGeometryInspection } from "../../lib/step-geometry-adapter";
+import { StepMetadataCard } from "./StepMetadataCard";
 
 const samples = {
   CYLINDER_SUCCESS: { label: "Cilindro — sucesso sintético", result: cylinderSuccess },
@@ -55,16 +56,7 @@ export function TurningViewerContainer({
       <p>{localStepFile.filename} · {formatFileSize(localStepFile.sizeBytes)}</p>
       <p className="mt-1 text-xs">Emissão de G-code e despacho físico permanecem bloqueados.</p>
     </div>}
-    {geometryInspection && <details className="rounded-lg border border-slate-700 bg-slate-900 p-3 text-sm">
-      <summary className="cursor-pointer font-medium">Metadados da inspeção STEP local</summary>
-      <dl className="mt-2 grid gap-1 text-slate-200">
-        <div><dt className="inline text-slate-400">Schema: </dt><dd className="inline">{geometryInspection.metadata.schema}</dd></div>
-        <div><dt className="inline text-slate-400">Unidade: </dt><dd className="inline">{geometryInspection.metadata.lengthUnit}</dd></div>
-        <div><dt className="inline text-slate-400">Bytes lidos: </dt><dd className="inline">{geometryInspection.metadata.bytesRead}</dd></div>
-      </dl>
-      {!geometryInspection.supported && <p className="mt-2 text-amber-200">{geometryInspection.reason}</p>}
-      <p className="mt-2 text-xs text-slate-400">A análise geométrica definitiva depende de despacho assíncrono autorizado.</p>
-    </details>}
+    {geometryInspection && <StepMetadataCard inspection={geometryInspection} />}
     <label className="block text-sm">Cenário de teste
       <select value={selection} onChange={event => {
         const next = event.target.value;
