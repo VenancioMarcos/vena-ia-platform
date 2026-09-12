@@ -851,3 +851,23 @@ AUTO-040 foi aprovada pelo CTO. AUTO-041 autoriza integrar `StepUploadZone` na r
 `/cam/turning`, mostrar os metadados locais e explicitar que a geometria aguarda
 despacho, mantendo G-code e despacho físico bloqueados. Exige testes web, tsc, lint,
 pytest, Ruff e diff; autoriza somente commit local na mesma branch, sem push.
+
+## 2026-09-12 — CTO-CODEX-AUTO-042
+
+AUTO-041 aprovada. Criado adaptador cliente de inspeção textual STEP limitado a
+64 KiB, com schema AP203/AP214/AP242, unidade e presença de tokens B-Rep, sem
+inventar geometria. Commit local `31a1920`; 49 testes web e regressão Python
+aprovados, sem push.
+
+## 2026-09-12 — CTO-CODEX-AUTO-043
+
+AUTO-042 aprovada. Criado `StepMetadataCard` acessível e integrado à rota
+`/cam/turning`, apresentando metadados e aviso defensivo sem controles físicos.
+Commit local `34e2e6b`, aprovado pelo CTO; sem push.
+
+## 2026-09-12 — CTO-CODEX-AUTO-044
+
+AUTO-043 aprovada. Ordem de consolidação documental da Rota 2 Etapa 1, repetição
+da suíte web, TypeScript, lint e diff, seguida de commit somente documental. Estado
+alvo: `ROTA_2_STAGE_1_CONSOLIDATED_AWAITING_PR_AUTHORIZATION`; nenhum push ou PR
+autorizado.

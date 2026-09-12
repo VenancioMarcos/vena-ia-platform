@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.22
-**Última atualização:** 2026-09-11
+**Versão:** 2.23
+**Última atualização:** 2026-09-12
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-12
 
-- **Handoff CTO:** AUTO-042 acrescenta inspeção textual STEP limitada a 64 KiB à rota `/cam/turning`. Ela informa schema/unidade/tokens B-Rep sem extrair ou inventar geometria; análise definitiva continua dependente de despacho assíncrono autorizado. Sem upload remoto, backend, dependências, push ou alteração dos limites físico-operacionais.
+- **Handoff CTO:** `ROTA_2_STAGE_1_CONSOLIDATED_AWAITING_PR_AUTHORIZATION`. AUTO-040 a AUTO-043 implementaram, somente em `apps/web`, validação cliente STEP, dropzone HTML5, inspeção textual limitada a 64 KiB e card acessível de metadados na rota `/cam/turning`. O CTO aprovou AUTO-043 no commit local `34e2e6b`; AUTO-044 consolida a documentação e validação antes de qualquer autorização de push ou Pull Request. Sem upload remoto, backend, dependências, geração NC ou alteração dos limites físico-operacionais.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

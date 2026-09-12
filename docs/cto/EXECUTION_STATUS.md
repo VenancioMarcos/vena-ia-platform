@@ -1,5 +1,21 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-044
+
+`ROTA_2_STAGE_1_CONSOLIDATED_AWAITING_PR_AUTHORIZATION`. AUTO-043 aprovada pelo
+CTO no commit `34e2e6b`. A Etapa 1 reúne validação cliente STEP, dropzone HTML5,
+adaptador textual de metadados topológicos e card acessível de inspeção. Validação:
+51 testes web, TypeScript e lint aprovados com zero erros/avisos; `git diff --check`
+aprovado. Sem push, PR, backend, emissão NC ou alteração dos limites
+físico-operacionais.
+
+## 2026-09-12 — CTO-CODEX-AUTO-043
+
+`ROTA_2_STEP_METADATA_CARD_COMPLETED`. O `StepMetadataCard` apresenta schema,
+unidade, bytes lidos e suporte textual B-Rep na rota `/cam/turning`, com mensagem
+defensiva e sem controles de emissão física. Commit local `34e2e6b`, aprovado pelo
+CTO; sem push.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-042
 
 `ROTA_2_STEP_GEOMETRY_ADAPTER_IN_PROGRESS`. AUTO-041 aprovada pelo CTO. Adaptador
