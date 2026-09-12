@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { TurningProfile2D } from "../components/cam/TurningProfile2D";
+import { AnalyticTurningProfile2D, TurningProfile2D } from "../components/cam/TurningProfile2D";
 import { cylinderSuccess } from "./fixtures/cylinder-success";
 import type { TurningToolpathPlan } from "../lib/turning-contracts";
 
@@ -74,4 +74,23 @@ test("a valid single-axis line remains visible", () => {
   const svg = render(plan);
   assert.match(svg, /data-motion="CUTTING"/);
   assert.doesNotMatch(svg, /data-fallback/);
+});
+
+test("completed backend profile renders a review-only analytic RZ SVG and dimensions", () => {
+  const html = renderToStaticMarkup(createElement(AnalyticTurningProfile2D, {
+    profile: {
+      points: [{ radius_mm: 12, z_mm: -30 }, { radius_mm: 12, z_mm: -10 }, { radius_mm: 6, z_mm: 0 }],
+      axis_origin: [0, 0, 0], axis_direction: [0, 0, 1], is_closed: false,
+    },
+    boundingBox: { maxRadiusMm: 12, totalZLengthMm: 30 },
+    width: 640,
+    height: 400,
+  }));
+  assert.match(html, /Perfil 2D Analítico \(Revisão Obrigatória\)/);
+  assert.match(html, /Raio máximo:.*12\.000 mm/);
+  assert.match(html, /Comprimento Z:.*30\.000 mm/);
+  assert.match(html, /<svg[^>]*role="img"/);
+  assert.match(html, /data-profile="analytic-rz"/);
+  assert.match(html, /revisão humana obrigatória/);
+  assert.doesNotMatch(html, /NaN|Infinity|data-motion/);
 });

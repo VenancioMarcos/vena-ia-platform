@@ -1,5 +1,19 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-059
+
+`ROTA_4_E2E_CAD_INTEGRATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-058 aprovada
+no commit `3b2d8c8`; integração E2E validada com 62 testes Web, 732 Python e os
+checks estáticos verdes. Consolidação documental, publicação da branch, Draft PR
+e CI em execução; nenhum merge ou autoridade física autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-058
+
+`ROTA_4_E2E_CAD_INTEGRATION_IN_PROGRESS`. A branch parte da `main` integrada em
+`03aaf2d`. O frontend usa os endpoints reais do gateway, valida e converte o
+perfil RZ concluído e o renderiza em SVG com dimensões e revisão obrigatória.
+Validação completa e commit local em andamento; sem push ou autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-055
 
 `ROTA_3_BACKEND_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-054 aprovada no
