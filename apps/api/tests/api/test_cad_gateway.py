@@ -71,6 +71,7 @@ def test_dispatches_valid_step_to_owner_scoped_sandbox(
                     {"r_mm": 25.0, "z_mm": -100.0},
                     {"r_mm": 0.0, "z_mm": -100.0},
                 ],
+                "warnings": [],
                 "bounding_box": {
                     "max_radius_mm": 25.0,
                     "min_z_mm": -100.0,

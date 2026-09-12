@@ -33,6 +33,7 @@ test("preserves queued, processing and completed job transitions", async () => {
       points: [{ r_mm: 10, z_mm: -20 }, { r_mm: 5, z_mm: 0 }],
       bounding_box: { max_radius_mm: 10, min_z_mm: -20, max_z_mm: 0, total_z_length_mm: 20 },
       review_status: "PROFILE_AVAILABLE_REQUIRES_REVIEW",
+      warnings: ["PROFILE_CLOSURE_GAP_WITHIN_TOLERANCE"],
     } },
   ];
   const calls: Array<{ url: string; method: string | undefined }> = [];
@@ -60,6 +61,7 @@ test("preserves queued, processing and completed job transitions", async () => {
   });
   assert.deepEqual(completed.boundingBox, { maxRadiusMm: 10, minZMm: -20, maxZMm: 0, totalZLengthMm: 20 });
   assert.equal(completed.reviewStatus, "PROFILE_AVAILABLE_REQUIRES_REVIEW");
+  assert.deepEqual(completed.warnings, ["PROFILE_CLOSURE_GAP_WITHIN_TOLERANCE"]);
   assert.equal(isTerminalDispatchStatus(queued), false);
   assert.equal(isTerminalDispatchStatus(completed), true);
 });
@@ -84,6 +86,18 @@ test("fails closed when a COMPLETED response has malformed RZ profile data", asy
     },
   }) });
   assert.deepEqual(invalid, { jobId: "job-bad", status: "FAILED", error: "Perfil RZ retornado pela API é inválido." });
+});
+
+test("fails closed when geometry warnings are malformed", async () => {
+  const invalid = await pollCadDispatchJob("job-warning", { transport: async () => response({
+    job_id: "job-warning", status: "COMPLETED", profile_data: {
+      points: [{ r_mm: 1, z_mm: 0 }, { r_mm: 1, z_mm: -1 }],
+      bounding_box: { max_radius_mm: 1, min_z_mm: -1, max_z_mm: 0, total_z_length_mm: 1 },
+      review_status: "PROFILE_AVAILABLE_REQUIRES_REVIEW",
+      warnings: ["VALID", 42],
+    },
+  }) });
+  assert.equal(invalid.status, "FAILED");
 });
 
 test("returns a bounded FAILED state for communication errors and invalid responses", async () => {

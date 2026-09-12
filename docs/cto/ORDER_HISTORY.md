@@ -943,3 +943,16 @@ Python integral.
 Ordem de consolidação documental da Etapa 2, publicação da branch dedicada,
 abertura de Draft PR contra `main` e monitoramento do CI inicial. Nenhum merge,
 backend, dependência de rede ou mudança de autoridade física está autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-062
+
+A Etapa 1 da Rota 5 foi concluída no commit local `db78731`. O pipeline rejeita
+perfis RZ degenerados, abertos acima de 0,05 mm, auto-intersectantes ou fora do
+envelope e propaga avisos toleráveis à UI com revisão obrigatória. Validação:
+738 Python, 9 ignorados, 64 Web e checks estáticos aprovados; sem push nesta missão.
+
+## 2026-09-12 — CTO-CODEX-AUTO-063
+
+Ordem de consolidação documental, publicação da branch dedicada, abertura de PR
+contra `main` e coleta do CI inicial. Nenhum merge, deploy, dependência de rede ou
+mudança de autoridade física está autorizado.

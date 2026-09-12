@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.29
+**Versão:** 2.30
 **Última atualização:** 2026-09-12
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,13 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-12
+
+- **Handoff CTO:** `ROTA_5_CAD_HARDENING_PR_OPEN_AWAITING_CI_AND_REVIEW`.
+  AUTO-062 foi aprovada no commit `db78731`: degeneração, abertura acima de
+  0,05 mm, auto-interseção e envelope dimensional falham fechado; avisos toleráveis
+  chegam à UI mantendo revisão obrigatória. Validação aprovada: 738 Python,
+  9 ignorados, 64 Web, TypeScript, lint, Ruff, mypy e diff. AUTO-063 consolida a
+  documentação, publica a branch e abre PR; nenhum merge ou limite físico foi alterado.
 
 - **Handoff CTO:** `ROTA_4_E2E_CAD_INTEGRATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-058 foi aprovada no commit local `3b2d8c8`: o frontend usa os endpoints reais do gateway, valida a resposta `COMPLETED` e renderiza o perfil RZ em SVG com dimensões e revisão obrigatória. Validação local: 62 Web, 732 Python, TypeScript, lint, Ruff e diff aprovados. AUTO-059 publica a branch e abre Draft PR; nenhum merge ou limite físico foi alterado.
 

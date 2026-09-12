@@ -46,3 +46,17 @@ test("renders completed and failed outcomes without physical-operation controls"
   assert.match(failed, /Falha controlada/);
   assert.doesNotMatch(completed + failed, /G-code|ciclo de usinagem|emissão física/i);
 });
+
+test("renders bounded geometry warnings with mandatory review feedback", () => {
+  const inspection = { supported: true as const, metadata: { schema: "AP242" as const, applicationIdentifier: null, lengthUnit: "MILLIMETRE" as const, bytesRead: 128 }, profile: { source: "STEP_TEXTUAL_METADATA_ONLY" as const, points: [] as const, visualizable: false as const, limitations: ["NO_GEOMETRY_EXTRACTION", "ASYNC_ANALYSIS_REQUIRED"] as const } };
+  const html = renderToStaticMarkup(createElement(StepMetadataCard, {
+    inspection,
+    dispatchState: {
+      phase: "COMPLETED",
+      jobId: "job-warning",
+      warnings: ["PROFILE_CLOSURE_GAP_WITHIN_TOLERANCE"],
+    },
+  }));
+  assert.match(html, /Avisos de qualidade geométrica — revisão obrigatória/);
+  assert.match(html, /PROFILE_CLOSURE_GAP_WITHIN_TOLERANCE/);
+});

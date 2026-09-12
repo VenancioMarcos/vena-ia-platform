@@ -4,11 +4,12 @@ export type CadDispatchUiState = Readonly<{
   phase: "IDLE" | "DISPATCHING" | "QUEUED" | "PROCESSING" | "COMPLETED" | "FAILED";
   jobId?: string;
   error?: string;
+  warnings?: readonly string[];
 }>;
 
 export type CadDispatchUiAction =
   | Readonly<{ type: "START" }>
-  | Readonly<{ type: "JOB"; jobId: string; status: "QUEUED" | "PROCESSING" | "COMPLETED" | "FAILED"; error?: string }>
+  | Readonly<{ type: "JOB"; jobId: string; status: "QUEUED" | "PROCESSING" | "COMPLETED" | "FAILED"; error?: string; warnings?: readonly string[] }>
   | Readonly<{ type: "RESET" }>;
 
 export const idleDispatchState: CadDispatchUiState = { phase: "IDLE" };
@@ -19,9 +20,12 @@ export function reduceCadDispatchState(
 ): CadDispatchUiState {
   if (action.type === "RESET") return idleDispatchState;
   if (action.type === "START") return { phase: "DISPATCHING" };
-  return action.error
-    ? { phase: action.status, jobId: action.jobId, error: action.error }
-    : { phase: action.status, jobId: action.jobId };
+  return {
+    phase: action.status,
+    jobId: action.jobId,
+    ...(action.error ? { error: action.error } : {}),
+    ...(action.warnings?.length ? { warnings: action.warnings } : {}),
+  };
 }
 
 type Props = Readonly<{
@@ -66,6 +70,10 @@ export function StepMetadataCard({
         <progress aria-label="Progresso indeterminado da análise geométrica" className="w-full" />
       </div>}
       {dispatchState.phase === "COMPLETED" && <p role="status" className="text-emerald-300">Perfil processado e pronto para renderização 2D.</p>}
+      {dispatchState.phase === "COMPLETED" && dispatchState.warnings?.length ? <div role="alert" className="rounded border border-amber-500 bg-amber-950/40 p-2 text-amber-100">
+        <p className="font-medium">Avisos de qualidade geométrica — revisão obrigatória:</p>
+        <ul className="list-disc pl-5">{dispatchState.warnings.map(warning => <li key={warning}>{warning}</li>)}</ul>
+      </div> : null}
       {dispatchState.phase === "FAILED" && <p role="alert" className="text-rose-300">{dispatchState.error ?? "A análise geométrica falhou."}</p>}
       {active && <button type="button" onClick={onCancel} className="rounded border border-slate-400 px-3 py-2 text-slate-100">
         Cancelar análise

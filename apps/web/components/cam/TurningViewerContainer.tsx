@@ -69,7 +69,7 @@ export function TurningViewerContainer({
   }
 
   function recordJob(job: DispatchJobStatus) {
-    dispatch({ type: "JOB", jobId: job.jobId, status: job.status, error: job.error });
+    dispatch({ type: "JOB", jobId: job.jobId, status: job.status, error: job.error, warnings: job.warnings });
     setProcessedProfile(job.status === "COMPLETED" && job.profile && job.boundingBox
       ? { profile: job.profile, boundingBox: job.boundingBox }
       : null);
@@ -128,8 +128,11 @@ export function TurningViewerContainer({
     {geometryInspection && <StepMetadataCard inspection={geometryInspection} dispatchState={dispatchState}
       onProcess={() => void processGeometry()} onCancel={cancelDispatch} />}
     {processedProfile?.profile && processedProfile.boundingBox &&
-      <AnalyticTurningProfile2D profile={processedProfile.profile} boundingBox={processedProfile.boundingBox}
-        width={640} height={400} className="rounded-lg border border-cyan-800 bg-slate-900 p-3" />}
+      <div className="space-y-2">
+        <p className="inline-flex rounded bg-amber-900 px-2 py-1 text-xs font-semibold text-amber-100">Perfil 2D Analítico — Revisão Obrigatória</p>
+        <AnalyticTurningProfile2D profile={processedProfile.profile} boundingBox={processedProfile.boundingBox}
+          width={640} height={400} className="rounded-lg border border-cyan-800 bg-slate-900 p-3" />
+      </div>}
     <label className="block text-sm">Cenário de teste
       <select value={selection} onChange={event => {
         const next = event.target.value;
