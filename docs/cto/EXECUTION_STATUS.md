@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-042
+
+`ROTA_2_STEP_GEOMETRY_ADAPTER_IN_PROGRESS`. AUTO-041 aprovada pelo CTO. Adaptador
+cliente limitado a 64 KiB extrai metadados STEP e sinaliza ausência de tokens B-Rep,
+sem inferir geometria. Testes web, tsc e lint aprovados; regressão backend pendente.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-041
 
 `ROTA_2_STEP_VIEWER_INTEGRATION_IN_PROGRESS`. AUTO-040 foi aprovada pelo CTO.
