@@ -828,3 +828,19 @@ fixado. Diagnóstico documentado sem correção, rerun, push adicional ou merge.
 CTO acolheu036 como R de infraestrutura e autorizou correção estrita do host da
 imagem MinIO, preservando release/digest, seguida de commit, push e monitoramento.
 Sem lógica de produto, merge, tag, release ou deploy.
+
+Execução concluída em `748cd1c`: referência oficial Quay com release/digest
+preservados; quatro checks remotos SUCCESS. PR #31 permanece Draft/CLEAN.
+
+## 2026-09-11 — TASK-LOCAL-038
+
+CTO aprovou037 integralmente e ordenou prontidão passiva para revisão do PR #31.
+Cinco documentos de fechamento permanecem locais sem commit/push. Nenhum merge,
+mudança de Draft ou nova frente técnica autorizada.
+
+## 2026-09-12 — CTO-CODEX-AUTO-040
+
+O proprietário autorizou o PR #31 para revisão e confirmou o merge. GitHub
+registrou `state=MERGED` em `400d18af8235d7cac67965e28ba3eaa6bab43413`.
+CTO homologou o evento e abriu a Rota 2 para validação STEP e uma dropzone local
+em `apps/web`, sem upload de rede, backend, push ou alteração dos limites físicos.

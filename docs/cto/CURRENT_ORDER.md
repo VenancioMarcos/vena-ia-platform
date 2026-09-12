@@ -1,16 +1,18 @@
 # Ordem CTO atual
 
-**Missão:** TASK-LOCAL-037
-**Estado:** CI_MINIO_REFERENCE_REMEDIATION_IN_PROGRESS
-**Data:** 2026-09-11
-**Baseline inicial sincronizado:** e2f3c92d5c7158b20a9375e4c6130f0c8cb30287 (33 commits sobre d798417).
+**Missão:** CTO-CODEX-AUTO-040
+**Estado:** ROTA_2_CAD_INGESTION_IN_PROGRESS
+**Data:** 2026-09-12
+**Baseline inicial sincronizado:** 400d18af8235d7cac67965e28ba3eaa6bab43413 (merge do PR #31 na `main`).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-036 acolhida R: Backend CI falhou no pull pelo host Docker Hub após suas validações
-passarem.037 autoriza trocar exclusivamente para `quay.io/minio/minio`, mantendo
-release/digest, validar YAML/diff, commit/push e monitorar PR #31. Sem merge.
+PR #31 foi integrado na `main` pelo merge commit `400d18a`. AUTO-040 autoriza
+uma fundação local da Rota 2: validação STEP em memória, dropzone declarativa,
+testes e documentação. O trabalho ocorre em `codex/v3.2-step-cad-ingestion-web`.
+É proibido push, alteração em backend/pacotes, dependências de rede e qualquer
+mudança nos limites operacionais.
 
 ## Rotas futuras para deliberação do proprietário
 
@@ -22,8 +24,9 @@ release/digest, validar YAML/diff, commit/push e monitorar PR #31. Sem merge.
 3. Perfil CNC real: coletar requisitos de comando/cinemática e revisão técnica
    para futura especificação do pós-processador. Não abre G9 nem autoriza máquina.
 
-O proprietário escolheu a Rota 1 em 2026-09-11. Rotas 2 e 3 permanecem apenas
-documentadas; nenhum upload CAD ou integração física foi iniciado.
+O proprietário concluiu a Rota 1 em 2026-09-12. A Rota 2 inicia apenas a
+validação cliente de arquivo e interface local; não há upload remoto, integração
+backend, geração NC ou autorização física.
 
 ## Continuidade obrigatória
 
@@ -33,7 +36,8 @@ autorização do proprietário, continuar. Não encerrar apenas por receber nova
 Confirmar no histórico da conversa se o envio já ocorreu antes de repetir mensagem.
 Atualizar este arquivo, CONTEXT e histórico após cada parecer/ordem.
 
-Push da branch dedicada autorizado e executado na TASK-LOCAL-035. Sem merge,
-tag, release ou deploy nesta autorização. NON_PRODUCTION;
+O merge do PR #31 foi autorizado e concluído pelo proprietário. AUTO-040 autoriza
+somente commit local na branch da Rota 2; sem push, tag, release ou deploy.
+NON_PRODUCTION;
 G9=PENDING_AUTHORITATIVE_REVIEW; PHYSICAL_USE_AUTHORIZED=false. Contas, credenciais,
 custos, acessos externos e operação CNC não são delegados ao AI-CTO.

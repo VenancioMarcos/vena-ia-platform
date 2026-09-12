@@ -27,9 +27,9 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-### 3.1 Síntese vigente — 2026-09-11
+### 3.1 Síntese vigente — 2026-09-12
 
-- **Handoff CTO:** TASK-LOCAL-036 isolou falha do Backend CI no host Docker Hub da imagem MinIO, após lint/tipos/migrations/testes passarem. TASK-LOCAL-037 autorizada: usar a referência oficial no Quay preservando release/digest, validar, commit/push e monitorar novamente o PR Draft #31. Nenhum merge autorizado; G9 e autoridade física permanecem bloqueados.
+- **Handoff CTO:** PR #31 foi integrado na `main` via `400d18af8235d7cac67965e28ba3eaa6bab43413`, após quatro checks remotos SUCCESS. CTO-CODEX-AUTO-040 abriu a Rota 2 na branch local `codex/v3.2-step-cad-ingestion-web`: validação STEP estritamente cliente e dropzone HTML5, sem upload remoto, backend, dependências, push ou alteração dos limites físico-operacionais.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.
