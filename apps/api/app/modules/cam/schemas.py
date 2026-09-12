@@ -76,6 +76,7 @@ class TurningStrategyPlanRequest(_CamContract):
     stock_radius_mm: float = Field(gt=0)
     stock_front_z_mm: float
     target_front_z_mm: float
+    finish_allowance_mm: float = Field(default=0.0, ge=0, le=5.0)
     tool: TurningToolParams
     cutting_parameters: CuttingParameters
     review_status: Literal["PROFILE_AVAILABLE_REQUIRES_REVIEW"]

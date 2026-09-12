@@ -1,5 +1,18 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-080
+
+`CAM_ROTA_2_FINISHING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-079 foi
+aprovada pelo CTO no commit `fe63498`, com 752 Python, 9 ignorados, 64 Web e checks
+estáticos verdes. Consolidação, publicação, Draft PR e CI em andamento; sem merge.
+
+## 2026-09-12 — CTO-CODEX-AUTO-079
+
+`CAM_ROTA_2_FINISHING_STRATEGY_IN_PROGRESS`. Estratégia contínua de acabamento
+implementada com compensação normal de raio e sobremetal, alcance efetivo da aresta
+e rejeição de concavidade incompatível. Doze testes CAM, 752 Python/9 ignorados e
+64 Web aprovados; `GROOVING` e saídas executáveis permanecem bloqueados.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-076
 
 `CAM_ROTA_1_STRATEGY_FOUNDATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-075 foi

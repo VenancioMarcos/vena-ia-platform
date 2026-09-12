@@ -22,10 +22,16 @@ def _request(
     *,
     operation_type: TurningOperationType = TurningOperationType.ROUGH_TURNING,
     depth_of_cut_mm: float = 2.0,
+    profile_data: tuple[RzPoint, ...] | None = None,
+    tip_radius_mm: float = 0.8,
+    finish_allowance_mm: float = 0.0,
+    cutting_edge_angle_deg: float = 95.0,
+    cutting_edge_length_mm: float = 12.0,
 ) -> TurningStrategyPlanRequest:
     return TurningStrategyPlanRequest(
         operation_type=operation_type,
-        profile_data=(
+        profile_data=profile_data
+        or (
             RzPoint(r_mm=0.0, z_mm=0.0),
             RzPoint(r_mm=10.0, z_mm=0.0),
             RzPoint(r_mm=10.0, z_mm=-20.0),
@@ -42,10 +48,11 @@ def _request(
         stock_radius_mm=14.0,
         stock_front_z_mm=2.0,
         target_front_z_mm=0.0,
+        finish_allowance_mm=finish_allowance_mm,
         tool=TurningToolParams(
-            tip_radius_mm=0.8,
-            cutting_edge_angle_deg=95.0,
-            cutting_edge_length_mm=12.0,
+            tip_radius_mm=tip_radius_mm,
+            cutting_edge_angle_deg=cutting_edge_angle_deg,
+            cutting_edge_length_mm=cutting_edge_length_mm,
             orientation=ToolOrientation.RIGHT_HAND,
             compensation=CompensationType.NONE,
         ),
@@ -133,12 +140,105 @@ def test_engine_rejects_profile_outside_declared_bounding_box() -> None:
         plan_turning_strategy(request)
 
 
-@pytest.mark.parametrize(
-    "operation_type",
-    (TurningOperationType.FINISHING, TurningOperationType.GROOVING),
-)
-def test_unimplemented_operations_fail_closed(operation_type: TurningOperationType) -> None:
+def test_plans_continuous_finishing_with_nose_radius_and_allowance() -> None:
+    result = plan_turning_strategy(
+        _request(
+            operation_type=TurningOperationType.FINISHING,
+            finish_allowance_mm=0.2,
+        )
+    )
+
+    assert result.operation_type == TurningOperationType.FINISHING
+    assert len(result.passes) == 1
+    assert result.passes[0].operation_type == TurningOperationType.FINISHING
+    assert result.passes[0].coordinates_rz_mm == (
+        RzPoint(r_mm=11.0, z_mm=0.0),
+        RzPoint(r_mm=11.0, z_mm=-20.0),
+    )
+    assert result.material_removal_volume_mm3 == 0.0
+    assert "TOOL_CENTER_PATH_INCLUDES_2D_NOSE_RADIUS_COMPENSATION" in result.warnings
+
+
+def test_plans_finishing_for_sampled_curved_profile_deterministically() -> None:
+    profile = (
+        RzPoint(r_mm=0.0, z_mm=0.0),
+        RzPoint(r_mm=10.0, z_mm=0.0),
+        RzPoint(r_mm=10.4, z_mm=-4.0),
+        RzPoint(r_mm=11.0, z_mm=-10.0),
+        RzPoint(r_mm=11.4, z_mm=-16.0),
+        RzPoint(r_mm=11.5, z_mm=-20.0),
+        RzPoint(r_mm=0.0, z_mm=-20.0),
+    )
+    request = _request(
+        operation_type=TurningOperationType.FINISHING,
+        profile_data=profile,
+    ).model_copy(
+        update={
+            "bounding_box": TurningBoundingBox(
+                max_radius_mm=11.5,
+                min_z_mm=-20.0,
+                max_z_mm=0.0,
+                total_z_length_mm=20.0,
+            )
+        }
+    )
+
+    result = plan_turning_strategy(request)
+
+    assert result == plan_turning_strategy(request)
+    assert len(result.passes[0].coordinates_rz_mm) == 5
+    assert all(
+        compensated.r_mm > nominal.r_mm
+        for compensated, nominal in zip(
+            result.passes[0].coordinates_rz_mm,
+            profile[1:-1],
+        )
+    )
+
+
+def test_finishing_rejects_tool_nose_larger_than_concave_profile_radius() -> None:
+    profile = (
+        RzPoint(r_mm=0.0, z_mm=0.0),
+        RzPoint(r_mm=10.0, z_mm=0.0),
+        RzPoint(r_mm=10.0, z_mm=-0.2),
+        RzPoint(r_mm=9.5, z_mm=-0.5),
+        RzPoint(r_mm=9.0, z_mm=-1.0),
+        RzPoint(r_mm=9.5, z_mm=-1.5),
+        RzPoint(r_mm=10.0, z_mm=-2.0),
+        RzPoint(r_mm=10.0, z_mm=-20.0),
+        RzPoint(r_mm=0.0, z_mm=-20.0),
+    )
+    with pytest.raises(
+        TurningStrategyValidationError,
+        match="TOOL_GEOMETRY_UNDERCUT_COLLISION",
+    ):
+        plan_turning_strategy(
+            _request(
+                operation_type=TurningOperationType.FINISHING,
+                profile_data=profile,
+                tip_radius_mm=2.0,
+            )
+        )
+
+
+def test_finishing_rejects_insufficient_angle_projected_edge_reach() -> None:
+    with pytest.raises(
+        TurningStrategyValidationError,
+        match="TOOL_GEOMETRY_UNDERCUT_COLLISION",
+    ):
+        plan_turning_strategy(
+            _request(
+                operation_type=TurningOperationType.FINISHING,
+                tip_radius_mm=0.8,
+                finish_allowance_mm=0.2,
+                cutting_edge_angle_deg=5.0,
+                cutting_edge_length_mm=2.0,
+            )
+        )
+
+
+def test_grooving_remains_fail_closed() -> None:
     with pytest.raises(
         TurningStrategyValidationError, match="OPERATION_NOT_IMPLEMENTED_IN_FOUNDATION"
     ):
-        plan_turning_strategy(_request(operation_type=operation_type))
+        plan_turning_strategy(_request(operation_type=TurningOperationType.GROOVING))
