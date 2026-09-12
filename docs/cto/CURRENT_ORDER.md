@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-070
-**Estado:** ROTA_6_CAD_EPIC_CONSOLIDATION_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-071
+**Estado:** ROTA_6_CAD_EPIC_CONSOLIDATION_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-12
 **Branch:** `codex/v3.6-cad-epic-baseline-consolidation`
 **Baseline da branch:** `00ed21d974d84f67faab1ef28a1b25fedf89322d`
@@ -9,13 +9,13 @@
 
 ## Estado vigente
 
-Os PRs #36 e #37 concluíram a Rota 5 na `main`. AUTO-070 consolida roadmaps,
-arquitetura e changelog para congelar documentalmente a baseline das Rotas 2 a 5.
+AUTO-070 foi aprovada no commit `7d5dbc4`. O gate atual é publicar a branch,
+abrir o PR documental contra `main` e coletar o CI inicial.
 
 ## Continuidade
 
-Validar a regressão completa e criar commit documental local, sem push. Enviar
-VTP-AUTO-070 ao CTO e aguardar a próxima ordem.
+Criar commit de governança, publicar a branch, abrir PR, coletar o CI, enviar
+VTP-AUTO-071 ao CTO e aguardar a próxima ordem. Nenhum merge autorizado.
 
 ## Limites permanentes
 

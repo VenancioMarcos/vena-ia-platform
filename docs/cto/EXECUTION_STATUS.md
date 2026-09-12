@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-071
+
+`ROTA_6_CAD_EPIC_CONSOLIDATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-070 aprovada
+em `7d5dbc4`; consolidação documental validada com 740 Python, 9 ignorados e 64 Web.
+Commit de governança, publicação, PR e CI em andamento; sem merge, tag ou release.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-070
 
 `ROTA_6_CAD_EPIC_CONSOLIDATION_IN_PROGRESS`. Branch criada da `main` em

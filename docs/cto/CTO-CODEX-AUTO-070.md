@@ -1,6 +1,6 @@
 # CTO-CODEX-AUTO-070 — Consolidação do épico CAD
 
-**Status:** `ROTA_6_CAD_EPIC_CONSOLIDATION_IN_PROGRESS`
+**Status:** `ROTA_6_CAD_EPIC_CONSOLIDATION_PR_OPEN_AWAITING_CI_AND_REVIEW`
 **Data:** 2026-09-12
 **Branch:** `codex/v3.6-cad-epic-baseline-consolidation`
 **Baseline:** `00ed21d974d84f67faab1ef28a1b25fedf89322d`
@@ -45,5 +45,5 @@ estratégia CAM, pós-processamento ou autoridade física.
 
 ## Continuidade
 
-Validar a regressão completa, criar commit local sem push, enviar VTP-AUTO-070 ao
-CTO e aguardar a próxima ordem sem encerrar a execução.
+O commit `7d5dbc4` foi aprovado pelo CTO. AUTO-071 publica a branch e abre o PR,
+sem merge, tag ou release.

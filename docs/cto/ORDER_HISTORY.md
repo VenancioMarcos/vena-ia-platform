@@ -992,3 +992,8 @@ O PR #37 foi integrado por squash merge em `00ed21d`; branch remota removida e
 
 Ordem exclusivamente documental para consolidar roadmaps, arquitetura e changelog
 do épico CAD das Rotas 2 a 5. Nenhum push, tag, release ou código funcional autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-071
+
+Ordem de publicação da branch documental, abertura de PR contra `main` e coleta do
+CI. Nenhum merge, tag, release ou autoridade física autorizado.
