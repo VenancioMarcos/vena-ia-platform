@@ -1718,4 +1718,22 @@ corpus, physical use or G9.
 
 ---
 
-**Fim do Documento 03 — Roadmap Executivo Vena_IA até v3.1**
+## 12. Baseline CAD STEP — Rotas 2 a 5
+
+**Estado:** `COMPLETED_ON_MAIN` em `00ed21d`.
+
+As Rotas 2 a 5 consolidam a ingestão STEP do navegador até a visualização analítica:
+
+1. dropzone e validação cliente limitada do cabeçalho ISO-10303-21;
+2. gateway REST FastAPI autenticado, job assíncrono e sandbox temporário;
+3. extração axissimétrica do perfil RZ e bounding box sob revisão obrigatória;
+4. renderização SVG reativa, polling limitado, cancelamento e warnings;
+5. hardening de degeneração, abertura acima de 0,05 mm, auto-interseção e envelope;
+6. stress com quatro uploads concorrentes e payload exato de 15 MiB.
+
+Baseline de qualidade: 740 testes Python aprovados, 9 ignorados e 64 testes Web,
+com Ruff, mypy, TypeScript, Next lint e CI verdes. Esta conclusão não altera
+`G9=PENDING_AUTHORITATIVE_REVIEW`, não autoriza uso físico e não inicia estratégias
+CAM, pós-processamento ou integração CNC.
+
+**Fim do Documento 03 — Roadmap Executivo Vena_IA até a baseline CAD da Rota 6**

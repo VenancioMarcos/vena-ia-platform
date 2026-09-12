@@ -8,6 +8,20 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — CAD ingestion and hardening epic (Routes 2–5)
+
+* Added a native STEP dropzone, bounded ISO-10303-21 client validation, asynchronous
+  dispatch with polling/cancellation and reactive RZ SVG rendering.
+* Added authenticated FastAPI ingestion/status routes, owner-isolated jobs,
+  temporary sandbox cleanup and OCCT-backed axisymmetric profile extraction.
+* Added fail-closed geometry checks for degenerate segments, closure gaps above
+  0.05 mm, self-intersection and conservative dimensional envelopes; bounded
+  warnings remain subject to mandatory review.
+* Added system coverage for four concurrent owners and an exact 15 MiB payload.
+  Baseline validation is 740 Python tests, 9 skipped and 64 Web tests.
+* `G9=PENDING_AUTHORITATIVE_REVIEW` and `PHYSICAL_USE_AUTHORIZED=FALSE`; no machine
+  send, DNC, NC transfer, cycle start, tag or release is included.
+
 ### Added — v3.2.0-turning-web-alpha documentary milestone
 
 * Consolidate local synthetic 2D turning contracts, projection, SVG, fixture
