@@ -828,3 +828,46 @@ fixado. Diagnóstico documentado sem correção, rerun, push adicional ou merge.
 CTO acolheu036 como R de infraestrutura e autorizou correção estrita do host da
 imagem MinIO, preservando release/digest, seguida de commit, push e monitoramento.
 Sem lógica de produto, merge, tag, release ou deploy.
+
+Execução concluída em `748cd1c`: referência oficial Quay com release/digest
+preservados; quatro checks remotos SUCCESS. PR #31 permanece Draft/CLEAN.
+
+## 2026-09-11 — TASK-LOCAL-038
+
+CTO aprovou037 integralmente e ordenou prontidão passiva para revisão do PR #31.
+Cinco documentos de fechamento permanecem locais sem commit/push. Nenhum merge,
+mudança de Draft ou nova frente técnica autorizada.
+
+## 2026-09-12 — CTO-CODEX-AUTO-040
+
+O proprietário autorizou o PR #31 para revisão e confirmou o merge. GitHub
+registrou `state=MERGED` em `400d18af8235d7cac67965e28ba3eaa6bab43413`.
+CTO homologou o evento e abriu a Rota 2 para validação STEP e uma dropzone local
+em `apps/web`, sem upload de rede, backend, push ou alteração dos limites físicos.
+
+## 2026-09-12 — CTO-CODEX-AUTO-041
+
+AUTO-040 foi aprovada pelo CTO. AUTO-041 autoriza integrar `StepUploadZone` na rota
+`/cam/turning`, mostrar os metadados locais e explicitar que a geometria aguarda
+despacho, mantendo G-code e despacho físico bloqueados. Exige testes web, tsc, lint,
+pytest, Ruff e diff; autoriza somente commit local na mesma branch, sem push.
+
+## 2026-09-12 — CTO-CODEX-AUTO-042
+
+AUTO-041 aprovada. Criado adaptador cliente de inspeção textual STEP limitado a
+64 KiB, com schema AP203/AP214/AP242, unidade e presença de tokens B-Rep, sem
+inventar geometria. Commit local `31a1920`; 49 testes web e regressão Python
+aprovados, sem push.
+
+## 2026-09-12 — CTO-CODEX-AUTO-043
+
+AUTO-042 aprovada. Criado `StepMetadataCard` acessível e integrado à rota
+`/cam/turning`, apresentando metadados e aviso defensivo sem controles físicos.
+Commit local `34e2e6b`, aprovado pelo CTO; sem push.
+
+## 2026-09-12 — CTO-CODEX-AUTO-044
+
+AUTO-043 aprovada. Ordem de consolidação documental da Rota 2 Etapa 1, repetição
+da suíte web, TypeScript, lint e diff, seguida de commit somente documental. Estado
+alvo: `ROTA_2_STAGE_1_CONSOLIDATED_AWAITING_PR_AUTHORIZATION`; nenhum push ou PR
+autorizado.

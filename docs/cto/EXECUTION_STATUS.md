@@ -1,5 +1,62 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-044
+
+`ROTA_2_STAGE_1_CONSOLIDATED_AWAITING_PR_AUTHORIZATION`. AUTO-043 aprovada pelo
+CTO no commit `34e2e6b`. A Etapa 1 reúne validação cliente STEP, dropzone HTML5,
+adaptador textual de metadados topológicos e card acessível de inspeção. Validação:
+51 testes web, TypeScript e lint aprovados com zero erros/avisos; `git diff --check`
+aprovado. Sem push, PR, backend, emissão NC ou alteração dos limites
+físico-operacionais.
+
+## 2026-09-12 — CTO-CODEX-AUTO-043
+
+`ROTA_2_STEP_METADATA_CARD_COMPLETED`. O `StepMetadataCard` apresenta schema,
+unidade, bytes lidos e suporte textual B-Rep na rota `/cam/turning`, com mensagem
+defensiva e sem controles de emissão física. Commit local `34e2e6b`, aprovado pelo
+CTO; sem push.
+
+## 2026-09-12 — CTO-CODEX-AUTO-042
+
+`ROTA_2_STEP_GEOMETRY_ADAPTER_IN_PROGRESS`. AUTO-041 aprovada pelo CTO. Adaptador
+cliente limitado a 64 KiB extrai metadados STEP e sinaliza ausência de tokens B-Rep,
+sem inferir geometria. Testes web, tsc e lint aprovados; regressão backend pendente.
+
+## 2026-09-12 — CTO-CODEX-AUTO-041
+
+`ROTA_2_STEP_VIEWER_INTEGRATION_IN_PROGRESS`. AUTO-040 foi aprovada pelo CTO.
+A rota `/cam/turning` agora integra a dropzone STEP local e preserva os fixtures
+sintéticos; o banner informa que a geometria aguarda despacho e que G-code/despacho
+físico estão bloqueados. Validação local: 46 testes web, TypeScript e lint sem
+erros/avisos; `pytest -q` 727 passed/9 skipped; Ruff e diff check aprovados.
+Commit local autorizado, sem push.
+
+## 2026-09-12 — CTO-CODEX-AUTO-040
+
+`ROTA_2_CAD_INGESTION_IN_PROGRESS`. PR #31 integrado na `main` via
+`400d18af8235d7cac67965e28ba3eaa6bab43413`; fonte de verdade confirmada como
+`MERGED`. A nova branch local `codex/v3.2-step-cad-ingestion-web` parte desse
+merge. Em escopo: validação STEP cliente, dropzone nativa, testes e documentação;
+sem push, backend, dependências, HTTP, geração NC ou mudança dos limites físicos.
+
+Implementação e validação local concluídas: 45 testes web, TypeScript e lint sem
+erros/avisos; `pytest -q` 727 passed/9 skipped; Ruff e diff check aprovados.
+Commit local pendente; sem push.
+
+## 2026-09-11 — TASK-LOCAL-038
+
+`PR_31_CI_GREEN_AWAITING_MAINTAINER_REVIEW`.037 aprovada integralmente.
+Local/remoto `748cd1c`,34 commits;quatro pipelines SUCCESS. PR #31 permanece
+OPEN/Draft/MERGEABLE/CLEAN. Cinco documentos de fechamento mantidos localmente,
+sem commit/push. Aguardar decisão formal do proprietário/mantenedor;sem merge.
+
+## 2026-09-11 — TASK-LOCAL-037 concluída
+
+`READY_FOR_MAINTAINER_PR_REVIEW`. Commit remoto `748cd1c`; YAML/diff PASS.
+Backend 3m23s, Frontend 1m15s, Runtime Policy 2m01s e Controlled Capacity 2m06s:
+todos SUCCESS. PR #31 OPEN/Draft/MERGEABLE/CLEAN. Documentação terminal local,
+sem commit/push adicional; nenhuma ação de merge autorizada.
+
 ## 2026-09-11 — TASK-LOCAL-037
 
 `CI_MINIO_REFERENCE_REMEDIATION_IN_PROGRESS`.036 acolhida R. Manifesto oficial

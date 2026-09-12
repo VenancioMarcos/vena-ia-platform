@@ -6,6 +6,9 @@ import { cylinderSuccess } from "../../tests/fixtures/cylinder-success";
 import { quantizedViolation } from "../../tests/fixtures/quantized-violation";
 import { reconstructionFailure } from "../../tests/fixtures/reconstruction-failure";
 import { TurningProfile2D } from "./TurningProfile2D";
+import { StepUploadZone } from "./StepUploadZone";
+import { inspectStepGeometry, type StepGeometryInspection } from "../../lib/step-geometry-adapter";
+import { StepMetadataCard } from "./StepMetadataCard";
 
 const samples = {
   CYLINDER_SUCCESS: { label: "Cilindro — sucesso sintético", result: cylinderSuccess },
@@ -13,10 +16,25 @@ const samples = {
   RECONSTRUCTION_FAILURE: { label: "Falha de reconstrução", result: reconstructionFailure },
 } as const;
 export type TurningFixtureSelection = keyof typeof samples;
+export type LocalStepFileMetadata = Readonly<{ filename: string; sizeBytes: number }>;
+
+function formatFileSize(sizeBytes: number): string {
+  if (sizeBytes < 1024) return `${sizeBytes} B`;
+  if (sizeBytes < 1024 * 1024) return `${(sizeBytes / 1024).toFixed(1)} KB`;
+  return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 /** Local fixture preview only; initialSelection is read once on mount. */
-export function TurningViewerContainer({ initialSelection = "CYLINDER_SUCCESS" }: Readonly<{ initialSelection?: TurningFixtureSelection }>) {
+export function TurningViewerContainer({
+  initialSelection = "CYLINDER_SUCCESS",
+  initialLocalStepFile = null,
+}: Readonly<{
+  initialSelection?: TurningFixtureSelection;
+  initialLocalStepFile?: LocalStepFileMetadata | null;
+}>) {
   const [selection, setSelection] = useState<TurningFixtureSelection>(initialSelection);
+  const [localStepFile, setLocalStepFile] = useState<LocalStepFileMetadata | null>(initialLocalStepFile);
+  const [geometryInspection, setGeometryInspection] = useState<StepGeometryInspection | null>(null);
   const result: SyntheticTurningExecutionResult = samples[selection].result;
   // Never substitute the nominal plan when reconstruction did not produce a plan.
   const plan = result.quantized_plan;
@@ -26,6 +44,19 @@ export function TurningViewerContainer({ initialSelection = "CYLINDER_SUCCESS" }
   return <section aria-label="Inspeção de fixtures de torneamento" className="space-y-4 rounded-xl border border-slate-700 bg-slate-950 p-4 text-slate-100">
     <h2 className="text-lg font-semibold">Torneamento · inspeção sintética</h2>
     <p className="text-sm text-slate-300">Exemplos locais de teste. Visualização sem autorização para uso físico.</p>
+    <StepUploadZone
+      onAccepted={file => {
+        setLocalStepFile({ filename: file.name, sizeBytes: file.size });
+        void inspectStepGeometry(file).then(setGeometryInspection, () => setGeometryInspection(null));
+      }}
+      onCleared={() => { setLocalStepFile(null); setGeometryInspection(null); }}
+    />
+    {localStepFile && <div role="status" aria-live="polite" className="rounded-lg border border-amber-400 bg-amber-950/30 p-3 text-sm text-amber-100">
+      <p className="font-medium">Arquivo local carregado — Pipeline de geometria analítica aguardando despacho.</p>
+      <p>{localStepFile.filename} · {formatFileSize(localStepFile.sizeBytes)}</p>
+      <p className="mt-1 text-xs">Emissão de G-code e despacho físico permanecem bloqueados.</p>
+    </div>}
+    {geometryInspection && <StepMetadataCard inspection={geometryInspection} />}
     <label className="block text-sm">Cenário de teste
       <select value={selection} onChange={event => {
         const next = event.target.value;

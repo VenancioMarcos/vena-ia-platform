@@ -43,3 +43,15 @@ test("reconstruction failure does not silently display the retained nominal plan
   assert.match(html, /Não disponível/);
   assert.doesNotMatch(html, /<svg|data-motion=/);
 });
+
+test("local STEP state preserves the synthetic viewer and shows the defensive dispatch banner", () => {
+  const html = renderToStaticMarkup(createElement(TurningViewerContainer, {
+    initialLocalStepFile: { filename: "bracket.STEP", sizeBytes: 2 * 1024 * 1024 },
+  }));
+  assert.match(html, /Envio local de arquivo STEP/);
+  assert.match(html, /Arquivo local carregado — Pipeline de geometria analítica aguardando despacho\./);
+  assert.match(html, /bracket\.STEP.*2\.0 MB/);
+  assert.match(html, /Emissão de G-code e despacho físico permanecem bloqueados\./);
+  assert.match(html, /value="CYLINDER_SUCCESS" selected=""/);
+  assert.match(html, /<svg/);
+});
