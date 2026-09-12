@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-062
+
+`ROTA_5_CAD_HARDENING_IN_PROGRESS`. Branch criada da `main` integrada em
+`e8774a7`. O pipeline rejeita perfis degenerados, abertos, auto-intersectantes e
+fora do envelope; tolerâncias aceitáveis produzem avisos exibidos na UI com revisão
+obrigatória. Validação aprovada: 738 Python, 9 ignorados, 64 Web, TypeScript, lint,
+Ruff, mypy e diff. Commit local em andamento; sem push ou autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-059
 
 `ROTA_4_E2E_CAD_INTEGRATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-058 aprovada

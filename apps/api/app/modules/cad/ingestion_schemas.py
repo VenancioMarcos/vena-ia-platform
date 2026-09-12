@@ -38,6 +38,7 @@ class CadProfileData(BaseModel):
     points: tuple[CadProfilePoint, ...]
     bounding_box: CadProfileBoundingBox
     review_status: Literal["PROFILE_AVAILABLE_REQUIRES_REVIEW"]
+    warnings: tuple[str, ...] = ()
 
 
 class CadJobStatusResponse(BaseModel):

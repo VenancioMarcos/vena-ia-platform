@@ -20,6 +20,7 @@ export type DispatchJobStatus = Readonly<{
     totalZLengthMm: number;
   }>;
   reviewStatus?: "PROFILE_AVAILABLE_REQUIRES_REVIEW";
+  warnings?: readonly string[];
 }>;
 
 export type DispatchTransport = (
@@ -48,13 +49,15 @@ function finiteNumber(value: unknown, minimum = -Infinity): value is number {
   return typeof value === "number" && Number.isFinite(value) && value >= minimum;
 }
 
-function normalizeCompletedProfile(candidate: Record<string, unknown>): Pick<DispatchJobStatus, "profile" | "boundingBox" | "reviewStatus"> | null {
+function normalizeCompletedProfile(candidate: Record<string, unknown>): Pick<DispatchJobStatus, "profile" | "boundingBox" | "reviewStatus" | "warnings"> | null {
   const rawProfile = candidate.profile_data;
   if (!rawProfile || typeof rawProfile !== "object") return null;
   const profile = rawProfile as Record<string, unknown>;
   const rawPoints = profile.points;
   const rawBounds = profile.bounding_box;
+  const rawWarnings = profile.warnings ?? [];
   if (!Array.isArray(rawPoints) || rawPoints.length < 2 || !rawBounds || typeof rawBounds !== "object" ||
+      !Array.isArray(rawWarnings) || rawWarnings.some(warning => typeof warning !== "string" || !warning.trim()) ||
       profile.review_status !== "PROFILE_AVAILABLE_REQUIRES_REVIEW") return null;
 
   const points = rawPoints.map(point => {
@@ -85,6 +88,7 @@ function normalizeCompletedProfile(candidate: Record<string, unknown>): Pick<Dis
       totalZLengthMm: bounds.total_z_length_mm,
     },
     reviewStatus: "PROFILE_AVAILABLE_REQUIRES_REVIEW",
+    warnings: rawWarnings.map(warning => (warning as string).slice(0, 160)),
   };
 }
 
