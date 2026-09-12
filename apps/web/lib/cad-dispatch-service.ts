@@ -1,3 +1,5 @@
+import type { TurningProfile2D } from "./turning-contracts";
+
 export type DispatchPayload = Readonly<{
   fileBytes: ArrayBuffer | Blob;
   filename: string;
@@ -10,6 +12,14 @@ export type DispatchJobStatus = Readonly<{
   jobId: string;
   status: DispatchJobState;
   error?: string;
+  profile?: TurningProfile2D;
+  boundingBox?: Readonly<{
+    maxRadiusMm: number;
+    minZMm: number;
+    maxZMm: number;
+    totalZLengthMm: number;
+  }>;
+  reviewStatus?: "PROFILE_AVAILABLE_REQUIRES_REVIEW";
 }>;
 
 export type DispatchTransport = (
@@ -19,12 +29,14 @@ export type DispatchTransport = (
 
 export type CadDispatchOptions = Readonly<{
   endpoint?: string;
+  statusEndpoint?: string;
   timeoutMs?: number;
   transport?: DispatchTransport;
   signal?: AbortSignal;
 }>;
 
-const DEFAULT_DISPATCH_ENDPOINT = "/api/cad/dispatch";
+const DEFAULT_DISPATCH_ENDPOINT = "/api/v1/cad/step/dispatch";
+const DEFAULT_STATUS_ENDPOINT = "/api/v1/cad/step/jobs";
 const DEFAULT_TIMEOUT_MS = 15_000;
 const jobStates = new Set<DispatchJobState>(["QUEUED", "PROCESSING", "COMPLETED", "FAILED"]);
 
@@ -32,17 +44,67 @@ function failed(error: string, jobId = ""): DispatchJobStatus {
   return { jobId, status: "FAILED", error };
 }
 
+function finiteNumber(value: unknown, minimum = -Infinity): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= minimum;
+}
+
+function normalizeCompletedProfile(candidate: Record<string, unknown>): Pick<DispatchJobStatus, "profile" | "boundingBox" | "reviewStatus"> | null {
+  const rawProfile = candidate.profile_data;
+  if (!rawProfile || typeof rawProfile !== "object") return null;
+  const profile = rawProfile as Record<string, unknown>;
+  const rawPoints = profile.points;
+  const rawBounds = profile.bounding_box;
+  if (!Array.isArray(rawPoints) || rawPoints.length < 2 || !rawBounds || typeof rawBounds !== "object" ||
+      profile.review_status !== "PROFILE_AVAILABLE_REQUIRES_REVIEW") return null;
+
+  const points = rawPoints.map(point => {
+    if (!point || typeof point !== "object") return null;
+    const rawPoint = point as Record<string, unknown>;
+    return finiteNumber(rawPoint.r_mm, 0) && finiteNumber(rawPoint.z_mm)
+      ? { radius_mm: rawPoint.r_mm, z_mm: rawPoint.z_mm }
+      : null;
+  });
+  if (points.some(point => point === null)) return null;
+
+  const bounds = rawBounds as Record<string, unknown>;
+  if (!finiteNumber(bounds.max_radius_mm, 0) || !finiteNumber(bounds.min_z_mm) ||
+      !finiteNumber(bounds.max_z_mm) || !finiteNumber(bounds.total_z_length_mm, 0) ||
+      bounds.max_z_mm < bounds.min_z_mm) return null;
+
+  return {
+    profile: {
+      points: points as Array<{ radius_mm: number; z_mm: number }>,
+      axis_origin: [0, 0, 0],
+      axis_direction: [0, 0, 1],
+      is_closed: false,
+    },
+    boundingBox: {
+      maxRadiusMm: bounds.max_radius_mm,
+      minZMm: bounds.min_z_mm,
+      maxZMm: bounds.max_z_mm,
+      totalZLengthMm: bounds.total_z_length_mm,
+    },
+    reviewStatus: "PROFILE_AVAILABLE_REQUIRES_REVIEW",
+  };
+}
+
 function normalizeJobStatus(value: unknown, fallbackJobId = ""): DispatchJobStatus {
   if (!value || typeof value !== "object") return failed("Resposta de despacho CAD inválida.", fallbackJobId);
   const candidate = value as Record<string, unknown>;
-  const jobId = typeof candidate.jobId === "string" && candidate.jobId.trim() ? candidate.jobId : fallbackJobId;
+  const rawJobId = candidate.job_id;
+  const jobId = typeof rawJobId === "string" && rawJobId.trim() ? rawJobId : fallbackJobId;
   const status = candidate.status;
   if (!jobId || typeof status !== "string" || !jobStates.has(status as DispatchJobState)) {
     return failed("Resposta de despacho CAD inválida.", jobId);
   }
-  const error = typeof candidate.error === "string" && candidate.error.trim()
-    ? candidate.error.slice(0, 300)
+  const error = typeof candidate.error_detail === "string" && candidate.error_detail.trim()
+    ? candidate.error_detail.slice(0, 300)
     : undefined;
+  if (status === "COMPLETED") {
+    const completed = normalizeCompletedProfile(candidate);
+    if (!completed) return failed("Perfil RZ retornado pela API é inválido.", jobId);
+    return { jobId, status, ...completed };
+  }
   return error ? { jobId, status: status as DispatchJobState, error } : { jobId, status: status as DispatchJobState };
 }
 
@@ -69,8 +131,6 @@ export function buildDispatchFormData(payload: DispatchPayload): FormData {
 
   const form = new FormData();
   form.append("file", file, filename);
-  form.append("filename", filename);
-  form.append("schema", schema);
   return form;
 }
 
@@ -126,7 +186,7 @@ export async function pollCadDispatchJob(
 ): Promise<DispatchJobStatus> {
   const normalizedJobId = jobId.trim();
   if (!normalizedJobId) return failed("O identificador do job é obrigatório.");
-  const endpoint = (options.endpoint ?? DEFAULT_DISPATCH_ENDPOINT).replace(/\/$/, "");
+  const endpoint = (options.statusEndpoint ?? DEFAULT_STATUS_ENDPOINT).replace(/\/$/, "");
   return requestJob(`${endpoint}/${encodeURIComponent(normalizedJobId)}`, { method: "GET" }, options, normalizedJobId);
 }
 

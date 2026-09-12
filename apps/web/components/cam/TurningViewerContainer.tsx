@@ -5,7 +5,7 @@ import type { SyntheticTurningExecutionResult } from "../../lib/turning-contract
 import { cylinderSuccess } from "../../tests/fixtures/cylinder-success";
 import { quantizedViolation } from "../../tests/fixtures/quantized-violation";
 import { reconstructionFailure } from "../../tests/fixtures/reconstruction-failure";
-import { TurningProfile2D } from "./TurningProfile2D";
+import { AnalyticTurningProfile2D, TurningProfile2D } from "./TurningProfile2D";
 import { StepUploadZone } from "./StepUploadZone";
 import { inspectStepGeometry, type StepGeometryInspection } from "../../lib/step-geometry-adapter";
 import { idleDispatchState, reduceCadDispatchState, StepMetadataCard } from "./StepMetadataCard";
@@ -38,6 +38,7 @@ export function TurningViewerContainer({
   const [selectedStepFile, setSelectedStepFile] = useState<File | null>(null);
   const [geometryInspection, setGeometryInspection] = useState<StepGeometryInspection | null>(null);
   const [dispatchState, dispatch] = useReducer(reduceCadDispatchState, idleDispatchState);
+  const [processedProfile, setProcessedProfile] = useState<Pick<DispatchJobStatus, "profile" | "boundingBox"> | null>(null);
   const dispatchController = useRef<AbortController | null>(null);
   const result: SyntheticTurningExecutionResult = samples[selection].result;
   // Never substitute the nominal plan when reconstruction did not produce a plan.
@@ -50,6 +51,7 @@ export function TurningViewerContainer({
     dispatchController.current?.abort();
     dispatchController.current = null;
     dispatch({ type: "RESET" });
+    setProcessedProfile(null);
   }
 
   async function waitForPoll(signal: AbortSignal): Promise<void> {
@@ -68,6 +70,9 @@ export function TurningViewerContainer({
 
   function recordJob(job: DispatchJobStatus) {
     dispatch({ type: "JOB", jobId: job.jobId, status: job.status, error: job.error });
+    setProcessedProfile(job.status === "COMPLETED" && job.profile && job.boundingBox
+      ? { profile: job.profile, boundingBox: job.boundingBox }
+      : null);
   }
 
   async function processGeometry() {
@@ -122,6 +127,9 @@ export function TurningViewerContainer({
     </div>}
     {geometryInspection && <StepMetadataCard inspection={geometryInspection} dispatchState={dispatchState}
       onProcess={() => void processGeometry()} onCancel={cancelDispatch} />}
+    {processedProfile?.profile && processedProfile.boundingBox &&
+      <AnalyticTurningProfile2D profile={processedProfile.profile} boundingBox={processedProfile.boundingBox}
+        width={640} height={400} className="rounded-lg border border-cyan-800 bg-slate-900 p-3" />}
     <label className="block text-sm">Cenário de teste
       <select value={selection} onChange={event => {
         const next = event.target.value;
