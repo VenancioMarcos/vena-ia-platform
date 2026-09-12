@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-074
+
+`CAM_EPIC_PREPARATION_IN_PROGRESS`. O fechamento documental `3f2b198` foi
+publicado e `main` permanece alinhada com `origin/main`; a tag `v0.7.0-cad`
+continua congelada em `a6babbd`. O perfil RZ, o job autenticado, a fundação
+sintética e a UI foram mapeados. Não existe módulo CAM no backend e nenhum código
+funcional ou autoridade física foi adicionado.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-073
 
 `CAD_EPIC_OFFICIALLY_CLOSED_BASELINE_TAGGED`. PR #38 integrado por squash merge

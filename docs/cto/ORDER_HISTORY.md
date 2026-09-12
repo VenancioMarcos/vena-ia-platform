@@ -1008,3 +1008,10 @@ O PR #38 foi retirado de Draft; estado confirmado como `OPEN`, `MERGEABLE` e
 O PR #38 foi integrado por squash merge em `a6babbd`. A tag anotada oficial
 `v0.7.0-cad` foi publicada e aponta para a mesma baseline. `main` e
 `origin/main` permanecem alinhadas; limites físicos inalterados.
+
+## 2026-09-12 — CTO-CODEX-AUTO-074
+
+O fechamento documental `3f2b198` foi publicado na `main`. A preparação do épico
+CAM mapeou o perfil RZ autenticado, a fundação sintética e a UI existente, além das
+lacunas de contratos e gates para estratégias. Nenhum planejador novo, trajetória,
+pós-processamento, emissão NC ou autoridade física foi implementado.

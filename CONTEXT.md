@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.33
+**Versão:** 2.34
 **Última atualização:** 2026-09-12
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-12
+
+- **Handoff CTO:** `CAM_EPIC_PREPARATION_IN_PROGRESS`. O fechamento documental
+  `3f2b198` foi publicado e `main` está alinhada com `origin/main`; a tag
+  `v0.7.0-cad` preserva a baseline de produto `a6babbd`. O pipeline autenticado
+  entrega perfil RZ revisável à UI, enquanto o backend ainda não possui módulo CAM.
+  Interfaces e lacunas para estratégias foram mapeadas sem alterar código funcional.
 
 - **Handoff CTO:** `CAD_EPIC_OFFICIALLY_CLOSED_BASELINE_TAGGED`. O PR #38 foi
   integrado em `a6babbd` às 2026-09-12T19:30:01Z; `main` e `origin/main`

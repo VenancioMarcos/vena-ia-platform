@@ -1,21 +1,23 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-073-MERGE-AND-SYNC
-**Estado:** CAD_EPIC_OFFICIALLY_CLOSED_BASELINE_TAGGED
+**Missão:** CTO-CODEX-AUTO-074
+**Estado:** CAM_EPIC_PREPARATION_IN_PROGRESS
 **Data:** 2026-09-12
-**Branch:** `codex/auto-073-cad-baseline-closeout`
-**Baseline da branch:** `a6babbde437e5547e00ba83038218d7d69178023`
+**Branch:** `codex/auto-074-cam-epic-preparation`
+**Baseline da branch:** `3f2b19877c528cab0d080fcb1bc0756f4bef7390`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O PR #38 foi integrado em `a6babbd`; `main` e `origin/main` estão alinhadas.
-A tag anotada `v0.7.0-cad` foi publicada sobre a baseline do épico CAD.
+O fechamento documental `3f2b198` foi publicado; `main` e `origin/main` estão
+alinhadas. A tag `v0.7.0-cad` preserva a baseline de produto `a6babbd`. O perfil
+RZ chega à UI por contrato autenticado, mas ainda não existe módulo CAM no backend.
 
 ## Continuidade
 
-Criar commit documental local de fechamento, sem push. Enviar VTP-AUTO-073 ao CTO
-e aguardar a próxima ordem sem encerrar a execução.
+Documentar as interfaces e lacunas para desbaste, acabamento, faceamento e canais,
+sem implementar estratégia ou trajetória. Enviar VTP-AUTO-074 ao CTO e aguardar a
+próxima ordem sem encerrar a execução.
 
 ## Limites permanentes
 
