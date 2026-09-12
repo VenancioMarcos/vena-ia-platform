@@ -903,3 +903,12 @@ AUTO-048 aprovada no commit `cdceafd`. Ordem integra o ciclo visual de despacho 
 card STEP e à rota `/cam/turning`, com estados explícitos, polling limitado e
 cancelamento via `AbortController`; sem backend, push, emissão NC ou autoridade
 física.
+
+AUTO-049 foi aprovada pelo CTO no commit `34e7c22`, com 59 testes web e regressão
+Python integral.
+
+## 2026-09-12 — CTO-CODEX-AUTO-050
+
+Ordem de consolidação documental da Etapa 2, publicação da branch dedicada,
+abertura de Draft PR contra `main` e monitoramento do CI inicial. Nenhum merge,
+backend, dependência de rede ou mudança de autoridade física está autorizado.

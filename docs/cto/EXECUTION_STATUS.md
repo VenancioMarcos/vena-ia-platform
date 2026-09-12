@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-050
+
+`ROTA_2_STAGE_2_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-049 aprovada pelo CTO no
+commit `34e7c22`. Etapa 2 consolidada: serviço cliente assíncrono STEP e ciclo
+reativo na rota `/cam/turning`; 59 testes web, TypeScript/lint, 727 testes Python,
+Ruff e diff aprovados. Commit documental em preparação; push e Draft PR pendentes
+do gate externo. Nenhum merge autorizado.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-049
 
 `ROTA_2_UI_ASYNC_DISPATCH_INTEGRATION_IN_PROGRESS`. AUTO-048 aprovada pelo CTO no

@@ -19,6 +19,8 @@ de jobs STEP, sem integrar interface, backend ou operação física.
 - 727 testes Python aprovados e 9 ignorados.
 - Ruff e `git diff --check` aprovados.
 
+Parecer do CTO: **APROVADO (A)** no commit local `cdceafd`.
+
 ## Limites
 
 `PHYSICAL_USE_AUTHORIZED=FALSE`; `G9=PENDING_AUTHORITATIVE_REVIEW`;

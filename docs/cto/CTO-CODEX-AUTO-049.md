@@ -11,3 +11,5 @@ visualização 2D; não existem controles de emissão NC ou operação física.
 - TypeScript e Next lint aprovados com zero erros e zero avisos.
 - 727 testes Python aprovados e 9 ignorados.
 - Ruff e `git diff --check` aprovados.
+
+Parecer do CTO: **APROVADO (A)** no commit local `34e7c22`.
