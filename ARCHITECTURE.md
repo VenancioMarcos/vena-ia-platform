@@ -411,3 +411,27 @@ candidate output, blind replay and Digital Thread replay. Download requires curr
 membership and revalidates all bindings. G9 cannot be promoted by this route or UI;
 no machine adapter or physical-control port exists. Details:
 `docs/CONTROLLED_TEST_ENVIRONMENT.md` and ADR-0036.
+
+---
+
+## 23. Baseline de Ingestão e Processamento CAD STEP — Rotas 2 a 5
+
+```text
+StepUploadZone + validação ISO-10303-21 limitada
+  → POST /api/v1/cad/step/dispatch (autenticado)
+  → CadIngestionGateway (job por proprietário + sandbox temporário)
+  → StepBackgroundProcessor (parser + OCCT + perfil RZ)
+  → GET /api/v1/cad/step/jobs/{job_id}
+  → warnings revisáveis + AnalyticTurningProfile2D SVG
+```
+
+O pipeline permanece no domínio `apps/api/app/modules/cad` do Modular Monolith.
+Arquivos vivem apenas no sandbox temporário e são removidos em `finally`; o estado
+do job é process-local e isolado por proprietário. O frontend em `apps/web` somente
+despacha, consulta e renderiza a resposta analítica.
+
+O hardening rejeita segmentos degenerados, perfis abertos acima de 0,05 mm,
+auto-interseções e envelopes dimensionais excedidos. Pequenas folgas aceitas geram
+warnings e nunca removem `PROFILE_AVAILABLE_REQUIRES_REVIEW`. Testes cobrem quatro
+uploads concorrentes e o teto de 15 MiB. Não existe acoplamento desta rota com
+machine-send, DNC, transferência NC, cycle start ou autoridade física.

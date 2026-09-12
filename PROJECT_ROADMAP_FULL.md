@@ -6,6 +6,29 @@
 
 ---
 
+## Baseline CAD vigente — Rotas 2 a 5 concluídas
+
+O épico de ingestão e processamento CAD STEP está integrado na `main` até o commit
+`00ed21d`. A baseline cobre dropzone cliente, validação ISO-10303-21 limitada,
+gateway REST FastAPI autenticado, sandbox temporário, processamento assíncrono,
+extração de perfil axissimétrico RZ, renderização SVG reativa, hardening geométrico
+e stress concorrente no teto de 15 MiB.
+
+Matriz de cobertura:
+
+| Camada | Evidência integrada | Limite permanente |
+|---|---|---|
+| Web | Upload, validação, polling, cancelamento, warnings e SVG RZ | Revisão obrigatória |
+| API | Ingestão autenticada, job isolado, worker e limpeza do sandbox | Sem emissão física |
+| Geometria | Perfil RZ, tolerância, degeneração e auto-interseção | Somente análise |
+| Resiliência | 4 uploads concorrentes e payload exato de 15 MiB | Ambiente controlado |
+| Qualidade | 740 Python, 9 ignorados e 64 Web | CI e revisão humana |
+
+`G9=PENDING_AUTHORITATIVE_REVIEW` e `PHYSICAL_USE_AUTHORIZED=FALSE`. A baseline não
+inclui pós-processamento, machine-send, DNC, transferência NC ou cycle start.
+
+---
+
 ## 📍 COMECE AQUI — Leitura Obrigatória (Antes de Qualquer Coisa)
 
 Todo agente de IA que começa a trabalhar neste projeto **deve ler nesta ordem**:
@@ -273,4 +296,3 @@ R: Use [`.ai/CONTEXT_TEMPLATE.md`](.ai/CONTEXT_TEMPLATE.md) e atualize `CONTEXT.
 **Criado:** 2026-07-11  
 **Responsável:** Claude (Documentation Engineer)  
 **Próxima revisão:** Após v0.3 concluída
-

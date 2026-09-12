@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-070
+
+`ROTA_6_CAD_EPIC_CONSOLIDATION_IN_PROGRESS`. Branch criada da `main` em
+`00ed21d`. Roadmaps, arquitetura e changelog consolidam a baseline das Rotas 2 a 5,
+incluindo cobertura e limites. Regressão aprovada: 740 Python, 9 ignorados, 64 Web,
+TypeScript, lint, Ruff, mypy e diff. Commit local em andamento; nenhum push, tag,
+release ou autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-067
 
 `ROTA_5_STAGE_2_STRESS_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-066 aprovada no
