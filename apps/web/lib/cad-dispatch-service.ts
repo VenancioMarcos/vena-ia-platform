@@ -21,6 +21,7 @@ export type CadDispatchOptions = Readonly<{
   endpoint?: string;
   timeoutMs?: number;
   transport?: DispatchTransport;
+  signal?: AbortSignal;
 }>;
 
 const DEFAULT_DISPATCH_ENDPOINT = "/api/cad/dispatch";
@@ -45,13 +46,14 @@ function normalizeJobStatus(value: unknown, fallbackJobId = ""): DispatchJobStat
   return error ? { jobId, status: status as DispatchJobState, error } : { jobId, status: status as DispatchJobState };
 }
 
-function normalizedOptions(options: CadDispatchOptions): Required<CadDispatchOptions> {
+function normalizedOptions(options: CadDispatchOptions) {
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) throw new Error("O timeout de despacho CAD é inválido.");
   return {
     endpoint: options.endpoint ?? DEFAULT_DISPATCH_ENDPOINT,
     timeoutMs,
     transport: options.transport ?? fetch,
+    signal: options.signal,
   };
 }
 
@@ -78,7 +80,7 @@ async function requestJob(
   options: CadDispatchOptions,
   fallbackJobId = "",
 ): Promise<DispatchJobStatus> {
-  let resolved: Required<CadDispatchOptions>;
+  let resolved: ReturnType<typeof normalizedOptions>;
   try {
     resolved = normalizedOptions(options);
   } catch (error) {
@@ -86,17 +88,21 @@ async function requestJob(
   }
 
   const controller = new AbortController();
+  const abortFromCaller = () => controller.abort();
+  if (resolved.signal?.aborted) controller.abort();
+  else resolved.signal?.addEventListener("abort", abortFromCaller, { once: true });
   const timer = setTimeout(() => controller.abort(), resolved.timeoutMs);
   try {
     const response = await resolved.transport(url, { ...init, signal: controller.signal });
     if (!response.ok) return failed(`Despacho CAD recusado (HTTP ${response.status}).`, fallbackJobId);
     return normalizeJobStatus(await response.json(), fallbackJobId);
   } catch {
-    return controller.signal.aborted
-      ? failed("O despacho CAD excedeu o tempo limite.", fallbackJobId)
-      : failed("Falha de comunicação no despacho CAD.", fallbackJobId);
+    if (resolved.signal?.aborted) return failed("O despacho CAD foi cancelado.", fallbackJobId);
+    if (controller.signal.aborted) return failed("O despacho CAD excedeu o tempo limite.", fallbackJobId);
+    return failed("Falha de comunicação no despacho CAD.", fallbackJobId);
   } finally {
     clearTimeout(timer);
+    resolved.signal?.removeEventListener("abort", abortFromCaller);
   }
 }
 

@@ -896,3 +896,10 @@ missão. O CTO aprovou a transição.
 O proprietário autorizou e executou por meio do Codex o merge do PR #32 na `main`,
 registrado em `2d3da5d`. AUTO-048 abre a Etapa 2 em branch dedicada para serviço
 cliente de despacho assíncrono STEP, sem backend, push ou autoridade física.
+
+## 2026-09-12 — CTO-CODEX-AUTO-049
+
+AUTO-048 aprovada no commit `cdceafd`. Ordem integra o ciclo visual de despacho ao
+card STEP e à rota `/cam/turning`, com estados explícitos, polling limitado e
+cancelamento via `AbortController`; sem backend, push, emissão NC ou autoridade
+física.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useReducer, useRef, useState } from "react";
 import type { SyntheticTurningExecutionResult } from "../../lib/turning-contracts";
 import { cylinderSuccess } from "../../tests/fixtures/cylinder-success";
 import { quantizedViolation } from "../../tests/fixtures/quantized-violation";
@@ -8,7 +8,8 @@ import { reconstructionFailure } from "../../tests/fixtures/reconstruction-failu
 import { TurningProfile2D } from "./TurningProfile2D";
 import { StepUploadZone } from "./StepUploadZone";
 import { inspectStepGeometry, type StepGeometryInspection } from "../../lib/step-geometry-adapter";
-import { StepMetadataCard } from "./StepMetadataCard";
+import { idleDispatchState, reduceCadDispatchState, StepMetadataCard } from "./StepMetadataCard";
+import { dispatchCadJob, pollCadDispatchJob, type DispatchJobStatus } from "../../lib/cad-dispatch-service";
 
 const samples = {
   CYLINDER_SUCCESS: { label: "Cilindro — sucesso sintético", result: cylinderSuccess },
@@ -34,29 +35,93 @@ export function TurningViewerContainer({
 }>) {
   const [selection, setSelection] = useState<TurningFixtureSelection>(initialSelection);
   const [localStepFile, setLocalStepFile] = useState<LocalStepFileMetadata | null>(initialLocalStepFile);
+  const [selectedStepFile, setSelectedStepFile] = useState<File | null>(null);
   const [geometryInspection, setGeometryInspection] = useState<StepGeometryInspection | null>(null);
+  const [dispatchState, dispatch] = useReducer(reduceCadDispatchState, idleDispatchState);
+  const dispatchController = useRef<AbortController | null>(null);
   const result: SyntheticTurningExecutionResult = samples[selection].result;
   // Never substitute the nominal plan when reconstruction did not produce a plan.
   const plan = result.quantized_plan;
   const moves = plan?.operations.flatMap(operation => operation.moves) ?? [];
   const passes = plan?.operations.reduce((total, operation) => total + operation.passes_count, 0);
   const feeds = [...new Set(moves.map(move => move.feed_rate_type))];
+
+  function cancelDispatch() {
+    dispatchController.current?.abort();
+    dispatchController.current = null;
+    dispatch({ type: "RESET" });
+  }
+
+  async function waitForPoll(signal: AbortSignal): Promise<void> {
+    await new Promise<void>((resolve, reject) => {
+      const onAbort = () => {
+        window.clearTimeout(timer);
+        reject(new DOMException("Cancelled", "AbortError"));
+      };
+      const timer = window.setTimeout(() => {
+        signal.removeEventListener("abort", onAbort);
+        resolve();
+      }, 750);
+      signal.addEventListener("abort", onAbort, { once: true });
+    });
+  }
+
+  function recordJob(job: DispatchJobStatus) {
+    dispatch({ type: "JOB", jobId: job.jobId, status: job.status, error: job.error });
+  }
+
+  async function processGeometry() {
+    if (!selectedStepFile || !geometryInspection?.supported) return;
+    cancelDispatch();
+    const controller = new AbortController();
+    dispatchController.current = controller;
+    dispatch({ type: "START" });
+    let job = await dispatchCadJob({
+      fileBytes: selectedStepFile,
+      filename: selectedStepFile.name,
+      schema: geometryInspection.metadata.schema,
+    }, { signal: controller.signal });
+    if (controller.signal.aborted) return;
+    recordJob(job);
+
+    try {
+      for (let attempt = 0; attempt < 40 && (job.status === "QUEUED" || job.status === "PROCESSING"); attempt += 1) {
+        await waitForPoll(controller.signal);
+        job = await pollCadDispatchJob(job.jobId, { signal: controller.signal });
+        if (controller.signal.aborted) return;
+        recordJob(job);
+      }
+      if (job.status === "QUEUED" || job.status === "PROCESSING") {
+        dispatch({ type: "JOB", jobId: job.jobId, status: "FAILED", error: "A análise excedeu o limite de monitoramento." });
+      }
+    } catch {
+      if (!controller.signal.aborted) {
+        dispatch({ type: "JOB", jobId: job.jobId, status: "FAILED", error: "Falha ao monitorar a análise geométrica." });
+      }
+    } finally {
+      dispatchController.current = null;
+    }
+  }
+
   return <section aria-label="Inspeção de fixtures de torneamento" className="space-y-4 rounded-xl border border-slate-700 bg-slate-950 p-4 text-slate-100">
     <h2 className="text-lg font-semibold">Torneamento · inspeção sintética</h2>
     <p className="text-sm text-slate-300">Exemplos locais de teste. Visualização sem autorização para uso físico.</p>
     <StepUploadZone
       onAccepted={file => {
+        cancelDispatch();
+        setSelectedStepFile(file);
         setLocalStepFile({ filename: file.name, sizeBytes: file.size });
         void inspectStepGeometry(file).then(setGeometryInspection, () => setGeometryInspection(null));
       }}
-      onCleared={() => { setLocalStepFile(null); setGeometryInspection(null); }}
+      onCleared={() => { cancelDispatch(); setSelectedStepFile(null); setLocalStepFile(null); setGeometryInspection(null); }}
     />
     {localStepFile && <div role="status" aria-live="polite" className="rounded-lg border border-amber-400 bg-amber-950/30 p-3 text-sm text-amber-100">
       <p className="font-medium">Arquivo local carregado — Pipeline de geometria analítica aguardando despacho.</p>
       <p>{localStepFile.filename} · {formatFileSize(localStepFile.sizeBytes)}</p>
       <p className="mt-1 text-xs">Emissão de G-code e despacho físico permanecem bloqueados.</p>
     </div>}
-    {geometryInspection && <StepMetadataCard inspection={geometryInspection} />}
+    {geometryInspection && <StepMetadataCard inspection={geometryInspection} dispatchState={dispatchState}
+      onProcess={() => void processGeometry()} onCancel={cancelDispatch} />}
     <label className="block text-sm">Cenário de teste
       <select value={selection} onChange={event => {
         const next = event.target.value;

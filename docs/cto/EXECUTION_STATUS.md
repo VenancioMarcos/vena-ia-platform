@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-049
+
+`ROTA_2_UI_ASYNC_DISPATCH_INTEGRATION_IN_PROGRESS`. AUTO-048 aprovada pelo CTO no
+commit `cdceafd`. Integração visual concluída com envio, fila, processamento,
+conclusão, falha e cancelamento. Validação: 59 testes web; TypeScript e lint limpos;
+727 testes Python aprovados, 9 ignorados; Ruff e diff aprovados. Sem push, backend
+ou autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-048
 
 `ROTA_2_STAGE_2_ASYNC_DISPATCH_IN_PROGRESS`. PR #32 integrado pelo proprietário no

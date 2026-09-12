@@ -78,3 +78,17 @@ test("aborts a stalled transport at the configured timeout", async () => {
     error: "O despacho CAD excedeu o tempo limite.",
   });
 });
+
+test("distinguishes an explicit caller cancellation from a timeout", async () => {
+  const controller = new AbortController();
+  const transport: DispatchTransport = (_input, init) => new Promise((_resolve, reject) => {
+    init?.signal?.addEventListener("abort", () => reject(new Error("aborted")), { once: true });
+  });
+  const pending = pollCadDispatchJob("job-cancel", { signal: controller.signal, transport });
+  controller.abort();
+  assert.deepEqual(await pending, {
+    jobId: "job-cancel",
+    status: "FAILED",
+    error: "O despacho CAD foi cancelado.",
+  });
+});
