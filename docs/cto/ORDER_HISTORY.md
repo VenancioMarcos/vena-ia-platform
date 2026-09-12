@@ -1008,3 +1008,23 @@ O PR #38 foi retirado de Draft; estado confirmado como `OPEN`, `MERGEABLE` e
 O PR #38 foi integrado por squash merge em `a6babbd`. A tag anotada oficial
 `v0.7.0-cad` foi publicada e aponta para a mesma baseline. `main` e
 `origin/main` permanecem alinhadas; limites físicos inalterados.
+
+## 2026-09-12 — CTO-CODEX-AUTO-074
+
+O fechamento documental `3f2b198` foi publicado na `main`. A preparação do épico
+CAM mapeou o perfil RZ autenticado, a fundação sintética e a UI existente, além das
+lacunas de contratos e gates para estratégias. Nenhum planejador novo, trajetória,
+pós-processamento, emissão NC ou autoridade física foi implementado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-075
+
+Criado o domínio CAM canônico com enums, contratos Pydantic estritos e motor
+determinístico de faceamento e desbaste 2D. Nove testes CAM e a regressão integral
+de 749 Python/9 ignorados e 64 Web foram aprovados. Acabamento e canais permanecem
+em falha fechada; nenhum push, G-code ou autoridade física foi adicionado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-076
+
+Ordem de consolidação documental, publicação da fundação CAM, abertura de Draft PR
+contra `main` e coleta do CI inicial. Nenhum merge, pós-processamento, emissão NC
+ou autoridade física está autorizado.

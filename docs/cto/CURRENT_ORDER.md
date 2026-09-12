@@ -1,21 +1,23 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-073-MERGE-AND-SYNC
-**Estado:** CAD_EPIC_OFFICIALLY_CLOSED_BASELINE_TAGGED
+**Missão:** CTO-CODEX-AUTO-076
+**Estado:** CAM_ROTA_1_STRATEGY_FOUNDATION_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-12
-**Branch:** `codex/auto-073-cad-baseline-closeout`
-**Baseline da branch:** `a6babbde437e5547e00ba83038218d7d69178023`
+**Branch:** `codex/v4.0-cam-turning-strategies-foundation`
+**Baseline da branch:** `3f2b19877c528cab0d080fcb1bc0756f4bef7390`
+**Commit funcional:** `92d3651`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O PR #38 foi integrado em `a6babbd`; `main` e `origin/main` estão alinhadas.
-A tag anotada `v0.7.0-cad` foi publicada sobre a baseline do épico CAD.
+O CTO aprovou a fundação CAM e autorizou publicar a branch e abrir Draft PR contra
+`main`. O pacote mantém faceamento e desbaste 2D analíticos; acabamento e canais
+permanecem em falha fechada e nenhum output é executável.
 
 ## Continuidade
 
-Criar commit documental local de fechamento, sem push. Enviar VTP-AUTO-073 ao CTO
-e aguardar a próxima ordem sem encerrar a execução.
+Publicar a branch, abrir Draft PR, coletar o estado inicial do CI, enviar
+VTP-AUTO-076 ao CTO e aguardar a próxima ordem sem merge.
 
 ## Limites permanentes
 

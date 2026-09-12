@@ -1,5 +1,27 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-076
+
+`CAM_ROTA_1_STRATEGY_FOUNDATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-075 foi
+aprovada pelo CTO com 749 Python, 9 ignorados, 64 Web e checks estáticos verdes.
+Consolidação documental, publicação da branch, Draft PR e CI inicial em andamento;
+nenhum merge, pós-processamento ou autoridade física autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-075
+
+`CAM_ROTA_1_STRATEGY_FOUNDATION_IN_PROGRESS`. Módulo CAM canônico, contratos
+Pydantic estritos e motor analítico de faceamento/desbaste criados em `92d3651`.
+Validação: 749 Python, 9 ignorados, 64 Web, TypeScript, lint, Ruff, mypy e diff
+aprovados. `FINISHING` e `GROOVING` falham fechado; sem push ou autoridade física.
+
+## 2026-09-12 — CTO-CODEX-AUTO-074
+
+`CAM_EPIC_PREPARATION_IN_PROGRESS`. O fechamento documental `3f2b198` foi
+publicado e `main` permanece alinhada com `origin/main`; a tag `v0.7.0-cad`
+continua congelada em `a6babbd`. O perfil RZ, o job autenticado, a fundação
+sintética e a UI foram mapeados. Não existe módulo CAM no backend e nenhum código
+funcional ou autoridade física foi adicionado.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-073
 
 `CAD_EPIC_OFFICIALLY_CLOSED_BASELINE_TAGGED`. PR #38 integrado por squash merge
