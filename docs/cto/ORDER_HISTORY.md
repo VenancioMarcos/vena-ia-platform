@@ -972,3 +972,8 @@ removida. `main` e `origin/main` ficaram alinhadas; limites físicos inalterados
 A Rota 5 Etapa 2 adiciona testes de sistema para uploads STEP concorrentes e para
 o teto de 15 MiB, com isolamento por proprietário, contrato revisável e limpeza
 determinística. Somente testes e governança; sem push, emissão ou autoridade física.
+
+## 2026-09-12 — CTO-CODEX-AUTO-067
+
+Ordem de consolidação documental, publicação da branch de stress, abertura de PR
+contra `main` e coleta do CI inicial. Nenhum merge ou autoridade física autorizado.

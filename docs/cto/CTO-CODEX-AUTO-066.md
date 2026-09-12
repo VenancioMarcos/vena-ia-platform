@@ -1,6 +1,6 @@
 # CTO-CODEX-AUTO-066 — Testes E2E e stress do pipeline CAD
 
-**Status:** `ROTA_5_STAGE_2_STRESS_TESTS_IN_PROGRESS`
+**Status:** `ROTA_5_STAGE_2_STRESS_PR_OPEN_AWAITING_CI_AND_REVIEW`
 **Data:** 2026-09-12
 **Branch:** `codex/v3.5-cad-e2e-stress-tests`
 **Baseline:** `fce719a7b266ed4bf8e38a984f03e1f55ef57cac`
@@ -58,5 +58,5 @@ testes e registros de governança.
 
 ## Continuidade
 
-Criar commit local atômico, sem push. Enviar VTP-AUTO-066 ao CTO, solicitar
-parecer e aguardar a próxima ordem sem encerrar a execução.
+O commit `c955aa7` foi aprovado pelo CTO. AUTO-067 consolida a documentação,
+publica a branch e abre o PR, sem merge.

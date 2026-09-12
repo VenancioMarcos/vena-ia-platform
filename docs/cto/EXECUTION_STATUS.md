@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-067
+
+`ROTA_5_STAGE_2_STRESS_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-066 aprovada no
+commit `c955aa7`, com 740 Python, 9 ignorados, 64 Web e checks estáticos verdes.
+Consolidação documental, publicação da branch, PR e CI em andamento; nenhum merge
+ou autoridade física autorizado.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-066
 
 `ROTA_5_STAGE_2_STRESS_TESTS_IN_PROGRESS`. Branch criada da `main` integrada em
