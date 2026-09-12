@@ -21,6 +21,10 @@ FINISHING_WARNINGS = REVIEW_WARNINGS + (
     "TOOL_CENTER_PATH_INCLUDES_2D_NOSE_RADIUS_COMPENSATION",
     "FINISHING_VOLUME_REQUIRES_PRECUT_STOCK_MODEL",
 )
+GROOVING_WARNINGS = REVIEW_WARNINGS + (
+    "GROOVE_PLUNGES_INCLUDE_FULL_RADIAL_RELIEF_RETRACT",
+    "GROOVE_TOOL_WIDTH_AND_CORNER_RADIUS_REQUIRE_HUMAN_REVIEW",
+)
 
 
 class TurningStrategyValidationError(ValueError):
@@ -104,9 +108,7 @@ def _plan_facing(request: TurningStrategyPlanRequest) -> TurningStrategyPlanResp
     return TurningStrategyPlanResponse(
         operation_type=TurningOperationType.FACING,
         passes=tuple(passes),
-        material_removal_volume_mm3=math.fsum(
-            item.estimated_removed_volume_mm3 for item in passes
-        ),
+        material_removal_volume_mm3=math.fsum(item.estimated_removed_volume_mm3 for item in passes),
         warnings=REVIEW_WARNINGS,
     )
 
@@ -208,9 +210,7 @@ def _plan_roughing(request: TurningStrategyPlanRequest) -> TurningStrategyPlanRe
     return TurningStrategyPlanResponse(
         operation_type=TurningOperationType.ROUGH_TURNING,
         passes=tuple(passes),
-        material_removal_volume_mm3=math.fsum(
-            item.estimated_removed_volume_mm3 for item in passes
-        ),
+        material_removal_volume_mm3=math.fsum(item.estimated_removed_volume_mm3 for item in passes),
         warnings=REVIEW_WARNINGS,
     )
 
@@ -306,9 +306,7 @@ def _validate_finishing_clearance(
     """Reject concave profile curvature that the round tool nose cannot enter."""
     tool_radius = request.tool.tip_radius_mm
     tolerance = request.linear_tolerance_mm
-    edge_projection = abs(
-        math.sin(math.radians(request.tool.cutting_edge_angle_deg))
-    )
+    edge_projection = abs(math.sin(math.radians(request.tool.cutting_edge_angle_deg)))
     effective_edge_reach = request.tool.cutting_edge_length_mm * edge_projection
     required_reach = tool_radius + request.finish_allowance_mm
     if required_reach > effective_edge_reach + tolerance:
@@ -332,9 +330,7 @@ def _offset_vertex(
     tolerance: float,
 ) -> RzPoint:
     tangents = tuple(
-        tangent
-        for tangent in (previous_tangent, following_tangent)
-        if tangent is not None
+        tangent for tangent in (previous_tangent, following_tangent) if tangent is not None
     )
     normals = tuple((-tangent[1], tangent[0]) for tangent in tangents)
     if len(normals) == 1:
@@ -361,10 +357,7 @@ def _offset_vertex(
 def _plan_finishing(request: TurningStrategyPlanRequest) -> TurningStrategyPlanResponse:
     contour = _finishing_contour(request)
     _validate_finishing_clearance(request, contour)
-    tangents = tuple(
-        _unit_tangent(first, second)
-        for first, second in zip(contour, contour[1:])
-    )
+    tangents = tuple(_unit_tangent(first, second) for first, second in zip(contour, contour[1:]))
     offset = request.tool.tip_radius_mm + request.finish_allowance_mm
     compensated = tuple(
         _offset_vertex(
@@ -391,6 +384,133 @@ def _plan_finishing(request: TurningStrategyPlanRequest) -> TurningStrategyPlanR
     )
 
 
+def _groove_spans(request: TurningStrategyPlanRequest) -> tuple[_AxialSpan, ...]:
+    """Find axial groove floors bounded by a larger-radius shoulder at each end."""
+    contour = _finishing_contour(request)
+    tolerance = request.linear_tolerance_mm
+    grooves: list[_AxialSpan] = []
+    for index, (first, second) in enumerate(zip(contour, contour[1:])):
+        if index == 0 or index + 2 >= len(contour):
+            continue
+        if not math.isclose(first.r_mm, second.r_mm, abs_tol=tolerance, rel_tol=0):
+            continue
+        if abs(first.z_mm - second.z_mm) <= tolerance:
+            continue
+        previous = contour[index - 1]
+        following = contour[index + 2]
+        if previous.r_mm <= first.r_mm + tolerance or following.r_mm <= first.r_mm + tolerance:
+            continue
+        grooves.append(
+            _AxialSpan(
+                radius_mm=first.r_mm,
+                front_z_mm=max(first.z_mm, second.z_mm),
+                rear_z_mm=min(first.z_mm, second.z_mm),
+            )
+        )
+    if not grooves:
+        raise TurningStrategyValidationError("GROOVE_PROFILE_NOT_FOUND")
+    return tuple(grooves)
+
+
+def _groove_centers(
+    groove: _AxialSpan,
+    insert_width_mm: float,
+    corner_radius_mm: float,
+    tolerance: float,
+) -> tuple[float, ...]:
+    if groove.length_mm + tolerance < insert_width_mm:
+        raise TurningStrategyValidationError("GROOVE_NARROWER_THAN_INSERT")
+    if corner_radius_mm * 2 >= insert_width_mm - tolerance:
+        raise TurningStrategyValidationError("GROOVE_INSERT_CORNER_RADIUS_INVALID")
+
+    front = groove.front_z_mm - insert_width_mm / 2
+    rear = groove.rear_z_mm + insert_width_mm / 2
+    available_travel = front - rear
+    if available_travel <= tolerance:
+        return ((groove.front_z_mm + groove.rear_z_mm) / 2,)
+
+    maximum_stepover = insert_width_mm - 2 * corner_radius_mm
+    interval_count = math.ceil(available_travel / maximum_stepover)
+    return tuple(
+        front - available_travel * index / interval_count for index in range(interval_count + 1)
+    )
+
+
+def _plan_grooving(request: TurningStrategyPlanRequest) -> TurningStrategyPlanResponse:
+    insert_width = request.tool.insert_width_mm
+    if insert_width is None:
+        raise TurningStrategyValidationError("GROOVING_INSERT_WIDTH_REQUIRED")
+
+    grooves = _groove_spans(request)
+    passes: list[MachiningPass] = []
+    for groove in grooves:
+        centers = _groove_centers(
+            groove,
+            insert_width,
+            request.tool.tip_radius_mm,
+            request.linear_tolerance_mm,
+        )
+        contour = _finishing_contour(request)
+        floor_index = next(
+            index
+            for index, (first, second) in enumerate(zip(contour, contour[1:]))
+            if math.isclose(
+                first.r_mm,
+                groove.radius_mm,
+                abs_tol=request.linear_tolerance_mm,
+                rel_tol=0,
+            )
+            and math.isclose(
+                max(first.z_mm, second.z_mm),
+                groove.front_z_mm,
+                abs_tol=request.linear_tolerance_mm,
+                rel_tol=0,
+            )
+            and math.isclose(
+                min(first.z_mm, second.z_mm),
+                groove.rear_z_mm,
+                abs_tol=request.linear_tolerance_mm,
+                rel_tol=0,
+            )
+        )
+        entry_radius = min(contour[floor_index - 1].r_mm, contour[floor_index + 2].r_mm)
+        if entry_radius > request.stock_radius_mm + request.linear_tolerance_mm:
+            raise TurningStrategyValidationError("GROOVE_PLUNGE_OUTSIDE_STOCK_ENVELOPE")
+        radial_levels = _levels(
+            entry_radius,
+            groove.radius_mm,
+            request.cutting_parameters.depth_of_cut_mm,
+        )
+        if len(passes) + len(centers) * len(radial_levels) > MAX_PASSES:
+            raise TurningStrategyValidationError("PASS_LIMIT_EXCEEDED")
+
+        allocated_width = groove.length_mm / len(centers)
+        previous_radius = entry_radius
+        for radius in radial_levels:
+            removed_per_center = math.pi * (previous_radius**2 - radius**2) * allocated_width
+            for center_z in centers:
+                passes.append(
+                    MachiningPass(
+                        sequence=len(passes) + 1,
+                        operation_type=TurningOperationType.GROOVING,
+                        coordinates_rz_mm=(
+                            RzPoint(r_mm=entry_radius, z_mm=center_z),
+                            RzPoint(r_mm=radius, z_mm=center_z),
+                            RzPoint(r_mm=entry_radius, z_mm=center_z),
+                        ),
+                        estimated_removed_volume_mm3=removed_per_center,
+                    )
+                )
+            previous_radius = radius
+
+    return TurningStrategyPlanResponse(
+        operation_type=TurningOperationType.GROOVING,
+        passes=tuple(passes),
+        material_removal_volume_mm3=math.fsum(item.estimated_removed_volume_mm3 for item in passes),
+        warnings=GROOVING_WARNINGS,
+    )
+
+
 def plan_turning_strategy(request: TurningStrategyPlanRequest) -> TurningStrategyPlanResponse:
     """Build a deterministic review-only 2D plan without machine or NC authority."""
     _validate_profile(request)
@@ -400,4 +520,6 @@ def plan_turning_strategy(request: TurningStrategyPlanRequest) -> TurningStrateg
         return _plan_roughing(request)
     if request.operation_type == TurningOperationType.FINISHING:
         return _plan_finishing(request)
+    if request.operation_type == TurningOperationType.GROOVING:
+        return _plan_grooving(request)
     raise TurningStrategyValidationError("OPERATION_NOT_IMPLEMENTED_IN_FOUNDATION")
