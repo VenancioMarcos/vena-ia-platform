@@ -1,0 +1,366 @@
+"""Immutable synthetic point-motion contracts. Never physical toolpaths."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+from datetime import datetime, timedelta
+from enum import StrEnum
+from typing import Annotated, Literal
+
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
+
+from app.modules.engineering.turning_schemas import TurningProfile2D
+
+
+RadialPoint = tuple[Annotated[float, Field(ge=0)], float]
+FeedRateType = Literal["MM_PER_REVOLUTION", "MM_PER_MINUTE"]
+
+
+class _SyntheticContract(BaseModel):
+    model_config = ConfigDict(strict=True, extra="forbid", frozen=True, allow_inf_nan=False,
+                              revalidate_instances="always")
+
+
+class TurningMotionType(StrEnum):
+    RAPID = "RAPID"
+    CUTTING = "CUTTING"
+    RETRACT = "RETRACT"
+
+
+class TurningToolpathMove(_SyntheticContract):
+    start_point: RadialPoint
+    end_point: RadialPoint
+    motion_type: TurningMotionType
+    feed_rate_type: FeedRateType
+
+    @model_validator(mode="after")
+    def validate_segment(self) -> TurningToolpathMove:
+        if self.start_point == self.end_point:
+            raise ValueError("zero-length synthetic moves are not allowed")
+        return self
+
+
+class TurningOperationPlan(_SyntheticContract):
+    operation_id: str = Field(min_length=1, max_length=255)
+    operation_type: Literal["FACING", "ROUGH_TURNING"]
+    passes_count: int = Field(ge=0, le=1000)
+    moves: tuple[TurningToolpathMove, ...] = Field(max_length=10_000)
+
+    @model_validator(mode="after")
+    def validate_sequence(self) -> TurningOperationPlan:
+        cuts = sum(move.motion_type == TurningMotionType.CUTTING for move in self.moves)
+        if cuts != self.passes_count:
+            raise ValueError("passes_count must equal the number of cutting segments")
+        if any(a.end_point != b.start_point for a, b in zip(self.moves, self.moves[1:])):
+            raise ValueError("synthetic moves must be continuous")
+        return self
+
+
+class TurningToolpathPlan(_SyntheticContract):
+    profile_id: str = Field(min_length=1, max_length=255)
+    operations: tuple[TurningOperationPlan, ...] = Field(max_length=2)
+    total_cutting_length_mm: float = Field(ge=0)
+    is_collision_free: Literal[False] = False
+    collision_status: Literal["NOT_VALIDATED"] = "NOT_VALIDATED"
+    executable_output: Literal[False] = False
+    physical_use_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def validate_plan(self) -> TurningToolpathPlan:
+        moves = [move for operation in self.operations for move in operation.moves]
+        if len(moves) > 10_000:
+            raise ValueError("synthetic move limit exceeded")
+        if any(a.end_point != b.start_point for a, b in zip(moves, moves[1:])):
+            raise ValueError("operations must share a continuous transition")
+        length = math.fsum(math.dist(move.start_point, move.end_point) for move in moves
+                           if move.motion_type == TurningMotionType.CUTTING)
+        if not math.isfinite(length) or not math.isclose(
+            length, self.total_cutting_length_mm, abs_tol=1e-9, rel_tol=1e-12,
+        ):
+            raise ValueError("total cutting length must match synthetic segments")
+        return self
+
+
+class SyntheticTurningParameters(_SyntheticContract):
+    axial_depth_mm: float = Field(gt=0)
+    radial_depth_mm: float = Field(gt=0)
+    axial_allowance_mm: float = Field(ge=0)
+    radial_allowance_mm: float = Field(ge=0)
+    clearance_mm: float = Field(gt=0)
+    feed_rate_type: FeedRateType
+
+
+class TurningStaticExclusionZone(_SyntheticContract):
+    """Closed, static rectangle in declared RZ; not inferred remaining stock."""
+
+    zone_id: str = Field(min_length=1, max_length=255)
+    r_min_mm: float = Field(ge=0)
+    r_max_mm: float = Field(ge=0)
+    z_min_mm: float
+    z_max_mm: float
+
+    @model_validator(mode="after")
+    def validate_bounds(self) -> TurningStaticExclusionZone:
+        if self.r_min_mm > self.r_max_mm or self.z_min_mm > self.z_max_mm:
+            raise ValueError("zone bounds must be ordered")
+        return self
+
+
+class TurningChuckFixture(_SyntheticContract):
+    """Conservative axial half-plane for all radii; diameter is metadata only."""
+
+    z_chuck_plane_mm: float
+    jaw_clamping_diameter_mm: float = Field(gt=0)
+    safety_clearance_axial_mm: float = Field(gt=0)
+
+
+class TurningToolEnvelope2D(_SyntheticContract):
+    """Synthetic non-cutting AABB offsets relative to the ideal point, in mm."""
+
+    tool_id: str = Field(min_length=1, max_length=255)
+    shank_r_min_mm: float
+    shank_r_max_mm: float
+    shank_z_min_mm: float
+    shank_z_max_mm: float
+
+    @model_validator(mode="after")
+    def validate_bounds(self) -> TurningToolEnvelope2D:
+        if (self.shank_r_min_mm >= self.shank_r_max_mm
+                or self.shank_z_min_mm >= self.shank_z_max_mm):
+            raise ValueError("synthetic shank must have positive width and length")
+        return self
+
+
+TurningBoundaryStatus = Literal[
+    "PASS", "CHUCK_COLLISION_DETECTED", "CENTERLINE_VIOLATION",
+    "DECLARED_ZONE_INTERFERENCE", "NOT_EVALUATED",
+]
+TurningVerificationLimitations = tuple[
+    Literal["NO_STOCK_OR_MATERIAL_REMOVAL_VALIDATION"],
+    Literal["NO_REAL_TOOL_OR_FIXTURE_VALIDATION"],
+]
+
+
+class TurningVerificationReport(_SyntheticContract):
+    boundary_status: TurningBoundaryStatus
+    declared_boundaries_passed: bool
+    violating_moves: tuple[Annotated[int, Field(ge=0, lt=10_000)], ...] = Field(
+        max_length=10_000,
+    )
+    is_verified: Literal[False] = False
+    collision_status: Literal["NOT_VALIDATED"] = "NOT_VALIDATED"
+    executable_output: Literal[False] = False
+    physical_use_authorized: Literal[False] = False
+    limitations: TurningVerificationLimitations = (
+        "NO_STOCK_OR_MATERIAL_REMOVAL_VALIDATION", "NO_REAL_TOOL_OR_FIXTURE_VALIDATION",
+    )
+
+    @model_validator(mode="after")
+    def validate_result(self) -> TurningVerificationReport:
+        if self.declared_boundaries_passed != (self.boundary_status == "PASS"):
+            raise ValueError("declared success must match PASS status")
+        if tuple(sorted(set(self.violating_moves))) != self.violating_moves:
+            raise ValueError("violating indices must be unique and ordered")
+        if bool(self.violating_moves) != (self.boundary_status not in {"PASS", "NOT_EVALUATED"}):
+            raise ValueError("violation indices must match boundary status")
+        return self
+
+
+def _require_utc(value: datetime) -> datetime:
+    if value.utcoffset() != timedelta(0):
+        raise ValueError("timestamp must be timezone-aware UTC")
+    return value
+
+
+UtcTimestamp = Annotated[datetime, AfterValidator(_require_utc)]
+Sha256Digest = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+
+
+class TurningQuantizationReport(_SyntheticContract):
+    """Declared numeric X/R consistency only; no text provenance or boundary proof."""
+
+    original_radius_mm: float = Field(ge=0)
+    programmed_x_diameter_mm: float = Field(ge=0)
+    reconstructed_radius_mm: float = Field(ge=0)
+    radial_deviation_mm: float
+    is_boundary_safe: Literal[False] = False
+    boundary_status: Literal["NOT_EVALUATED"] = "NOT_EVALUATED"
+    limitations: tuple[Literal["NUMERICAL_QUANTIZATION_CHECK_ONLY"]] = (
+        "NUMERICAL_QUANTIZATION_CHECK_ONLY",
+    )
+
+    @model_validator(mode="after")
+    def validate_numeric_consistency(self) -> TurningQuantizationReport:
+        reconstructed = self.programmed_x_diameter_mm / 2.0
+        if self.programmed_x_diameter_mm > 0.0 and reconstructed == 0.0:
+            raise ValueError("positive diameter underflowed during radius reconstruction")
+        # Compare the declared binary-float operations exactly, without an absolute
+        # epsilon that can hide a small coordinate or erase a signed deviation.
+        if self.reconstructed_radius_mm != reconstructed:
+            raise ValueError("reconstructed radius must equal declared diameter / 2")
+        expected_deviation = reconstructed - self.original_radius_mm
+        if not math.isfinite(expected_deviation) or self.radial_deviation_mm != expected_deviation:
+            raise ValueError("radial deviation must equal reconstructed minus original radius")
+        return self
+
+
+class TurningPlanQuantizationSummary(_SyntheticContract):
+    """Two ordered endpoint reports per move; numeric extrema, no boundary proof."""
+
+    decimal_places: int = Field(ge=1, le=6)
+    evaluated_moves_count: int = Field(ge=0, le=10_000)
+    max_positive_radial_deviation_mm: float = Field(ge=0)
+    max_negative_radial_deviation_mm: float = Field(le=0)
+    move_reports: tuple[TurningQuantizationReport, ...] = Field(max_length=20_000)
+    is_boundary_safe: Literal[False] = False
+    boundary_status: Literal["NOT_EVALUATED"] = "NOT_EVALUATED"
+    limitations: tuple[Literal["NUMERICAL_QUANTIZATION_AGGREGATE_ONLY"]] = (
+        "NUMERICAL_QUANTIZATION_AGGREGATE_ONLY",
+    )
+
+    @model_validator(mode="after")
+    def validate_aggregate(self) -> TurningPlanQuantizationSummary:
+        if len(self.move_reports) != 2 * self.evaluated_moves_count:
+            raise ValueError("each evaluated move requires start and end reports")
+        positive = max((r.radial_deviation_mm for r in self.move_reports), default=0.0)
+        negative = min((r.radial_deviation_mm for r in self.move_reports), default=0.0)
+        if (self.max_positive_radial_deviation_mm != max(0.0, positive)
+                or self.max_negative_radial_deviation_mm != min(0.0, negative)):
+            raise ValueError("aggregate extrema must match endpoint reports")
+        return self
+
+
+class SyntheticTurningMetadata(_SyntheticContract):
+    """Local reproducibility metadata only; neither signed nor trusted authority."""
+
+    schema_version: Literal["synthetic-turning/v3"] = "synthetic-turning/v3"
+    evaluated_at_utc: UtcTimestamp
+    parameters_digest_sha256: Sha256Digest
+    quantization_decimal_places: int = Field(default=3, ge=1, le=6)
+    quantization_digest_sha256: Sha256Digest | None = None
+    quantized_verification_digest_sha256: Sha256Digest | None = None
+    brep_serialization_digest_sha256: Sha256Digest | None
+    brep_serialization_format: Literal["OCCT_BREP_ASCII_V3_NO_TRIANGLES_NO_NORMALS"] | None
+    occt_binding_version: str | None = Field(default=None, min_length=1, max_length=100)
+    limitations: tuple[
+        Literal["NO_CANONICAL_GEOMETRIC_IDENTITY"],
+        Literal["NO_DIGITAL_THREAD_INTEGRATION"],
+        Literal["NO_PHYSICAL_AUTHORITY"],
+    ] = ("NO_CANONICAL_GEOMETRIC_IDENTITY", "NO_DIGITAL_THREAD_INTEGRATION", "NO_PHYSICAL_AUTHORITY")
+
+    @model_validator(mode="after")
+    def validate_provenance(self) -> SyntheticTurningMetadata:
+        if self.brep_serialization_digest_sha256 is not None and (
+            self.brep_serialization_format is None or self.occt_binding_version is None
+        ):
+            raise ValueError("BRep digest requires serialization format and binding version")
+        return self
+
+
+class SyntheticTurningExecutionResult(_SyntheticContract):
+    pipeline_status: Literal[
+        "SUCCESS_SYNTHETIC", "CAD_EXTRACTION_FAILED", "PLANNING_FAILED", "BOUNDARY_VERIFICATION_FAILED",
+        "QUANTIZATION_FAILED", "QUANTIZED_VERIFICATION_FAILED", "QUANTIZED_BOUNDARY_VIOLATION",
+    ]
+    failure_reason: str | None = Field(min_length=1, max_length=255)
+    profile: TurningProfile2D | None
+    plan: TurningToolpathPlan | None
+    verification: TurningVerificationReport | None
+    metadata: SyntheticTurningMetadata
+    quantization: TurningPlanQuantizationSummary | None = None
+    quantized_plan: TurningToolpathPlan | None = None
+    quantized_verification: TurningVerificationReport | None = None
+    is_physical_ready: Literal[False] = False
+    physical_use_authorized: Literal[False] = False
+    executable_output: Literal[False] = False
+    emission_status: Literal["CONTROLLER_PROFILE_UNRESOLVED"] = "CONTROLLER_PROFILE_UNRESOLVED"
+
+    @model_validator(mode="after")
+    def validate_stages(self) -> SyntheticTurningExecutionResult:
+        success = self.pipeline_status == "SUCCESS_SYNTHETIC"
+        if success != (self.failure_reason is None):
+            raise ValueError("success and failure_reason must agree")
+        has_quantization = success or self.pipeline_status in {
+            "QUANTIZED_VERIFICATION_FAILED", "QUANTIZED_BOUNDARY_VIOLATION",
+        }
+        has_reverification = success or self.pipeline_status == "QUANTIZED_BOUNDARY_VIOLATION"
+        if has_reverification != (self.quantized_plan is not None) or has_reverification != (
+            self.quantized_verification is not None
+        ) or has_reverification != (self.metadata.quantized_verification_digest_sha256 is not None):
+            raise ValueError("completed reverification requires both artifacts and digest")
+        if (self.pipeline_status == "QUANTIZED_VERIFICATION_FAILED"
+                and self.failure_reason != "QUANTIZED_RECONSTRUCTION_OR_VERIFICATION_FAILED"):
+            raise ValueError("quantized evaluation failure requires its fixed reason")
+        if has_quantization != (self.quantization is not None):
+            raise ValueError("quantization artifacts must match completed fourth stage")
+        if has_quantization != (self.metadata.quantization_digest_sha256 is not None):
+            raise ValueError("quantization digest must accompany successful quantization")
+        if self.pipeline_status == "CAD_EXTRACTION_FAILED":
+            if self.profile is not None or self.plan is not None or self.verification is not None:
+                raise ValueError("CAD failure cannot include later-stage artifacts")
+            return self
+        if self.profile is None or self.metadata.brep_serialization_digest_sha256 is None:
+            raise ValueError("later stages require profile and serialized BRep provenance")
+        if self.pipeline_status == "PLANNING_FAILED":
+            if self.plan is not None or self.verification is not None:
+                raise ValueError("planning failure cannot include later-stage artifacts")
+            return self
+        if self.plan is None:
+            raise ValueError("verification stage requires plan")
+        canonical = json.dumps(self.profile.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
+        expected_id = "synthetic-profile:sha256:" + hashlib.sha256(canonical.encode()).hexdigest()
+        if self.plan.profile_id != expected_id:
+            raise ValueError("plan must reference the included synthetic profile")
+        move_count = sum(len(operation.moves) for operation in self.plan.operations)
+        quantified_stage = has_quantization or self.pipeline_status == "QUANTIZATION_FAILED"
+        if quantified_stage and move_count == 0:
+            raise ValueError("empty plans cannot have successful boundary evaluation")
+        if self.verification is not None and any(
+            index >= move_count for index in self.verification.violating_moves
+        ):
+            raise ValueError("verification indices must refer to included plan movements")
+        verified = self.verification is not None and self.verification.declared_boundaries_passed
+        if quantified_stage != verified:
+            raise ValueError("quantization stage requires exactly declared-boundary PASS")
+        if self.quantization is not None:
+            summary = self.quantization
+            radii = tuple(point[0] for operation in self.plan.operations for move in operation.moves
+                          for point in (move.start_point, move.end_point))
+            if (summary.evaluated_moves_count != move_count
+                    or tuple(r.original_radius_mm for r in summary.move_reports) != radii
+                    or summary.decimal_places != self.metadata.quantization_decimal_places):
+                raise ValueError("quantization must correspond to plan endpoints and precision")
+            serialized = json.dumps(summary.model_dump(mode="json"), sort_keys=True,
+                                    separators=(",", ":"), allow_nan=False)
+            if hashlib.sha256(serialized.encode("utf-8")).hexdigest() != self.metadata.quantization_digest_sha256:
+                raise ValueError("quantization digest must match included summary")
+        if self.quantized_plan is not None and self.quantized_verification is not None:
+            rebuilt, report = self.quantized_plan, self.quantized_verification
+            if self.quantization is None:
+                raise ValueError("reverification requires quantization")
+            if rebuilt.profile_id != self.plan.profile_id or len(rebuilt.operations) != len(self.plan.operations):
+                raise ValueError("quantized plan identity and operations must match nominal")
+            endpoints = iter(self.quantization.move_reports)
+            for nominal_op, quantized_op in zip(self.plan.operations, rebuilt.operations):
+                if ((nominal_op.operation_id, nominal_op.operation_type, nominal_op.passes_count,
+                     len(nominal_op.moves)) != (quantized_op.operation_id, quantized_op.operation_type,
+                                              quantized_op.passes_count, len(quantized_op.moves))):
+                    raise ValueError("quantized operation must preserve identity, passes and moves")
+                for nominal, quantized in zip(nominal_op.moves, quantized_op.moves):
+                    expected_start = (next(endpoints).reconstructed_radius_mm, nominal.start_point[1])
+                    expected_end = (next(endpoints).reconstructed_radius_mm, nominal.end_point[1])
+                    if (quantized.start_point != expected_start or quantized.end_point != expected_end
+                            or quantized.motion_type != nominal.motion_type
+                            or quantized.feed_rate_type != nominal.feed_rate_type):
+                        raise ValueError("quantized movement must match reconstructed R and nominal Z/type")
+            if any(index >= move_count for index in report.violating_moves):
+                raise ValueError("quantized violation indices must refer to movements")
+            if report.boundary_status == "NOT_EVALUATED" or success != report.declared_boundaries_passed:
+                raise ValueError("success requires PASS; violation requires actual violation report")
+            serialized = json.dumps(report.model_dump(mode="json"), sort_keys=True,
+                                    separators=(",", ":"), allow_nan=False)
+            if hashlib.sha256(serialized.encode("utf-8")).hexdigest() != self.metadata.quantized_verification_digest_sha256:
+                raise ValueError("quantized verification digest must match report")
+        return self

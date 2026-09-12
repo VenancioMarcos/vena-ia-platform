@@ -1,3 +1,5 @@
+import pytest
+
 from starlette.testclient import TestClient
 from sqlalchemy import select
 
@@ -577,3 +579,68 @@ def test_catalog_openapi_is_additive_and_authority_fields_are_closed(client: Tes
         "catalogs" in path and ("export" in path or "reconcile" in path)
         for path in schema["paths"]
     )
+
+
+@pytest.mark.parametrize("incompatible_kind", ["MACHINE", "TOOL", "BOTH"])
+def test_incompatible_selection_withholds_derived_parameters(
+    client: TestClient, make_account, incompatible_kind: str
+) -> None:
+    account = make_account()
+    material = _create(
+        client,
+        account.headers,
+        "MATERIAL",
+        "DIAG-MAT",
+        {"cutting_speed_m_min": 100, "feed_per_tooth_mm": 0.1},
+    )
+    machine = _create(
+        client,
+        account.headers,
+        "MACHINE",
+        "DIAG-MACHINE",
+        {
+            "operations": ["milling"] if incompatible_kind in {"MACHINE", "BOTH"} else ["turning"],
+            "max_rpm": 3000,
+            "max_feed_mm_min": 1000,
+        },
+    )
+    tool = _create(
+        client,
+        account.headers,
+        "TOOL",
+        "DIAG-TOOL",
+        {
+            "operations": ["milling"] if incompatible_kind in {"TOOL", "BOTH"} else ["turning"],
+            "diameter_mm": 10,
+            "teeth": 2,
+        },
+    )
+    response = client.post(
+        "/engineering/recommendations/preliminary",
+        headers=account.headers,
+        json={
+            "material_id": material["id"],
+            "machine_id": machine["id"],
+            "tool_id": tool["id"],
+            "operation": "turning",
+            "cutting_length_mm": 100,
+            "setup_time_min": 5,
+            "machine_hour_rate": 120,
+            "currency": "BRL",
+        },
+    )
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["compatibility"] == "PRELIMINARY_COMPATIBILITY_CHECK:INCOMPATIBLE"
+    for value in [
+        *body["preliminary_parameters"].values(),
+        body["machining_time_estimate"],
+        body["total_estimated_time"],
+        body["cost_estimate"],
+    ]:
+        assert value["status"] == "NOT_AVAILABLE"
+        assert value["value"] is None
+    assert body["formulas"] == []
+    assert body["cost_components"] == {}
+    assert body["setup_time_estimate"]["value"] == 5
+    assert body["status"] == "PRELIMINARY_ENGINEERING_REQUIRES_HUMAN_REVIEW"

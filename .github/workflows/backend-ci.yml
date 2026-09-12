@@ -114,7 +114,7 @@ jobs:
           docker run --detach --name vena-minio-ci --publish 9000:9000 \
             --env MINIO_ROOT_USER="$MINIO_ACCESS_KEY" \
             --env MINIO_ROOT_PASSWORD="$MINIO_SECRET_KEY" \
-            minio/minio:RELEASE.2025-09-07T16-13-09Z@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e server /data
+            quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e server /data
           for attempt in $(seq 1 30); do
             curl --fail --silent http://localhost:9000/minio/health/live && exit 0
             sleep 2

@@ -527,3 +527,304 @@ O CTO aprovou a TASK-V30-000 e autorizou a integração da PR documental #24 seg
 somente da implementação de v2.1 Package 1. O escopo resolve ownership organizacional
 e compatibilidade dos catálogos Engineering com migration reversível se comprovada.
 Package 2, v2.2, v3.0, deploy, produção e CNC executável permanecem fora.
+
+## 2026-09-08 — Retomada do ciclo Gemini/Codex
+
+DIAG-001 entregue; FIX-002 implementada em 08569ff e aprovada tecnicamente por
+relatório. Handoff local b86f51e. SPEC-003 documentada em 9b5a83b, revisada AR;
+dialeto genérico corrigido e aceito. IMPL-004 recebida e executada localmente;
+validação 455 passed/2 skipped, aguardando commit/envio. O proprietário reiterou
+executar, entregar, pedir/aguardar nova ordem e continuar sem perguntas rotineiras.
+
+### Snapshot da ordem substituída (histórico; não executar)
+
+# Ordem CTO atual
+
+```text
+MISSION=TASK_V21_001
+TITLE=V2_1_PACKAGE_1_OWNERSHIP_AND_COMPATIBILITY
+ROADMAP_PR=24
+ROADMAP_HEAD=fcc0ea8af28190a0609f587af42faa0419cbcd8d
+FUNCTIONAL_BRANCH=codex/v2.1-enterprise-engineering-governance
+V2_0=RELEASED_AND_FULLY_VERIFIED
+ROADMAP=v2.1_TO_v2.2_TO_v3.0_APPROVED
+DECISION=DEC-037_APPROVED_CTO
+RISK=R-048_CRITICAL_GATE_V2_1
+PACKAGE_1=APPROVED_FOR_IMPLEMENTATION
+PACKAGE_2=NOT_STARTED
+MIGRATION=ALLOWED_IF_PROVEN_REVERSIBLE
+DEPLOY=PROHIBITED
+EXECUTABLE_CNC=PROHIBITED
+TODAY_TARGET=V3_0
+EXPECTED_STATE=VENA_IA_V2_1_PACKAGE_1_READY_FOR_CTO_REVIEW
+CONTINUOUS_CTO_CODEX_FLOW_POLICY=ACTIVE
+```
+
+O CTO aprovou o roadmap e autorizou somente v2.1 Package 1. Primeiro integrar a PR
+documental #24; depois implementar ownership/compatibility de catálogos Engineering.
+Package 2, v2.2, v3.0, deploy e CNC executável permanecem proibidos.
+
+## 2026-09-09 — CTO-CODEX-STEP-005
+
+Após entrega b5b04b7/IMPL-004 e parecer AR, Gemini emitiu STEP-005: extrator de
+perfil externo + quatro fixtures, commit local e nenhum NC/push. Implementação
+em validação. Ordem anterior apenas de fixtures foi substituída pela versão
+completa STEP-005 recebida após a entrega; não executar versões concorrentes.
+
+
+## 2026-09-09 — CAM-006 substituída por CAM-006A
+
+STEP-005 aprovada AR por relatório. Codex identificou ausência de fixação/envelope
+para afirmar is_collision_free. Gemini acolheu o conflito e emitiu CAM-006A:
+Variante A de ponto ideal matemático, autoridade false/colisão NOT_VALIDATED.
+Implementação isolada e testes em curso; sem novo pedido de autorização ao dono
+para esta decisão técnica. Ordem CAM-006 original não deve ser executada.
+
+
+## 2026-09-09 — CAM-006A aprovada; CAM-007 em revisão
+
+Gemini aprovou AR a entrega d3785d3 por relatório e emitiu CAM-007. Codex
+apontou ausência de stock/perfil/material e referência de ferramenta para
+interferência; proposta CAM-007A enviada. Aguardando decisão técnica.
+
+
+## 2026-09-09 — CAM-007 substituída por CAM-007A
+
+Gemini aceitou integralmente a objeção técnica. Ordem CAM-007A: fronteiras
+sintéticas declaradas, is_verified=false, verificação contínua de todos os
+segmentos, local apenas. Implementação e 29 testes específicos aprovados.
+
+
+## 2026-09-09 — CAM-007A aprovada; CAM-008 recebida
+
+CTO aprovou f55534a tecnicamente no escopo por relatório. CAM-008 ordena
+orquestrador interno e E2E sintético. Refinamento de pureza/timestamp, unidades,
+coleção explícita e metadados imutáveis enviado antes de implementar.
+
+
+## 2026-09-09 — CAM-008A confirmada
+
+Refinamentos técnicos aprovados integralmente pelo CTO; CAM-008A substitui
+CAM-008: orquestrador sintético com timestamp/tolerâncias/zonas explícitos e
+metadados imutáveis de serialização BRep. 34 testes E2E PASS, regressão em curso.
+
+
+## 2026-09-09 — CAM-008A aprovada; conflito POST-009
+
+CTO aprovou 5f50559 por relatório e pediu pós-processador. Codex registrou
+reintrodução de dialeto universal já rejeitado pelo ADR-0037, falta de F,
+referências físicas e revalidação da quantização. Proposta POST-009A documental
+enviada; emissor não implementado. Aguardando decisão técnica.
+
+
+## 2026-09-09 — POST-009 cancelada; POST-009A documental
+
+CTO acolheu integralmente o conflito e cancelou a emissão NC. POST-009A
+autoriza matriz/template de pré-requisitos, nenhuma implementação de pós.
+Documento concluído; suíte exigida 548 pass/2 skips, sem código de produto alterado.
+
+
+## 2026-09-09 — POST-009A aprovada; STAB-010
+
+CTO aprovou f3fb048 por relatório e pediu auditoria/consolidação documental
+do marco local v3.2.0-turning-synthetic-alpha. Sem publicação, tag, NC ou
+alteração de manifests/runtime. Após entrega, aguardar orientação de encerramento.
+
+
+## 2026-09-09 — HOLD-011 e retomada AUTO-012
+
+STAB-010 aprovada em dc75997. HOLD-011 recebida/executada: árvore limpa e
+congelamento confirmado ao CTO, sem alterar docs naquela ordem. Após nova
+diretriz de continuidade no Gemini, CTO emitiu AUTO-012 para schema numérico.
+Proprietário pediu buscar; ordem lida e contrato de is_boundary_safe em revisão.
+
+
+## 2026-09-09 — AUTO-012 substituída por AUTO-012A
+
+CTO confirmou integralmente false/NOT_EVALUATED e contrato somente numérico,
+sem fronteiras/trajectória/NC. Implementação e testes em validação.
+
+
+## 2026-09-09 — WAIT-013 e EXEC-014
+
+AUTO-012A aprovada por relatório; staging bloqueado por quota, WAIT-013
+confirmada sem descartar arquivos. Proprietário informou novo login no Gemini;
+CTO emitiu EXEC-014. Revisor normal aceitou staging na retomada.
+
+## 2026-09-09 — EXEC-014 aprovada; AUTO-015
+
+Commit 70e4d13 efetivado pelo revisor normal, árvore limpa; revalidação
+569 pass/2 skips em 128.86 s. Gemini aprovou por relatório e emitiu AUTO-015:
+avaliador matemático puro de diâmetro, precisão 1..6, testes completos e commit
+local; nenhuma emissão NC. Próximo passo: entregar e aguardar resposta real.
+
+## 2026-09-09 — AUTO-015 aprovada; AUTO-016
+
+Gemini aprovou ebbe37e por relatório com 592 pass/2 skips e emitiu AUTO-016:
+contrato e avaliador agregado de extremos de planos, sem NC/fronteiras físicas.
+Contagem N movimentos corresponde a 2N relatórios ordenados start/end.
+
+## 2026-09-09 — AUTO-016 aprovada; AUTO-017
+
+Gemini aprovou 770ac7b por relatório e ordenou integração do agregado ao
+orquestrador, precisão no digest dos parâmetros e hash do sumário. Contrato
+local v2 para distinguir sucesso obrigatório de quatro estágios. Sem NC.
+
+## 2026-09-09 — AUTO-017 aprovada; AUTO-018
+
+Gemini aprovou 6d4665a por relatório e ordenou reconstrução de R quantizado
+com Z original e reverificação contínua, sem integrar ao E2E ou emitir NC.
+
+## 2026-09-09 — AUTO-018 aprovada; AUTO-019A
+
+Gemini aprovou c28405d por relatório. AUTO-019 substituída pela AUTO-019A após
+acolher falha de reconstrução/verificação distinta de colisão comprovada.
+Integração autorizada do quinto estágio v3, sem NC ou autoridade física.
+
+## 2026-09-10 — AUTO-019A aprovada; AUTO-020
+
+Gemini aprovou84492a5 por relatório e retificou alegações ilustrativas de NC/
+homologação. Ordenou dossiê/consolidação documental dos cinco estágios e17
+commits, regressão e commit local; pedir/aguardar parecer de fechamento.
+
+## 2026-09-10 — AUTO-020 aprovada; AUTO-021
+
+Baseline bcf3313 aprovado por relatório; CTO ordenou transição documental para
+STANDBY_AWAITING_UPSTREAM_SYNC. Aguardar deliberação do proprietário sobre
+sincronização remota/frente Web-CAD. Nenhuma feature/publicação autorizada.
+
+
+## 2026-09-10 — AUTO-021 aprovada; AUTO-022
+
+Gemini aprovou 6eecfa6 e, após solicitação de continuidade, emitiu AUTO-022:
+auditoria dos 19 commits, bundle incremental local e checklist pré-sincronização.
+Proibidos Git de rede, publicação e mudança de código. Entrega preparada com
+658 passed/2 skipped; solicitar e aguardar parecer real após commit local.
+
+
+## 2026-09-10 — AUTO-022 aprovada; AUTO-023
+
+Gemini aprovou f6335c3 por relatório e emitiu AUTO-023: espelho TypeScript do
+contrato synthetic-turning/v3 e três fixtures reais. Sem backend, visualizador,
+rede ou nova dependência. Continuar a execução local e aguardar parecer após entrega.
+
+
+### AUTO-023A — Metadados administrativos STEP (2026-09-10)
+
+CTO acolheu a falha reprodutível e autorizou normalizar exclusivamente entidades
+PERSON/ORGANIZATION geradas nas fixtures sintéticas. Dois AP203 regenerados;
+AP214 e conteúdo fora dessas entidades idênticos ao baseline. Sem alteração de
+runtime, geometria, tolerâncias ou comparação exata de fixtures. Achado demonstra
+limite das auditorias por assinatura: histórico/bundle antigos ainda contêm
+metadados ambientais; nenhuma limpeza de histórico ou rede foi autorizada.
+Lint web permanece pendência separada; typecheck local não equivale a lint PASS.
+
+
+## 2026-09-10 — AUTO-023/A aprovada; AUTO-024/A
+
+Após autorização expressa do proprietário, relatório completo enviado ao Gemini
+com recebimento verificado. CTO aprovou 870ffa2 por relatório, acolheu lint pendente
+e emitiu AUTO-024/A: apenas configuração de lint web, sem dependências/backend/
+contratos, validar lint/tsc/pytest. Aguarda entrega e próxima ordem real.
+
+
+## 2026-09-10 — AUTO-024/A acolhida; AUTO-024/B
+
+CTO recebeu d541dc0 e acolheu ressalva WEB-LINT-001. Instrução final AUTO-024/B
+solicita registro formal no backlog sem apps/regras/rede. Cabeçalho AUTO-025 e
+contagem21 do parecer são inconsistentes com instrução/estado: base real22 commits
+antes deste registro. Seguir AUTO-024/B e relatar correção da contagem.
+
+
+## 2026-09-10 — AUTO-024/B aprovada; AUTO-025 recebida
+
+Gemini aprovou 116059d3 e confirmou23 commits locais, encerrando AUTO-024.
+AUTO-025: criar testes locais das três fixtures e narrowing/predicados dos sete
+estados; executar runner disponível ou script TypeScript, tsc, lint, pytest,
+Ruff e diff; registrar entrega e commit test(web): implement unit tests for turning contracts and fixtures.
+Sem novas instalações, backend/packages, Git de rede ou publicação. Relatório VTP
+com status/resumo/bloqueador/próxima, seguido de aguardar resposta real.
+
+
+## 2026-09-10 — AUTO-025 aprovada; AUTO-026 recebida
+
+Gemini aprovou 0a744a78,14 testes web/658 Python e24 commits. AUTO-026 solicita
+rz-projection.ts e testes: bounding box perfil/passadas, Z horizontal/R vertical
+invertido, aspecto1:1, margens e cores âmbar/ciano/magenta; exceções/degeneração.
+Validação:todos node:test,tsc,next lint,pytest,Ruff,diff; entrega026 e continuidade.
+Commit local feat(web): implement RZ planar projection utilities and tests.
+Sem Git de rede, manifests, backend/packages, publicação ou autoridade física.
+
+
+## 2026-09-10 — TASK-LOCAL-027
+
+AUTO-026 em32e1df8 acolhida AR no parecer final. Resposta contém início incompleto
+AUTO-027 React, seguido de instrução completa TASK-LOCAL-027: testes de R/Z zero,
+linhas degeneradas,padding e tolerância<=1e-5. Seguir instrução final; sem UI.
+Critérios:pytest/web/tsc PASS,árvore limpa,novo VTP. Sem backend/configuração/rede.
+
+
+## 2026-09-10 — TASK-LOCAL-028
+
+027 em82228f7 aceita;028 completa recebida:TurningProfile2D React/SVG puro com
+plan/width/height/className, projeção026, eixos/cor/fallback. SSR via node:test,
+tsc,lint,pytest,Ruff,diff. Commit feat(web): implement TurningProfile2D pure SVG component and tests.
+Sem efeitos/rede/backend/manifests. Registrar VTP e aguardar ordem real.
+Ressalva ao parecer: testes não provam blindagem universal nem precisão física.
+
+
+## 2026-09-10 — TASK-LOCAL-029
+
+028 emcd14b92 aceita.029 solicita contêiner use client/useState, seleção das três
+fixtures locais, metadados, badges e SVG ou mensagem de plano ausente. SSR,
+tsc,lint,pytest,Ruff,diff e commit local. Não criar rota/HTTP/backend/manifests.
+Reconstrução retém plano nominal; instrução de ausência aplica-se a quantized_plan.
+
+
+## 2026-09-11 — TASK-LOCAL-030
+
+029 aceita em49a8320.030 solicita /cam/turning com título/disclaimer exatos e
+container029, layout responsivo;teste SSR,node:test,tsc,lint,pytest,Ruff,diff.
+Commit feat(web): integrate CAM turning inspector sandbox page and tests.
+Sem API/backend/manifests/Git de rede/publicação. Enviar VTP e aguardar ordem real.
+
+## 2026-09-11 — TASK-LOCAL-031
+
+CTO aprovou030 em e4da6ad e emitiu031. Ordem formal acrescenta três viewports,
+pytest/Ruff ao escopo compacto. Execução local validada,ver TASK-LOCAL-031.md.
+Próximo: enviar relatório e aguardar parecer real; nenhuma aprovação031 presumida.
+
+## 2026-09-11 — TASK-LOCAL-032
+
+CTO aprovou031 em103dd0e e ordenou consolidar documentação e repetir suítes.
+Marco v3.2.0-turning-web-alpha somente documental, sem tag ou Git remoto.
+Relatar032 após validação e aguardar parecer real.
+
+## 2026-09-11 — TASK-LOCAL-033
+
+CTO aprovou032 em b057c88 e ordenou bundle dos31 commits,checklist e regressões.
+Bundle não inclui commit documental033 posterior. Sem Git remoto/publicação.
+Relatar e aguardar parecer real após validação.
+
+## 2026-09-11 — TASK-LOCAL-034
+
+033 aprovada em6af8df2;CTO ordena prontidão documental e três opções futuras.
+Sem deliberação presumida ou monitoramento em background. Relatar e aguardar.
+
+## 2026-09-11 — TASK-LOCAL-035
+
+CTO aprovou034 em e2f3c92. Proprietário autorizou expressamente a Rota 1: dry-run,
+push real da branch dedicada, preparação do PR e governança. Repositório confirmado
+PUBLIC; PR Draft #31 existente foi preservado. Sem autorização de merge ou release.
+
+## 2026-09-11 — TASK-LOCAL-036
+
+CTO aprovou035 com ressalva pelos checks pendentes e ordenou monitoramento passivo.
+Frontend/Runtime Policy passaram; Backend falhou após testes no pull do MinIO
+fixado. Diagnóstico documentado sem correção, rerun, push adicional ou merge.
+
+## 2026-09-11 — TASK-LOCAL-037
+
+CTO acolheu036 como R de infraestrutura e autorizou correção estrita do host da
+imagem MinIO, preservando release/digest, seguida de commit, push e monitoramento.
+Sem lógica de produto, merge, tag, release ou deploy.

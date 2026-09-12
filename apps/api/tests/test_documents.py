@@ -93,18 +93,38 @@ def test_create_document(client, storage) -> None:
     storage.upload_file.assert_called_once()
 
 
-def test_create_step_document(client, storage) -> None:
-    project_id, token = _create_project(client, "cad-owner@vena-ia.dev")
+@pytest.mark.parametrize(
+    ("filename", "content_type"),
+    (("part.stp", "application/step"), ("part.step", "model/step")),
+)
+def test_create_step_document(client, storage, filename, content_type) -> None:
+    project_id, token = _create_project(
+        client, f"cad-owner-{filename}@vena-ia.dev"
+    )
 
     response = client.post(
         f"/projects/{project_id}/documents",
         headers=_headers(token),
-        files={"file": ("part.step", STEP_BYTES, "application/step")},
+        files={"file": (filename, STEP_BYTES, content_type)},
+    )
+
+    assert response.status_code == 201
+    assert response.json()["content_type"] == content_type
+    storage.upload_file.assert_called_once()
+
+
+def test_accepts_browser_generic_mime_for_valid_step_only(client, storage) -> None:
+    project_id, token = _create_project(client, "browser-step@vena-ia.dev")
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(token),
+        files={"file": ("TESTE_01_cube.stp", STEP_BYTES, "application/octet-stream")},
     )
 
     assert response.status_code == 201
     assert response.json()["content_type"] == "application/step"
-    storage.upload_file.assert_called_once()
+    assert storage.upload_file.call_args.kwargs["content_type"] == "application/step"
 
 
 def test_rejects_step_with_invalid_signature(client, storage) -> None:
@@ -114,6 +134,34 @@ def test_rejects_step_with_invalid_signature(client, storage) -> None:
         f"/projects/{project_id}/documents",
         headers=_headers(token),
         files={"file": ("part.step", b"not a step file", "application/step")},
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Document signature is invalid"}
+    storage.upload_file.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "invalid_content",
+    (
+        b"\xff\xd8\xff\xe0JFIF renamed from photo.jpg",
+        PDF_BYTES,
+        b"HEADER;\nEND-ISO-10303-21;",
+        b"ISO-10303-21;\nHEADER;\nDATA;",
+    ),
+    ids=("jpg-bytes", "pdf-bytes", "missing-header", "missing-trailer"),
+)
+def test_rejects_invalid_step_content_with_generic_mime(
+    client, storage, invalid_content
+) -> None:
+    project_id, token = _create_project(
+        client, f"invalid-step-{invalid_content[:3].hex()}@vena-ia.dev"
+    )
+
+    response = client.post(
+        f"/projects/{project_id}/documents",
+        headers=_headers(token),
+        files={"file": ("renamed.stp", invalid_content, "application/octet-stream")},
     )
 
     assert response.status_code == 400

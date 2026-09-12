@@ -1,5 +1,234 @@
 # Estado de execução CTO
 
+## 2026-09-11 — TASK-LOCAL-037
+
+`CI_MINIO_REFERENCE_REMEDIATION_IN_PROGRESS`.036 acolhida R. Manifesto oficial
+Quay confirmou a mesma release e digest; host da imagem corrigido exclusivamente
+nos dois workflows e na matriz de suporte. Validação, commit/push e CI pendentes.
+
+## 2026-09-11 — TASK-LOCAL-036
+
+`REMOTE_CI_FAILURE_AWAITING_REMEDIATION_ORDER`. Frontend CI e Runtime Policy CI
+SUCCESS. Backend CI FAILURE no passo de iniciar MinIO: pull de imagem fixada
+negado/código125, depois de lint, mypy, migrations e pytest passarem. PR #31
+continua Draft em `08cabbe`; nenhuma correção, rerun, push ou merge. Ver036.
+
+## 2026-09-11 — TASK-LOCAL-035
+
+`UPSTREAM_SYNC_COMPLETED_AWAITING_PR_REVIEW`. Proprietário autorizou Rota 1.
+Dry-run e push inicial dos 33 commits PASS; remoto confirmou `e2f3c92` na branch
+dedicada do repositório PUBLIC. PR Draft #31 preservado; checks Backend, Frontend
+e Runtime Policy iniciados. Registro documental035 é o 34º e integra o push
+complementar. Sem merge/tag/release/deploy; ver TASK-LOCAL-035.md.
+
+## 2026-09-11 — TASK-LOCAL-034
+
+STANDBY_MONITORED_AWAITING_OWNER_DELIBERATION. Baseline32 commits até6af8df2;
+registro034 será33º,bundle31 até b057c88. Suites03341 web/658 Python+2 skips,lint
+limpo;nenhuma suíte repetida para documentos. Espera nesta sessão,sem background.
+Três opções futuras registradas em TASK-LOCAL-034;nenhuma decisão presumida.
+
+## 2026-09-11 — TASK-LOCAL-033
+
+READY_FOR_UPSTREAM_SYNC_CONSOLIDATED local.032 aprovada em b057c88;bundle
+incremental31 commits verificado,base d798417 exigida.033 documental será32º,
+fora do bundle.41 web PASS,Python658/2 em129.55s;lint limpo,Ruff/diff PASS.
+Ver TASK-LOCAL-033.md;parecer033 pendente.
+
+## 2026-09-11 — TASK-LOCAL-032
+
+STANDBY_WEB_BASELINE_CONSOLIDATED.031 aprovada em103dd0e;032 consolida
+marco documental v3.2.0-turning-web-alpha.41 web PASS,Python658/2 em195.53s;
+tsc/Ruff/diff PASS;lint limpo. Ver TASK-LOCAL-032.md.
+Sem mudança de runtime, publicação ou autoridade física;parecer032 pendente.
+
+## 2026-09-11 — TASK-LOCAL-031
+
+030 aceita em e4da6ad. Cleanup e CSS corrigidos;41 web PASS,Python658/2 em168.24s;
+tsc/Ruff/diff PASS;lint limpo. QA nove casos responsivos PASS. Ver TASK-LOCAL-031.md.
+Relatório ao CTO e parecer ainda pendentes.
+
+## 2026-09-11 — TASK-LOCAL-030
+
+029 aceita em49a8320. Página local implementada;38 testes web PASS; Python658/2 em354.71s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001.
+QA desktop/seleção no navegador PASS;servidor temporário encerrado. Ver TASK-LOCAL-030.md.
+
+
+## 2026-09-11 — TASK-LOCAL-029
+
+028 aceita emcd14b92. Seletor local e37 testes web PASS; Python658/2 em133.49s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001. Sem substituição silenciosa do plano quantizado ausente. Ver029.
+
+
+## 2026-09-10 — TASK-LOCAL-028
+
+027 aceita em82228f7. Componente SVG puro implementado;34 testes web PASS,
+Python658/2 em135.88s;tsc/Ruff/diff PASS;lint apenas WEB-LINT-001. Sem rota/efeitos/rede. Ver TASK-LOCAL-028.md.
+
+
+## 2026-09-10 — TASK-LOCAL-027
+
+Parecer final026 AR; instrução final027 limitada a testes numéricos.29 web/tsc
+PASS,Python658 passed,2 skipped,0 failed em129.58s;diff PASS. Ver TASK-LOCAL-027.md.
+
+
+## 2026-09-10 — AUTO-026
+
+AUTO-025 em0a744a78 APROVADA. Utilitários RZ implementados,25 testes web PASS;
+regressão658/2 em124.69s;tsc/Ruff/diff PASS,lint0 erros/1 warning. Sem UI, backend
+ou manifests. Ver entrega026. Commit e relatório pendentes; aguardar resposta real.
+
+
+## 2026-09-10 — AUTO-025
+
+AUTO-024/B em116059d3 APROVADA, ciclo fechado. Nova missão: testes web sem
+instalações/backend/produto. 14 testes via TypeScript + node:test PASS; regressão658/2 em152.01s; tsc/Ruff/diff
+PASS e lint0 erros/WEB-LINT-001 apenas. Ver CTO-CODEX-AUTO-025.md. Commit e
+relatório ao CTO pendentes, aguardar resposta real.
+
+## 2026-09-10 — AUTO-024/B
+
+AUTO-024/A em d541dc0 acolhida com ressalva, sem bloqueador. Item WEB-LINT-001
+formalizado em docs/cto/WEB-LINT-001.md, incluindo evidência, escopo e aceitação
+futura. Somente documentação; sem nova implementação ou testes redundantes.
+Verificar árvore limpa após commit e reportar ao CTO para fechamento do ciclo.
+
+## 2026-09-10 — AUTO-024/A
+
+Configuração ESLint local e escopo lib/tests concluídos; lint exit0 com um warning
+preexistente de cleanup React Hooks. CTO acolheu ressalva AR, backlog WEB-LINT-001.
+98 regras confirmadas nos cinco arquivos turning, sem ignorá-los. tsc PASS;
+regressão 658 passed/2 skipped em129.69s. Nenhum pacote/backend/contrato alterado.
+Próximo passo: commit local, relatório e aguardar parecer/nova ordem real.
+
+## 2026-09-10 — AUTO-023/A validada, aguardando entrega/parecer
+
+AUTO-023A aprovada pelo CTO: normalização PERSON/ORGANIZATION apenas nas fixtures
+sintéticas; dois AP203 alterados, AP214 e geometria idênticos. Teste pontual PASS.
+Regressão final 658 passed/2 skipped em 107.25 s, eliminada falha inicial.
+TypeScript PASS com 12 rejeições esperadas; replay Pydantic PASS nos três casos;
+Ruff/mypy PASS193. Lint existente sem configuração, exit1, pendência acolhida.
+Próximo passo: commit local, enviar relatório conclusivo e aguardar nova ordem real.
+
+## 2026-09-10 — AUTO-022
+
+Status: READY_FOR_UPSTREAM_SYNC (local, sem autorização de publicação).
+19 commits auditados; 632 blobs e patch completo sem assinaturas pesquisadas.
+Bundle incremental em temp verificado; depende de d798417 e termina em 6eecfa6.
+Checklist e registro AUTO-022 documentam inventário e limites. .gitignore reforçado.
+658 passed/2 skipped em 159.81 s; Ruff/mypy PASS193 fontes.
+Próximo passo: commit local, enviar relatório e aguardar parecer real do CTO.
+
+## 2026-09-10 — AUTO-021
+
+Status: STANDBY_AWAITING_UPSTREAM_SYNC.
+Baseline: bcf3313fdb2e67db91ae18fb9c3002a4f5c5b399 (18 commits locais).
+AUTO-020 aprovada por relatório; dossiê de cinco estágios consolidado.
+Objetivo/escopo: registrar transição e aguardar deliberação sobre sincronização
+remota/frente Web-CAD. Arquivos: CURRENT_ORDER/EXECUTION_STATUS, CONTEXT e
+histórico/registro da aprovação. Critério: somente documentação e árvore limpa
+após commit. Código e suíte658/2 preservados; diff como validação da transição.
+Próximo passo: confirmar commit/árvore ao CTO e aguardar orientação real.
+
+
+## 2026-09-10 — AUTO-020
+
+AUTO-019A aprovada em84492a5 por relatório; ilustrações externas retificadas pelo CTO.
+Dossiê/continuidade consolidados; 487 arquivos auditados com limites registrados.
+Ruff/mypy PASS193 fontes; regressão 658 passed/2 skipped em161.38s. Código/testes/manifests inalterados.
+
+## 2026-09-09 — AUTO-019A
+
+AUTO-018 aprovada em c28405d; ajuste AUTO-019A acolhido pelo CTO. Quinto estágio
+implementado, 62 testes E2E PASS (12 novos); Ruff/mypy PASS193 fontes. Regressão completa 658 passed/2 skipped em 128.60 s, concluída em 2026-09-10.
+
+## 2026-09-09 — AUTO-018
+
+AUTO-017 aprovada em 6d4665a por relatório. Reconstrução/reverificação
+implementadas, 16 testes novos PASS; Ruff/mypy PASS193 fontes. Regressão completa 646 passed/2 skipped em 118.55 s.
+
+## 2026-09-09 — AUTO-017
+
+AUTO-016 aprovada em 770ac7b por relatório. Quarto estágio implementado,
+50 testes E2E PASS (16 novos); Ruff/mypy PASS193 fontes. Regressão completa 630 passed/2 skipped em 137.10 s.
+
+## 2026-09-09 — AUTO-016
+
+AUTO-015 aprovada em ebbe37e por relatório, árvore limpa. Agregado de planos
+implementado, 22 testes novos PASS; Ruff/mypy PASS193 fontes. Regressão completa 614 passed/2 skipped em 118.57 s; commit/envio como próximos passos.
+
+## 2026-09-09 — AUTO-015
+
+EXEC-014 concluída em 70e4d13, árvore limpa e 569 pass/2 skips em 128.86 s;
+parecer aprovado por relatório. Avaliador puro implementado, 23 testes novos
+PASS; Ruff/mypy PASS em 193 fontes. Regressão completa 592 passed/2 skipped em 136.68 s. Commit/envio como próximos passos.
+
+## 2026-09-09 — EXEC-014
+
+AUTO-012A aprovada com 569 pass/2 skips; WAIT-013 preservou arquivos. Nova
+ordem EXEC-014 após novo login informado. Revisor aceitou git add normal;
+commit/revalidação em curso. Nenhum bypass ou Git de rede.
+
+## 2026-09-09 — AUTO-012A
+
+Após STAB/HOLD, nova ordem local AUTO-012 ajustada pelo CTO para AUTO-012A.
+Schema numérico implementado, 21 testes específicos; Ruff/mypy PASS em 192 fontes.
+Suíte completa 569 pass/2 skips em 155.99 s. Revisão automática bloqueou git add
+por limite de uso; commit pendente, HEAD dc75997 e árvore modificada. Sem NC.
+
+## 2026-09-09 — STAB-010
+
+POST-009A aprovada em f3fb048; auditoria/consolidação documental local em curso.
+Marco v3.2.0-turning-synthetic-alpha sem release/tag ou bump runtime 3.1.0.
+476 arquivos rastreados sem assinaturas pesquisadas; quatro espaços históricos
+em linhas vazias corrigidos. Suíte final 548 pass/2 skips em 152.26 s;
+Ruff/mypy PASS em 192 fontes. Commit/envio como próximos passos.
+
+## 2026-09-09 — POST-009A documental
+
+Emissão POST-009 cancelada pelo CTO; POST-009A confirmou matriz/template de
+pré-requisitos. Documento concluído; suíte exigida 548 pass/2 skips em 170.51 s;
+Ruff/mypy PASS em 192 fontes. Revisão documental/commit/envio em curso.
+
+## 2026-09-09 — CAM-008A
+
+CAM-007A aprovada em f55534a; ajustes CAM-008 confirmados e emitida CAM-008A.
+Orquestrador sintético E2E implementado; 34 testes específicos PASS. Ruff/mypy
+PASS em 192 fontes; suíte completa 548 pass/2 skips em 122.35 s.
+Commit/envio como próximos passos; sem NC, autoridade ou endpoint.
+
+## 2026-09-09 — CAM-007A
+
+CAM-006A entregue d3785d3 e aprovada AR. Conflito CAM-007 acolhido pelo CTO,
+substituído por CAM-007A. Verificador de fronteiras sintéticas implementado;
+29 testes específicos passaram; suíte 514 passed/2 skipped em 130.95 s.
+Ruff/mypy PASS em 191 fontes. Commit/envio ao CTO como próximos passos. Sem claim de colisão física, NC ou integração.
+
+## 2026-09-09 — CAM-006A
+
+Variante sintética de ponto ideal autorizada pelo CTO e implementada.
+Colisão NOT_VALIDATED e autoridade false. Suíte final 485 pass/2 skips em
+131.63 s; 16 testes novos. Ruff/mypy PASS em 190 fontes. Commit d3785d3 enviado e aprovado AR por relatório.
+
+## 2026-09-09 — CAM-006 recebida
+
+STEP-005 no commit 57a0fcf aprovada AR. CAM-006 aguarda esclarecimento técnico
+direto do CTO: plano sintético sem claim de colisão ou fundação de setup/envelopes.
+Nenhum código CAM novo. Detalhes em CTO-CODEX-CAM-006.md.
+
+## 2026-09-09 — STEP-005
+
+Extrator cilíndrico externo e quatro fixtures implementados. Suíte final
+469 passed/2 skipped em 127.00 s, incluindo faces radiais. Ruff/mypy PASS.
+Sem CAM, NC ou integração. Após validação final, commit local e envio ao CTO.
+
+## 2026-09-08 — IMPL-004
+
+Schemas mínimos e helper CAD preliminar implementados e validados: 455 passed,
+2 skipped, Ruff/mypy PASS. Commit b5b04b7 enviado ao Gemini; sem integração, CAM ou NC.
+Estado: aguardando parecer e nova ordem.
+
+Os estados abaixo são históricos; a ordem vigente está em CURRENT_ORDER.md.
+
 ## 2026-08-11 — Master Mission v3.0 terminal
 
 ```text
@@ -749,4 +978,33 @@ MIGRATION=NONE
 DEPLOY=NONE
 V3_2=NOT_STARTED
 NEXT=FINAL_CI_THEN_AUTHORIZED_RELEASE_FLOW
+```
+
+## 2026-08-11 — TASK-V31-006 First Controlled CAD-to-G-code Test Path
+
+```text
+STATE=VENA_IA_V3_1_FIRST_CONTROLLED_CAD_TO_GCODE_TEST_READY
+BRANCH=codex/v3.1-first-controlled-test-path
+FIRST_BODY=RUNTIME_GENERATED_STEP_CYLINDER
+REAL_BACKEND_PATH=DOCUMENT_UPLOAD_STORAGE_CAD_EVIDENCE_DIGITAL_THREAD_DOWNLOAD
+BROWSER_REVIEW_SURFACE=MANUFACTURING_GEOMETRY_PROCESS_PLAN_TOOLPATH_LEVEL2_DIGITAL_THREAD
+DOWNLOAD_ACKNOWLEDGEMENT=NON_PRODUCTION_HUMAN_REVIEW_NO_PHYSICAL_AUTHORITY
+DEPLOYMENT_TARGET=EXISTING_LOCAL_CONTROLLED_WEB_ENVIRONMENT
+EXTERNAL_DEPLOYMENT=NOT_CONFIGURED_OR_AUTHORIZED
+G9=PENDING_AUTHORITATIVE_REVIEW
+CAD_TO_GCODE_CONTROLLED_VALIDATION_READY=FALSE
+PHYSICAL_USE_AUTHORIZED=FALSE
+MACHINE_SEND=FALSE
+DNC=FALSE
+NC_TRANSFER=FALSE
+CYCLE_START=FALSE
+DIRECT_MACHINE_CONTROL=FALSE
+NO_HUMAN_REVIEW_BYPASS=TRUE
+V3_2=NOT_STARTED
+BACKEND_VALIDATION=RUFF_PASS_MYPY_185_FILES_PASS_PYTEST_392_PASS_2_SKIP
+FRONTEND_VALIDATION=TYPECHECK_PASS_BUILD_PASS_PLAYWRIGHT_10_PASS
+RUNTIME_POLICY=PASS
+RESILIENCE_POLICY=PASS
+DOCKER_COMPOSE_CONFIG=PASS_WITH_LOCAL_DOCKER_CONFIG_ACCESS_WARNING
+NEXT=DRAFT_PR_AND_CTO_REVIEW
 ```

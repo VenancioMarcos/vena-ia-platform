@@ -36,10 +36,10 @@ acompanhadas pelo digest multi-arquitetura imutável:
 | Web | `node:22.20.0-alpine3.22` | `sha256:dbcedd8aeab47fbc0f4dd4bffa55b7c3c729a707875968d467aaaea42d6225af` | Docker Official Image; Node.js MIT e componentes Alpine |
 | PostgreSQL/pgvector | `pgvector/pgvector:0.8.1-pg17` | `sha256:3e8b3adfd27b5707128f60956f62a793c3c9326ea8cfaf0eab7adccb5d700b21` | projeto pgvector; PostgreSQL License |
 | Redis | `redis:7.4.7-alpine` | `sha256:02f2cc4882f8bf87c79a220ac958f58c700bdec0dfb9b9ea61b62fb0e8f1bfcf` | Docker Official Image; licença Redis 7.4 deve ser revista antes de distribuição externa |
-| MinIO | `minio/minio:RELEASE.2025-09-07T16-13-09Z` | `sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e` | imagem oficial MinIO; AGPLv3 |
+| MinIO | `quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z` | `sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e` | imagem oficial MinIO no Quay; AGPLv3 |
 
 Fontes: repositórios oficiais Docker Library, `pgvector/pgvector`, `redis` e
-`minio/minio`. A release MinIO de 2025-10-15 publicada no GitHub não possuía imagem
+`quay.io/minio/minio`. A release MinIO de 2025-10-15 publicada no GitHub não possuía imagem
 Docker correspondente no registro durante a auditoria; foi selecionada a release
 Docker oficial mais recente que pôde ter manifesto e digest verificados. Isso não
 autoriza upgrade automático.

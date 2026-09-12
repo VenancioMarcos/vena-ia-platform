@@ -1473,3 +1473,182 @@ integridade apenas.
 Reviewer, decision e external evidence authority não pertencem ao input público.
 Adjudicação, integração externa e teste físico exigem missões separadas. G9 permanece
 pending; readiness/physical authority permanecem false; não há migration ou v3.2.
+
+## DEC-046 — First Controlled Path Uses the Existing Local Web Boundary
+
+**Data:** 2026-08-11
+**Status:** IMPLEMENTADA — AGUARDA REVISÃO DO CTO
+**Tipo:** Validation / Web Delivery / CNC Safety
+
+TASK-V31-006 validates the shortest existing path without creating deployment
+infrastructure: a valid STEP cylindrical body is generated at test runtime, uploaded
+through the authenticated Documents API and processed by the real storage, CAD kernel,
+planning, verification, Digital Thread and controlled-download services. Browser
+coverage verifies the review surface and guarded download contract.
+
+The user acknowledgement is a UX control, never an authority source. Server-side
+membership, artifact integrity, replay and G0-G8 remain authoritative; G9 stays
+`PENDING_AUTHORITATIVE_REVIEW`. No GitHub deployment, environment, secret, variable or
+repository deployment configuration was found, so external Vercel infrastructure was
+not invented. Turning coverage, expanded CAD corpus, external deployment and physical
+validation require separate evidence and authorization.
+
+## DEC-047 — Contratos propostos de torneamento XZ
+
+**Data:** 2026-09-08
+**Status:** APROVADA TECNICAMENTE COM RESSALVAS — IMPL-004; restante PROPOSED
+**Tipo:** CAD / Engineering / Turning
+
+CTO-CODEX-SPEC-003 propõe o [ADR-0037](adr/ADR-0037-turning-geometry-and-toolpath-foundation.md):
+perfil de revolução com evidência global, datum frontal, geometria em raio e
+programação proposta em diâmetro; stock/fixação e ferramenta específicos;
+faceamento e cilindramento externo reto; trajetória linear com verificador
+independente. Perfil real de controlador permanece não resolvido e bloqueia NC.
+A sequência G90/G94/G95 sugerida não possui semântica universal de torno;
+a seleção exige manual e sistema de códigos identificados. Incremento IMPL-004: schemas mínimos e helper de eixo comum isolados. Sem
+mudança de contratos vigentes, integração CAD/CAM, G9 ou autoridade física.
+Parecer AR recebido do Gemini por relatório; implementação aguardando revisão.
+
+
+### DEC-047 — Incremento STEP-005
+
+IMPL-004 aprovada AR por relatório. Ordem STEP-005 autoriza localmente extrator
+cilíndrico externo e quatro fixtures. Reconstrução analítica e diferenças booleanas
+bidirecionais são a implementação delimitada de verificação global do subconjunto,
+sem provar CAM/segurança física. Código aguardando revisão do CTO. Sem NC ou
+expansão de fresamento; detalhes e limitações no ADR-0037.
+
+
+### DEC-047 — Exceção CAM-006A aprovada tecnicamente
+
+Conflito entre CAM-006 e ausência de fixação/ferramenta acolhido pelo Gemini.
+CAM-006A substitui a ordem e autoriza somente planejamento matemático sintético
+de ponto ideal, sem runtime/pós. Campos de colisão e autoridade permanecem false
+ou NOT_VALIDATED. A exceção não altera os requisitos para toolpath físico. Detalhes
+no ADR-0037 e registro CTO-CODEX-CAM-006.md; implementação aguarda revisão.
+
+
+### DEC-047 — CAM-007 em revisão técnica
+
+Contrato recebido não inclui stock/material remanescente nem referência do
+envelope para verificar haste/ombro. Proposta CAM-007A de fronteiras sintéticas
+declaradas enviada ao CTO. Nenhuma validação física/NC autorizada.
+
+
+### DEC-047 — CAM-007A aprovada tecnicamente
+
+Gemini acolheu o conflito e substituiu CAM-007 por CAM-007A. Implementar
+fronteiras sintéticas declaradas conforme incremento do ADR-0037, mantendo
+is_verified=false e limitações obrigatórias. Sem validação física.
+
+
+### DEC-047 — CAM-008 em revisão de contrato
+
+Ordem de orquestração E2E sintética recebida após aprovação CAM-007A. Ajuste
+de timestamp explícito, unidades suportadas e metadados imutáveis enviado ao CTO.
+Sem integrar ao Digital Thread vigente ou habilitar NC/autoridade física.
+
+
+### DEC-047 — CAM-008A aprovada tecnicamente
+
+Ajustes de CAM-008 confirmados integralmente; CTO emitiu CAM-008A.
+Orquestração sintética interna, metadados imutáveis/replay explícito conforme
+incremento no ADR-0037. Sem integração no Digital Thread vigente ou NC.
+
+
+### DEC-047 — POST-009 em revisão técnica
+
+Cabeçalho universal e emissão sem perfil de controlador resolvido contradizem
+ADR-0037. Sem F/recuo/ferramenta/material e validação do arredondamento, não
+implementar emissor. Proposta de pacote documental POST-009A enviada ao CTO.
+
+
+### DEC-047 — POST-009A aprovada tecnicamente
+
+CTO acolheu integralmente o conflito, cancelou a emissão POST-009 e autorizou
+POST-009A documental. Matriz/template em engineering/TURNING_CONTROLLER_PREREQUISITES.md.
+Sem perfil real/manual/dados revisados, CONTROLLER_PROFILE_UNRESOLVED permanece.
+Nenhum emissor de torno implementado; detalhes no incremento do ADR-0037.
+
+
+### DEC-047 — STAB-010: marco sintético local
+
+CTO aprovou POST-009A e pediu consolidação documental v3.2.0-turning-synthetic-alpha.
+Rótulo local NON_PRODUCTION, sem tag/release/bump de manifests ou publicação.
+API continua 3.1.0; emissão de torno bloqueada e dados reais pendentes.
+
+
+### DEC-047 — AUTO-012 em revisão de contrato
+
+Nova ordem retoma schema numérico após HOLD-011. Campo is_boundary_safe carece
+de fronteiras/trajectória; proposta de false/NOT_EVALUATED enviada ao CTO.
+Nenhuma emissão NC ou integração ao Digital Thread.
+
+
+### DEC-047 — AUTO-012A aprovada tecnicamente
+
+CTO acolheu integralmente o conflito e substituiu AUTO-012 por AUTO-012A.
+Contrato numérico isolado, is_boundary_safe=false/NOT_EVALUATED e limitações
+fixas; retomada local sem NC ou publicação, conforme incremento ADR-0037.
+
+
+### DEC-047 — AUTO-015 autorizada
+
+EXEC-014 concluiu commit 70e4d13 e revalidação 569 pass/2 skips. CTO aprovou
+e emitiu AUTO-015, função numérica isolada; política no ADR-0037. Sem NC
+ou promoção do contrato a segurança de fronteira.
+
+### AUTO-016 — Agregado numérico de extremos (2026-09-09)
+
+Após aprovação AUTO-015 em ebbe37e, agregar ambos os extremos em ordem
+start/end por movimento; contagem de movimentos e exatamente 2N relatórios.
+Máximo positivo/mínimo negativo incluem zero; validação estrita e falha total
+em ponto inválido. Sem quantização de Z, prova de material ou fronteiras.
+
+### AUTO-017 — Quarto estágio numérico (2026-09-09)
+
+Integrar quantização apenas após fronteiras declaradas PASS. Resultado local
+synthetic-turning/v2 exige sumário no sucesso; QUANTIZATION_FAILED preserva
+artefatos anteriores. Precisão em parâmetros/metadata e hash canônico do sumário;
+validar vínculo de contagem/raios/precisão/hash, sem autoridade física ou NC.
+
+### AUTO-018 — Reconstrução radial e reverificação (2026-09-09)
+
+Reconstruir apenas R, preservar Z/IDs/tipos/contagens; recalcular comprimento
+de corte e rejeitar segmentos colapsados. Reutilizar verificador de fronteiras
+declaradas sem promover PASS a segurança física ou NC. Wrapper isolado do E2E.
+
+### AUTO-019A — Quinto estágio e falhas distintas (2026-09-09)
+
+CTO acolheu separar falha de reconstrução/verificação de violação real. Contrato
+v3 exige seis artefatos no sucesso e na violação; falha interna preserva quatro
+sem fabricar relatório/plano posterior. Validar vínculos e digest; Z original.
+
+### AUTO-020 — Consolidação documental (2026-09-10)
+
+Cinco estágios sob synthetic-turning/v3 consolidados em dossiê local. Marco
+alpha não é tag/release, homologação ou autoridade. API/manifests3.1.0, Z nominal,
+sem alteração de cálculo ou testes. Ilustrações externas não representam produto.
+
+
+### AUTO-023 — Espelho web do contrato sintético v3 (2026-09-10)
+
+Após aprovação AUTO-022 em f6335c3, CTO autorizou somente tipos web e fixtures.
+Espelho readonly da serialização completa em apps/web/lib/turning-contracts.ts;
+união discriminada de sete estados, presenças/nulos, flags false e metadados por
+estágio. Aliases da terminologia da missão não alteram nomes de campos Python.
+Três fixtures exportadas e revalidadas a partir dos casos E2E reais, com replay.
+Sem validação geométrica/runtime TypeScript, endpoint, visualizador, dependência,
+NC ou alteração de backend. readonly não congela objetos em runtime; números e
+hashes exigem validação independente ao consumir dados externos no futuro.
+
+
+### AUTO-023A — Metadados administrativos STEP (2026-09-10)
+
+CTO acolheu a falha reprodutível e autorizou normalizar exclusivamente entidades
+PERSON/ORGANIZATION geradas nas fixtures sintéticas. Dois AP203 regenerados;
+AP214 e conteúdo fora dessas entidades idênticos ao baseline. Sem alteração de
+runtime, geometria, tolerâncias ou comparação exata de fixtures. Achado demonstra
+limite das auditorias por assinatura: histórico/bundle antigos ainda contêm
+metadados ambientais; nenhuma limpeza de histórico ou rede foi autorizada.
+Lint web permanece pendência separada; typecheck local não equivale a lint PASS.

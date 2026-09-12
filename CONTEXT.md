@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.5
-**Última atualização:** 2026-08-10
+**Versão:** 2.22
+**Última atualização:** 2026-09-11
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -26,6 +26,67 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ---
 
 ## 3. Estado atual do projeto
+
+### 3.1 Síntese vigente — 2026-09-11
+
+- **Handoff CTO:** TASK-LOCAL-036 isolou falha do Backend CI no host Docker Hub da imagem MinIO, após lint/tipos/migrations/testes passarem. TASK-LOCAL-037 autorizada: usar a referência oficial no Quay preservando release/digest, validar, commit/push e monitorar novamente o PR Draft #31. Nenhum merge autorizado; G9 e autoridade física permanecem bloqueados.
+
+- Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
+- CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.
+- Backend/API 3.1.0; modelos SQLAlchemy em apps/api por DEC-011. Migration registrada e61c4f8a2b90; nenhuma migration executada nesta auditoria.
+- Repositório PUBLIC confirmado na auditoria DIAG-001; não reconsultado na STAB-010. Nenhuma mudança de visibilidade ou publicação realizada.
+- CTO-CODEX-DIAG-001 concluída em docs/cto/CTO-CODEX-DIAG-001.md: 399 passed, 2 skipped em 258.95 s; Ruff/mypy PASS em Python 3.14.6 experimental. Varredura limitada: 1828 blobs/226 commits, sem assinaturas pesquisadas de credenciais; não certifica ausência absoluta de segredos.
+- Diagnóstico enviado ao Gemini após autorização específica do proprietário; parecer AR recebido. CTO-CODEX-FIX-002 corrige igualdade de compatibilidade, adiciona regressão e reforça .gitignore. Validação: 402 passed, 2 skipped em 118.07 s; Ruff/mypy PASS. Ver docs/cto/CTO-CODEX-FIX-002.md. Commit somente local, sem push.
+- G9 pendente; PHYSICAL_USE_AUTHORIZED=false. Sem machine-send, DNC, transferência NC, cycle start ou deploy.
+
+### 3.2 Histórico de entregas
+
+Os registros abaixo descrevem o estado na data de cada entrega. Versões antigas, packages não iniciados e PRs pendentes são checkpoints históricos; não substituem a síntese vigente acima.
+
+
+* **TESTE_02/TESTE_03 — real STEP AP214/AP203 browser validation completed:** the
+  standards-compliant whitespace emitted around STEP `SI_UNIT` parameters is now
+  recognized conservatively by the textual parser. Focused parser regression passed,
+  the API-only runtime was rebuilt, and both real inputs completed the authenticated
+  rendered-browser controlled path through G0–G8, Manufacturing Geometry, Process
+  Plan, bounded Toolpath, Level-2 and the immutable Digital Thread. The controlled
+  download endpoint returned HTTP 200 and the preserved candidate is 861 bytes with
+  SHA-256 `f012921e34a5817c47bb31f9d12f680f11f1c3ea9e2c885df00501bcc1d23f7e`.
+  G9 remains pending; controlled-validation readiness and physical-use authority
+  remain false. No machine-send, DNC/NC transfer, cycle start or direct control ran.
+
+* **TASK-V31-007B — TESTE_01 real browser path completed:** the verified public
+  `TESTE_01_cube.stp` input completed authenticated browser orchestration through
+  geometry/topology evidence, Manufacturing Geometry, verified Process Plan, bounded
+  Toolpath, Level-2, G0–G8 and the immutable Digital Thread. The first controlled
+  candidate was downloaded as `vena-ia-fd23a2b2dec85a45.candidate.nc` with SHA-256
+  `fd23a2b2dec85a4522082e7992dfd5ab90171080fc736a28be9967387986cb49`.
+  The API image includes the OpenGL runtime required by OCP, and only the controlled
+  CAD call receives the longer bounded browser timeout. G9 remains pending;
+  controlled-validation readiness and physical-use authority remain false. The full
+  troubleshooting history, execution evidence and reusable end-to-end operating
+  method are recorded in `docs/FIRST_CONTROLLED_CAD_TO_GCODE_TEST.md`.
+
+* **TASK-V31-007B — STEP browser MIME compatibility:** the local v3.1 API accepts
+  `application/octet-stream` only for `.step`/`.stp` after bounded-size, STEP header
+  and terminal-marker validation, then stores the canonical `application/step`
+  content type. Focused document tests, Ruff and mypy pass; PostgreSQL, Redis, MinIO,
+  worker readiness and API `3.1.0` remain operational after an API-only rebuild.
+  The real UI TESTE_01 must resume with the same verified cube input; G9 remains
+  pending and controlled-validation/physical-use authority remain false.
+
+* **TASK-V31-006 — First Controlled CAD-to-G-code Test Path:** the v3.1 line now
+  verifies a runtime-generated STEP cylinder through real upload/storage/CAD services
+  and the complete controlled API chain, without predeclaring expected features. The
+  browser exposes Manufacturing Geometry, Process Plan, Toolpath, Level-2 and Digital
+  Thread artifacts and requires an explicit non-production acknowledgement before
+  download. No GitHub/Vercel deployment configuration or environment exists, so no
+  external infrastructure was invented; the verified web target is the existing local
+  controlled environment. G9/readiness/physical authority remain pending/false.
+
+* **Release v3.1.0 — NON_PRODUCTION:** PR #30 was Squash Merged at `64ac3b8`; the
+  annotated tag and GitHub Release `v3.1.0` are published. Post-merge Backend,
+  Frontend and Runtime Policy CI passed. No deploy or v3.2 was started.
 
 * **Release Candidate v3.1.0 — NON_PRODUCTION:** API/FastAPI/health/OpenAPI and
   frontend versions are aligned at `3.1.0`; release notes consolidate the Controlled
@@ -380,7 +441,7 @@ PERMANENT_OPERATIONAL_LIMITS_ACTIVE=true
 
 * Gateway externo confiável e fluxo público de recuperação de senha; controles distribuídos internos de autenticação já usam Redis.
 * OCR para PDFs sem camada textual; o Package 1 mantém falha explícita.
-* Kernel geométrico CAD, propriedades topológicas, volume/área robustos, CAM, CNC ou simulação.
+* Pipeline de torneamento, CAM geral, simulação cinemática/remoção B-Rep exata e validação independente para uso físico. Kernel CAD/OCCT e evidências topológicas já existem; o candidato de fresamento permanece limitado e NON_PRODUCTION.
 * Capacidade, timeout preemptivo de bibliotecas síncronas e backend histórico de telemetria validados para piloto/produção.
 * Deploy/CD automatizado; os workflows atuais cobrem CI de backend e frontend, sem publicação automática.
 * `packages/database` como pacote real (os modelos vivem em `apps/api` por decisão deliberada — `DEC-011`).

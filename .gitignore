@@ -49,3 +49,23 @@ Thumbs.db
 .minio/
 .postgres/
 .redis/
+
+# Local credentials and certificates
+*.key
+*.pem
+*.crt
+*.cert
+*.local
+
+# Runtime outputs and temporary CAD/CAM artifacts (versioned fixtures remain allowed)
+outputs/
+temp/
+tmp/
+*.step.tmp
+*.stp.tmp
+*.nc.tmp
+
+# Local CNC outputs and repository contingency bundles
+*.nc
+*.gcode
+*.bundle

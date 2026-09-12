@@ -30,6 +30,10 @@ _ALLOWED_DOCUMENT_TYPES: dict[str, tuple[tuple[str, ...], tuple[bytes, ...]]] = 
     ),
 }
 
+_STEP_EXTENSIONS = frozenset({".step", ".stp"})
+_STEP_BROWSER_CONTENT_TYPES = frozenset({"application/octet-stream"})
+_STEP_TRAILER = b"END-ISO-10303-21;"
+
 
 class DocumentNotFoundError(Exception):
     pass
@@ -228,14 +232,15 @@ class DocumentService:
 
         expected_content_types, signatures = allowed
         content_type = (file.content_type or "").split(";", 1)[0].strip().lower()
-        if content_type not in expected_content_types:
-            raise InvalidDocumentError("Document content type does not match its extension")
 
         try:
             file.file.seek(0, 2)
             file_size = file.file.tell()
             file.file.seek(0)
             signature = file.file.read(max(len(item) for item in signatures))
+            trailer_size = min(file_size, 256)
+            file.file.seek(-trailer_size, 2)
+            trailer = file.file.read(trailer_size)
             file.file.seek(0)
         except (OSError, ValueError) as exc:
             raise InvalidDocumentError("Unable to read file") from exc
@@ -246,6 +251,19 @@ class DocumentService:
             raise DocumentTooLargeError("File exceeds the configured size limit")
         if not any(signature.startswith(item) for item in signatures):
             raise InvalidDocumentError("Document signature is invalid")
+
+        is_step = extension in _STEP_EXTENSIONS
+        if is_step and not trailer.rstrip().endswith(_STEP_TRAILER):
+            raise InvalidDocumentError("Document signature is invalid")
+
+        if content_type not in expected_content_types:
+            if not (is_step and content_type in _STEP_BROWSER_CONTENT_TYPES):
+                raise InvalidDocumentError(
+                    "Document content type does not match its extension"
+                )
+            # Browsers may serialize an unregistered .stp file as generic binary.
+            # Canonicalize only after positive STEP header and trailer validation.
+            content_type = "application/step"
 
         return filename, content_type, file_size
 

@@ -8,6 +8,171 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — v3.2.0-turning-web-alpha documentary milestone
+
+* Consolidate local synthetic 2D turning contracts, projection, SVG, fixture
+  selector and sandbox page; report architecture, 41 web tests and mobile QA.
+* Resolve WEB-LINT-001 without lint suppression; document cleanup harness limits.
+* STANDBY_WEB_BASELINE_CONSOLIDATED is a local documentation checkpoint;
+  runtime remains3.1.0. No tag, release, upstream synchronization or physical authority.
+
+
+### Fixed — AUTO-024/A local web lint configuration
+
+* Configure installed Next/TypeScript ESLint presets and explicitly include
+  app/components/lib/tests. Lint exits zero; preexisting React Hooks cleanup
+  warning remains tracked as WEB-LINT-001 without suppressing the rule.
+
+### Added — AUTO-023 synthetic turning web contracts
+
+* Readonly TypeScript mirror of synthetic-turning/v3 with seven discriminated
+  states, explicit nullability and false physical/output flags.
+* Three fixtures from real Python E2E runs with Pydantic validation and replay;
+  static rejection probes and exhaustive narrowing for future web consumers.
+* No new endpoint, viewer, backend contract, dependency or CNC emission.
+* AUTO-023A normalizes synthetic STEP PERSON/ORGANIZATION metadata; retains exact
+  fixture reproducibility checks without changing geometry or backend runtime.
+
+### Fixed — TASK-V31-007B STEP browser MIME compatibility
+* STEP/STP uploads now accept the browser-observed generic
+  `application/octet-stream` representation only when the extension is `.step` or
+  `.stp`, the configured size bound passes, and both STEP header and terminal
+  markers are present.
+* Valid generic STEP uploads are canonicalized to `application/step`; PDF and all
+  other document types retain their existing MIME allowlists.
+* Regression coverage rejects renamed JPG/PDF bytes, missing STEP header/trailer
+  and unsupported extensions without weakening the upload boundary globally.
+* The API runtime now installs the OpenGL compatibility library required by the
+  OpenCascade Python bindings, so real STEP topology evidence remains available in
+  the production-shaped container instead of failing closed as kernel unavailable.
+* The controlled CAD run receives a scoped 120-second browser timeout for its bounded
+  kernel workload; all other API calls retain the existing 30-second timeout.
+* `TESTE_01_cube.stp` completed the real browser path through G0–G8, Manufacturing
+  Geometry, verified Process Plan, bounded Toolpath, Level-2 evidence, Digital Thread
+  and the first controlled `.candidate.nc` download.
+* STEP length-unit recognition now tolerates standards-compliant whitespace around
+  `SI_UNIT` parameters. The focused regression covers the multiline millimetre form
+  observed in real AP203/AP214 exports without weakening unknown-unit fail-closed
+  behavior.
+* `PEÇA_TESTE_02_STEP_AP214.STEP` and `PEÇA_TESTE_03_STEP_AP203.STEP` completed the
+  authenticated rendered-browser path through G0–G8, Manufacturing Geometry,
+  verified Process Plan, bounded Toolpath, Level-2, immutable Digital Thread and the
+  controlled non-production download endpoint. G9 remained pending in both runs.
+
+### Added — TASK-V31-006 first controlled test path
+* Added an executable test that uploads a runtime-generated STEP cylinder through the
+  real Documents/CAD services and verifies Manufacturing Geometry, Process Plan,
+  bounded Toolpath, G0-G8, Digital Thread and controlled candidate download without
+  declaring expected features in advance.
+* Expanded the controlled-test UI with reviewable Manufacturing Geometry, Process
+  Plan, Toolpath, Level-2 and Digital Thread artifact evidence.
+* Candidate download now remains disabled until the user explicitly acknowledges
+  `NON_PRODUCTION`, required human review and absence of physical authority.
+
+### Safety
+* G9 remains `PENDING_AUTHORITATIVE_REVIEW`; controlled-validation readiness and
+  physical-use authority remain false. No deploy, machine connection, v3.2 or
+  automatic authority path was introduced.
+
+## [v3.2.0-turning-synthetic-alpha] — 2026-09-09 — NON_PRODUCTION
+
+Marco documental LOCAL consolidado por CTO-CODEX-STAB-010. Sem tag, release,
+push, merge ou publicação. API e manifests continuam em 3.1.0; este rótulo não
+representa versão executada ou release distribuída. Controlador não resolvido,
+sem pós/emissão NC de torneamento, integração runtime ou autoridade física.
+
+### Consolidation — CTO-CODEX-AUTO-020 — 2026-09-10
+
+* Dossiê local dos cinco estágios sob synthetic-turning/v3, inventário dos17
+  commits anteriores e distinção de falha interna/violação comprovada. Sem tag/release.
+* Z permanece original; nenhuma homologação de controlador ou emissão NC de torno.
+
+### Added — CTO-CODEX-AUTO-019A
+
+* Quinto estágio de reverificação radial no contrato synthetic-turning/v3,
+  com falha interna distinta de violação real, seis artefatos no sucesso/violação
+  e quatro na falha interna; vínculos geométricos e digest conferidos. Sem NC.
+
+### Added — CTO-CODEX-AUTO-018
+
+* Reconstrução radial quantizada e reverificação contínua de fronteiras
+  declaradas; Z mantido e movimentos colapsados rejeitados, sem NC/autoridade.
+
+### Added — CTO-CODEX-AUTO-017
+
+* Quantização agregada como quarto estágio interno, com precisão em parâmetros,
+  digest do sumário e falha explícita. Contrato synthetic-turning/v2 exige
+  quantização no sucesso; API/runtime continuam 3.1.0, sem NC/autoridade física.
+
+### Added — CTO-CODEX-AUTO-016
+
+* Sumário numérico dos dois extremos por movimento de plano sintético,
+  com contagem/extremos coerentes e revalidação profunda. Sem emissão NC.
+
+### Added — CTO-CODEX-AUTO-015
+
+* Avaliador puro de quantização de diâmetro, precisão 1..6 e ROUND_HALF_UP
+  do valor binário exato em contexto Decimal independente; sem emissão NC.
+* Rejeição de overflow e perda de diâmetro positivo para zero na resolução.
+
+### Added — CTO-CODEX-AUTO-012A
+
+* Contrato numérico estrito de reconstrução radial/desvio assinado, sem
+  avaliação de fronteira ou formatter NC. is_boundary_safe=false/NOT_EVALUATED.
+* Trabalho local retomado após HOLD-011, sem promover o marco sintético a release.
+
+### Stabilization
+
+* Fundação sintética CAD/perfil, planejamento 2D, verificação de fronteiras,
+  orquestrador interno e pré-requisitos de pós consolidados para revisão local.
+* Correção de compatibilidade estrita e proteção de arquivos locais preservadas;
+  quatro linhas vazias com espaços no relatório histórico de diagnóstico limpas.
+* Pacote aguarda dados reais de controlador/ferramenta/setup para evolução do pós.
+
+### Documentation — CTO-CODEX-POST-009A
+
+* Matriz de pré-requisitos/lacunas e template de coleta técnica de controlador,
+  processo, ferramenta/setup e quantização; emissão NC continua bloqueada.
+* POST-009 cancelada pelo CTO após conflito com dialeto universal e entradas
+  ausentes. Nenhum emissor, valor físico ou aprovação inventado.
+
+### Added — CTO-CODEX-CAM-008A
+
+* Orquestrador interno une BRep/perfil/plano/verificação em resultado sintético
+  estrito, com falhas por estágio e metadados imutáveis de replay.
+* Timestamp UTC e tolerâncias explícitos; hashes de parâmetros e serialização
+  BRep reais separados. Sem identidade STEP inventada, endpoint, NC ou autoridade.
+
+### Added — CTO-CODEX-CAM-007A
+
+* Verificador independente contínuo de segmentos contra plano axial conservador
+  e zonas estáticas declaradas, com AABB local explícita e aritmética racional.
+* Schemas estritos e relatório limitado a fronteiras sintéticas; is_verified=false,
+  sem validação de stock/material, ferramenta real, autoridade física ou NC.
+
+### Added — CTO-CODEX-CAM-006A
+
+* Planejamento sintético de passes radiais/axiais com stock/sobremetais explícitos,
+  schemas imutáveis e limites de recursos. Colisão NOT_VALIDATED e autoridade false.
+* Sem ferramenta real, integração, NC ou alteração de fresamento.
+
+### Added — CTO-CODEX-STEP-005
+
+* Extrator isolado de perfil cilíndrico externo radial/Z, datum explícito e
+  equivalência por reconstrução booleana do sólido, sem CAM/NC.
+* Quatro fixtures STEP AP203/AP214 sintéticas, gerador reproduzível e testes.
+
+### Added — CTO-CODEX-IMPL-004
+
+* Schemas mínimos estritos de torneamento e verificação preliminar de retas
+  cilíndricas/cônicas, com inspeção BRep isolada e falha fechada.
+* Sem extração de perfil, integração, CAM, emissão NC ou autoridade física.
+
+### Documentation — CTO-CODEX-SPEC-003
+
+* ADR-0037 e DEC-047 propõem contratos de torneamento XZ, stock, ferramenta e pós
+  dependente do controlador. Somente documentação; nenhum suporte novo implementado.
+
 ## [3.1.0] — 2026-08-11 — Controlled CAD-to-G-code Test Environment
 
 ### Added — TASK-V31-004 G9 Review Package
@@ -771,3 +936,10 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 * **MAJOR** — mudança incompatível na plataforma ou na arquitetura fundamental.
 * **MINOR** — nova versão executiva do roadmap (v0.2 Core, v0.3 IA Base etc.) ou funcionalidade relevante.
 * **PATCH** — correções e ajustes que não alteram escopo funcional.
+
+## CTO-CODEX-FIX-002 — 2026-09-08 (local, unreleased)
+
+- Reject incompatible catalog selections for calculated spindle speed, feed, machining time and derived total/cost; preserve the complete compatibility contract and human review requirement.
+- Cover machine-only, tool-only and combined incompatibility with negative API regressions.
+- Ignore local certificates, credential files, runtime outputs and temporary CAD/CAM suffixes; preserve .env.example and ordinary CAD fixtures.
+- Clarify current v3.1 context separately from historical delivery checkpoints. No turning pipeline, migration, push, release or physical authority added.

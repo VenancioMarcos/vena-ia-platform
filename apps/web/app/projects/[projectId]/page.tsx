@@ -125,10 +125,12 @@ export default function ProjectPage({
 
   useEffect(() => {
     const controller = new AbortController();
+    // Keep the live registry, not a snapshot of its current entries.
+    const activeJobControllers = jobControllers.current;
     void load(controller.signal);
     return () => {
       controller.abort();
-      Object.values(jobControllers.current).forEach((item) => item.abort());
+      Object.values(activeJobControllers).forEach((item) => item.abort());
     };
   }, [load]);
 

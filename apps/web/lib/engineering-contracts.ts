@@ -138,10 +138,74 @@ export type DigitalThreadManifest = {
   thread_id: string;
   organization_id: string;
   status: string;
-  artifacts: Array<{ artifact_id: string; artifact_type: string; content_hash: string }>;
+  artifacts: Array<{
+    artifact_id: string;
+    artifact_type: string;
+    schema_version: string;
+    content_hash: string;
+    lifecycle_status: "CURRENT";
+  }>;
   replay_hash: string;
   g9_state: "PENDING_AUTHORITATIVE_REVIEW";
   physical_use_authorized: false;
+};
+export type ManufacturingGeometryModel = {
+  schema_version: "vena-ia.manufacturing-geometry-model/v1";
+  planning_schema_version: "vena-ia.verified-process-plan/v1";
+  status: string;
+  final_geometry: {
+    source_geometry_hash: string;
+    topology_evidence_hash: string;
+    normalized_unit: string;
+    bounds: [number[], number[]];
+    topology_valid: boolean;
+  };
+  stock: { status: string; source_ref: string | null; contains_final_geometry: boolean | null };
+  removal_regions: Array<{ region_id: string; region_type: string; status: string }>;
+  operation_candidates: Array<{
+    candidate_id: string;
+    operation_class: string;
+    status: string;
+    target_region_refs: string[];
+    executable_output: false;
+  }>;
+  verification: {
+    status: string;
+    coherent: boolean;
+    deterministic_replay_hash: string;
+    physical_validation: false;
+  };
+  review_state: string;
+  executable_output: false;
+};
+export type ToolpathCandidate = {
+  schema_version: "vena-ia.toolpath-candidate/v1";
+  status: "CANDIDATE_FOR_VALIDATION" | "REJECTED" | "REQUIRES_INPUT";
+  operation_candidate_id: string;
+  target_region_ids: string[];
+  segments: Array<{
+    segment_id: string;
+    primitive: "LINEAR";
+    motion: "RAPID_CANDIDATE" | "FEED_CANDIDATE";
+    target_region_id: string | null;
+  }>;
+  verification: { status: string; deterministic_replay_hash: string; physical_validation: false };
+  review_state: string;
+  executable_output: false;
+  production_authority: false;
+};
+export type Level2Evidence = {
+  schema_version: "vena-ia.level2-material-removal-evidence/v1";
+  status: "PASS_REQUIRES_HUMAN_REVIEW" | "REJECTED" | "REQUIRES_INPUT";
+  replay_hash: string;
+  reconstructed_segment_count: number;
+  target_coverage: string;
+  remaining_material: string;
+  gouge_detected: boolean;
+  protected_surface_violation: boolean;
+  rapid_collision_detected: boolean;
+  fixture_collision_detected: boolean | null;
+  physical_validation: false;
 };
 export type G9ReviewPackage = {
   schema_version: "vena-ia.g9-review-package/v1";
@@ -173,6 +237,9 @@ export type ControlledEnvironmentResult = {
   nc_transfer: false;
   cycle_start: false;
   direct_machine_control: false;
+  manufacturing_model: ManufacturingGeometryModel;
+  toolpath: ToolpathCandidate;
+  level2_evidence: Level2Evidence;
   gcode_candidate: { program: string; output_hash: string };
   blind_validation: {
     gates: GateEvidence[];

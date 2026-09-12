@@ -1706,6 +1706,16 @@ authority, persistence, migration or v3.2 was introduced.
 aligned for publication as `NON_PRODUCTION`; the release cannot approve G9 or grant
 physical use. Merge, tag and GitHub Release remain the explicit TASK-V31-005 gate.
 
+**TASK-V31-006 — First Controlled CAD-to-G-code Test Path:** `IMPLEMENTED / READY_FOR_CTO_REVIEW`.
+The first repeatable path uses a runtime-generated STEP cylindrical body and the real
+authenticated document upload, storage, CAD kernel, evidence, Digital Thread and
+controlled-download services. The web review surface exposes Manufacturing Geometry,
+Process Plan, bounded Toolpath, Level-2 and artifact provenance, and requires an
+explicit non-production acknowledgement before download. The existing local web
+boundary is the deployment target because no approved external environment or
+deployment configuration exists. This does not validate turning, an expanded CAD
+corpus, physical use or G9.
+
 ---
 
 **Fim do Documento 03 — Roadmap Executivo Vena_IA até v3.1**

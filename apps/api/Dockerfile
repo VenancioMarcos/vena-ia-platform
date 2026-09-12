@@ -16,7 +16,10 @@ COPY apps/api/alembic.ini ./apps/api/alembic.ini
 COPY apps/api/migrations ./apps/api/migrations
 COPY scripts ./scripts
 
-RUN python -m pip install --no-cache-dir "pip==${PIP_VERSION}" \
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends libgl1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && python -m pip install --no-cache-dir "pip==${PIP_VERSION}" \
     && python -m pip install --no-cache-dir . ./apps/api \
     && groupadd --system vena-ia \
     && useradd --system --gid vena-ia --home-dir /app --no-create-home vena-ia \
