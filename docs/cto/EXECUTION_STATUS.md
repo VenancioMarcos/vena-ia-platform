@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-076
+
+`CAM_ROTA_1_STRATEGY_FOUNDATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-075 foi
+aprovada pelo CTO com 749 Python, 9 ignorados, 64 Web e checks estáticos verdes.
+Consolidação documental, publicação da branch, Draft PR e CI inicial em andamento;
+nenhum merge, pós-processamento ou autoridade física autorizado.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-075
 
 `CAM_ROTA_1_STRATEGY_FOUNDATION_IN_PROGRESS`. Módulo CAM canônico, contratos

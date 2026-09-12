@@ -1,6 +1,6 @@
 # CTO-CODEX-AUTO-075 — Fundação canônica de estratégias CAM
 
-**Status:** `CAM_ROTA_1_STRATEGY_FOUNDATION_IN_PROGRESS`
+**Status:** `CAM_ROTA_1_STRATEGY_FOUNDATION_PR_OPEN_AWAITING_CI_AND_REVIEW`
 **Data:** 2026-09-12
 **Branch:** `codex/v4.0-cam-turning-strategies-foundation`
 **Baseline:** `3f2b19877c528cab0d080fcb1bc0756f4bef7390`
@@ -68,8 +68,8 @@ a revisão, sem G-code, pós-processador, conexão de máquina ou autoridade fí
 
 ## Próximos passos
 
-Submeter VTP-AUTO-075 ao CTO e aguardar ordem delimitada para evolução do domínio
-CAM sem conectar o motor a endpoints ou pós-processadores por inferência.
+AUTO-075 foi aprovada pelo CTO. A AUTO-076 publica a branch, abre Draft PR contra
+`main`, coleta o CI inicial e retorna ao CTO sem executar merge.
 
 ## Limites permanentes
 

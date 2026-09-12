@@ -1022,3 +1022,9 @@ Criado o domínio CAM canônico com enums, contratos Pydantic estritos e motor
 determinístico de faceamento e desbaste 2D. Nove testes CAM e a regressão integral
 de 749 Python/9 ignorados e 64 Web foram aprovados. Acabamento e canais permanecem
 em falha fechada; nenhum push, G-code ou autoridade física foi adicionado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-076
+
+Ordem de consolidação documental, publicação da fundação CAM, abertura de Draft PR
+contra `main` e coleta do CI inicial. Nenhum merge, pós-processamento, emissão NC
+ou autoridade física está autorizado.

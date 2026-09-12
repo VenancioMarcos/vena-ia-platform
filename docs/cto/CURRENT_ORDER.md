@@ -1,22 +1,23 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-075
-**Estado:** CAM_ROTA_1_STRATEGY_FOUNDATION_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-076
+**Estado:** CAM_ROTA_1_STRATEGY_FOUNDATION_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-12
 **Branch:** `codex/v4.0-cam-turning-strategies-foundation`
 **Baseline da branch:** `3f2b19877c528cab0d080fcb1bc0756f4bef7390`
+**Commit funcional:** `92d3651`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O módulo canônico CAM, seus contratos estritos e o motor determinístico de
-faceamento e desbaste 2D foram criados no commit local `92d3651`. Acabamento e
-canais permanecem em falha fechada e nenhum output é executável.
+O CTO aprovou a fundação CAM e autorizou publicar a branch e abrir Draft PR contra
+`main`. O pacote mantém faceamento e desbaste 2D analíticos; acabamento e canais
+permanecem em falha fechada e nenhum output é executável.
 
 ## Continuidade
 
-Enviar VTP-AUTO-075 ao CTO e aguardar a próxima ordem sem push, endpoint CAM,
-pós-processamento ou expansão autônoma do escopo.
+Publicar a branch, abrir Draft PR, coletar o estado inicial do CI, enviar
+VTP-AUTO-076 ao CTO e aguardar a próxima ordem sem merge.
 
 ## Limites permanentes
 
