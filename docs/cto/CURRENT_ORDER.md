@@ -1,18 +1,18 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-040
-**Estado:** ROTA_2_CAD_INGESTION_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-041
+**Estado:** ROTA_2_STEP_VIEWER_INTEGRATION_IN_PROGRESS
 **Data:** 2026-09-12
 **Baseline inicial sincronizado:** 400d18af8235d7cac67965e28ba3eaa6bab43413 (merge do PR #31 na `main`).
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Escopo vigente
 
-PR #31 foi integrado na `main` pelo merge commit `400d18a`. AUTO-040 autoriza
-uma fundação local da Rota 2: validação STEP em memória, dropzone declarativa,
-testes e documentação. O trabalho ocorre em `codex/v3.2-step-cad-ingestion-web`.
-É proibido push, alteração em backend/pacotes, dependências de rede e qualquer
-mudança nos limites operacionais.
+PR #31 foi integrado na `main` pelo merge commit `400d18a`. AUTO-041 integra a
+dropzone STEP cliente já validada à rota `/cam/turning`, mostra os metadados locais
+e um banner de despacho pendente, sem alterar fixtures sintéticas. O trabalho ocorre
+em `codex/v3.2-step-cad-ingestion-web`. São proibidos push, alteração em
+backend/pacotes, dependências de rede e qualquer mudança nos limites operacionais.
 
 ## Rotas futuras para deliberação do proprietário
 
@@ -36,7 +36,7 @@ autorização do proprietário, continuar. Não encerrar apenas por receber nova
 Confirmar no histórico da conversa se o envio já ocorreu antes de repetir mensagem.
 Atualizar este arquivo, CONTEXT e histórico após cada parecer/ordem.
 
-O merge do PR #31 foi autorizado e concluído pelo proprietário. AUTO-040 autoriza
+O merge do PR #31 foi autorizado e concluído pelo proprietário. AUTO-041 autoriza
 somente commit local na branch da Rota 2; sem push, tag, release ou deploy.
 NON_PRODUCTION;
 G9=PENDING_AUTHORITATIVE_REVIEW; PHYSICAL_USE_AUTHORIZED=false. Contas, credenciais,

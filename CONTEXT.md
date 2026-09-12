@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-12
 
-- **Handoff CTO:** PR #31 foi integrado na `main` via `400d18af8235d7cac67965e28ba3eaa6bab43413`, após quatro checks remotos SUCCESS. CTO-CODEX-AUTO-040 abriu a Rota 2 na branch local `codex/v3.2-step-cad-ingestion-web`: validação STEP estritamente cliente e dropzone HTML5, sem upload remoto, backend, dependências, push ou alteração dos limites físico-operacionais.
+- **Handoff CTO:** PR #31 foi integrado na `main` via `400d18af8235d7cac67965e28ba3eaa6bab43413`, após quatro checks remotos SUCCESS. AUTO-041 integra a dropzone STEP estritamente cliente à rota `/cam/turning` na branch local `codex/v3.2-step-cad-ingestion-web`: arquivo aceito exibe metadados e banner de pipeline aguardando despacho, com G-code e despacho físico bloqueados. Sem upload remoto, backend, dependências, push ou alteração dos limites físico-operacionais.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

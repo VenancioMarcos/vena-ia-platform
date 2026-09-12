@@ -844,3 +844,10 @@ O proprietário autorizou o PR #31 para revisão e confirmou o merge. GitHub
 registrou `state=MERGED` em `400d18af8235d7cac67965e28ba3eaa6bab43413`.
 CTO homologou o evento e abriu a Rota 2 para validação STEP e uma dropzone local
 em `apps/web`, sem upload de rede, backend, push ou alteração dos limites físicos.
+
+## 2026-09-12 — CTO-CODEX-AUTO-041
+
+AUTO-040 foi aprovada pelo CTO. AUTO-041 autoriza integrar `StepUploadZone` na rota
+`/cam/turning`, mostrar os metadados locais e explicitar que a geometria aguarda
+despacho, mantendo G-code e despacho físico bloqueados. Exige testes web, tsc, lint,
+pytest, Ruff e diff; autoriza somente commit local na mesma branch, sem push.

@@ -8,6 +8,7 @@ type UploadState = "idle" | "dragover" | "accepted" | "rejected";
 type Props = Readonly<{
   maxSizeBytes?: number;
   onAccepted?: (file: File) => void;
+  onCleared?: () => void;
 }>;
 
 function formatSize(sizeBytes: number): string {
@@ -17,7 +18,7 @@ function formatSize(sizeBytes: number): string {
 }
 
 /** Client-only STEP picker. It validates in memory and does not send files over the network. */
-export function StepUploadZone({ maxSizeBytes, onAccepted }: Props) {
+export function StepUploadZone({ maxSizeBytes, onAccepted, onCleared }: Props) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<UploadState>("idle");
@@ -43,6 +44,7 @@ export function StepUploadZone({ maxSizeBytes, onAccepted }: Props) {
     setState("idle");
     setMessage("Arraste um arquivo STEP ou clique para selecionar.");
     if (inputRef.current) inputRef.current.value = "";
+    onCleared?.();
   }
 
   const stateClasses = state === "dragover"

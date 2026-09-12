@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-041
+
+`ROTA_2_STEP_VIEWER_INTEGRATION_IN_PROGRESS`. AUTO-040 foi aprovada pelo CTO.
+A rota `/cam/turning` agora integra a dropzone STEP local e preserva os fixtures
+sintéticos; o banner informa que a geometria aguarda despacho e que G-code/despacho
+físico estão bloqueados. Validação local: 46 testes web, TypeScript e lint sem
+erros/avisos; `pytest -q` 727 passed/9 skipped; Ruff e diff check aprovados.
+Commit local autorizado, sem push.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-040
 
 `ROTA_2_CAD_INGESTION_IN_PROGRESS`. PR #31 integrado na `main` via
