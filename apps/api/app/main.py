@@ -21,7 +21,9 @@ from app.modules.auth.security_store import build_authentication_security_store
 from app.modules.audit.middleware import AuditCorrelationMiddleware
 from app.modules.chats.api.routes import router as chats_router
 from app.modules.cnc.api.routes import router as cnc_router
+from app.modules.cad.api.routes import ingestion_router as cad_ingestion_router
 from app.modules.cad.api.routes import router as cad_router
+from app.modules.cad.ingestion import build_cad_ingestion_gateway
 from app.modules.documents.api.routes import router as documents_router
 from app.modules.documents.dependencies import initialize_document_storage
 from app.modules.engineering.api.routes import router as engineering_router
@@ -42,7 +44,12 @@ API_VERSION = "3.1.0"
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     initialize_document_storage()
-    yield
+    gateway = build_cad_ingestion_gateway()
+    _app.state.cad_ingestion_gateway = gateway
+    try:
+        yield
+    finally:
+        gateway.close()
 
 
 def create_app() -> FastAPI:
@@ -163,6 +170,7 @@ def create_app() -> FastAPI:
     app.include_router(engineering_assistance_router)
     app.include_router(jobs_router)
     app.include_router(cad_router)
+    app.include_router(cad_ingestion_router)
     app.include_router(manufacturing_router)
     app.include_router(organizations_router)
     app.include_router(cnc_router)

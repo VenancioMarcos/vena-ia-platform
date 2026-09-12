@@ -1,5 +1,27 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-055
+
+`ROTA_3_BACKEND_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-054 aprovada no
+commit `428612e`; pacote local da Rota 3 validado com 732 testes Python e 59 Web.
+Commit documental, publicação da branch e Draft PR em execução. Nenhum merge,
+deploy, geração NC ou autoridade física autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-054
+
+`ROTA_3_STEP_BACKGROUND_PROCESSOR_IN_PROGRESS`. AUTO-053 aprovada no commit
+`e88a787`. Worker local implementado com transições `PROCESSING`, `COMPLETED` e
+`FAILED`, perfil RZ revisável, bounding box e limpeza do sandbox em `finally`.
+Sem push, planejamento CAM, geração NC ou autoridade física.
+
+## 2026-09-12 — CTO-CODEX-AUTO-053
+
+`ROTA_3_BACKEND_GATEWAY_IN_PROGRESS`. PR #33 integrado na `main` pelo merge
+`75b9608`; branch `codex/v3.3-cad-backend-gateway` criada exatamente desse
+baseline. Gateway autenticado implementado com validação STEP em fluxo, limite
+de 15 MB, sandbox temporário, jobs `QUEUED` isolados por proprietário e consulta
+de status. Nenhum push, processamento geométrico, geração NC ou autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-050
 
 `ROTA_2_STAGE_2_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-049 aprovada pelo CTO no

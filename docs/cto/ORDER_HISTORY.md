@@ -6,6 +6,30 @@ O proprietário ativou execução contínua obrigatória: toda task termina com 
 entregue ao CTO, estado `AWAITING_CTO_NEXT_ORDER`, captura integral da ordem
 seguinte e retomada imediata. Somente `ENCERRAR FLUXO` encerra o ciclo.
 
+## 2026-09-12 — CTO-CODEX-AUTO-052
+
+O CTO determinou sincronizar a `main` após o PR #33, confirmar o merge
+`75b9608` e registrar o encerramento da Rota 2 sem push ou mudança funcional.
+
+## 2026-09-12 — CTO-CODEX-AUTO-053
+
+O CTO aprovou o encerramento da Rota 2 e abriu a Rota 3 para um gateway backend
+autenticado de ingestão STEP: validação defensiva em fluxo, limite de 15 MB,
+sandbox temporário, job `QUEUED`, testes e documentação, em branch dedicada e
+sem push.
+
+## 2026-09-12 — CTO-CODEX-AUTO-054
+
+Após aprovar a AUTO-053 no commit `e88a787`, o CTO ordenou conectar o gateway a
+um worker local, produzir perfil RZ e bounding box revisáveis, representar
+falhas sem detalhes internos e limpar o sandbox, sem push ou saída física.
+
+## 2026-09-12 — CTO-CODEX-AUTO-055
+
+Após aprovar a AUTO-054 no commit `428612e`, o CTO ordenou consolidar a Rota 3,
+publicar a branch dedicada, abrir Draft PR contra `main` e monitorar o CI, sem
+merge ou publicação executável.
+
 ## 2026-08-06 — TASK-V17-003
 
 O CTO aprovou a TASK-V17-002 e ordenou concluir a v1.7 na mesma PR #18 com
