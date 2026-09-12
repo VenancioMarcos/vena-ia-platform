@@ -997,3 +997,14 @@ do épico CAD das Rotas 2 a 5. Nenhum push, tag, release ou código funcional au
 
 Ordem de publicação da branch documental, abertura de PR contra `main` e coleta do
 CI. Nenhum merge, tag, release ou autoridade física autorizado.
+
+## 2026-09-12 — CTO-CODEX-AUTO-072-PRE-MERGE
+
+O PR #38 foi retirado de Draft; estado confirmado como `OPEN`, `MERGEABLE` e
+`CLEAN`. Nenhum merge ou tag ocorreu nessa missão.
+
+## 2026-09-12 — CTO-CODEX-AUTO-073-MERGE-AND-SYNC
+
+O PR #38 foi integrado por squash merge em `a6babbd`. A tag anotada oficial
+`v0.7.0-cad` foi publicada e aponta para a mesma baseline. `main` e
+`origin/main` permanecem alinhadas; limites físicos inalterados.

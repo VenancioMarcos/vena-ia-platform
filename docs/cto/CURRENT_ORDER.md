@@ -1,21 +1,21 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-071
-**Estado:** ROTA_6_CAD_EPIC_CONSOLIDATION_PR_OPEN_AWAITING_CI_AND_REVIEW
+**Missão:** CTO-CODEX-AUTO-073-MERGE-AND-SYNC
+**Estado:** CAD_EPIC_OFFICIALLY_CLOSED_BASELINE_TAGGED
 **Data:** 2026-09-12
-**Branch:** `codex/v3.6-cad-epic-baseline-consolidation`
-**Baseline da branch:** `00ed21d974d84f67faab1ef28a1b25fedf89322d`
+**Branch:** `codex/auto-073-cad-baseline-closeout`
+**Baseline da branch:** `a6babbde437e5547e00ba83038218d7d69178023`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-AUTO-070 foi aprovada no commit `7d5dbc4`. O gate atual é publicar a branch,
-abrir o PR documental contra `main` e coletar o CI inicial.
+O PR #38 foi integrado em `a6babbd`; `main` e `origin/main` estão alinhadas.
+A tag anotada `v0.7.0-cad` foi publicada sobre a baseline do épico CAD.
 
 ## Continuidade
 
-Criar commit de governança, publicar a branch, abrir PR, coletar o CI, enviar
-VTP-AUTO-071 ao CTO e aguardar a próxima ordem. Nenhum merge autorizado.
+Criar commit documental local de fechamento, sem push. Enviar VTP-AUTO-073 ao CTO
+e aguardar a próxima ordem sem encerrar a execução.
 
 ## Limites permanentes
 

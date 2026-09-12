@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.32
+**Versão:** 2.33
 **Última atualização:** 2026-09-12
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,10 +29,11 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-12
 
-- **Handoff CTO:** `ROTA_6_CAD_EPIC_CONSOLIDATION_PR_OPEN_AWAITING_CI_AND_REVIEW`.
-  AUTO-070 foi aprovada em `7d5dbc4`: roadmaps, arquitetura e changelog consolidam
-  a baseline STEP das Rotas 2 a 5. Validação: 740 Python, 9 ignorados, 64 Web e
-  checks estáticos. AUTO-071 publica a branch e abre PR; sem merge, tag ou release.
+- **Handoff CTO:** `CAD_EPIC_OFFICIALLY_CLOSED_BASELINE_TAGGED`. O PR #38 foi
+  integrado em `a6babbd` às 2026-09-12T19:30:01Z; `main` e `origin/main`
+  estão alinhadas. A tag anotada `v0.7.0-cad` foi publicada sobre essa baseline.
+  Rotas 2 a 5 permanecem homologadas com 740 Python, 9 ignorados, 64 Web e checks
+  estáticos. Nenhum limite físico foi alterado.
 
 - **Handoff CTO:** `ROTA_4_E2E_CAD_INTEGRATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-058 foi aprovada no commit local `3b2d8c8`: o frontend usa os endpoints reais do gateway, valida a resposta `COMPLETED` e renderiza o perfil RZ em SVG com dimensões e revisão obrigatória. Validação local: 62 Web, 732 Python, TypeScript, lint, Ruff e diff aprovados. AUTO-059 publica a branch e abre Draft PR; nenhum merge ou limite físico foi alterado.
 

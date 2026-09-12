@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-073
+
+`CAD_EPIC_OFFICIALLY_CLOSED_BASELINE_TAGGED`. PR #38 integrado por squash merge
+em `a6babbd`; `main` alinhada com `origin/main`. Tag anotada `v0.7.0-cad`
+publicada sobre a baseline. Fechamento documental em branch local, sem push;
+limites de revisão e autoridade física inalterados.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-071
 
 `ROTA_6_CAD_EPIC_CONSOLIDATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-070 aprovada
