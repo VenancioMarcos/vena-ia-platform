@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-063
+
+`ROTA_5_CAD_HARDENING_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-062 aprovada no
+commit `db78731`, com 738 testes Python, 9 ignorados, 64 Web e checks estáticos
+verdes. Consolidação documental, publicação da branch, PR e CI inicial em execução;
+nenhum merge ou autoridade física autorizado.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-062
 
 `ROTA_5_CAD_HARDENING_IN_PROGRESS`. Branch criada da `main` integrada em

@@ -1,6 +1,6 @@
 # CTO-CODEX-AUTO-062 — Hardening e resiliência do pipeline CAD
 
-**Status:** `ROTA_5_CAD_HARDENING_IN_PROGRESS`  
+**Status:** `ROTA_5_CAD_HARDENING_PR_OPEN_AWAITING_CI_AND_REVIEW`
 **Data:** 2026-09-12  
 **Branch:** `codex/v3.5-cad-hardening-resilience`  
 **Baseline:** `e8774a7ccbd7517e7cf08c906b7ffcbbb5bdb954`
@@ -64,5 +64,5 @@ O escopo não inclui CAM, G-code, pós-processamento, transmissão ou operação
 
 ## Continuidade
 
-Criar o commit local atômico, sem push. Enviar VTP-AUTO-062 ao CTO, solicitar parecer
-e aguardar a próxima ordem sem encerrar a execução.
+O commit funcional `db78731` foi aprovado pelo CTO. AUTO-063 consolida a
+documentação, publica a branch e abre o PR, sem merge.

@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-062
-**Estado:** ROTA_5_CAD_HARDENING_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-063
+**Estado:** ROTA_5_CAD_HARDENING_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-12
 **Branch:** `codex/v3.5-cad-hardening-resilience`
 **Baseline da branch:** `e8774a7ccbd7517e7cf08c906b7ffcbbb5bdb954`
@@ -9,15 +9,14 @@
 
 ## Estado vigente
 
-A Rota 5 aplica validação conservadora de tolerância, fechamento, degeneração,
-auto-interseção e envelope dimensional ao perfil RZ. Avisos estruturados chegam à
-interface sem remover a revisão obrigatória.
+A AUTO-062 foi aprovada no commit `db78731`: o perfil RZ falha fechado para
+geometria inválida e propaga avisos toleráveis à UI com revisão obrigatória. O gate
+atual é publicar a branch, abrir o PR e coletar o CI inicial.
 
 ## Continuidade
 
-Concluir a validação completa e criar commit local atômico, sem push. Enviar
-VTP-AUTO-062 ao CTO, solicitar parecer e aguardar a próxima ordem sem encerrar o
-fluxo.
+Criar o commit documental, publicar a branch, abrir PR contra `main`, coletar o CI,
+enviar VTP-AUTO-063 ao CTO e aguardar a próxima ordem. Nenhum merge está autorizado.
 
 ## Limites permanentes
 

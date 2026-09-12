@@ -29,13 +29,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-12
 
-- **Handoff CTO:** `ROTA_5_CAD_HARDENING_IN_PROGRESS`. A branch
-  `codex/v3.5-cad-hardening-resilience` parte da `main` em `e8774a7` e valida
-  degeneração, fechamento com tolerância de 0,05 mm, auto-interseção e limites
-  dimensionais do perfil RZ. Avisos estruturados chegam à UI mantendo revisão
-  obrigatória. Validação aprovada: 738 Python, 9 ignorados, 64 Web, TypeScript,
-  lint, Ruff, mypy e diff. Commit local em andamento; nenhum push ou limite físico
-  foi alterado.
+- **Handoff CTO:** `ROTA_5_CAD_HARDENING_PR_OPEN_AWAITING_CI_AND_REVIEW`.
+  AUTO-062 foi aprovada no commit `db78731`: degeneração, abertura acima de
+  0,05 mm, auto-interseção e envelope dimensional falham fechado; avisos toleráveis
+  chegam à UI mantendo revisão obrigatória. Validação aprovada: 738 Python,
+  9 ignorados, 64 Web, TypeScript, lint, Ruff, mypy e diff. AUTO-063 consolida a
+  documentação, publica a branch e abre PR; nenhum merge ou limite físico foi alterado.
 
 - **Handoff CTO:** `ROTA_4_E2E_CAD_INTEGRATION_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-058 foi aprovada no commit local `3b2d8c8`: o frontend usa os endpoints reais do gateway, valida a resposta `COMPLETED` e renderiza o perfil RZ em SVG com dimensões e revisão obrigatória. Validação local: 62 Web, 732 Python, TypeScript, lint, Ruff e diff aprovados. AUTO-059 publica a branch e abre Draft PR; nenhum merge ou limite físico foi alterado.
 
