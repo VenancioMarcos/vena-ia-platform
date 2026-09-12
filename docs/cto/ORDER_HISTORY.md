@@ -30,6 +30,13 @@ Após aprovar a AUTO-054 no commit `428612e`, o CTO ordenou consolidar a Rota 3,
 publicar a branch dedicada, abrir Draft PR contra `main` e monitorar o CI, sem
 merge ou publicação executável.
 
+## 2026-09-12 — CTO-CODEX-AUTO-058
+
+Após a integração da Rota 3 na `main`, o CTO ordenou conectar o serviço web às
+rotas reais do gateway, validar o contrato `COMPLETED` e renderizar o perfil RZ
+analítico com dimensões e revisão obrigatória. A missão foi aprovada no commit
+local `3b2d8c8`, com 62 testes Web e 732 testes Python verdes.
+
 ## 2026-08-06 — TASK-V17-003
 
 O CTO aprovou a TASK-V17-002 e ordenou concluir a v1.7 na mesma PR #18 com
