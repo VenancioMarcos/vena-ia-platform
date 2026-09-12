@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-083
-**Estado:** CAM_ROTA_3_GROOVING_STRATEGY_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-084
+**Estado:** CAM_ROTA_3_GROOVING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-12
 **Branch:** `codex/v4.2-cam-grooving-strategy`
 **Baseline da branch:** `2703e37741f276b4aac6b68595513810848eab8b`
@@ -9,14 +9,14 @@
 
 ## Estado vigente
 
-Implementar `GROOVING` analítico por mergulho radial e passes laterais em Z,
-considerando largura da pastilha e raio de canto. Canais incompatíveis devem falhar
-fechado e nenhuma saída executável ou instrução física pode ser produzida.
+A estratégia `GROOVING` foi aprovada pelo CTO no commit `7653641`, com mergulho
+radial controlado, recuo de alívio e stepovers em Z derivados da largura e do raio
+de canto da pastilha. A regressão homologou 754 Python e 64 Web.
 
 ## Continuidade
 
-Concluir implementação, testes e regressão, criar commit local atômico, enviar
-VTP-AUTO-083 ao CTO e aguardar a próxima ordem. Nenhum push está autorizado.
+Consolidar governança, publicar a branch, abrir Draft PR contra `main`, coletar o
+CI inicial e enviar VTP-AUTO-084 ao CTO. Nenhum merge está autorizado nesta etapa.
 
 ## Limites permanentes
 

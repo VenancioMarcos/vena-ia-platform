@@ -29,6 +29,12 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-12
 
+- **Handoff CTO:** `CAM_ROTA_3_GROOVING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW`.
+  AUTO-083 foi aprovada no commit `7653641`: `GROOVING` analítico cobre mergulho
+  radial, recuo de alívio e stepovers em Z, com validação fail-closed de largura e
+  geometria da pastilha. Validação: 754 Python/9 ignorados, 64 Web e checks
+  estáticos; publicação e Draft PR em andamento, sem merge ou saída executável.
+
 - **Handoff CTO:** `CAM_ROTA_2_FINISHING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW`.
   A branch `codex/v4.1-cam-finishing-strategy` contém em `fe63498` um passe contínuo
   de `FINISHING`, offset normal pelo raio de ponta e sobremetal, alcance angular da

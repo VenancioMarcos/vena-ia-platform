@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-084
+
+`CAM_ROTA_3_GROOVING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-083 foi
+aprovada pelo CTO no commit `7653641`, com 754 Python, 9 ignorados, 64 Web e checks
+estáticos verdes. Consolidação, publicação, Draft PR e CI em andamento; sem merge.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-083
 
 `CAM_ROTA_3_GROOVING_STRATEGY_IN_PROGRESS`. Planejamento analítico de canal em

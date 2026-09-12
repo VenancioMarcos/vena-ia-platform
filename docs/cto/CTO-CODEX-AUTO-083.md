@@ -1,6 +1,6 @@
 # CTO-CODEX-AUTO-083 — Estratégia analítica de canais
 
-**Status:** `CAM_ROTA_3_GROOVING_STRATEGY_IN_PROGRESS`
+**Status:** `CAM_ROTA_3_GROOVING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW`
 **Data:** 2026-09-12
 **Branch:** `codex/v4.2-cam-grooving-strategy`
 **Baseline:** `2703e37741f276b4aac6b68595513810848eab8b`
@@ -58,5 +58,5 @@ mergulho radial e passes laterais em Z, sem produzir instruções executáveis.
 
 ## Continuidade
 
-Concluir a regressão, criar o commit local atômico, enviar VTP-AUTO-083 ao CTO e
-aguardar a próxima ordem. Nenhum push está autorizado nesta missão.
+Publicar a branch, abrir Draft PR contra `main`, coletar o CI inicial e enviar
+VTP-AUTO-084 ao CTO sem executar merge.
