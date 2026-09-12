@@ -1,26 +1,26 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-054
-**Estado:** ROTA_3_STEP_BACKGROUND_PROCESSOR_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-055
+**Estado:** ROTA_3_BACKEND_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-12
 **Branch:** `codex/v3.3-cad-backend-gateway`
 **Baseline da branch:** `75b96080ee9bf1201c2ffda2f70bf9b3e172963c`
-**Entrega anterior:** `e88a787` (AUTO-053 aprovada)
+**Commits funcionais:** `e88a787`, `428612e`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O gateway dispara um processamento em background após responder `QUEUED`. O
-worker transiciona para `PROCESSING`, carrega o B-Rep com o kernel existente,
-aplica a convenção RZ declarada da rota e encerra em `COMPLETED` com perfil e
-bounding box, ou `FAILED` com erro estável. O arquivo temporário é removido em
-`finally`.
+A Rota 3 reúne gateway autenticado STEP, sandbox temporário, estados de job e
+processamento em background com perfil RZ e bounding box revisáveis. As suítes
+locais aprovam 732 testes Python e 59 testes Web, além de mypy, Ruff, TypeScript,
+lint e diff. A publicação da branch, abertura do Draft PR e CI são os gates desta
+missão.
 
 ## Continuidade
 
-Concluir regressões e documentação, criar o commit local autorizado, enviar
-VTP-AUTO-054 ao CTO e aguardar a próxima ordem sem encerrar o fluxo. Nenhum push
-foi autorizado.
+Criar o commit documental, publicar a branch, abrir Draft PR contra `main`,
+monitorar o CI inicial, enviar VTP-AUTO-055 ao CTO e aguardar a próxima ordem
+sem encerrar o fluxo. Nenhum merge está autorizado nesta missão.
 
 ## Limites permanentes
 

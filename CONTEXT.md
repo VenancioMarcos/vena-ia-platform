@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.26
+**Versão:** 2.27
 **Última atualização:** 2026-09-12
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-12
 
-- **Handoff CTO:** `ROTA_3_STEP_BACKGROUND_PROCESSOR_IN_PROGRESS`. A AUTO-053 foi aprovada no commit `e88a787`. A AUTO-054 conecta o gateway autenticado a um worker local que transiciona `QUEUED/PROCESSING/COMPLETED/FAILED`, reutiliza o kernel e extrator conservador, devolve perfil RZ e bounding box revisáveis e remove o arquivo do sandbox em sucesso ou falha. Sem push, planejamento CAM, G-code ou alteração dos limites físico-operacionais.
+- **Handoff CTO:** `ROTA_3_BACKEND_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-053/054 foram aprovadas nos commits `e88a787` e `428612e`. A Rota 3 reúne gateway STEP autenticado, validação em fluxo, sandbox temporário, job isolado por proprietário e background processor com perfil RZ revisável. Validação local: 732 Python, 59 Web, mypy, Ruff, TypeScript, lint e diff aprovados. AUTO-055 publica a branch e abre Draft PR; nenhum merge ou limite físico foi alterado.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.
