@@ -1,7 +1,19 @@
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, File, HTTPException, UploadFile, status
 
 from app.modules.auth.dependencies import CurrentUserDependency
-from app.modules.cad.dependencies import CADAnalysisServiceDependency
+from app.modules.cad.dependencies import (
+    CADAnalysisServiceDependency,
+    CadIngestionGatewayDependency,
+)
+from app.modules.cad.ingestion import (
+    CadIngestionJobNotFoundError,
+    CadUploadTooLargeError,
+    InvalidCadUploadError,
+    InvalidStepContentError,
+)
+from app.modules.cad.ingestion_schemas import CadJobStatusResponse, StepUploadResponse
 from app.modules.cad.kernel import OpenCascadeGeometryKernel
 from app.modules.cad.parser import StepParseError
 from app.modules.cad.schemas import (
@@ -26,6 +38,53 @@ from app.modules.documents.service import (
 )
 
 router = APIRouter(prefix="/cad", tags=["cad"])
+ingestion_router = APIRouter(prefix="/api/v1/cad", tags=["cad-ingestion"])
+
+
+@ingestion_router.post(
+    "/step/dispatch",
+    response_model=StepUploadResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def dispatch_step_upload(
+    current_user: CurrentUserDependency,
+    gateway: CadIngestionGatewayDependency,
+    file: Annotated[UploadFile, File(description="ISO 10303-21 STEP file")],
+) -> StepUploadResponse:
+    try:
+        job = await gateway.dispatch(file, owner_user_id=str(current_user.id))
+    except InvalidCadUploadError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except (CadUploadTooLargeError, InvalidStepContentError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    return StepUploadResponse(
+        job_id=job.job_id,
+        filename=job.filename,
+        size_bytes=job.size_bytes,
+        schema_type=job.schema_type,
+        status=job.status,
+    )
+
+
+@ingestion_router.get(
+    "/step/jobs/{job_id}",
+    response_model=CadJobStatusResponse,
+)
+def get_step_upload_status(
+    job_id: str,
+    current_user: CurrentUserDependency,
+    gateway: CadIngestionGatewayDependency,
+) -> CadJobStatusResponse:
+    try:
+        job = gateway.get_job(job_id, owner_user_id=str(current_user.id))
+    except CadIngestionJobNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="CAD ingestion job not found") from exc
+    return CadJobStatusResponse(
+        job_id=job.job_id,
+        status=job.status,
+        error_detail=job.error_detail,
+    )
 
 
 @router.get("/kernel-decision", response_model=GeometryKernelDecision)

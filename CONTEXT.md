@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.24
+**Versão:** 2.25
 **Última atualização:** 2026-09-12
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-12
 
-- **Handoff CTO:** `ROTA_2_STAGE_2_PR_OPEN_AWAITING_CI_AND_REVIEW`. O PR #32 integrou a Etapa 1 em `2d3da5d`. AUTO-048/049 implementaram, na branch local `codex/v3.2-step-async-dispatch`, serviço cliente assíncrono STEP e ciclo visual com timeout, polling limitado, cancelamento e falhas estruturadas. Commits `cdceafd` e `34e7c22`; 59 testes web e 727 Python aprovados. AUTO-050 consolida a documentação antes da publicação e do Draft PR. Sem backend, geração NC ou alteração dos limites físico-operacionais.
+- **Handoff CTO:** `ROTA_3_BACKEND_GATEWAY_IN_PROGRESS`. O PR #33 integrou a Rota 2 em `75b9608`. A AUTO-053, na branch `codex/v3.3-cad-backend-gateway`, abre o gateway autenticado `POST /api/v1/cad/step/dispatch`, com validação STEP em fluxo, limite de 15 MB, sandbox temporário e job `QUEUED` isolado por proprietário. A consulta de status não executa geometria, G-code ou ação física. Sem push e sem alteração dos limites físico-operacionais.
 
 - Runtime/API v3.1.0 NON_PRODUCTION. Última referência remota histórica: main 64ac3b8, PR #31 Draft em d798417; sequência local ainda não publicada. STAB-010 não consultou rede.
 - CAD/OCCT e evidências topológicas implementados. TESTE_01–03 registrados no relatório oficial. Candidato limitado a fresamento 3 eixos/2.5D; torneamento possui somente cadeia sintética interna, sem pipeline físico ou NC.

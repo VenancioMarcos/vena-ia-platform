@@ -1,7 +1,8 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Request
 
+from app.modules.cad.ingestion import CadIngestionGateway
 from app.modules.cad.parser import StepTextParser
 from app.modules.cad.service import CADAnalysisService
 from app.modules.documents.dependencies import (
@@ -25,4 +26,14 @@ def get_cad_analysis_service(
 CADAnalysisServiceDependency = Annotated[
     CADAnalysisService,
     Depends(get_cad_analysis_service),
+]
+
+
+def get_cad_ingestion_gateway(request: Request) -> CadIngestionGateway:
+    return request.app.state.cad_ingestion_gateway
+
+
+CadIngestionGatewayDependency = Annotated[
+    CadIngestionGateway,
+    Depends(get_cad_ingestion_gateway),
 ]

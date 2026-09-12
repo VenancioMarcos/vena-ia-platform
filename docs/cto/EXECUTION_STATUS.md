@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-053
+
+`ROTA_3_BACKEND_GATEWAY_IN_PROGRESS`. PR #33 integrado na `main` pelo merge
+`75b9608`; branch `codex/v3.3-cad-backend-gateway` criada exatamente desse
+baseline. Gateway autenticado implementado com validação STEP em fluxo, limite
+de 15 MB, sandbox temporário, jobs `QUEUED` isolados por proprietário e consulta
+de status. Nenhum push, processamento geométrico, geração NC ou autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-050
 
 `ROTA_2_STAGE_2_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-049 aprovada pelo CTO no
