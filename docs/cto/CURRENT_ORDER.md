@@ -1,23 +1,22 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-074
-**Estado:** CAM_EPIC_PREPARATION_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-075
+**Estado:** CAM_ROTA_1_STRATEGY_FOUNDATION_IN_PROGRESS
 **Data:** 2026-09-12
-**Branch:** `codex/auto-074-cam-epic-preparation`
+**Branch:** `codex/v4.0-cam-turning-strategies-foundation`
 **Baseline da branch:** `3f2b19877c528cab0d080fcb1bc0756f4bef7390`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O fechamento documental `3f2b198` foi publicado; `main` e `origin/main` estão
-alinhadas. A tag `v0.7.0-cad` preserva a baseline de produto `a6babbd`. O perfil
-RZ chega à UI por contrato autenticado, mas ainda não existe módulo CAM no backend.
+O módulo canônico CAM, seus contratos estritos e o motor determinístico de
+faceamento e desbaste 2D foram criados no commit local `92d3651`. Acabamento e
+canais permanecem em falha fechada e nenhum output é executável.
 
 ## Continuidade
 
-Documentar as interfaces e lacunas para desbaste, acabamento, faceamento e canais,
-sem implementar estratégia ou trajetória. Enviar VTP-AUTO-074 ao CTO e aguardar a
-próxima ordem sem encerrar a execução.
+Enviar VTP-AUTO-075 ao CTO e aguardar a próxima ordem sem push, endpoint CAM,
+pós-processamento ou expansão autônoma do escopo.
 
 ## Limites permanentes
 

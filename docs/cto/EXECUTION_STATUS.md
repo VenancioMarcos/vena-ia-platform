@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-075
+
+`CAM_ROTA_1_STRATEGY_FOUNDATION_IN_PROGRESS`. Módulo CAM canônico, contratos
+Pydantic estritos e motor analítico de faceamento/desbaste criados em `92d3651`.
+Validação: 749 Python, 9 ignorados, 64 Web, TypeScript, lint, Ruff, mypy e diff
+aprovados. `FINISHING` e `GROOVING` falham fechado; sem push ou autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-074
 
 `CAM_EPIC_PREPARATION_IN_PROGRESS`. O fechamento documental `3f2b198` foi
