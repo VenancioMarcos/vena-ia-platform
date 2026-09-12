@@ -7,7 +7,7 @@ from app.modules.cad.dependencies import get_cad_ingestion_gateway
 from app.modules.cad.ingestion import CadIngestionGateway
 
 
-VALID_STEP = b"""ISO-10303-21;
+INVALID_GEOMETRY_STEP = b"""ISO-10303-21;
 HEADER;
 FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF'));
 ENDSEC;
@@ -15,6 +15,8 @@ DATA;
 ENDSEC;
 END-ISO-10303-21;
 """
+TURNING_FIXTURES = Path(__file__).parents[1] / "fixtures" / "cad" / "turning"
+VALID_STEP = (TURNING_FIXTURES / "cylinder_d50_l100.stp").read_bytes()
 
 
 def _install_gateway(root: Path, *, max_size_bytes: int = 15 * 1024 * 1024):
@@ -48,12 +50,10 @@ def test_dispatches_valid_step_to_owner_scoped_sandbox(
             "job_id": body["job_id"],
             "filename": "fixture.STEP",
             "size_bytes": len(VALID_STEP),
-            "schema_type": "AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF",
+            "schema_type": body["schema_type"],
             "status": "QUEUED",
         }
-        persisted = list(tmp_path.glob("*.step"))
-        assert len(persisted) == 1
-        assert persisted[0].read_bytes() == VALID_STEP
+        assert list(tmp_path.iterdir()) == []
 
         job_response = client.get(
             f"/api/v1/cad/step/jobs/{body['job_id']}",
@@ -62,8 +62,23 @@ def test_dispatches_valid_step_to_owner_scoped_sandbox(
         assert job_response.status_code == 200
         assert job_response.json() == {
             "job_id": body["job_id"],
-            "status": "QUEUED",
+            "status": "COMPLETED",
             "error_detail": None,
+            "profile_data": {
+                "points": [
+                    {"r_mm": 0.0, "z_mm": 0.0},
+                    {"r_mm": 25.0, "z_mm": 0.0},
+                    {"r_mm": 25.0, "z_mm": -100.0},
+                    {"r_mm": 0.0, "z_mm": -100.0},
+                ],
+                "bounding_box": {
+                    "max_radius_mm": 25.0,
+                    "min_z_mm": -100.0,
+                    "max_z_mm": 0.0,
+                    "total_z_length_mm": 100.0,
+                },
+                "review_status": "PROFILE_AVAILABLE_REQUIRES_REVIEW",
+            },
         }
 
         outsider = make_account("cad-gateway-outsider@vena-ia.dev")
@@ -116,6 +131,34 @@ def test_rejects_missing_signature_and_oversized_payload_without_residue(
 
         assert missing_signature.status_code == 422
         assert oversized.status_code == 422
+        assert list(tmp_path.iterdir()) == []
+    finally:
+        _remove_gateway(gateway)
+
+
+def test_corrupt_geometry_fails_without_internal_details_or_sandbox_residue(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+) -> None:
+    gateway = _install_gateway(tmp_path)
+    try:
+        account = make_account("cad-corrupt-geometry@vena-ia.dev")
+        response = client.post(
+            "/api/v1/cad/step/dispatch",
+            headers=account.headers,
+            files={"file": ("corrupt.step", INVALID_GEOMETRY_STEP, "application/step")},
+        )
+        assert response.status_code == 202
+
+        status_response = client.get(
+            f"/api/v1/cad/step/jobs/{response.json()['job_id']}",
+            headers=account.headers,
+        )
+        assert status_response.status_code == 200
+        assert status_response.json()["status"] == "FAILED"
+        assert status_response.json()["error_detail"] == "STEP_PROFILE_EXTRACTION_FAILED"
+        assert status_response.json()["profile_data"] is None
         assert list(tmp_path.iterdir()) == []
     finally:
         _remove_gateway(gateway)

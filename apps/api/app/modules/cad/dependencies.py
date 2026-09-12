@@ -5,6 +5,7 @@ from fastapi import Depends, Request
 from app.modules.cad.ingestion import CadIngestionGateway
 from app.modules.cad.parser import StepTextParser
 from app.modules.cad.service import CADAnalysisService
+from app.modules.cad.services.step_processor import StepBackgroundProcessor
 from app.modules.documents.dependencies import (
     DocumentServiceDependency,
     DocumentStorageDependency,
@@ -36,4 +37,16 @@ def get_cad_ingestion_gateway(request: Request) -> CadIngestionGateway:
 CadIngestionGatewayDependency = Annotated[
     CadIngestionGateway,
     Depends(get_cad_ingestion_gateway),
+]
+
+
+def get_step_background_processor(
+    gateway: CadIngestionGatewayDependency,
+) -> StepBackgroundProcessor:
+    return StepBackgroundProcessor(gateway)
+
+
+StepBackgroundProcessorDependency = Annotated[
+    StepBackgroundProcessor,
+    Depends(get_step_background_processor),
 ]

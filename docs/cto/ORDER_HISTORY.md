@@ -18,6 +18,12 @@ autenticado de ingestão STEP: validação defensiva em fluxo, limite de 15 MB,
 sandbox temporário, job `QUEUED`, testes e documentação, em branch dedicada e
 sem push.
 
+## 2026-09-12 — CTO-CODEX-AUTO-054
+
+Após aprovar a AUTO-053 no commit `e88a787`, o CTO ordenou conectar o gateway a
+um worker local, produzir perfil RZ e bounding box revisáveis, representar
+falhas sem detalhes internos e limpar o sandbox, sem push ou saída física.
+
 ## 2026-08-06 — TASK-V17-003
 
 O CTO aprovou a TASK-V17-002 e ordenou concluir a v1.7 na mesma PR #18 com

@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-12 — CTO-CODEX-AUTO-054
+
+`ROTA_3_STEP_BACKGROUND_PROCESSOR_IN_PROGRESS`. AUTO-053 aprovada no commit
+`e88a787`. Worker local implementado com transições `PROCESSING`, `COMPLETED` e
+`FAILED`, perfil RZ revisável, bounding box e limpeza do sandbox em `finally`.
+Sem push, planejamento CAM, geração NC ou autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-053
 
 `ROTA_3_BACKEND_GATEWAY_IN_PROGRESS`. PR #33 integrado na `main` pelo merge

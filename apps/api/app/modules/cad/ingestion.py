@@ -2,13 +2,13 @@ import os
 import re
 import shutil
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePath
 from uuid import uuid4
 
 from fastapi import UploadFile
 
-from app.modules.cad.ingestion_schemas import CadJobState
+from app.modules.cad.ingestion_schemas import CadJobState, CadProfileData
 
 MAX_STEP_UPLOAD_BYTES = 15 * 1024 * 1024
 STREAM_CHUNK_BYTES = 64 * 1024
@@ -42,6 +42,7 @@ class CadIngestionJob:
     status: CadJobState
     path: Path
     error_detail: str | None = None
+    profile_data: CadProfileData | None = None
 
 
 class CadIngestionGateway:
@@ -119,6 +120,37 @@ class CadIngestionGateway:
         if job is None or job.owner_user_id != owner_user_id:
             raise CadIngestionJobNotFoundError("CAD ingestion job not found")
         return job
+
+    def get_job_for_processing(self, job_id: str) -> CadIngestionJob:
+        job = self._jobs.get(job_id)
+        if job is None:
+            raise CadIngestionJobNotFoundError("CAD ingestion job not found")
+        return job
+
+    def mark_processing(self, job_id: str) -> None:
+        job = self.get_job_for_processing(job_id)
+        self._jobs[job_id] = replace(job, status="PROCESSING")
+
+    def mark_completed(self, job_id: str, profile_data: CadProfileData) -> None:
+        job = self.get_job_for_processing(job_id)
+        self._jobs[job_id] = replace(
+            job,
+            status="COMPLETED",
+            profile_data=profile_data,
+            error_detail=None,
+        )
+
+    def mark_failed(self, job_id: str, error_detail: str) -> None:
+        job = self.get_job_for_processing(job_id)
+        self._jobs[job_id] = replace(
+            job,
+            status="FAILED",
+            profile_data=None,
+            error_detail=error_detail,
+        )
+
+    def delete_job_file(self, job_id: str) -> None:
+        self.get_job_for_processing(job_id).path.unlink(missing_ok=True)
 
     def close(self) -> None:
         self._jobs.clear()

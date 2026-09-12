@@ -1,11 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile, status
 
 from app.modules.auth.dependencies import CurrentUserDependency
 from app.modules.cad.dependencies import (
     CADAnalysisServiceDependency,
     CadIngestionGatewayDependency,
+    StepBackgroundProcessorDependency,
 )
 from app.modules.cad.ingestion import (
     CadIngestionJobNotFoundError,
@@ -49,6 +50,8 @@ ingestion_router = APIRouter(prefix="/api/v1/cad", tags=["cad-ingestion"])
 async def dispatch_step_upload(
     current_user: CurrentUserDependency,
     gateway: CadIngestionGatewayDependency,
+    processor: StepBackgroundProcessorDependency,
+    background_tasks: BackgroundTasks,
     file: Annotated[UploadFile, File(description="ISO 10303-21 STEP file")],
 ) -> StepUploadResponse:
     try:
@@ -57,6 +60,8 @@ async def dispatch_step_upload(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except (CadUploadTooLargeError, InvalidStepContentError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    background_tasks.add_task(processor.process, job.job_id)
 
     return StepUploadResponse(
         job_id=job.job_id,
@@ -84,6 +89,7 @@ def get_step_upload_status(
         job_id=job.job_id,
         status=job.status,
         error_detail=job.error_detail,
+        profile_data=job.profile_data,
     )
 
 
