@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-079
-**Estado:** CAM_ROTA_2_FINISHING_STRATEGY_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-080
+**Estado:** CAM_ROTA_2_FINISHING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-12
 **Branch:** `codex/v4.1-cam-finishing-strategy`
 **Baseline da branch:** `4ba57db11809de4317b21e71e3029a98f9b6ed52`
@@ -11,12 +11,13 @@
 
 O motor CAM agora planeja `FINISHING` contínuo para contornos RZ amostrados, com
 compensação 2D do raio de ponta, sobremetal e alcance angular da aresta. Concavidades
-incompatíveis falham fechado e `GROOVING` continua bloqueado.
+incompatíveis falham fechado e `GROOVING` continua bloqueado. O CTO aprovou o pacote
+local `fe63498` para publicação e abertura de Draft PR.
 
 ## Continuidade
 
-Concluir o commit local autorizado, enviar VTP-AUTO-079 ao CTO e aguardar a próxima
-ordem sem push, endpoint, pós-processador ou geração de G-code.
+Consolidar o estado documental, publicar a branch, abrir Draft PR contra `main`,
+coletar o CI inicial e enviar VTP-AUTO-080 ao CTO sem executar merge.
 
 ## Limites permanentes
 

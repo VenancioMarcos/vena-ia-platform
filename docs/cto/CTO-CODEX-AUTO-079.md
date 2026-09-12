@@ -1,6 +1,6 @@
 # CTO-CODEX-AUTO-079 — Acabamento contínuo e compensação de raio
 
-**Status:** `CAM_ROTA_2_FINISHING_STRATEGY_IN_PROGRESS`
+**Status:** `CAM_ROTA_2_FINISHING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW`
 **Data:** 2026-09-12
 **Branch:** `codex/v4.1-cam-finishing-strategy`
 **Baseline:** `4ba57db11809de4317b21e71e3029a98f9b6ed52`
@@ -57,4 +57,5 @@ contínuo em perfis RZ, compensada pelo raio de ponta, sem gerar comandos de má
 
 ## Continuidade
 
-Enviar VTP-AUTO-079 ao CTO e aguardar a próxima ordem sem encerrar a execução.
+Publicar a branch, abrir Draft PR contra `main`, coletar o CI inicial e enviar
+VTP-AUTO-080 ao CTO sem executar merge.
