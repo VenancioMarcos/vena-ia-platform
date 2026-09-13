@@ -1,6 +1,6 @@
 # CTO-CODEX-AUTO-087 — Gateway de planejamento CAM E2E
 
-**Status:** `CAM_ROTA_4_E2E_GATEWAY_IN_PROGRESS`
+**Status:** `CAM_ROTA_4_E2E_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW`
 **Data:** 2026-09-13
 **Branch:** `codex/v4.3-cam-e2e-planning-gateway`
 **Baseline:** `ad231f8a044e47e51fd4c1335a5fc0ad84fa4de0`
@@ -68,4 +68,5 @@ transferência DNC/NC, cycle start ou controle físico.
 
 ## Próximos passos
 
-Enviar o VTP-AUTO-087 ao CTO e aguardar a próxima ordem sem encerrar a execução.
+Publicar a branch, abrir o Draft PR contra `main`, acompanhar o CI e enviar o
+VTP-AUTO-088 ao CTO. Nenhum merge está autorizado nesta etapa.

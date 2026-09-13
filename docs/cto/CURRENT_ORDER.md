@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-087
-**Estado:** CAM_ROTA_4_E2E_GATEWAY_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-088
+**Estado:** CAM_ROTA_4_E2E_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-13
 **Branch:** `codex/v4.3-cam-e2e-planning-gateway`
 **Baseline da branch:** `ad231f8a044e47e51fd4c1335a5fc0ad84fa4de0`
@@ -16,8 +16,8 @@ pertencentes ao usuário ao motor analítico CAM. Somente perfis com estado
 
 ## Continuidade
 
-Concluir o commit local atômico da AUTO-087, enviar VTP ao CTO e aguardar a próxima
-ordem. Nenhum push está autorizado nesta etapa.
+Consolidar a governança, publicar a branch, abrir o Draft PR contra `main`, coletar
+o estado inicial do CI e enviar o VTP-AUTO-088. Nenhum merge está autorizado.
 
 ## Limites permanentes
 

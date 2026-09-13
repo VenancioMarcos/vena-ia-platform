@@ -1,5 +1,11 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-088
+
+`CAM_ROTA_4_E2E_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-087 aprovada pelo
+CTO no commit `60cff8a`, com 758 Python, 9 ignorados, 64 Web e checks estáticos
+verdes. Consolidação, publicação, Draft PR e CI em andamento; nenhum merge.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-087
 
 `CAM_ROTA_4_E2E_GATEWAY_IN_PROGRESS`. Gateway CAM autenticado integrado ao estado

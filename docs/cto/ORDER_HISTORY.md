@@ -1051,3 +1051,9 @@ A Rota 3 do CAM implementa canais analíticos por mergulho radial com recuo de
 alívio e stepovers em Z calculados pela largura e pelo raio de canto da pastilha.
 Canais incompatíveis falham fechado; nenhum push, G-code ou autoridade física foi
 adicionado nesta missão.
+
+## 2026-09-13 — CTO-CODEX-AUTO-087
+
+A Rota 4 do CAM estabelece o gateway autenticado `POST /api/v1/cam/turning/plan`,
+ligando jobs CAD do proprietário e perfis RZ revisáveis às quatro estratégias de
+torneamento. O plano permanece revisável, não executável e sem autoridade física.

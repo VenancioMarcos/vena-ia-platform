@@ -29,14 +29,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-13
 
-- **Handoff CTO:** `CAM_ROTA_4_E2E_GATEWAY_IN_PROGRESS`. A branch
+- **Handoff CTO:** `CAM_ROTA_4_E2E_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW`. A branch
   `codex/v4.3-cam-e2e-planning-gateway`, criada da `main` integrada em `ad231f8`,
   adiciona o endpoint autenticado `POST /api/v1/cam/turning/plan`. O gateway
   recupera somente jobs CAD do proprietário com perfil revisável, converte o perfil
   RZ ao contrato CAM e executa `FACING`, `ROUGH_TURNING`, `FINISHING` ou `GROOVING`
   com resposta `PLANNED_REQUIRES_REVIEW` e `executable_output=false`. Validação:
-  758 Python/9 ignorados, 64 Web, TypeScript, Next lint, Ruff, mypy e diff verdes;
-  sem push, G-code, comunicação de máquina ou autoridade física.
+  758 Python/9 ignorados, 64 Web, TypeScript, Next lint, Ruff, mypy e diff verdes.
+  Publicação upstream e Draft PR contra `main` estão em andamento; sem merge,
+  G-code, comunicação de máquina ou autoridade física.
 
 - **Handoff CTO:** `CAM_ROTA_3_GROOVING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW`.
   AUTO-083 foi aprovada no commit `7653641`: `GROOVING` analítico cobre mergulho
