@@ -29,6 +29,7 @@ from app.modules.cnc.services.machining_report import (
     compile_machining_report,
     plan_fingerprint,
 )
+from app.modules.cnc.services.sustainability_estimator import estimate_sustainability
 from app.modules.cnc.services.text_report_exporter import (
     SAFETY_STAMP,
     format_machining_report_text,
@@ -169,6 +170,9 @@ def test_complete_report_replays_deterministically(controller):
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
     assert report.cost_time_audit.currency == "BRL"
+    assert report.sustainability_audit.grid_region == "BRASIL_SIN"
+    assert report.sustainability_audit.electrical_energy_kwh > 0
+    assert report.sustainability_audit.carbon_emission_kg_co2e > 0
     assert report.governance_stamp == "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
     assert report.safety_flags == GCodeSafetyFlags()
     assert report.source_plan_name is None
@@ -234,6 +238,20 @@ def test_report_rejects_valid_cost_audit_from_a_different_cycle():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_valid_sustainability_audit_from_another_power_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    other_audit = estimate_sustainability(
+        motor_power_kw=report.power_force_audit.p_motor_est_kw + 1,
+        cutting_time_minutes=report.cost_time_audit.cutting_time_minutes,
+        total_cycle_time_minutes=report.cost_time_audit.total_cycle_time_minutes,
+    )
+    body = report.model_dump()
+    body["sustainability_audit"] = other_audit.model_dump()
+    with pytest.raises(ValidationError, match="REPORT_SUSTAINABILITY_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -265,3 +283,5 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert "ESTIMATIVA ANALÍTICA DE TAYLOR" in rendered
     assert "cost_time: total_minutes=" in rendered
     assert "ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA" in rendered
+    assert "sustainability: electrical_energy_kwh=" in rendered
+    assert "ESTIMATIVA ECOLÓGICA E ENERGÉTICA ANALÍTICA" in rendered

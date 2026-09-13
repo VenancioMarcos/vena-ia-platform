@@ -77,6 +77,15 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
                 f"currency={validated.cost_time_audit.currency}",
                 "ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA - NÃO CONSIDERA "
                 "FLUTUAÇÕES LOGÍSTICAS, PARADAS NÃO PROGRAMADAS OU IMPOSTOS",
+                "sustainability: electrical_energy_kwh="
+                f"{validated.sustainability_audit.electrical_energy_kwh:.9f}; "
+                f"cutting_energy_kwh={validated.sustainability_audit.cutting_energy_kwh:.9f}; "
+                f"standby_energy_kwh={validated.sustainability_audit.standby_energy_kwh:.9f}; "
+                f"carbon_emission_kg_co2e="
+                f"{validated.sustainability_audit.carbon_emission_kg_co2e:.9f}; "
+                f"grid_region={validated.sustainability_audit.grid_region}",
+                "ESTIMATIVA ECOLÓGICA E ENERGÉTICA ANALÍTICA - NÃO CONSIDERA "
+                "DINÂMICA AUXILIAR DE REFRIGERAÇÃO EXTERNA OU PICOS DE PARTIDA",
             ),
         ),
         _section(
