@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-136 a AUTO-140
+
+`CAD_E2E_CONCURRENCY_HARDENING_COMPLETED_LOCAL`. O PR #51 foi integrado por
+squash em `1857018` e a tag oficial `v0.3.0-sim-rc1` foi publicada. O teste E2E
+CAD substituiu a autenticação SQLite compartilhada por identidades UUID isoladas
+no cenário concorrente e clientes por worker; cinco repetições e o pytest completo
+passaram com `791 passed, 9 skipped`. Web: 73 testes, TypeScript e lint aprovados;
+Ruff, mypy em 210 arquivos e diff aprovados. Sem push da branch de hardening.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-131 a AUTO-135
 
 `RELEASE_V0_3_0_SIM_RC1_CONSOLIDATED_LOCAL`. O PR #50 passou no Backend CI

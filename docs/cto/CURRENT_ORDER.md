@@ -1,22 +1,21 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-131 a AUTO-135
-**Estado:** RELEASE_V0_3_0_SIM_RC1_CONSOLIDATED_LOCAL
+**Missão:** CTO-CODEX-AUTO-136 a AUTO-140
+**Estado:** CAD_E2E_CONCURRENCY_HARDENING_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v6.4-release-consolidation-docs`
-**Baseline da branch:** `227bc35c2f1cc66ab85c041e23458e16b5e588f6`
+**Branch:** `codex/v6.5-test-concurrency-hardening`
+**Baseline da branch:** `1857018acea48238d835869eb115b8b84a83733f`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O PR #50 integrou a Rota SIM 4. A arquitetura canônica agora descreve o pipeline
-CAD → CAM → CNC → SIM, suas fronteiras modulares, contratos estritos, validação
-cinemática e salvaguardas permanentes.
+O PR #51 consolidou o release documental na `main` e a tag oficial
+`v0.3.0-sim-rc1` aponta para `1857018`. O teste E2E CAD agora isola identidades
+UUID e o cliente de cada worker, eliminando a contenção da fixture SQLite global.
 
 ## Continuidade
 
-A release candidate documental está consolidada localmente, sem push, e aguarda
-parecer do CTO.
+O hardening foi consolidado localmente, sem push, e aguarda parecer do CTO.
 
 ## Limites permanentes
 
