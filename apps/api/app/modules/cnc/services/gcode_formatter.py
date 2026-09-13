@@ -10,6 +10,7 @@ from app.modules.cnc.schemas import (
     GCodeGenerationResponse,
 )
 from app.modules.cnc.services.envelope_validator import validate_kinematic_envelope
+from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 
 
 SUPPORTED_CONTROLLERS = frozenset(CNCControllerType)
@@ -175,6 +176,7 @@ def format_gcode_candidate(request: GCodeGenerationRequest) -> GCodeGenerationRe
     path_length_mm = math.fsum(_path_length(item.coordinates_rz_mm) for item in request.cam_plan_data.passes)
     motion_block_count = math.fsum(len(item.coordinates_rz_mm) for item in request.cam_plan_data.passes)
     program_text = "\n".join(lines)
+    require_valid_gcode_syntax(program_text, request.controller_profile)
     validate_kinematic_envelope(program_text, request.machine_envelope)
     return GCodeGenerationResponse(
         plan_id=request.plan_id,

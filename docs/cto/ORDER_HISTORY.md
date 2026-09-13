@@ -1,5 +1,18 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-146
+
+A Rota 5 CNC foi consolidada para publicação upstream a partir de `ba88f3f`.
+O Draft PR #53 deverá preservar o auditor de texto puramente estático e todas as
+salvaguardas não produtivas; CI remoto é obrigatório antes de revisão ou integração.
+
+## 2026-09-13 — CTO-CODEX-AUTO-141 a AUTO-145
+
+O PR #52 publicou o hardening do E2E CAD, passou no Backend CI em 3m36s, foi
+promovido para review e integrado por squash em `dd950938`. A Rota 5 CNC iniciou
+um auditor estático e fail-closed de sintaxe G-code para Fanuc, Siemens e Haas,
+mantendo os programas como candidatos não executáveis e sem push da nova rota.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-136 a AUTO-140
 
 O PR documental #51 foi integrado em `1857018` e a tag oficial

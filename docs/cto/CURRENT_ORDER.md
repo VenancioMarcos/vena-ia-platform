@@ -1,21 +1,23 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-136 a AUTO-140
-**Estado:** CAD_E2E_CONCURRENCY_HARDENING_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-146 a AUTO-150
+**Estado:** CNC_ROUTE_5_PR_OPEN_AWAITING_CI_AND_REVIEW
 **Data:** 2026-09-13
-**Branch:** `codex/v6.5-test-concurrency-hardening`
-**Baseline da branch:** `1857018acea48238d835869eb115b8b84a83733f`
+**Branch:** `codex/v6.6-cnc-gcode-syntax-linter`
+**Baseline da branch:** `dd950938bf3e7bdb2a7447647964c8542b69b26c`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O PR #51 consolidou o release documental na `main` e a tag oficial
-`v0.3.0-sim-rc1` aponta para `1857018`. O teste E2E CAD agora isola identidades
-UUID e o cliente de cada worker, eliminando a contenção da fixture SQLite global.
+O PR #52 integrou o hardening CAD em `dd950938` após Backend CI aprovado. A Rota 5
+CNC acrescenta auditor estático de sintaxe por dialeto, sem executar, transmitir ou
+liberar programas para máquina. A entrega será publicada como Draft PR #53 e só
+seguirá para revisão após CI remoto aprovado.
 
 ## Continuidade
 
-O hardening foi consolidado localmente, sem push, e aguarda parecer do CTO.
+A rota está pronta para publicação upstream; nenhum merge é autorizado antes da
+confirmação explícita dos checks remotos.
 
 ## Limites permanentes
 
