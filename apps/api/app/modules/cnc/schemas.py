@@ -346,6 +346,82 @@ class SurfaceRoughnessAuditPayload(_CNCGenerationContract):
         return self
 
 
+class MachiningPowerForceAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-machining-power-force-audit/v1"] = (
+        "vena-ia.cnc-machining-power-force-audit/v1"
+    )
+    material_profile: Literal["AISI_1020", "ABNT_1045", "ALUMINUM_6061_T6"]
+    kc1_1_n_per_mm2: float = Field(gt=0)
+    kienzle_exponent_mc: float = Field(gt=0, lt=1)
+    feed_mm_per_rev: float = Field(gt=0, le=5.0)
+    depth_of_cut_mm: float = Field(gt=0, le=100.0)
+    cutting_edge_angle_deg: float = Field(gt=0, le=179.0)
+    chip_thickness_mm: float = Field(gt=0)
+    chip_width_mm: float = Field(gt=0)
+    cutting_speed_m_per_min: float = Field(gt=0, le=3_000.0)
+    spindle_rpm_reference: float = Field(gt=0, le=30_000.0)
+    max_spindle_rpm: float = Field(gt=0, le=30_000.0)
+    fc_nominal_n: float = Field(gt=0)
+    pc_cutting_kw: float = Field(gt=0)
+    p_motor_est_kw: float = Field(gt=0)
+    mrr_cm3_min: float = Field(gt=0)
+    machine_power_limit_kw: float = Field(gt=0, le=1_000.0)
+    power_status: Literal["POWER_WITHIN_LIMITS", "POWER_EXCEEDED_WARNING"]
+    spindle_efficiency: float = Field(default=0.80, ge=0.80, le=0.80)
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "KIENZLE_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_DYNAMIC_EFFICIENCY"
+    ] = "KIENZLE_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_DYNAMIC_EFFICIENCY"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_analytical_model(self) -> "MachiningPowerForceAuditPayload":
+        expected_material = {
+            "AISI_1020": (1_780.0, 0.25),
+            "ABNT_1045": (1_900.0, 0.26),
+            "ALUMINUM_6061_T6": (700.0, 0.23),
+        }[self.material_profile]
+        if (self.kc1_1_n_per_mm2, self.kienzle_exponent_mc) != expected_material:
+            raise ValueError("KIENZLE_MATERIAL_PARAMETERS_INCONSISTENT")
+        if self.spindle_rpm_reference > self.max_spindle_rpm:
+            raise ValueError("KIENZLE_SPINDLE_RPM_EXCEEDS_LIMIT")
+        sin_kr = math.sin(math.radians(self.cutting_edge_angle_deg))
+        expected_width = self.depth_of_cut_mm / sin_kr
+        expected_thickness = self.feed_mm_per_rev * sin_kr
+        expected_force = (
+            self.kc1_1_n_per_mm2
+            * expected_width
+            * expected_thickness ** (1 - self.kienzle_exponent_mc)
+        )
+        expected_cutting_power = (
+            expected_force * self.cutting_speed_m_per_min / (60 * 1_000)
+        )
+        expected_motor_power = expected_cutting_power / self.spindle_efficiency
+        expected_mrr = (
+            self.cutting_speed_m_per_min * self.depth_of_cut_mm * self.feed_mm_per_rev
+        )
+        checks = (
+            (self.chip_width_mm, expected_width, "KIENZLE_CHIP_WIDTH_INCONSISTENT"),
+            (self.chip_thickness_mm, expected_thickness, "KIENZLE_CHIP_THICKNESS_INCONSISTENT"),
+            (self.fc_nominal_n, expected_force, "KIENZLE_FORCE_INCONSISTENT"),
+            (self.pc_cutting_kw, expected_cutting_power, "KIENZLE_CUTTING_POWER_INCONSISTENT"),
+            (self.p_motor_est_kw, expected_motor_power, "KIENZLE_MOTOR_POWER_INCONSISTENT"),
+            (self.mrr_cm3_min, expected_mrr, "KIENZLE_MRR_INCONSISTENT"),
+        )
+        for actual, expected, code in checks:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "POWER_WITHIN_LIMITS"
+            if self.p_motor_est_kw <= self.machine_power_limit_kw
+            else "POWER_EXCEEDED_WARNING"
+        )
+        if self.power_status != expected_status:
+            raise ValueError("KIENZLE_POWER_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -364,6 +440,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     chuck_proximity: ChuckProximityAudit
     geometry_audit: GeometryDimensionalAuditReport
     surface_roughness_audit: SurfaceRoughnessAuditPayload
+    power_force_audit: MachiningPowerForceAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"

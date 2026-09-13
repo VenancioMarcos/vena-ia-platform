@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from hashlib import sha256
+import math
 
 from app.modules.cam.repository import TurningPlanRecord
 from app.modules.cam.schemas import (
@@ -22,6 +23,7 @@ from app.modules.cnc.services.geometry_auditor import (
     GeometryDimensionalAuditError,
     require_geometry_dimensions_consistent,
 )
+from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
 from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
@@ -113,6 +115,21 @@ def compile_machining_report(
         record.request.tool_params.tip_radius_mm,
         nominal_ra_max_um=record.request.nominal_surface_roughness_ra_um,
     )
+    reference_diameter_mm = record.source_brep_bounds.max_radius_mm * 2.0
+    theoretical_rpm = (
+        record.request.cutting_params.vc_m_per_min * 1_000.0
+        / (math.pi * reference_diameter_mm)
+    )
+    power_force_audit = estimate_cutting_power_force(
+        record.request.material_reference,
+        feed_mm_per_rev=record.request.cutting_params.feed_mm_per_rev,
+        depth_of_cut_mm=record.request.cutting_params.depth_of_cut_mm,
+        cutting_edge_angle_deg=record.request.tool_params.cutting_edge_angle_deg,
+        cutting_speed_m_per_min=record.request.cutting_params.vc_m_per_min,
+        spindle_rpm_reference=min(theoretical_rpm, request.max_spindle_rpm),
+        max_spindle_rpm=request.max_spindle_rpm,
+        machine_power_limit_kw=record.request.machine_power_limit_kw,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -133,6 +150,7 @@ def compile_machining_report(
         chuck_proximity=simulation.chuck_proximity,
         geometry_audit=geometry_audit,
         surface_roughness_audit=roughness_audit,
+        power_force_audit=power_force_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -144,6 +162,8 @@ def compile_machining_report(
             "BRep nominal bounds passed the analytical dimensional gate.",
             "Surface roughness is an ideal kinematic estimate; vibration, tool wear and "
             "material effects are excluded.",
+            "Kienzle force and power values are analytical estimates; real dynamic "
+            "efficiency, thermal effects and machine behavior are excluded.",
         ),
     )
 

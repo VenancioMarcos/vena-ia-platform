@@ -92,6 +92,31 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "IDEAL_KINEMATIC_MODEL_EXCLUDES_VIBRATION_TOOL_WEAR_AND_MATERIAL_EFFECTS";
     safety_flags: MachiningReportSafetyFlags;
   };
+  power_force_audit: {
+    schema_version: "vena-ia.cnc-machining-power-force-audit/v1";
+    material_profile: "AISI_1020" | "ABNT_1045" | "ALUMINUM_6061_T6";
+    kc1_1_n_per_mm2: number;
+    kienzle_exponent_mc: number;
+    feed_mm_per_rev: number;
+    depth_of_cut_mm: number;
+    cutting_edge_angle_deg: number;
+    chip_thickness_mm: number;
+    chip_width_mm: number;
+    cutting_speed_m_per_min: number;
+    spindle_rpm_reference: number;
+    max_spindle_rpm: number;
+    fc_nominal_n: number;
+    pc_cutting_kw: number;
+    p_motor_est_kw: number;
+    mrr_cm3_min: number;
+    machine_power_limit_kw: number;
+    power_status: "POWER_WITHIN_LIMITS" | "POWER_EXCEEDED_WARNING";
+    spindle_efficiency: 0.8;
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "KIENZLE_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_DYNAMIC_EFFICIENCY";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -121,6 +146,7 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const estimate = report.cycle_time_estimate;
   const proximityWarning = report.chuck_proximity.warning_code === "WARNING_PROXIMITY_CHUCK";
   const dimensionalPass = report.geometry_audit.status === "PASS";
+  const powerWithinLimits = report.power_force_audit.power_status === "POWER_WITHIN_LIMITS";
 
   return <article className="space-y-6 rounded-2xl border border-slate-700 bg-slate-900 p-6 text-slate-100" aria-label="Relatório técnico CNC">
     <header className="space-y-3">
@@ -198,6 +224,24 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       <p className="font-mono text-xs text-slate-300">{report.surface_roughness_audit.compliance_tag}</p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         RUGOSIDADE TEÓRICA CINEMÁTICA - NÃO CONSIDERA VIBRAÇÃO OU DESGASTE DA FERRAMENTA
+      </p>
+    </section>
+
+    <section aria-labelledby="report-power-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-power-heading" className="text-lg font-semibold">Telemetria energética teórica</h2>
+        <span role="status" className={`rounded-full border px-3 py-1 text-xs font-bold ${powerWithinLimits ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-amber-500 bg-amber-950 text-amber-100"}`}>
+          {powerWithinLimits ? "POTÊNCIA ADEQUADA" : "ALERTA DE POTÊNCIA EXCESSIVA"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Força tangencial estimada" value={`${report.power_force_audit.fc_nominal_n.toFixed(2)} N`} />
+        <Metric label="Potência de corte" value={`${report.power_force_audit.pc_cutting_kw.toFixed(3)} kW`} />
+        <Metric label="Potência estimada do motor" value={`${report.power_force_audit.p_motor_est_kw.toFixed(3)} kW`} />
+        <Metric label="MRR" value={`${report.power_force_audit.mrr_cm3_min.toFixed(3)} cm³/min`} />
+      </dl>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ENERGÉTICA ANALÍTICA DE KIENZLE - NÃO CONSIDERA RENDIMENTO DINÂMICO REAL
       </p>
     </section>
 

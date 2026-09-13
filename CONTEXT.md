@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.56
+**Versão:** 2.57
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_KIENZLE_POWER_FORCE_AUDIT_COMPLETED_LOCAL`.
+  O PR #59 integrou a Rota 11 por squash em `db1ff2e`; Backend e Frontend CI foram
+  aprovados, a branch remota foi removida e `main=origin/main`. A branch local
+  `codex/v7.3-cnc-cutting-power-force-estimator` aplica o modelo analítico de
+  Kienzle a materiais tabulados, calcula força tangencial, potência de corte,
+  potência estimada do motor e MRR, e compara a demanda ao limite configurável da
+  máquina. Contrato, manifesto, laudo e viewer preservam o caráter teórico e todos
+  os bloqueios físicos. A validação local usa 103 testes CNC, mypy/Ruff,
+  compilação estrita TypeScript, 7 testes Web e diff. A repetição do lint focado
+  ficou indisponível quando o revisor de execução atingiu seu limite de uso; sem
+  dependências de rede ou push.
 
 - **Handoff CTO:** `CNC_THEORETICAL_SURFACE_ROUGHNESS_AUDIT_COMPLETED_LOCAL`.
   O PR #58 integrou a Rota 10 por squash em `8d06fe5`; Backend e Frontend CI foram
