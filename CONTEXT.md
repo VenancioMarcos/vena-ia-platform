@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.50
+**Versão:** 2.51
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,17 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_ROUTE_7_MACHINING_REPORT_COMPLETED_LOCAL`. O PR #54
+  integrou a Rota 6 por squash em `9d8b2dbe`, após Backend e Frontend CI aprovados;
+  `main=origin/main` e a branch remota foi removida. A branch
+  `codex/v6.8-cnc-machining-report-exporter` compila relatório técnico JSON da
+  última simulação server-generated e vinculada ao plano owner-scoped. Revalida
+  plano, programa, envelope e proximidade; informa ferramentas, operação, tempos e
+  distâncias teóricos, hash e carimbo de não autorização. Ausência, adulteração e
+  mudança de proprietário falham fechadas. Cache limitado/process-local, sem
+  migration, PDF ou push. Validação: 818 Python/9 ignorados, 74 Web, TypeScript,
+  Next lint, Ruff, mypy e diff aprovados.
 
 - **Handoff CTO:** `CNC_ROUTE_6_CYCLE_TIME_ESTIMATOR_IN_PROGRESS`. O PR #53
   integrou o hardening de concorrência CAD por squash em `dd950938` após Backend

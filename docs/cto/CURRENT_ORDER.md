@@ -1,22 +1,24 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-149 a AUTO-153
-**Estado:** CNC_ROUTE_6_CYCLE_TIME_ESTIMATOR_IN_PROGRESS
+**Missão:** CTO-CODEX-AUTO-154 a AUTO-158
+**Estado:** CNC_ROUTE_7_MACHINING_REPORT_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v6.6-cnc-gcode-syntax-linter`
-**Baseline da branch:** `dd950938bf3e7bdb2a7447647964c8542b69b26c`
+**Branch:** `codex/v6.8-cnc-machining-report-exporter`
+**Baseline da branch:** `9d8b2dbe7a2d7c894c08fc463c6dc15a4a15363d`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O PR #53 integrou a Rota 5 CNC por squash em `0228bb96`. A Rota 6 acrescenta uma
-estimativa analítica de duração e percurso para a simulação, mantendo o resultado
-teórico, revisável e sem qualquer canal de execução física.
+O PR #54 integrou a Rota 6 CNC por squash em `9d8b2dbe`. A Rota 7 compila a última
+simulação server-generated de um plano pertencente ao usuário em relatório técnico
+JSON. O relatório revalida plano, programa, envelope, proximidade e estimativa e
+mantém toda saída teórica, revisável e sem canal de execução física.
 
 ## Continuidade
 
-A branch local será validada e publicada como Draft PR #54. CI remoto aprovado é
-obrigatório para promoção a revisão; merge não faz parte desta missão.
+A branch local está consolidada sem push. O relatório exige uma simulação válida do
+plano no processo corrente; reinício ou evicção requer nova simulação. Nenhuma
+persistência, migration, PDF, assinatura ou download de programa foi introduzido.
 
 ## Limites permanentes
 

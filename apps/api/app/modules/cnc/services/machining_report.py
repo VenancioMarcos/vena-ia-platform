@@ -1,0 +1,126 @@
+"""Compile review-only reports from server-generated, plan-bound simulation sources."""
+
+from dataclasses import dataclass
+from datetime import datetime
+from hashlib import sha256
+
+from app.modules.cam.repository import TurningPlanRecord
+from app.modules.cam.schemas import (
+    TurningPlanGatewayRequest,
+    TurningPlanGatewayResponse,
+    TurningStrategyPlanResponse,
+)
+from app.modules.cnc.enums import FeedMode, SpindleMode
+from app.modules.cnc.schemas import (
+    MachiningReportTool,
+    GCodeGenerationRequest,
+    MachiningTechnicalReportPayload,
+    ToolpathSimulationRequest,
+)
+from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
+from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
+from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
+
+
+class MachiningReportError(ValueError):
+    pass
+
+
+def plan_fingerprint(record: TurningPlanRecord) -> str:
+    request = TurningPlanGatewayRequest.model_validate(record.request)
+    response = TurningPlanGatewayResponse.model_validate(record.response)
+    if (
+        request.cad_job_id != response.cad_job_id
+        or request.operation_type != response.operation_type
+    ):
+        raise MachiningReportError("REPORT_PLAN_INCONSISTENT")
+    if any(item.operation_type != response.operation_type for item in response.passes):
+        raise MachiningReportError("REPORT_PLAN_INCONSISTENT")
+    return sha256((request.model_dump_json() + response.model_dump_json()).encode()).hexdigest()
+
+
+@dataclass(frozen=True)
+class MachiningReportSource:
+    owner_user_id: str
+    plan_fingerprint: str
+    request: ToolpathSimulationRequest
+    program_text: str
+    captured_at: datetime
+
+
+def compile_machining_report(
+    record: TurningPlanRecord, source: MachiningReportSource
+) -> MachiningTechnicalReportPayload:
+    fingerprint = plan_fingerprint(record)
+    request = ToolpathSimulationRequest.model_validate(source.request)
+    if (
+        source.owner_user_id != record.owner_user_id
+        or request.plan_id != record.response.plan_id
+        or source.plan_fingerprint != fingerprint
+        or request.program_text is not None
+    ):
+        raise MachiningReportError("REPORT_SOURCE_MISMATCH")
+    expected = format_gcode_candidate(
+        GCodeGenerationRequest(
+            plan_id=record.response.plan_id,
+            cam_plan_data=TurningStrategyPlanResponse.model_validate(
+                record.response.model_dump(exclude={"plan_id", "cad_job_id"})
+            ),
+            controller_profile=request.controller_profile,
+            program_number=request.program_number,
+            machine_envelope=request.machine_envelope,
+            review_authentication="AUTHENTICATED_REVIEW_CONTEXT",
+            feed_mode=FeedMode.G95_PER_REVOLUTION,
+            spindle_mode=SpindleMode.G96_CONSTANT_SURFACE_SPEED,
+            feed_value=record.request.cutting_params.feed_mm_per_rev,
+            spindle_value=record.request.cutting_params.vc_m_per_min,
+            max_spindle_rpm=request.max_spindle_rpm,
+            max_feed_mm_min=request.max_feed_mm_min,
+            tool_number=request.tool_number,
+            tool_offset=request.tool_offset,
+            tool_name=request.tool_name,
+        )
+    )
+    if expected.program_text != source.program_text:
+        raise MachiningReportError("REPORT_PROGRAM_MISMATCH")
+    require_valid_gcode_syntax(source.program_text, request.controller_profile)
+    simulation = parse_toolpath_simulation(
+        source.program_text,
+        controller_profile=request.controller_profile,
+        machine_envelope=request.machine_envelope,
+        stock=request.stock,
+        source_plan_id=request.plan_id,
+    )
+    estimate = simulation.cycle_time_estimate
+    if estimate is None or not estimate.per_tool_breakdown:
+        raise MachiningReportError("REPORT_TOOLPATH_REQUIRED")
+    if any(item.active_tool is None for item in simulation.segments):
+        raise MachiningReportError("REPORT_TOOL_REQUIRED")
+    return MachiningTechnicalReportPayload(
+        plan_id=record.response.plan_id,
+        cad_job_id=record.response.cad_job_id,
+        controller_profile=request.controller_profile,
+        program_number=request.program_number,
+        program_sha256=sha256(source.program_text.encode()).hexdigest(),
+        analytical_snapshot_at=source.captured_at,
+        tools=tuple(
+            MachiningReportTool(tool_id=item.tool, operations=(record.response.operation_type,))
+            for item in estimate.per_tool_breakdown
+        ),
+        cycle_time_estimate=estimate,
+        total_distance_mm=round(
+            estimate.total_cutting_distance_mm + estimate.total_rapid_distance_mm, 9
+        ),
+        envelope_audit="PASS_DECLARED_2D_ENVELOPE_ONLY",
+        machine_envelope=request.machine_envelope,
+        chuck_proximity=simulation.chuck_proximity,
+        limitations=(
+            "Source plan has no name; source_plan_name is unavailable.",
+            "Timestamp identifies the analytical snapshot, not a machining event.",
+            "Process-local latest successful simulation; rerun after restart or eviction.",
+            "Route 6 estimate uses X-diameter/Z distances and its existing modal-feed model; "
+            "G96/CSS RPM conversion is not physically validated.",
+            "No acceleration, tool-change, dwell or physical cycle-time validation.",
+            "Declared 2D envelope/proximity only; no G9 approval or machine authority.",
+        ),
+    )

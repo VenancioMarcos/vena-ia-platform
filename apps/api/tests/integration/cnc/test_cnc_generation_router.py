@@ -332,3 +332,51 @@ def test_simulation_endpoint_returns_safe_payload_from_owned_plan(
         assert body["safety_flags"]["executable_output"] is False
     finally:
         _remove_gateway(gateway)
+
+
+def test_report_requires_owned_plan_and_completed_plan_simulation(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+) -> None:
+    gateway = _install_gateway(tmp_path)
+    try:
+        owner = make_account("cnc-report-owner@vena-ia.dev")
+        outsider = make_account("cnc-report-outsider@vena-ia.dev")
+        plan_id = _create_plan(client, owner.headers)
+        endpoint = f"/api/v1/cnc/turning/plans/{plan_id}/report"
+
+        assert client.get(endpoint).status_code == 401
+        assert client.get(endpoint, headers=owner.headers).status_code == 422
+        assert client.get(endpoint, headers=outsider.headers).status_code == 404
+
+        simulated = client.post(
+            "/api/v1/cnc/turning/simulate-toolpath",
+            headers=owner.headers,
+            json={
+                "plan_id": plan_id,
+                "controller_profile": "FANUC_0I",
+                "program_number": 9004,
+                **_simulation_geometry(),
+            },
+        )
+        assert simulated.status_code == 200, simulated.text
+
+        response = client.get(endpoint, headers=owner.headers)
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert body["schema_version"] == "vena-ia.cnc-machining-report/v1"
+        assert body["plan_id"] == plan_id
+        assert body["source_plan_name"] is None
+        assert body["tools"] == [{"tool_id": "T0101", "operations": ["FACING"]}]
+        assert body["cycle_time_estimate"] == simulated.json()["cycle_time_estimate"]
+        assert body["envelope_audit"] == "PASS_DECLARED_2D_ENVELOPE_ONLY"
+        assert body["governance_stamp"] == (
+            "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
+        )
+        assert body["safety_flags"]["physical_use_authorized"] is False
+        assert body["safety_flags"]["executable_output"] is False
+        assert "program_text" not in body
+        assert client.get(endpoint, headers=outsider.headers).status_code == 404
+    finally:
+        _remove_gateway(gateway)
