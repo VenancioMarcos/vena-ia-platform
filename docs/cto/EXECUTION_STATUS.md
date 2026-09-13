@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-121 a AUTO-125
+
+`SIM_ROTA_3_E2E_WORKSPACE_COMPLETED_LOCAL`. O PR #48 foi aprovado no Frontend CI
+e integrado por squash em `a952d43`. A nova branch conecta o Canvas a um HUD
+X/Z/feed/ferramenta e ao bloco ISO ativo, todos sincronizados por Play/Pause/Scrub,
+com programa somente leitura e fallback seguro. Validação: 71 Web, TypeScript,
+lint, 789 Python/9 ignorados, Ruff, mypy em 210 arquivos e diff; sem push ou
+autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-116 a AUTO-120
 
 `SIM_ROTA_2_CANVAS_TOOLPATH_VIEWER_COMPLETED_LOCAL`. O PR #47 foi aprovado no

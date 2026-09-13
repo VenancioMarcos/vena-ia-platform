@@ -59,6 +59,8 @@ interface ToolpathCanvasViewerProps {
   width?: number;
   height?: number;
   className?: string;
+  visibleSegmentCount?: number;
+  onVisibleSegmentCountChange?: (count: number) => void;
 }
 
 const PADDING = 32;
@@ -170,30 +172,40 @@ export function ToolpathCanvasViewer({
   width = 760,
   height = 440,
   className = "",
+  visibleSegmentCount,
+  onVisibleSegmentCountChange,
 }: ToolpathCanvasViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [visibleSegments, setVisibleSegments] = useState(payload.segments.length);
+  const [internalVisibleSegments, setInternalVisibleSegments] = useState(payload.segments.length);
   const [playing, setPlaying] = useState(false);
   const renderable = isRenderable(payload, width, height);
+  const visibleSegments = Math.min(
+    payload.segments.length,
+    Math.max(0, visibleSegmentCount ?? internalVisibleSegments),
+  );
+
+  const updateVisibleSegments = (count: number) => {
+    const boundedCount = Math.min(payload.segments.length, Math.max(0, count));
+    if (visibleSegmentCount === undefined) setInternalVisibleSegments(boundedCount);
+    onVisibleSegmentCountChange?.(boundedCount);
+  };
 
   useEffect(() => {
-    setVisibleSegments(payload.segments.length);
+    setInternalVisibleSegments(payload.segments.length);
     setPlaying(false);
   }, [payload]);
 
   useEffect(() => {
     if (!playing || !renderable) return;
     const timer = window.setInterval(() => {
-      setVisibleSegments((current) => {
-        if (current >= payload.segments.length) {
-          setPlaying(false);
-          return current;
-        }
-        return current + 1;
-      });
+      if (visibleSegments >= payload.segments.length) {
+        setPlaying(false);
+        return;
+      }
+      updateVisibleSegments(visibleSegments + 1);
     }, 350);
     return () => window.clearInterval(timer);
-  }, [payload.segments.length, playing, renderable]);
+  }, [payload.segments.length, playing, renderable, visibleSegments]);
 
   useEffect(() => {
     const context = canvasRef.current?.getContext("2d");
@@ -233,7 +245,7 @@ export function ToolpathCanvasViewer({
               type="button"
               className="rounded-md bg-cyan-700 px-3 py-2 text-sm font-semibold hover:bg-cyan-600"
               onClick={() => {
-                if (visibleSegments >= payload.segments.length) setVisibleSegments(0);
+                if (visibleSegments >= payload.segments.length) updateVisibleSegments(0);
                 setPlaying((current) => !current);
               }}
               aria-label={playing ? "Pausar simulação" : "Reproduzir simulação"}
@@ -249,7 +261,7 @@ export function ToolpathCanvasViewer({
                 value={visibleSegments}
                 onChange={(event) => {
                   setPlaying(false);
-                  setVisibleSegments(Number(event.target.value));
+                  updateVisibleSegments(Number(event.target.value));
                 }}
                 className="w-full"
                 aria-label="Selecionar passo da trajetória"
