@@ -161,6 +161,9 @@ def test_complete_report_replays_deterministically(controller):
     assert report.power_force_audit.p_motor_est_kw > report.power_force_audit.pc_cutting_kw
     assert report.power_force_audit.mrr_cm3_min == pytest.approx(18.0)
     assert report.power_force_audit.power_status == "POWER_WITHIN_LIMITS"
+    assert report.tool_life_audits[0].tool_id == report.tools[0].tool_id
+    assert report.tool_life_audits[0].estimated_tool_life_minutes > 0
+    assert report.tool_life_audits[0].tool_life_consumed_percent > 0
     assert report.governance_stamp == "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
     assert report.safety_flags == GCodeSafetyFlags()
     assert report.source_plan_name is None
@@ -218,7 +221,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
 
     assert rendered == format_machining_report_text(report)
     assert rendered.count(SAFETY_STAMP) == 5
-    assert rendered.count("[") == 5
+    assert rendered.count("[") == 6
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -237,3 +240,5 @@ def test_text_export_is_deterministic_and_stamps_every_section():
         "ESTIMATIVA ENERGÉTICA ANALÍTICA DE KIENZLE - NÃO CONSIDERA "
         "RENDIMENTO DINÂMICO REAL" in rendered
     )
+    assert "tool_life[T0101]" in rendered
+    assert "ESTIMATIVA ANALÍTICA DE TAYLOR" in rendered

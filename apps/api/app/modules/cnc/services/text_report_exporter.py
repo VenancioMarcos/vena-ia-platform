@@ -61,6 +61,14 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
                 f"power_status={validated.power_force_audit.power_status}",
                 "ESTIMATIVA ENERGÉTICA ANALÍTICA DE KIENZLE - NÃO CONSIDERA "
                 "RENDIMENTO DINÂMICO REAL",
+                *(
+                    f"tool_life[{item.tool_id}]: estimated_minutes="
+                    f"{item.estimated_tool_life_minutes:.9f}; consumed_percent="
+                    f"{item.tool_life_consumed_percent:.9f}; status={item.integrity_status}"
+                    for item in validated.tool_life_audits
+                ),
+                "ESTIMATIVA ANALÍTICA DE TAYLOR - NÃO CONSIDERA FLUTUAÇÕES "
+                "TÉRMICAS REAIS OU LUBRIFICAÇÃO",
             ),
         ),
         _section(

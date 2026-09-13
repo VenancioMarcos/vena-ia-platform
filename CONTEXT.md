@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.57
+**Versão:** 2.58
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,16 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_TAYLOR_TOOL_LIFE_AUDIT_COMPLETED_LOCAL`.
+  O PR #60 integrou a Rota 12 por squash em `bc7a582`; Backend e Frontend CI foram
+  aprovados, a branch remota foi removida e `main=origin/main`. A branch local
+  `codex/v7.4-cnc-tool-life-taylor-estimator` aplica a equação clássica de Taylor a
+  pares ferramenta/material tabulados, calcula vida estimada e consumo acumulado
+  pelo tempo efetivo de corte de cada ferramenta e sinaliza desgaste acima de 80%.
+  Contrato, laudo e viewer preservam a natureza teórica e todas as barreiras físicas.
+  Validação local: 100 testes CNC, mypy em 200 fontes, Ruff, TypeScript estrito,
+  9 testes Web e `git diff --check`. Entrega local sem push.
 
 - **Handoff CTO:** `CNC_KIENZLE_POWER_FORCE_AUDIT_COMPLETED_LOCAL`.
   O PR #59 integrou a Rota 11 por squash em `db1ff2e`; Backend e Frontend CI foram

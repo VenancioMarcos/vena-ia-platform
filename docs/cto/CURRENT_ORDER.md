@@ -1,22 +1,22 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-189 a AUTO-198
-**Estado:** CNC_KIENZLE_POWER_FORCE_AUDIT_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-199 a AUTO-208
+**Estado:** CNC_TAYLOR_TOOL_LIFE_AUDIT_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v7.3-cnc-cutting-power-force-estimator`
-**Baseline da branch:** `db1ff2edbfa2716451034eef12696b3ad91f3dc1`
+**Branch:** `codex/v7.4-cnc-tool-life-taylor-estimator`
+**Baseline da branch:** `bc7a58237236482dd3aff23d1b0c239a8ac74cb5`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O PR #59 integrou a Rota 11 por squash em `db1ff2e`; a branch remota foi removida e
-`main=origin/main`. A Rota 12 calcula força e potência pelo modelo Kienzle, inclui
-MRR e limite configurável de potência e apresenta os resultados no manifesto,
-laudo e viewer com limitação analítica explícita.
+O PR #60 integrou a Rota 12 por squash em `bc7a582`; a branch remota foi removida e
+`main=origin/main`. A Rota 13 estima a vida útil por Taylor com perfis tabulados,
+acumula o consumo por ferramenta e apresenta estado seguro ou alerta crítico no
+contrato, laudo e viewer, sempre como análise teórica.
 
 ## Continuidade
 
-Consolidar o commit local e enviar VTP-AUTO-198-BATCH ao CTO. A branch permanece
+Enviar VTP-AUTO-208-BATCH ao CTO e aguardar parecer e próxima ordem. A branch permanece
 local e não deve receber push nesta etapa.
 
 ## Limites permanentes
