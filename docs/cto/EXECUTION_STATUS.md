@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-111 a AUTO-115
+
+`SIM_ROTA_1_TOOLPATH_VISUALIZER_FOUNDATION_COMPLETED_LOCAL`. O PR #46 foi aprovado
+no Backend CI e integrado por squash em `d60cb88`, encerrando o Épico CNC. A nova
+branch implementa parser de segmentos G0/G1, contratos estritos de envelope/stock
+e endpoint autenticado para programa ou plano pertencente ao usuário. Validação:
+789 Python/9 ignorados, 64 Web, Ruff, mypy em 210 arquivos e diff; sem push da
+Rota SIM 1 ou mudança de autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-106 a AUTO-110
 
 `CNC_ROTA_4_KINEMATIC_ENVELOPE_VALIDATOR_COMPLETED_LOCAL`. O PR #45 foi aprovado

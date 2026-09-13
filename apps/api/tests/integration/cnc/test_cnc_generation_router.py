@@ -80,6 +80,17 @@ def _generation_payload(plan_id: str) -> dict[str, object]:
     }
 
 
+def _simulation_geometry() -> dict[str, object]:
+    return {
+        "machine_envelope": _generation_payload("unused")["machine_envelope"],
+        "stock": {
+            "diameter_mm": 52.0,
+            "z_min_mm": -100.0,
+            "z_max_mm": 1.0,
+        },
+    }
+
+
 def test_generates_review_only_candidate_from_owned_cam_plan(
     client: TestClient,
     make_account,
@@ -266,5 +277,51 @@ def test_gateway_rejects_chuck_zone_collision_as_unprocessable(
 
         assert response.status_code == 422
         assert response.json()["detail"] == "CHUCK_EXCLUSION_ZONE_VIOLATION"
+    finally:
+        _remove_gateway(gateway)
+
+
+def test_simulation_endpoint_requires_authentication(client: TestClient) -> None:
+    response = client.post(
+        "/api/v1/cnc/turning/simulate-toolpath",
+        json={
+            "program_text": "G00 X40 Z2\nG01 X36 Z-20 F0.2",
+            "controller_profile": "FANUC_0I",
+            **_simulation_geometry(),
+        },
+    )
+
+    assert response.status_code == 401
+
+
+def test_simulation_endpoint_returns_safe_payload_from_owned_plan(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+) -> None:
+    gateway = _install_gateway(tmp_path)
+    try:
+        account = make_account("cnc-simulation-owner@vena-ia.dev")
+        plan_id = _create_plan(client, account.headers)
+
+        response = client.post(
+            "/api/v1/cnc/turning/simulate-toolpath",
+            headers=account.headers,
+            json={
+                "plan_id": plan_id,
+                "controller_profile": "FANUC_0I",
+                "program_number": 9003,
+                **_simulation_geometry(),
+            },
+        )
+
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert body["source_plan_id"] == plan_id
+        assert body["status"] == "SIMULATION_READY_REQUIRES_REVIEW"
+        assert body["segments"]
+        assert body["segments"][0]["active_tool"] == "T0101"
+        assert body["safety_flags"]["machine_send"] is False
+        assert body["safety_flags"]["executable_output"] is False
     finally:
         _remove_gateway(gateway)

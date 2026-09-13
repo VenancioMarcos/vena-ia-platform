@@ -1,22 +1,22 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-106 a AUTO-110
-**Estado:** CNC_ROTA_4_KINEMATIC_ENVELOPE_VALIDATOR_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-111 a AUTO-115
+**Estado:** SIM_ROTA_1_TOOLPATH_VISUALIZER_FOUNDATION_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v5.3-cnc-kinematic-envelope-validator`
-**Baseline da branch:** `27c48affd7091dd05d4e6cdd67b7b7ab098c8d00`
+**Branch:** `codex/v6.0-sim-toolpath-visualizer-foundation`
+**Baseline da branch:** `d60cb88e53a1064d123fca4adcdd3e66ebadc956`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O formatador exige um envelope X-diâmetro/Z explícito e valida todos os pontos e
-segmentos G0/G1 contra os cursos configurados e a zona retangular da placa.
-Movimentos incompletos, fora do curso ou em colisão falham fechados antes da resposta.
+O endpoint autenticado de simulação aceita um programa ISO limitado ou um plano
+CAM pertencente ao usuário. O parser valida primeiro o envelope e transforma G0/G1
+em segmentos X/Z com movimento, avanço e ferramenta para renderização 2D segura.
 
 ## Continuidade
 
-A Rota 3 foi integrada pelo PR #45 em `27c48af`. A Rota 4 está consolidada
-localmente, sem push, e aguarda parecer do CTO.
+A Rota 4 foi integrada pelo PR #46 em `d60cb88`, fechando o Épico CNC. A Rota SIM
+1 está consolidada localmente, sem push, e aguarda parecer do CTO.
 
 ## Limites permanentes
 

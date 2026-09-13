@@ -155,3 +155,63 @@ class GCodeGatewayRequest(_CNCGenerationContract):
         max_length=64,
         pattern=r"^[A-Za-z0-9 _-]+$",
     )
+
+
+class ToolpathSegment2D(_CNCGenerationContract):
+    motion_type: Literal["RAPID", "LINEAR"]
+    x_start_mm: float
+    z_start_mm: float
+    x_end_mm: float
+    z_end_mm: float
+    feed: float | None = Field(default=None, gt=0)
+    active_tool: str | None = Field(default=None, min_length=1, max_length=64)
+
+
+class TurningStock2D(_CNCGenerationContract):
+    diameter_mm: float = Field(gt=0)
+    z_min_mm: float
+    z_max_mm: float
+
+    @model_validator(mode="after")
+    def validate_bounds(self) -> "TurningStock2D":
+        if self.z_min_mm >= self.z_max_mm:
+            raise ValueError("STOCK_Z_BOUNDS_INVALID")
+        return self
+
+
+class ToolpathSimulationRequest(_CNCGenerationContract):
+    plan_id: str | None = Field(default=None, min_length=1, max_length=255)
+    program_text: str | None = Field(default=None, min_length=1, max_length=1_000_000)
+    controller_profile: CNCControllerType = Field(strict=False)
+    program_number: int = Field(default=9_000, ge=1, le=99_999_999)
+    machine_envelope: MachineEnvelope2D
+    stock: TurningStock2D
+    max_spindle_rpm: float = Field(default=3_000.0, gt=0, le=30_000)
+    max_feed_mm_min: float = Field(default=30_000.0, gt=0, le=30_000)
+    tool_number: int = Field(default=1, ge=1, le=99)
+    tool_offset: int = Field(default=1, ge=1, le=99)
+    tool_name: str = Field(
+        default="FERRAMENTA",
+        min_length=1,
+        max_length=64,
+        pattern=r"^[A-Za-z0-9 _-]+$",
+    )
+
+    @model_validator(mode="after")
+    def validate_source(self) -> "ToolpathSimulationRequest":
+        if (self.plan_id is None) == (self.program_text is None):
+            raise ValueError("EXACTLY_ONE_SIMULATION_SOURCE_REQUIRED")
+        return self
+
+
+class ToolpathSimulationPayload(_CNCGenerationContract):
+    status: Literal["SIMULATION_READY_REQUIRES_REVIEW"] = (
+        "SIMULATION_READY_REQUIRES_REVIEW"
+    )
+    source_plan_id: str | None = None
+    controller_profile: CNCControllerType
+    segments: tuple[ToolpathSegment2D, ...] = Field(min_length=1)
+    machine_envelope: MachineEnvelope2D
+    stock: TurningStock2D
+    coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)

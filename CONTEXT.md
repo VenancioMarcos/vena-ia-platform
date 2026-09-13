@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.43
+**Versão:** 2.44
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `SIM_ROTA_1_TOOLPATH_VISUALIZER_FOUNDATION_COMPLETED_LOCAL`.
+  O PR #46 integrou o fechamento do Épico CNC em `d60cb88` após Backend CI
+  aprovado. A branch `codex/v6.0-sim-toolpath-visualizer-foundation` acrescenta
+  parser determinístico de G0/G1 para segmentos X/Z, contratos de envelope e
+  stock e endpoint autenticado que aceita programa ISO ou plano CAM pertencente
+  ao usuário. O payload é somente de simulação, preserva metadados modais e todas
+  as travas físicas; 789 Python/9 ignorados, 64 Web, Ruff, mypy e diff aprovados.
+  Sem push da Rota SIM 1, transmissão, ciclo ou autoridade física.
 
 - **Handoff CTO:** `CNC_ROTA_4_KINEMATIC_ENVELOPE_VALIDATOR_COMPLETED_LOCAL`.
   O PR #45 integrou a Rota 3 em `27c48af` após Backend CI aprovado. A branch

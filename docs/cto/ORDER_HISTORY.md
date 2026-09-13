@@ -1129,3 +1129,31 @@ formatador ISO e responde com candidato revisável e não executável.
 Testes de integração cobrem sucesso E2E e falhas fechadas 401, 404 e 422, inclusive
 isolamento entre proprietários. Validação: 766 Python/9 ignorados, 64 Web, Ruff,
 mypy em 208 arquivos e `git diff --check`; sem push da branch Rota 2.
+
+## 2026-09-13 — CTO-CODEX-AUTO-111
+
+A branch `codex/v5.3-cnc-kinematic-envelope-validator` foi publicada em
+`a237fa6` e o Draft PR #46 aberto contra `main`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-112
+
+O Backend CI do PR #46 foi aprovado em 3m38s. O PR foi retirado de Draft e
+confirmado `OPEN`, `MERGEABLE` e `CLEAN` no commit `a237fa6`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-113
+
+O PR #46 foi integrado por squash merge em `d60cb88` às 2026-09-13T12:45:31Z.
+A branch remota foi removida e `main` alinhada estritamente com `origin/main`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-114
+
+A branch `codex/v6.0-sim-toolpath-visualizer-foundation` foi criada de `d60cb88`.
+Parser e contratos de simulação transformam movimentos G0/G1 em segmentos X/Z
+com avanço e ferramenta, após validação obrigatória do envelope cinemático.
+
+## 2026-09-13 — CTO-CODEX-AUTO-115
+
+O endpoint autenticado `/api/v1/cnc/turning/simulate-toolpath` aceita um programa
+ISO ou um plano CAM pertencente ao usuário e retorna payload revisável para UI 2D.
+Validação: 789 Python/9 ignorados, 64 Web, Ruff, mypy em 210 arquivos e diff;
+sem push da Rota SIM 1 ou autoridade física.
