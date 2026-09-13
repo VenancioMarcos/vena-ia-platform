@@ -1,6 +1,7 @@
 """Ideal kinematic surface-roughness estimates for analytical review only."""
 
 import math
+from typing import Literal
 
 from app.modules.cnc.schemas import SurfaceRoughnessAuditPayload
 
@@ -47,7 +48,11 @@ def estimate_surface_roughness(
     ra_um = feed**2 / (32.0 * radius) * 1_000.0
     rounded_ra_um = round(ra_um, 9)
     rounded_rz_um = round(rz_um, 9)
-    compliance = (
+    compliance: Literal[
+        "WITHIN_NOMINAL_RA_TOLERANCE",
+        "EXCEEDS_NOMINAL_RA_TOLERANCE",
+        "NOMINAL_RA_TOLERANCE_UNAVAILABLE",
+    ] = (
         "NOMINAL_RA_TOLERANCE_UNAVAILABLE"
         if nominal is None
         else (
