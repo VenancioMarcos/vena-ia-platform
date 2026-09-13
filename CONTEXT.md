@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.45
+**Versão:** 2.46
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `SIM_ROTA_3_E2E_WORKSPACE_COMPLETED_LOCAL`.
+  O PR #48 publicou a Rota SIM 2, passou no Frontend CI e foi integrado por squash
+  em `a952d43`. A branch `codex/v6.2-sim-e2e-workspace-view` adiciona a rota
+  `/cnc/simulation`, conectando Canvas, scrub, HUD X/Z/feed/ferramenta e programa ISO
+  somente leitura. Estados ausentes falham com alerta seguro; as travas de auditoria
+  permanecem visíveis. Validação: 71 Web, TypeScript, lint, 789 Python/9 ignorados,
+  Ruff, mypy em 210 arquivos e diff. Sem push da Rota SIM 3 ou autoridade física.
 
 - **Handoff CTO:** `SIM_ROTA_2_CANVAS_TOOLPATH_VIEWER_COMPLETED_LOCAL`.
   O PR #47 integrou a fundação backend da simulação em `36c21e7` após Backend CI

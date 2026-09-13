@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-121 a AUTO-125
+
+A Rota SIM 2 foi publicada no PR #48, aprovada pelo Frontend CI e integrada por
+squash em `a952d43`. A Rota SIM 3 cria o workspace `/cnc/simulation`, com Canvas,
+telemetria X/Z/feed/ferramenta e destaque do bloco ISO sincronizados ao scrub,
+programa somente leitura, alertas de auditoria e fallback seguro. O pacote foi
+consolidado localmente, sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-106 a AUTO-110
 
 A Rota 3 CNC foi publicada no PR #45, aprovada pelo Backend CI e integrada por

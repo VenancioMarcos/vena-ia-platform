@@ -1,22 +1,21 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-116 a AUTO-120
-**Estado:** SIM_ROTA_2_CANVAS_TOOLPATH_VIEWER_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-121 a AUTO-125
+**Estado:** SIM_ROTA_3_E2E_WORKSPACE_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v6.1-sim-canvas-toolpath-viewer`
-**Baseline da branch:** `36c21e7e76639c85b60524233128a85c3cc1a0d6`
+**Branch:** `codex/v6.2-sim-e2e-workspace-view`
+**Baseline da branch:** `a952d433a1f46a65fbfcf830e6e4344168615899`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O componente Canvas consome o payload de simulação tipado e desenha stock, zona
-de exclusão, eixos e trajetórias G00/G01. Controles locais permitem reprodução,
-pausa e scrub mantendo o aviso de auditoria e bloqueio físico sempre visível.
+O PR #48 integrou a Rota SIM 2. A nova rota Web reúne Canvas, programa ISO somente
+leitura e HUD de X/Z/feed/ferramenta sincronizado ao scrub, com fallback seguro para
+payload indisponível e alertas de auditoria permanentes.
 
 ## Continuidade
 
-A Rota SIM 1 foi integrada pelo PR #47 em `36c21e7`. A Rota SIM 2 está consolidada
-localmente, sem push, e aguarda parecer do CTO.
+A Rota SIM 3 está consolidada em commit local, sem push, e aguarda parecer do CTO.
 
 ## Limites permanentes
 
