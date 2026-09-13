@@ -9,6 +9,7 @@ from app.modules.cam.repository import TurningPlanRecord
 from app.modules.cam.schemas import (
     MachiningPass,
     RzPoint,
+    TurningBoundingBox,
     TurningPlanGatewayRequest,
     TurningPlanGatewayResponse,
     TurningStrategyPlanResponse,
@@ -26,6 +27,10 @@ from app.modules.cnc.services.machining_report import (
     MachiningReportSource,
     compile_machining_report,
     plan_fingerprint,
+)
+from app.modules.cnc.services.text_report_exporter import (
+    SAFETY_STAMP,
+    format_machining_report_text,
 )
 
 
@@ -104,6 +109,12 @@ def _source(controller=CNCControllerType.FANUC_0I):
             plan_id=generation.plan_id,
             cad_job_id=request.cad_job_id,
         ),
+        TurningBoundingBox(
+            max_radius_mm=12.0,
+            min_z_mm=-20.0,
+            max_z_mm=2.0,
+            total_z_length_mm=22.0,
+        ),
     )
     simulation = ToolpathSimulationRequest(
         plan_id=generation.plan_id,
@@ -136,6 +147,8 @@ def test_complete_report_replays_deterministically(controller):
     assert report.cycle_time_estimate.total_cutting_time_seconds == pytest.approx(26 / 36 * 60)
     assert report.envelope_audit == "PASS_DECLARED_2D_ENVELOPE_ONLY"
     assert report.chuck_proximity.minimum_clearance_mm > 5
+    assert report.geometry_audit.status == "PASS"
+    assert report.geometry_audit.manifest_generation_allowed is True
     assert report.governance_stamp == "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
     assert report.safety_flags == GCodeSafetyFlags()
     assert report.source_plan_name is None
@@ -183,3 +196,26 @@ def test_governance_stamp_cannot_be_removed_or_changed():
     body["governance_stamp"] = "APPROVED FOR MACHINE"
     with pytest.raises(ValidationError):
         MachiningTechnicalReportPayload.model_validate(body)
+
+
+def test_text_export_is_deterministic_and_stamps_every_section():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+
+    rendered = format_machining_report_text(report)
+
+    assert rendered == format_machining_report_text(report)
+    assert rendered.count(SAFETY_STAMP) == 5
+    assert rendered.count("[") == 5
+    assert "status=PASS" in rendered
+    assert "MAX_RADIUS: nominal_mm=" in rendered
+    assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
+    assert "G9=PENDING_AUTHORITATIVE_REVIEW" in rendered
+    assert "NO_HUMAN_REVIEW_BYPASS=TRUE" in rendered
+    assert "MACHINE_SEND=false" in rendered
+    assert "DNC=false" in rendered
+    assert "NC_TRANSFER=false" in rendered
+    assert "CYCLE_START=false" in rendered
+    assert "emission_status=CONTROLLER_PROFILE_UNRESOLVED" in rendered
+    assert "executable_output=false" in rendered
+    assert "program_text" not in rendered

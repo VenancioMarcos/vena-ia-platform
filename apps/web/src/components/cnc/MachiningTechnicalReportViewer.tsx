@@ -67,6 +67,20 @@ export interface MachiningTechnicalReportPayload {
     closest_segment_index: number;
     warning_code: "WARNING_PROXIMITY_CHUCK" | null;
   };
+  geometry_audit: {
+    schema_version: "vena-ia.cnc-geometry-dimensional-audit/v1";
+    status: "PASS" | "REJECTED";
+    deviations: readonly {
+      axis: "MAX_RADIUS" | "MIN_Z" | "MAX_Z";
+      nominal_mm: number;
+      programmed_mm: number;
+      signed_deviation_mm: number;
+      tolerance_mm: number;
+      within_tolerance: boolean;
+    }[];
+    findings: readonly string[];
+    manifest_generation_allowed: boolean;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -95,6 +109,7 @@ function Metric({ label, value }: { label: string; value: string }) {
 export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalReportViewerProps) {
   const estimate = report.cycle_time_estimate;
   const proximityWarning = report.chuck_proximity.warning_code === "WARNING_PROXIMITY_CHUCK";
+  const dimensionalPass = report.geometry_audit.status === "PASS";
 
   return <article className="space-y-6 rounded-2xl border border-slate-700 bg-slate-900 p-6 text-slate-100" aria-label="Relatório técnico CNC">
     <header className="space-y-3">
@@ -137,6 +152,28 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </dl>
       {proximityWarning ? <p role="alert" className="rounded-lg border border-red-500 bg-red-950/60 p-3 font-mono text-red-100">WARNING_PROXIMITY_CHUCK</p> : null}
       <p className="font-mono text-xs text-slate-400">SHA-256 do programa: {report.program_sha256}</p>
+    </section>
+
+    <section aria-labelledby="report-dimensional-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-dimensional-heading" className="text-lg font-semibold">Auditoria geométrica dimensional</h2>
+        <span role="status" className={`rounded-full border px-3 py-1 text-xs font-bold ${dimensionalPass ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {dimensionalPass ? "AUDITORIA GEOMÉTRICA CONFORME" : "DESVIO DETECTADO"}
+        </span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-left text-sm">
+          <thead><tr className="border-b border-slate-700 text-slate-400">
+            <th className="p-2">Dimensão</th><th className="p-2">Nominal</th><th className="p-2">Programada</th><th className="p-2">Desvio</th><th className="p-2">Tolerância</th>
+          </tr></thead>
+          <tbody>{report.geometry_audit.deviations.map((item) => <tr key={item.axis} className="border-b border-slate-800 font-mono">
+            <td className="p-2">{item.axis}</td><td className="p-2">{item.nominal_mm.toFixed(3)} mm</td><td className="p-2">{item.programmed_mm.toFixed(3)} mm</td><td className={`p-2 ${item.within_tolerance ? "text-emerald-300" : "text-red-300"}`}>{item.signed_deviation_mm.toFixed(3)} mm</td><td className="p-2">±{item.tolerance_mm.toFixed(3)} mm</td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <a href={`/api/v1/cnc/turning/plans/${encodeURIComponent(report.plan_id)}/report/download`} download className="inline-flex rounded-lg border border-cyan-500 bg-cyan-950 px-4 py-2 text-sm font-semibold text-cyan-100">
+        Exportar laudo textual — {report.governance_stamp}
+      </a>
     </section>
 
     <section aria-labelledby="report-limits-heading" className="space-y-2">

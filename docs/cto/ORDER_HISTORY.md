@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-169 a AUTO-178
+
+CTO ordenou publicar e integrar a Rota 9, inserir seu gate antes do manifesto,
+fornecer relatório JSON/TEXT, download autenticado, evidência dimensional no viewer
+e testes dos estados conforme e rejeitado. PR #57 integrado em `ac65258`; entrega da
+Rota 10 consolidada localmente em `codex/v7.1-cnc-dimensional-gate-integration`,
+sem push e sem autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-164 a AUTO-168
 
 CTO aprovou o Lote 14 e ordenou publicar/integrar a Rota 8 e criar o auditor de

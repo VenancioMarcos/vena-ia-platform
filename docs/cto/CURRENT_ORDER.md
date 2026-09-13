@@ -1,24 +1,23 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-164 a AUTO-168
-**Estado:** CNC_ROUTE_9_GEOMETRY_DIMENSIONAL_AUDITOR_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-169 a AUTO-178
+**Estado:** CNC_DIMENSIONAL_GATE_AND_TEXT_REPORT_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v7.0-cnc-geometry-dimensional-auditor`
-**Baseline da branch:** `b43aca729c66e16c0883c5e626dec68ac3239d68`
-**Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
+**Branch:** `codex/v7.1-cnc-dimensional-gate-integration`
+**Baseline da branch:** `ac65258800f2a5a685763ea03bd37a2146df3f91`
+**Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O PR #56 integrou a Rota 8 por squash em `b43aca7`; a branch remota foi removida e
-`main=origin/main`. O auditor da Rota 9 compara limites nominais do BRep com extremos
-programados, em convenção X-diâmetro/Z, e emite relatório analítico serializável com
-desvios assinados. Divergência dimensional, raio negativo e reversão radial linear
-fecham o gate de manifesto.
+O PR #57 integrou a Rota 9 por squash em `ac65258`; a branch remota foi removida e
+`main=origin/main`. O gate dimensional agora precede o manifesto e o download
+textual owner-scoped. API e viewer apresentam a mesma evidência de desvios; rejeição
+retorna 422 e não gera arquivo ou programa executável.
 
 ## Continuidade
 
-Consolidar o commit local e enviar VTP-AUTO-168-BATCH ao CTO. A branch da Rota 9
-permanece local e não deve receber push nesta etapa.
+Consolidar o commit local e enviar VTP-AUTO-178-BATCH ao CTO. A branch permanece
+local e não deve receber push nesta etapa.
 
 ## Limites permanentes
 

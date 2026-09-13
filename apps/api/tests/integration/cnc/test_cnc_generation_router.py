@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.modules.cad.dependencies import get_cad_ingestion_gateway
 from app.modules.cad.ingestion import CadIngestionGateway
+from app.modules.cam.schemas import TurningBoundingBox
 
 
 TURNING_FIXTURES = Path(__file__).parents[2] / "fixtures" / "cad" / "turning"
@@ -363,20 +364,75 @@ def test_report_requires_owned_plan_and_completed_plan_simulation(
         assert simulated.status_code == 200, simulated.text
 
         response = client.get(endpoint, headers=owner.headers)
-        assert response.status_code == 200, response.text
+        assert response.status_code == 422, response.text
         body = response.json()
-        assert body["schema_version"] == "vena-ia.cnc-machining-report/v1"
-        assert body["plan_id"] == plan_id
-        assert body["source_plan_name"] is None
-        assert body["tools"] == [{"tool_id": "T0101", "operations": ["FACING"]}]
-        assert body["cycle_time_estimate"] == simulated.json()["cycle_time_estimate"]
-        assert body["envelope_audit"] == "PASS_DECLARED_2D_ENVELOPE_ONLY"
-        assert body["governance_stamp"] == (
-            "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        )
-        assert body["safety_flags"]["physical_use_authorized"] is False
-        assert body["safety_flags"]["executable_output"] is False
+        assert body["detail"]["code"] == "GEOMETRY_DIMENSIONAL_AUDIT_REJECTED"
+        audit = body["detail"]["audit"]
+        assert audit["schema_version"] == "vena-ia.cnc-geometry-dimensional-audit/v1"
+        assert audit["status"] == "REJECTED"
+        assert audit["manifest_generation_allowed"] is False
+        assert "BREP_MAX_RADIUS_MISMATCH" in audit["findings"]
+        assert "BREP_MIN_Z_MISMATCH" in audit["findings"]
+        assert audit["safety_flags"]["physical_use_authorized"] is False
+        assert audit["safety_flags"]["executable_output"] is False
         assert "program_text" not in body
+        assert client.get(endpoint, headers=outsider.headers).status_code == 404
+    finally:
+        _remove_gateway(gateway)
+
+
+def test_download_report_requires_approved_dimensional_audit_and_owner(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+) -> None:
+    gateway = _install_gateway(tmp_path)
+    try:
+        owner = make_account("cnc-download-owner@vena-ia.dev")
+        outsider = make_account("cnc-download-outsider@vena-ia.dev")
+        plan_id = _create_plan(client, owner.headers)
+        store = app.state.turning_plan_store
+        record = store.get_owned(plan_id, owner_user_id=owner.id)
+        store.save(
+            owner_user_id=owner.id,
+            request=record.request,
+            response=record.response,
+            source_brep_bounds=TurningBoundingBox(
+                max_radius_mm=26.0,
+                min_z_mm=0.0,
+                max_z_mm=0.5,
+                total_z_length_mm=0.5,
+            ),
+        )
+        endpoint = f"/api/v1/cnc/turning/plans/{plan_id}/report/download"
+
+        assert client.get(endpoint).status_code == 401
+        assert client.get(endpoint, headers=owner.headers).status_code == 422
+        assert client.get(endpoint, headers=outsider.headers).status_code == 404
+        simulated = client.post(
+            "/api/v1/cnc/turning/simulate-toolpath",
+            headers=owner.headers,
+            json={
+                "plan_id": plan_id,
+                "controller_profile": "FANUC_0I",
+                "program_number": 9005,
+                **_simulation_geometry(),
+            },
+        )
+        assert simulated.status_code == 200, simulated.text
+
+        response = client.get(endpoint, headers=owner.headers)
+        assert response.status_code == 200, response.text
+        assert response.headers["content-type"].startswith("text/plain")
+        assert response.headers["content-disposition"].startswith("attachment;")
+        assert response.headers["cache-control"] == "no-store, private"
+        assert response.headers["x-content-type-options"] == "nosniff"
+        assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
+        assert response.text.count(
+            "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
+        ) == 5
+        assert "status=PASS" in response.text
+        assert "program_text" not in response.text
         assert client.get(endpoint, headers=outsider.headers).status_code == 404
     finally:
         _remove_gateway(gateway)

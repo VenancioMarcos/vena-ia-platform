@@ -1,5 +1,15 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-169 a AUTO-178
+
+`CNC_DIMENSIONAL_GATE_AND_TEXT_REPORT_COMPLETED_LOCAL`. O PR #57 passou no Backend
+CI e foi integrado por squash em `ac65258`; branch remota removida e main
+sincronizada. A auditoria dimensional agora bloqueia o manifesto e o download antes
+da serialização. O endpoint textual é autenticado, owner-scoped e restrito; o viewer
+mostra status e desvios sem controles físicos. Validação final disponível: 4 testes
+Web, smokes API dos caminhos aprovado/rejeitado/isolamento, compileall e diff. A
+suíte integral ficou indisponível sem instalar dependências pela rede. Sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-164 a AUTO-168
 
 `CNC_ROUTE_9_GEOMETRY_DIMENSIONAL_AUDITOR_COMPLETED_LOCAL`. O PR #56 foi aberto,

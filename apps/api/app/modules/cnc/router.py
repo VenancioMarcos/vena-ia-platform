@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException
 from datetime import datetime, timezone
+from hashlib import sha256
+
+from fastapi import APIRouter, HTTPException, Response
 from pydantic import ValidationError
 
 from app.modules.auth.dependencies import CurrentUserDependency
@@ -8,6 +10,7 @@ from app.modules.cam.schemas import TurningStrategyPlanResponse
 from app.modules.cnc.enums import FeedMode, SpindleMode
 from app.modules.cnc.report_repository import MachiningReportStoreDependency
 from app.modules.cnc.services.machining_report import (
+    GeometryDimensionalAuditError,
     MachiningReportSource,
     compile_machining_report,
     plan_fingerprint,
@@ -26,9 +29,37 @@ from app.modules.cnc.services.simulation_parser import (
     ToolpathSimulationError,
     parse_toolpath_simulation,
 )
+from app.modules.cnc.services.text_report_exporter import format_machining_report_text
 
 
 router = APIRouter(prefix="/api/v1/cnc", tags=["cnc-generation"])
+
+
+def _compile_owned_report(
+    plan_id: str,
+    owner_user_id: str,
+    plan_store: TurningPlanStoreDependency,
+    report_store: MachiningReportStoreDependency,
+) -> MachiningTechnicalReportPayload:
+    try:
+        record = plan_store.get_owned(plan_id, owner_user_id=owner_user_id)
+    except TurningPlanNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="CAM turning plan not found") from exc
+    source = report_store.get_owned(plan_id, owner_user_id)
+    if source is None:
+        raise HTTPException(status_code=422, detail="REPORT_TOOLPATH_REQUIRED")
+    try:
+        return compile_machining_report(record, source)
+    except GeometryDimensionalAuditError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "GEOMETRY_DIMENSIONAL_AUDIT_REJECTED",
+                "audit": exc.report.model_dump(mode="json"),
+            },
+        ) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail="REPORT_SOURCE_INVALID") from exc
 
 
 @router.post("/turning/generate", response_model=GCodeGenerationResponse)
@@ -154,14 +185,30 @@ def export_machining_report(
     plan_store: TurningPlanStoreDependency,
     report_store: MachiningReportStoreDependency,
 ) -> MachiningTechnicalReportPayload:
-    try:
-        record = plan_store.get_owned(plan_id, owner_user_id=str(current_user.id))
-    except TurningPlanNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="CAM turning plan not found") from exc
-    source = report_store.get_owned(plan_id, str(current_user.id))
-    if source is None:
-        raise HTTPException(status_code=422, detail="REPORT_TOOLPATH_REQUIRED")
-    try:
-        return compile_machining_report(record, source)
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail="REPORT_SOURCE_INVALID") from exc
+    return _compile_owned_report(
+        plan_id, str(current_user.id), plan_store, report_store
+    )
+
+
+@router.get("/turning/plans/{plan_id}/report/download")
+def download_machining_report(
+    plan_id: str,
+    current_user: CurrentUserDependency,
+    plan_store: TurningPlanStoreDependency,
+    report_store: MachiningReportStoreDependency,
+) -> Response:
+    report = _compile_owned_report(
+        plan_id, str(current_user.id), plan_store, report_store
+    )
+    opaque_name = sha256(plan_id.encode()).hexdigest()[:16]
+    return Response(
+        content=format_machining_report_text(report),
+        media_type="text/plain",
+        headers={
+            "Content-Disposition": f'attachment; filename="machining-report-{opaque_name}.txt"',
+            "Cache-Control": "no-store, private",
+            "Pragma": "no-cache",
+            "X-Content-Type-Options": "nosniff",
+            "Content-Security-Policy": "default-src 'none'; sandbox",
+        },
+    )
