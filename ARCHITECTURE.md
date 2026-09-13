@@ -1,7 +1,7 @@
 # ARCHITECTURE.md — Arquitetura Técnica da Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 1.0
+**Versão:** 1.1
 **Decisão arquitetural formal:** `docs/adr/ADR-001.md`
 **Documentos relacionados:** `PROJECT.md`, `CONTEXT.md`, `docs/DECISIONS.md`
 
@@ -435,3 +435,44 @@ auto-interseções e envelopes dimensionais excedidos. Pequenas folgas aceitas g
 warnings e nunca removem `PROFILE_AVAILABLE_REQUIRES_REVIEW`. Testes cobrem quatro
 uploads concorrentes e o teto de 15 MiB. Não existe acoplamento desta rota com
 machine-send, DNC, transferência NC, cycle start ou autoridade física.
+
+---
+
+## 24. Pipeline analítico CAD → CAM → CNC → SIM — v0.3.0-sim-rc1
+
+```text
+STEP autenticado e limitado
+  → CAD: sandbox temporário + OpenCascade + perfil analítico RZ
+  → CAM: estratégias FACING / ROUGH_TURNING / FINISHING / GROOVING
+  → CNC: formatter ISO revisável + dialetos Fanuc 0i / Siemens 840D / Haas
+  → barreira cinemática 2D: cursos X/Z + Chuck Exclusion Zone
+  → SIM API: segmentos imutáveis + stock/envelope + auditoria de folga
+  → Web: Canvas 2D + scrub + HUD + programa ISO somente leitura
+```
+
+O pipeline permanece dentro do Modular Monolith. CAD reside em
+`apps/api/app/modules/cad`; planejamento CAM, formatação CNC, validação cinemática
+e simulação residem nos módulos `cam` e `cnc` do backend; a apresentação fica em
+`apps/web`. A passagem entre estágios usa contratos Pydantic estritos e endpoints
+autenticados com isolamento por proprietário. Nenhuma etapa cria adaptador de
+controlador, porta serial, transporte DNC ou comando de ciclo.
+
+As barreiras fecham o fluxo antes da apresentação quando o payload, a geometria,
+o envelope, o dialeto ou a propriedade não podem ser verificados. Invasões da zona
+da placa são rejeitadas; aproximações válidas abaixo de 5,0 mm produzem apenas
+`WARNING_PROXIMITY_CHUCK` e destaque visual. Esse aviso não concede autorização.
+
+Todos os contratos de CNC e SIM preservam:
+
+```text
+PHYSICAL_USE_AUTHORIZED=FALSE
+G9=PENDING_AUTHORITATIVE_REVIEW
+NO_HUMAN_REVIEW_BYPASS=TRUE
+MACHINE_SEND=FALSE · DNC=FALSE · NC_TRANSFER=FALSE · CYCLE_START=FALSE
+emission_status=CONTROLLER_PROFILE_UNRESOLVED
+executable_output=false
+```
+
+O marco `v0.3.0-sim-rc1` identifica uma release candidate local e revisável. Ele
+não representa homologação de máquina, liberação de G9, deploy ou saída CNC física.
+Decisão relacionada: `docs/DECISIONS.md`, DEC-048.

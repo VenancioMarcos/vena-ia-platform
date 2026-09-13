@@ -1,5 +1,12 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-131 a AUTO-135
+
+A Rota SIM 4 foi publicada no PR #50, aprovada pelos checks Backend/Frontend e
+integrada por squash em `227bc35`. A branch `codex/v6.4-release-consolidation-docs`
+consolida a arquitetura CAD/CAM/CNC/SIM, DEC-048, changelog e o marco local
+`v0.3.0-sim-rc1`, mantendo todas as barreiras físicas e sem push da consolidação.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-126 a AUTO-130
 
 A Rota SIM 3 foi publicada no PR #49, aprovada pelo Frontend CI e integrada por

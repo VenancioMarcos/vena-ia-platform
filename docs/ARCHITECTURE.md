@@ -6,9 +6,9 @@ O documento canônico de arquitetura da Vena_IA Platform foi consolidado na raiz
 
 A decisão arquitetural formal permanece registrada em `docs/adr/ADR-001.md`.
 
-## Baseline CAD vigente
+## Baseline CAD/CAM/CNC/SIM vigente
 
-As Rotas 2 a 5 do pipeline STEP estão integradas na `main` em `00ed21d`. O fluxo
-analítico isolado, seus limites e o diagrama navegador → gateway → sandbox → worker
-→ perfil RZ → SVG estão registrados na Seção 23 do documento canônico. A baseline
-permanece sem porta de máquina ou autoridade física.
+O pipeline ponta a ponta está integrado na `main` em `227bc35`. O fluxo CAD STEP
+permanece descrito na Seção 23 do documento canônico; a Seção 24 consolida CAD →
+CAM → CNC → SIM, os módulos, contratos e barreiras fail-closed. A baseline permanece
+sem porta de máquina, liberação de G9 ou autoridade física.
