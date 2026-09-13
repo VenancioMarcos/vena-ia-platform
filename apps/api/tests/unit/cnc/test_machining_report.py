@@ -4,13 +4,22 @@ from datetime import datetime, timezone
 import pytest
 from pydantic import ValidationError
 
+from app.modules.cam.enums import TurningOperationType
 from app.modules.cam.repository import TurningPlanRecord
-from app.modules.cam.schemas import TurningPlanGatewayRequest, TurningPlanGatewayResponse
+from app.modules.cam.schemas import (
+    MachiningPass,
+    RzPoint,
+    TurningPlanGatewayRequest,
+    TurningPlanGatewayResponse,
+    TurningStrategyPlanResponse,
+)
 from app.modules.cnc.enums import CNCControllerType, SpindleMode
 from app.modules.cnc.schemas import (
+    GCodeGenerationRequest,
     GCodeSafetyFlags,
     MachiningTechnicalReportPayload,
     ToolpathSimulationRequest,
+    TurningStock2D,
 )
 from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
 from app.modules.cnc.services.machining_report import (
@@ -18,8 +27,51 @@ from app.modules.cnc.services.machining_report import (
     compile_machining_report,
     plan_fingerprint,
 )
-from tests.unit.cnc.test_gcode_formatter import _request
-from tests.unit.cnc.test_simulation_parser import _stock
+
+
+def _request(**updates: object) -> GCodeGenerationRequest:
+    plan = TurningStrategyPlanResponse(
+        operation_type=TurningOperationType.ROUGH_TURNING,
+        passes=(
+            MachiningPass(
+                sequence=1,
+                operation_type=TurningOperationType.ROUGH_TURNING,
+                coordinates_rz_mm=(
+                    RzPoint(r_mm=12.0, z_mm=2.0),
+                    RzPoint(r_mm=10.0, z_mm=2.0),
+                    RzPoint(r_mm=10.0, z_mm=-20.0),
+                ),
+                estimated_removed_volume_mm3=1_000.0,
+            ),
+        ),
+        material_removal_volume_mm3=1_000.0,
+        warnings=("ANALYTICAL_2D_REQUIRES_HUMAN_REVIEW",),
+    )
+    values: dict[str, object] = {
+        "plan_id": "plan-test-001",
+        "cam_plan_data": plan,
+        "controller_profile": CNCControllerType.FANUC_0I,
+        "program_number": 9001,
+        "machine_envelope": {
+            "x_min_mm": 0.0,
+            "x_max_mm": 100.0,
+            "z_min_mm": -200.0,
+            "z_max_mm": 200.0,
+            "chuck_exclusion_zone": {
+                "x_min_mm": 0.0,
+                "x_max_mm": 100.0,
+                "z_min_mm": 50.0,
+                "z_max_mm": 100.0,
+            },
+        },
+        "review_authentication": "AUTHENTICATED_REVIEW_CONTEXT",
+    }
+    values.update(updates)
+    return GCodeGenerationRequest(**values)
+
+
+def _stock() -> TurningStock2D:
+    return TurningStock2D(diameter_mm=52.0, z_min_mm=-100.0, z_max_mm=1.0)
 
 
 def _source(controller=CNCControllerType.FANUC_0I):
