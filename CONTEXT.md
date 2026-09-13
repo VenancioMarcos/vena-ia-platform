@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.40
+**Versão:** 2.41
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_ROTA_2_E2E_GATEWAY_COMPLETED_LOCAL`. A Rota 1 CNC foi
+  integrada pelo PR #43 em `1369418`, após Backend CI aprovado. A branch
+  `codex/v5.1-cnc-e2e-gateway` liga planos CAM process-local pertencentes ao usuário
+  ao endpoint autenticado `POST /api/v1/cnc/turning/generate`. O fluxo retorna um
+  candidato ISO `PLANNED_REQUIRES_REVIEW`, com falhas 401/404/422 e isolamento por
+  proprietário. Validação: 766 Python/9 ignorados, 64 Web, Ruff e mypy em 208
+  arquivos. Sem push, transmissão, ciclo físico ou autoridade de uso.
 
 - **Handoff CTO:** `CNC_ROTA_1_GCODE_FOUNDATION_COMPLETED_LOCAL`. A branch
   `codex/v5.0-cnc-generation-foundation`, criada da `main` integrada em `d3fafcd`,

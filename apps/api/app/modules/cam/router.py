@@ -13,6 +13,7 @@ from app.modules.cam.schemas import (
     TurningPlanGatewayResponse,
     TurningStrategyPlanRequest,
 )
+from app.modules.cam.repository import TurningPlanStoreDependency
 from app.modules.cam.services.strategy_engine import (
     TurningStrategyValidationError,
     plan_turning_strategy,
@@ -27,6 +28,7 @@ def create_turning_plan(
     payload: TurningPlanGatewayRequest,
     current_user: CurrentUserDependency,
     gateway: CadIngestionGatewayDependency,
+    plan_store: TurningPlanStoreDependency,
 ) -> TurningPlanGatewayResponse:
     try:
         job = gateway.get_job(payload.cad_job_id, owner_user_id=str(current_user.id))
@@ -84,7 +86,7 @@ def create_turning_plan(
         )
     )
     warnings = tuple(dict.fromkeys((*profile.warnings, *plan.warnings)))
-    return TurningPlanGatewayResponse(
+    response = TurningPlanGatewayResponse(
         plan_id=plan_id,
         cad_job_id=job.job_id,
         operation_type=plan.operation_type,
@@ -92,3 +94,9 @@ def create_turning_plan(
         material_removal_volume_mm3=plan.material_removal_volume_mm3,
         warnings=warnings,
     )
+    plan_store.save(
+        owner_user_id=str(current_user.id),
+        request=payload,
+        response=response,
+    )
+    return response

@@ -100,3 +100,9 @@ class GCodeGenerationResponse(_CNCGenerationContract):
         ProgramSafetyLevel.AUDIT_ONLY_NON_EXECUTABLE
     )
     safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+
+class GCodeGatewayRequest(_CNCGenerationContract):
+    plan_id: str = Field(min_length=1, max_length=255)
+    controller_profile: CNCControllerType = Field(strict=False)
+    program_number: int = Field(ge=1, le=99_999_999)

@@ -1,24 +1,23 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-091 a AUTO-095
-**Estado:** CNC_ROTA_1_GCODE_FOUNDATION_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-096 a AUTO-100
+**Estado:** CNC_ROTA_2_E2E_GATEWAY_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v5.0-cnc-generation-foundation`
-**Baseline da branch:** `d3fafcd86eea65aa075e61904a33c2c2ba6888e8`
+**Branch:** `codex/v5.1-cnc-e2e-gateway`
+**Baseline da branch:** `136941809c1acf481f7f7c476664a15009476553`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-A fundação CNC canônica acrescenta enums de controlador e modos, contratos Pydantic
-v2 estritos e um formatador determinístico de candidatos ISO para os passes CAM de
-torneamento. O texto inclui preâmbulo G21/G18, movimentos G00/G01, metadados de
-percurso e tempo estimado e todas as salvaguardas permanentes.
+O endpoint autenticado `POST /api/v1/cnc/turning/generate` recupera somente planos
+CAM pertencentes ao usuário, normaliza o contrato revisável e invoca o formatador
+ISO determinístico. A resposta permanece `PLANNED_REQUIRES_REVIEW`, auditável e
+não executável.
 
 ## Continuidade
 
-O lote está consolidado localmente e aguarda parecer do CTO. Nenhum push, endpoint,
-envio a controlador, transferência NC, ciclo físico ou autorização de produção foi
-adicionado.
+O gateway está consolidado localmente e aguarda parecer do CTO. A Rota 1 foi
+integrada pelo PR #43 em `1369418`; a branch da Rota 2 não foi publicada.
 
 ## Limites permanentes
 
