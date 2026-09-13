@@ -1,9 +1,13 @@
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from types import SimpleNamespace
+from uuid import uuid4
 
+from fastapi import Request
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.modules.auth.dependencies import get_current_user
 from app.modules.cad.dependencies import (
     get_cad_ingestion_gateway,
     get_step_background_processor,
@@ -61,6 +65,7 @@ def _install_gateway(root: Path) -> CadIngestionGateway:
 def _remove_gateway(gateway: CadIngestionGateway) -> None:
     app.dependency_overrides.pop(get_cad_ingestion_gateway, None)
     app.dependency_overrides.pop(get_step_background_processor, None)
+    app.dependency_overrides.pop(get_current_user, None)
     gateway.close()
 
 
@@ -83,43 +88,64 @@ def _step_at_upload_limit() -> bytes:
 
 
 def test_concurrent_owner_uploads_keep_jobs_isolated_and_clean(
-    client: TestClient,
-    make_account,
     tmp_path: Path,
 ) -> None:
     gateway = _install_gateway(tmp_path)
     try:
-        accounts = [make_account(f"cad-load-{index}@vena-ia.dev") for index in range(4)]
+        # The test exercises concurrent CAD dispatch, not the SQLite-backed auth
+        # fixture. UUID identities avoid sharing that fixture's single connection
+        # across worker threads while retaining owner-scoped endpoint coverage.
+        account_headers = [
+            {"Authorization": f"Bearer test-cad-load-{uuid4()}"} for _ in range(4)
+        ]
+        owner_ids = {
+            headers["Authorization"]: str(uuid4()) for headers in account_headers
+        }
+
+        def concurrent_current_user(request: Request) -> SimpleNamespace:
+            return SimpleNamespace(id=owner_ids[request.headers["authorization"]])
+
+        app.dependency_overrides[get_current_user] = concurrent_current_user
+        status_client = TestClient(app)
 
         def dispatch(index: int):
-            return client.post(
-                "/api/v1/cad/step/dispatch",
-                headers=accounts[index].headers,
-                files={
-                    "file": (
-                        f"concurrent-{index}.step",
-                        VALID_STEP,
-                        "application/step",
-                    )
-                },
-            )
+            # TestClient holds request and portal state. A client per worker keeps
+            # concurrent requests independent while avoiding an app-lifespan start
+            # for every worker. The shared gateway remains the object under test.
+            worker_client = TestClient(app)
+            try:
+                return worker_client.post(
+                    "/api/v1/cad/step/dispatch",
+                    headers=account_headers[index],
+                    files={
+                        "file": (
+                            f"concurrent-{index}.step",
+                            VALID_STEP,
+                            "application/step",
+                        )
+                    },
+                )
+            finally:
+                worker_client.close()
 
         with ThreadPoolExecutor(max_workers=4) as executor:
             responses = list(executor.map(dispatch, range(4)))
 
-        assert all(response.status_code == 202 for response in responses)
+        assert all(response.status_code == 202 for response in responses), [
+            response.text for response in responses
+        ]
         job_ids = [response.json()["job_id"] for response in responses]
         assert len(set(job_ids)) == len(job_ids)
         assert list(tmp_path.iterdir()) == []
 
         for index, job_id in enumerate(job_ids):
-            owner_status = client.get(
+            owner_status = status_client.get(
                 f"/api/v1/cad/step/jobs/{job_id}",
-                headers=accounts[index].headers,
+                headers=account_headers[index],
             )
-            other_status = client.get(
+            other_status = status_client.get(
                 f"/api/v1/cad/step/jobs/{job_id}",
-                headers=accounts[(index + 1) % len(accounts)].headers,
+                headers=account_headers[(index + 1) % len(account_headers)],
             )
             assert owner_status.status_code == 200
             assert owner_status.json()["status"] == "COMPLETED"
@@ -128,6 +154,7 @@ def test_concurrent_owner_uploads_keep_jobs_isolated_and_clean(
             )
             assert other_status.status_code == 404
     finally:
+        status_client.close()
         _remove_gateway(gateway)
 
 

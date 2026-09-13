@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-136 a AUTO-140
+
+O PR documental #51 foi integrado em `1857018` e a tag oficial
+`v0.3.0-sim-rc1` foi publicada. O hardening do E2E CAD elimina a disputa da
+fixture SQLite global no teste concorrente por meio de identidades UUID e clientes
+isolados por worker. A suíte completa passou com 791 testes e 9 ignorados; a branch
+`codex/v6.5-test-concurrency-hardening` permanece somente local.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-131 a AUTO-135
 
 A Rota SIM 4 foi publicada no PR #50, aprovada pelos checks Backend/Frontend e

@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.48
+**Versão:** 2.49
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CAD_E2E_CONCURRENCY_HARDENING_COMPLETED_LOCAL`.
+  O PR documental #51 integrou o marco v0.3.0-sim-rc1 em `1857018`, e a tag
+  oficial aponta para esse commit. O teste E2E concorrente de ingestão CAD isolou
+  as identidades UUID e os clientes dos workers, deixando de compartilhar a
+  fixture SQLite em memória. Cinco repetições e a suíte integral passaram com
+  `791 passed, 9 skipped`. A branch de hardening é local e mantém todas as
+  salvaguardas não produtivas.
 
 - **Handoff CTO:** `RELEASE_V0_3_0_SIM_RC1_CONSOLIDATED_LOCAL`.
   O PR #50 publicou a Rota SIM 4, passou no Backend e Frontend CI e foi integrado
