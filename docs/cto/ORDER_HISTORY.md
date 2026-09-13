@@ -1,5 +1,12 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-179 a AUTO-188
+
+CTO aprovou o Lote 16 com ressalva operacional e autorizou sua validação agregada no
+CI remoto. Ordenou publicar/integrar a Rota 10 e implementar auditoria de rugosidade
+teórica com contrato, relatório e viewer. PR #58 integrado em `8d06fe5`; Rota 11
+consolidada localmente em `codex/v7.2-cnc-surface-roughness-estimator`, sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-169 a AUTO-178
 
 CTO ordenou publicar e integrar a Rota 9, inserir seu gate antes do manifesto,

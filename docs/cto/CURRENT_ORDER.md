@@ -1,22 +1,22 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-169 a AUTO-178
-**Estado:** CNC_DIMENSIONAL_GATE_AND_TEXT_REPORT_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-179 a AUTO-188
+**Estado:** CNC_THEORETICAL_SURFACE_ROUGHNESS_AUDIT_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v7.1-cnc-dimensional-gate-integration`
-**Baseline da branch:** `ac65258800f2a5a685763ea03bd37a2146df3f91`
+**Branch:** `codex/v7.2-cnc-surface-roughness-estimator`
+**Baseline da branch:** `8d06fe5fbe17d4fef4f5ca4ed600ec112768b5fb`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O PR #57 integrou a Rota 9 por squash em `ac65258`; a branch remota foi removida e
-`main=origin/main`. O gate dimensional agora precede o manifesto e o download
-textual owner-scoped. API e viewer apresentam a mesma evidência de desvios; rejeição
-retorna 422 e não gera arquivo ou programa executável.
+O PR #58 integrou a Rota 10 por squash em `8d06fe5`; a branch remota foi removida e
+`main=origin/main`. A Rota 11 calcula Ra/Rz por modelo cinemático ideal, informa
+conformidade somente diante de tolerância nominal declarada e apresenta a limitação
+de vibração, desgaste e material no manifesto, laudo e viewer.
 
 ## Continuidade
 
-Consolidar o commit local e enviar VTP-AUTO-178-BATCH ao CTO. A branch permanece
+Consolidar o commit local e enviar VTP-AUTO-188-BATCH ao CTO. A branch permanece
 local e não deve receber push nesta etapa.
 
 ## Limites permanentes

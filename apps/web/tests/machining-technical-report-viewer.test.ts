@@ -60,6 +60,27 @@ const report: MachiningTechnicalReportPayload = {
     findings: [],
     manifest_generation_allowed: true,
   },
+  surface_roughness_audit: {
+    schema_version: "vena-ia.cnc-surface-roughness-audit/v1",
+    ra_theoretical_um: 1.5625,
+    rz_theoretical_um: 6.25,
+    finish_feed_mm_per_rev: 0.2,
+    insert_nose_radius_mm: 0.8,
+    nominal_ra_max_um: null,
+    compliance_tag: "NOMINAL_RA_TOLERANCE_UNAVAILABLE",
+    model_limitation: "IDEAL_KINEMATIC_MODEL_EXCLUDES_VIBRATION_TOOL_WEAR_AND_MATERIAL_EFFECTS",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -127,5 +148,16 @@ test("renders detected dimensional deviations without physical controls", () => 
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: rejectedReport }));
   assert.match(html, /DESVIO DETECTADO/);
   assert.match(html, /1\.000 mm/);
+  assert.doesNotMatch(html, /<button/i);
+});
+
+test("renders ideal surface roughness evidence and mandatory limitation", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Ra teórico/);
+  assert.match(html, /1\.563 µm/);
+  assert.match(html, /Rz teórico/);
+  assert.match(html, /6\.250 µm/);
+  assert.match(html, /NOMINAL_RA_TOLERANCE_UNAVAILABLE/);
+  assert.match(html, /RUGOSIDADE TEÓRICA CINEMÁTICA - NÃO CONSIDERA VIBRAÇÃO OU DESGASTE DA FERRAMENTA/);
   assert.doesNotMatch(html, /<button/i);
 });

@@ -301,6 +301,51 @@ class MachiningReportTool(_CNCGenerationContract):
     operations: tuple[TurningOperationType, ...] = Field(min_length=1)
 
 
+class SurfaceRoughnessAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-surface-roughness-audit/v1"] = (
+        "vena-ia.cnc-surface-roughness-audit/v1"
+    )
+    ra_theoretical_um: float = Field(gt=0)
+    rz_theoretical_um: float = Field(gt=0)
+    finish_feed_mm_per_rev: float = Field(gt=0, le=5.0)
+    insert_nose_radius_mm: float = Field(gt=0, le=10.0)
+    nominal_ra_max_um: float | None = Field(default=None, gt=0, le=1_000)
+    compliance_tag: Literal[
+        "WITHIN_NOMINAL_RA_TOLERANCE",
+        "EXCEEDS_NOMINAL_RA_TOLERANCE",
+        "NOMINAL_RA_TOLERANCE_UNAVAILABLE",
+    ]
+    model_limitation: Literal[
+        "IDEAL_KINEMATIC_MODEL_EXCLUDES_VIBRATION_TOOL_WEAR_AND_MATERIAL_EFFECTS"
+    ] = "IDEAL_KINEMATIC_MODEL_EXCLUDES_VIBRATION_TOOL_WEAR_AND_MATERIAL_EFFECTS"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_ideal_model(self) -> "SurfaceRoughnessAuditPayload":
+        expected_ra = (
+            self.finish_feed_mm_per_rev**2 / (32 * self.insert_nose_radius_mm) * 1_000
+        )
+        expected_rz = (
+            self.finish_feed_mm_per_rev**2 / (8 * self.insert_nose_radius_mm) * 1_000
+        )
+        if not math.isclose(self.ra_theoretical_um, expected_ra, abs_tol=5e-9, rel_tol=1e-12):
+            raise ValueError("SURFACE_ROUGHNESS_RA_INCONSISTENT")
+        if not math.isclose(self.rz_theoretical_um, expected_rz, abs_tol=5e-9, rel_tol=1e-12):
+            raise ValueError("SURFACE_ROUGHNESS_RZ_INCONSISTENT")
+        expected_tag = (
+            "NOMINAL_RA_TOLERANCE_UNAVAILABLE"
+            if self.nominal_ra_max_um is None
+            else (
+                "WITHIN_NOMINAL_RA_TOLERANCE"
+                if self.ra_theoretical_um <= self.nominal_ra_max_um
+                else "EXCEEDS_NOMINAL_RA_TOLERANCE"
+            )
+        )
+        if self.compliance_tag != expected_tag:
+            raise ValueError("SURFACE_ROUGHNESS_COMPLIANCE_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -318,6 +363,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     machine_envelope: MachineEnvelope2D
     chuck_proximity: ChuckProximityAudit
     geometry_audit: GeometryDimensionalAuditReport
+    surface_roughness_audit: SurfaceRoughnessAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
