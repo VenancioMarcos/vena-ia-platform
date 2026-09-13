@@ -1,23 +1,24 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-088
-**Estado:** CAM_ROTA_4_E2E_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW
+**Missão:** CTO-CODEX-AUTO-091 a AUTO-095
+**Estado:** CNC_ROTA_1_GCODE_FOUNDATION_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v4.3-cam-e2e-planning-gateway`
-**Baseline da branch:** `ad231f8a044e47e51fd4c1335a5fc0ad84fa4de0`
+**Branch:** `codex/v5.0-cnc-generation-foundation`
+**Baseline da branch:** `d3fafcd86eea65aa075e61904a33c2c2ba6888e8`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O endpoint autenticado `POST /api/v1/cam/turning/plan` liga jobs CAD concluídos e
-pertencentes ao usuário ao motor analítico CAM. Somente perfis com estado
-`PROFILE_AVAILABLE_REQUIRES_REVIEW` são aceitos; a resposta mantém
-`PLANNED_REQUIRES_REVIEW`, `executable_output=false` e todas as salvaguardas.
+A fundação CNC canônica acrescenta enums de controlador e modos, contratos Pydantic
+v2 estritos e um formatador determinístico de candidatos ISO para os passes CAM de
+torneamento. O texto inclui preâmbulo G21/G18, movimentos G00/G01, metadados de
+percurso e tempo estimado e todas as salvaguardas permanentes.
 
 ## Continuidade
 
-Consolidar a governança, publicar a branch, abrir o Draft PR contra `main`, coletar
-o estado inicial do CI e enviar o VTP-AUTO-088. Nenhum merge está autorizado.
+O lote está consolidado localmente e aguarda parecer do CTO. Nenhum push, endpoint,
+envio a controlador, transferência NC, ciclo físico ou autorização de produção foi
+adicionado.
 
 ## Limites permanentes
 

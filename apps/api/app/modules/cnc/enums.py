@@ -1,0 +1,22 @@
+from enum import StrEnum
+
+
+class CNCControllerType(StrEnum):
+    FANUC_0I = "FANUC_0I"
+    SIEMENS_840D = "SIEMENS_840D"
+    HAAS = "HAAS"
+    SIMULATED_STUB = "SIMULATED_STUB"
+
+
+class FeedMode(StrEnum):
+    G94_PER_MINUTE = "G94_PER_MINUTE"
+    G95_PER_REVOLUTION = "G95_PER_REVOLUTION"
+
+
+class SpindleMode(StrEnum):
+    G96_CONSTANT_SURFACE_SPEED = "G96_CONSTANT_SURFACE_SPEED"
+    G97_DIRECT_RPM = "G97_DIRECT_RPM"
+
+
+class ProgramSafetyLevel(StrEnum):
+    AUDIT_ONLY_NON_EXECUTABLE = "AUDIT_ONLY_NON_EXECUTABLE"

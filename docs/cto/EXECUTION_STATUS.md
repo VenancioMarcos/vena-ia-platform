@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-091 a AUTO-095
+
+`CNC_ROTA_1_GCODE_FOUNDATION_COMPLETED_LOCAL`. O PR #42 já estava integrado em
+`d3fafcd`; `main` e `origin/main` foram confirmadas nesse commit antes da criação
+da branch. A fundação CNC adiciona contratos estritos, perfis allowlisted e um
+formatador ISO determinístico com salvaguardas fail-closed. Validação: 762 Python,
+9 ignorados, 64 Web, Ruff e mypy verdes. Commit local em preparação; sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-088
 
 `CAM_ROTA_4_E2E_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-087 aprovada pelo
