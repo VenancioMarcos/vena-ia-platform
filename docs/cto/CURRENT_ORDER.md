@@ -1,22 +1,22 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-111 a AUTO-115
-**Estado:** SIM_ROTA_1_TOOLPATH_VISUALIZER_FOUNDATION_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-116 a AUTO-120
+**Estado:** SIM_ROTA_2_CANVAS_TOOLPATH_VIEWER_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v6.0-sim-toolpath-visualizer-foundation`
-**Baseline da branch:** `d60cb88e53a1064d123fca4adcdd3e66ebadc956`
+**Branch:** `codex/v6.1-sim-canvas-toolpath-viewer`
+**Baseline da branch:** `36c21e7e76639c85b60524233128a85c3cc1a0d6`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O endpoint autenticado de simulação aceita um programa ISO limitado ou um plano
-CAM pertencente ao usuário. O parser valida primeiro o envelope e transforma G0/G1
-em segmentos X/Z com movimento, avanço e ferramenta para renderização 2D segura.
+O componente Canvas consome o payload de simulação tipado e desenha stock, zona
+de exclusão, eixos e trajetórias G00/G01. Controles locais permitem reprodução,
+pausa e scrub mantendo o aviso de auditoria e bloqueio físico sempre visível.
 
 ## Continuidade
 
-A Rota 4 foi integrada pelo PR #46 em `d60cb88`, fechando o Épico CNC. A Rota SIM
-1 está consolidada localmente, sem push, e aguarda parecer do CTO.
+A Rota SIM 1 foi integrada pelo PR #47 em `36c21e7`. A Rota SIM 2 está consolidada
+localmente, sem push, e aguarda parecer do CTO.
 
 ## Limites permanentes
 

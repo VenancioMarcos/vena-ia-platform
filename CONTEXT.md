@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.44
+**Versão:** 2.45
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `SIM_ROTA_2_CANVAS_TOOLPATH_VIEWER_COMPLETED_LOCAL`.
+  O PR #47 integrou a fundação backend da simulação em `36c21e7` após Backend CI
+  aprovado. A branch `codex/v6.1-sim-canvas-toolpath-viewer` adiciona componente
+  Canvas client-side tipado com eixos X/Z, stock, zona da placa, diferenciação
+  visual G00/G01 e controles Play/Pause/Scrub. O banner de auditoria permanece
+  sempre visível; 67 Web, TypeScript, lint, 789 Python/9 ignorados, Ruff, mypy e
+  diff foram validados. Sem push da Rota SIM 2 ou autoridade física.
 
 - **Handoff CTO:** `SIM_ROTA_1_TOOLPATH_VISUALIZER_FOUNDATION_COMPLETED_LOCAL`.
   O PR #46 integrou o fechamento do Épico CNC em `d60cb88` após Backend CI
