@@ -65,6 +65,18 @@ def _generation_payload(plan_id: str) -> dict[str, object]:
         "plan_id": plan_id,
         "controller_profile": "SIMULATED_STUB",
         "program_number": 9002,
+        "machine_envelope": {
+            "x_min_mm": 0.0,
+            "x_max_mm": 100.0,
+            "z_min_mm": -200.0,
+            "z_max_mm": 200.0,
+            "chuck_exclusion_zone": {
+                "x_min_mm": 0.0,
+                "x_max_mm": 100.0,
+                "z_min_mm": 50.0,
+                "z_max_mm": 100.0,
+            },
+        },
     }
 
 
@@ -218,5 +230,41 @@ def test_gateway_rejects_invalid_or_incompatible_machine_limits(
         )
 
         assert response.status_code == 422
+    finally:
+        _remove_gateway(gateway)
+
+
+def test_gateway_rejects_chuck_zone_collision_as_unprocessable(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+) -> None:
+    gateway = _install_gateway(tmp_path)
+    try:
+        account = make_account("cnc-envelope-collision@vena-ia.dev")
+        plan_id = _create_plan(client, account.headers)
+        payload = _generation_payload(plan_id)
+        payload["controller_profile"] = "FANUC_0I"
+        payload["machine_envelope"] = {
+            "x_min_mm": 0.0,
+            "x_max_mm": 100.0,
+            "z_min_mm": -200.0,
+            "z_max_mm": 200.0,
+            "chuck_exclusion_zone": {
+                "x_min_mm": 40.0,
+                "x_max_mm": 60.0,
+                "z_min_mm": -1.0,
+                "z_max_mm": 2.0,
+            },
+        }
+
+        response = client.post(
+            "/api/v1/cnc/turning/generate",
+            headers=account.headers,
+            json=payload,
+        )
+
+        assert response.status_code == 422
+        assert response.json()["detail"] == "CHUCK_EXCLUSION_ZONE_VIOLATION"
     finally:
         _remove_gateway(gateway)

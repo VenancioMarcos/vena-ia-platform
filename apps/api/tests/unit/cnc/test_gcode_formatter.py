@@ -36,6 +36,18 @@ def _request(**updates: object) -> GCodeGenerationRequest:
         "cam_plan_data": _plan(),
         "controller_profile": CNCControllerType.FANUC_0I,
         "program_number": 9001,
+        "machine_envelope": {
+            "x_min_mm": 0.0,
+            "x_max_mm": 100.0,
+            "z_min_mm": -200.0,
+            "z_max_mm": 200.0,
+            "chuck_exclusion_zone": {
+                "x_min_mm": 0.0,
+                "x_max_mm": 100.0,
+                "z_min_mm": 50.0,
+                "z_max_mm": 100.0,
+            },
+        },
         "review_authentication": "AUTHENTICATED_REVIEW_CONTEXT",
     }
     values.update(updates)

@@ -11,6 +11,7 @@ from app.modules.cnc.schemas import (
     GCodeGenerationResponse,
 )
 from app.modules.cnc.services.gcode_formatter import GCodeFormattingError, format_gcode_candidate
+from app.modules.cnc.services.envelope_validator import KinematicBoundaryViolation
 
 
 router = APIRouter(prefix="/api/v1/cnc", tags=["cnc-generation"])
@@ -39,6 +40,7 @@ def generate_turning_gcode_candidate(
             cam_plan_data=cam_plan,
             controller_profile=payload.controller_profile,
             program_number=payload.program_number,
+            machine_envelope=payload.machine_envelope,
             review_authentication="AUTHENTICATED_REVIEW_CONTEXT",
             feed_mode=FeedMode.G95_PER_REVOLUTION,
             spindle_mode=SpindleMode.G96_CONSTANT_SURFACE_SPEED,
@@ -51,5 +53,5 @@ def generate_turning_gcode_candidate(
             tool_name=payload.tool_name,
         )
         return format_gcode_candidate(request)
-    except (GCodeFormattingError, ValidationError) as exc:
+    except (GCodeFormattingError, KinematicBoundaryViolation, ValidationError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

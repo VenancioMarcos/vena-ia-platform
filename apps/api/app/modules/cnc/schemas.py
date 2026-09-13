@@ -1,7 +1,7 @@
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.modules.cam.schemas import TurningStrategyPlanResponse
 from app.modules.cnc.enums import CNCControllerType, FeedMode, ProgramSafetyLevel, SpindleMode
@@ -75,11 +75,39 @@ class GCodeGenerationMetadata(_CNCGenerationContract):
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
 
 
+class ChuckExclusionZone2D(_CNCGenerationContract):
+    x_min_mm: float
+    x_max_mm: float
+    z_min_mm: float
+    z_max_mm: float
+
+    @model_validator(mode="after")
+    def validate_bounds(self) -> "ChuckExclusionZone2D":
+        if self.x_min_mm >= self.x_max_mm or self.z_min_mm >= self.z_max_mm:
+            raise ValueError("CHUCK_EXCLUSION_ZONE_BOUNDS_INVALID")
+        return self
+
+
+class MachineEnvelope2D(_CNCGenerationContract):
+    x_min_mm: float
+    x_max_mm: float
+    z_min_mm: float
+    z_max_mm: float
+    chuck_exclusion_zone: ChuckExclusionZone2D
+
+    @model_validator(mode="after")
+    def validate_bounds(self) -> "MachineEnvelope2D":
+        if self.x_min_mm >= self.x_max_mm or self.z_min_mm >= self.z_max_mm:
+            raise ValueError("MACHINE_ENVELOPE_BOUNDS_INVALID")
+        return self
+
+
 class GCodeGenerationRequest(_CNCGenerationContract):
     plan_id: str = Field(min_length=1, max_length=255)
     cam_plan_data: TurningStrategyPlanResponse
     controller_profile: CNCControllerType = Field(strict=False)
     program_number: int = Field(ge=1, le=99_999_999)
+    machine_envelope: MachineEnvelope2D
     review_authentication: Literal["AUTHENTICATED_REVIEW_CONTEXT"]
     feed_mode: FeedMode = Field(default=FeedMode.G95_PER_REVOLUTION, strict=False)
     spindle_mode: SpindleMode = Field(default=SpindleMode.G97_DIRECT_RPM, strict=False)
@@ -116,6 +144,7 @@ class GCodeGatewayRequest(_CNCGenerationContract):
     plan_id: str = Field(min_length=1, max_length=255)
     controller_profile: CNCControllerType = Field(strict=False)
     program_number: int = Field(ge=1, le=99_999_999)
+    machine_envelope: MachineEnvelope2D
     max_spindle_rpm: float = Field(default=3_000.0, gt=0, le=30_000)
     max_feed_mm_min: float = Field(default=30_000.0, gt=0, le=30_000)
     tool_number: int = Field(default=1, ge=1, le=99)

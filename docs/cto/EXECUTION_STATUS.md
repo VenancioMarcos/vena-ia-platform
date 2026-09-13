@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-106 a AUTO-110
+
+`CNC_ROTA_4_KINEMATIC_ENVELOPE_VALIDATOR_COMPLETED_LOCAL`. O PR #45 foi aprovado
+no Backend CI e integrado por squash em `27c48af`. A nova branch exige envelope
+X-diâmetro/Z, valida movimentos G0/G1 contra cursos e zona da placa e converte
+violações do gateway em 422. Validação: 783 Python/9 ignorados, 64 Web, Ruff,
+mypy em 209 arquivos e diff; sem push da Rota 4 ou mudança de autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-101 a AUTO-105
 
 `CNC_ROTA_3_CONTROLLER_DIALECTS_COMPLETED_LOCAL`. O PR #44 foi aprovado no CI e
