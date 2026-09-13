@@ -1652,3 +1652,40 @@ runtime, geometria, tolerâncias ou comparação exata de fixtures. Achado demon
 limite das auditorias por assinatura: histórico/bundle antigos ainda contêm
 metadados ambientais; nenhuma limpeza de histórico ou rede foi autorizada.
 Lint web permanece pendência separada; typecheck local não equivale a lint PASS.
+
+---
+
+## DEC-048 — Pipeline CAD/CAM/CNC/SIM permanece analítico e fail-closed
+
+**Data:** 2026-09-13
+
+**Status:** Aprovada
+
+**Tipo:** Arquitetura / Engenharia / Segurança
+
+**Documentos relacionados:** `ARCHITECTURE.md`, `SECURITY.md`,
+`docs/cto/CTO-CODEX-AUTO-135-BATCH.md`
+
+### Contexto
+
+As rotas CAD, CAM, CNC e SIM foram implementadas em incrementos separados. O marco
+de release candidate exige registrar a composição ponta a ponta sem transformar
+evidência analítica ou revisão visual em autorização de uso físico.
+
+### Decisão
+
+Manter o pipeline no Modular Monolith e conectar seus estágios somente por contratos
+estritos e rotas autenticadas. Geometria, ownership, estratégia, dialeto, envelope e
+simulação falham fechados. Proximidade inferior a 5,0 mm gera aviso de auditoria;
+invasão da zona da placa continua bloqueada.
+
+### Justificativa
+
+A separação preserva rastreabilidade e permite revisar cada artefato sem criar um
+caminho implícito para controlador, DNC, transferência NC ou início de ciclo.
+
+### Impacto
+
+`v0.3.0-sim-rc1` é uma release candidate local de software e documentação. G9,
+autoridade física, emissão executável e todas as operações de máquina permanecem
+desabilitadas até revisão autoritativa e decisão futura registrada.

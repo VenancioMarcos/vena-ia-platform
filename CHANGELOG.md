@@ -8,6 +8,19 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/) e versionamen
 
 ## [Unreleased]
 
+### Added — v0.3.0-sim-rc1 analytical CAD/CAM/CNC/SIM pipeline
+
+* Consolidated the authenticated STEP-to-profile path, deterministic turning CAM
+  strategies, review-only CNC formatting for Fanuc/Siemens/Haas and the integrated
+  2D simulation workspace.
+* Added strict X/Z envelope and chuck-zone barriers plus Euclidean clearance audit;
+  clearances below 5.0 mm emit `WARNING_PROXIMITY_CHUCK` in the API, Canvas and HUD.
+* Homologated PR #50 on Backend and Frontend CI and integrated SIM Route 4 into
+  `main` at `227bc35`.
+* The `v0.3.0-sim-rc1` milestone is local and non-production. G9 remains pending;
+  physical authority, machine send, DNC, NC transfer, cycle start and executable
+  output remain disabled.
+
 ### Added — CAD ingestion and hardening epic (Routes 2–5)
 
 * Added a native STEP dropzone, bounded ISO-10303-21 client validation, asynchronous

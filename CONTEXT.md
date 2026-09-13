@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.47
+**Versão:** 2.48
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,16 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `RELEASE_V0_3_0_SIM_RC1_CONSOLIDATED_LOCAL`.
+  O PR #50 publicou a Rota SIM 4, passou no Backend e Frontend CI e foi integrado
+  por squash em `227bc35`. A branch `codex/v6.4-release-consolidation-docs`
+  consolida a arquitetura CAD → CAM → CNC → SIM, DEC-048, changelog e registros
+  CTO para a release candidate local `v0.3.0-sim-rc1`. O marco permanece
+  não produtivo: G9 pendente, sem envio de máquina, DNC, transferência NC, ciclo,
+  saída executável ou autoridade física. O AUTO-135 registra os gates aprovados e
+  a única instabilidade concorrente do pytest agregado, aprovada em repetição
+  isolada e no arquivo E2E completo.
 
 - **Handoff CTO:** `SIM_ROTA_4_CHUCK_PROXIMITY_AUDIT_COMPLETED_LOCAL`.
   O PR #49 publicou a Rota SIM 3, passou no Frontend CI e foi integrado por squash

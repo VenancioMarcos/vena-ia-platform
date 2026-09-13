@@ -1,5 +1,15 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-131 a AUTO-135
+
+`RELEASE_V0_3_0_SIM_RC1_CONSOLIDATED_LOCAL`. O PR #50 passou no Backend CI
+(2m57s) e Frontend CI (1m21s), foi integrado por squash em `227bc35` e encerrou o
+Épico SIM na `main`. A branch documental consolida arquitetura, DEC-048, changelog
+e governança do pipeline CAD/CAM/CNC/SIM. Os gates Web, TypeScript, lint, Ruff,
+mypy e diff passaram. O pytest agregado registrou 790 aprovados, 9 ignorados e uma
+falha concorrente que passou isolada e no arquivo E2E completo; a tag local e a
+evidência detalhada estão no AUTO-135. Sem push, deploy ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-126 a AUTO-130
 
 `SIM_ROTA_4_CHUCK_PROXIMITY_AUDIT_COMPLETED_LOCAL`. O PR #49 foi aprovado no
