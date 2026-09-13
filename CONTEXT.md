@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.53
+**Versão:** 2.54
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,16 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_ROUTE_9_GEOMETRY_DIMENSIONAL_AUDITOR_COMPLETED_LOCAL`.
+  O PR #56 integrou a Rota 8 por squash em `b43aca7`; `main=origin/main` e a branch
+  remota foi removida. A branch local
+  `codex/v7.0-cnc-geometry-dimensional-auditor` contém um gate analítico estrito
+  entre limites nominais R/Z do BRep e extremos X-diâmetro/Z programados. O relatório
+  v1 registra desvios assinados e bloqueia manifesto diante de divergência, raio
+  negativo ou reversão radial linear. Validação: 832 Python aprovados/9 ignorados;
+  77 Web; TypeScript, Next lint, Ruff, mypy em 215 arquivos e diff aprovados. Sem
+  push da branch da Rota 9.
 
 - **Handoff CTO:** `CNC_ROUTE_8_WEB_VIEWER_COMPLETED_LOCAL`. Após autorização
   explícita do proprietário, o PR #55 foi integrado por squash em `3b6f8e6` e a

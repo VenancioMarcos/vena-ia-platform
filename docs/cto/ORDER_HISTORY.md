@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-164 a AUTO-168
+
+CTO aprovou o Lote 14 e ordenou publicar/integrar a Rota 8 e criar o auditor de
+consistência geométrica e dimensional. Após Frontend CI aprovado, o PR #56 foi
+integrado por squash em `b43aca7` sob autorização permanente do proprietário para
+comandos equivalentes; a branch remota foi removida. A Rota 9 foi criada localmente
+sobre essa baseline e implementa relatório de desvios com gate fail-closed, sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-159 a AUTO-163
 
 CTO aprovou VTP-AUTO-158-BATCH e ordenou publicar/integrar a Rota 7 e criar seu
