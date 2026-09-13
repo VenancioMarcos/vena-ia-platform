@@ -1057,3 +1057,33 @@ adicionado nesta missão.
 A Rota 4 do CAM estabelece o gateway autenticado `POST /api/v1/cam/turning/plan`,
 ligando jobs CAD do proprietário e perfis RZ revisáveis às quatro estratégias de
 torneamento. O plano permanece revisável, não executável e sem autoridade física.
+
+## 2026-09-13 — CTO-CODEX-AUTO-091
+
+O merge do PR #42, já concluído pela AUTO-090 em `d3fafcd`, foi confirmado no
+GitHub. A `main` local foi sincronizada estritamente com `origin/main` antes do
+início do lote CNC.
+
+## 2026-09-13 — CTO-CODEX-AUTO-092
+
+A branch `codex/v5.0-cnc-generation-foundation` foi criada diretamente de
+`d3fafcd`. O módulo CNC existente foi preservado e recebeu enums canônicos para
+controladores, modos de avanço e modos de rotação.
+
+## 2026-09-13 — CTO-CODEX-AUTO-093
+
+Contratos Pydantic v2 estritos e imutáveis foram acrescentados para requisição,
+resposta, metadados e flags de segurança. O formatador ISO traduz passes CAM para
+X-diâmetro/Z, G00/G01 e recusa contexto de revisão ou plano incompatível.
+
+## 2026-09-13 — CTO-CODEX-AUTO-094
+
+Quatro testes CNC cobrem determinismo, movimentos, salvaguardas e rejeições
+fail-closed. Regressão homologada com 762 Python/9 ignorados, 64 Web, Ruff, mypy
+em 206 arquivos e `git diff --check`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-095
+
+Fundação CNC consolidada sob `CNC_ROTA_1_GCODE_FOUNDATION_COMPLETED_LOCAL` para
+commit atômico local. Nenhum push, endpoint de emissão, machine-send, DNC,
+transferência NC, cycle start ou autoridade física foi incorporado.

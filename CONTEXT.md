@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.39
+**Versão:** 2.40
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_ROTA_1_GCODE_FOUNDATION_COMPLETED_LOCAL`. A branch
+  `codex/v5.0-cnc-generation-foundation`, criada da `main` integrada em `d3fafcd`,
+  estabelece enums e contratos CNC estritos e um formatador determinístico de
+  candidatos ISO de torneamento. O programa usa X-diâmetro/Z, G21/G18 e G00/G01,
+  inclui metadados e avisos obrigatórios e permanece sob revisão autoritativa, com
+  `executable_output=false`. Validação: 762 Python/9 ignorados, 64 Web, Ruff e
+  mypy em 206 arquivos. Sem push, transmissão, ciclo físico ou autoridade de uso.
 
 - **Handoff CTO:** `CAM_ROTA_4_E2E_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW`. A branch
   `codex/v4.3-cam-e2e-planning-gateway`, criada da `main` integrada em `ad231f8`,
