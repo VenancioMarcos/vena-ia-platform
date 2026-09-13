@@ -1,5 +1,15 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-141 a AUTO-145
+
+`CNC_ROUTE_5_STATIC_SYNTAX_AUDIT_IN_PROGRESS`. O PR #52 foi aprovado pelo Backend
+CI (3m36s), promovido a review e integrado por squash em `dd950938`. A nova branch
+implementa auditor estático fail-closed de G-code para Fanuc, Siemens e Haas,
+validando cabeçalho de governança, programa, ferramenta, valores F/S e conflitos
+modais. Validação final: 795 Python/9 ignorados, TypeScript, Next lint, Ruff,
+mypy e diff aprovados. Nenhuma execução, transmissão ou autorização física é
+introduzida.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-136 a AUTO-140
 
 `CAD_E2E_CONCURRENCY_HARDENING_COMPLETED_LOCAL`. O PR #51 foi integrado por

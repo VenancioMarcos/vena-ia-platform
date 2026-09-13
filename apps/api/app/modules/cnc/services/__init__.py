@@ -10,6 +10,11 @@ from app.modules.cnc.services.simulation_parser import (
     ToolpathSimulationError,
     parse_toolpath_simulation,
 )
+from app.modules.cnc.services.syntax_linter import (
+    GCodeSyntaxAuditError,
+    audit_gcode_syntax,
+    require_valid_gcode_syntax,
+)
 
 __all__ = [
     "GCodeFormattingError",
@@ -18,4 +23,7 @@ __all__ = [
     "parse_toolpath_simulation",
     "validate_kinematic_envelope",
     "ToolpathSimulationError",
+    "GCodeSyntaxAuditError",
+    "audit_gcode_syntax",
+    "require_valid_gcode_syntax",
 ]
