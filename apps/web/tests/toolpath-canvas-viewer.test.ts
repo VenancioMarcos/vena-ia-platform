@@ -26,6 +26,7 @@ const payload: ToolpathSimulationPayload = {
     },
   },
   stock: { diameter_mm: 52, z_min_mm: -100, z_max_mm: 1 },
+  chuck_proximity: { minimum_clearance_mm: 45, threshold_mm: 5, closest_segment_index: 0, warning_code: null },
   segments: [
     {
       motion_type: "RAPID",
@@ -81,6 +82,18 @@ test("preserves the mandatory audit-only governance banner", () => {
   assert.match(html, /AUDIT ONLY - PHYSICAL_USE_AUTHORIZED=FALSE/);
   assert.match(html, /revisão humana obrigatória/);
   assert.doesNotMatch(html, /machine.send|cycle.start|download/i);
+});
+
+
+test("highlights the canvas when the chuck proximity warning is active", () => {
+  const warningPayload: ToolpathSimulationPayload = {
+    ...payload,
+    chuck_proximity: { minimum_clearance_mm: 4, threshold_mm: 5, closest_segment_index: 1, warning_code: "WARNING_PROXIMITY_CHUCK" },
+  };
+  const html = renderToStaticMarkup(createElement(ToolpathCanvasViewer, { payload: warningPayload }));
+
+  assert.match(html, /data-chuck-proximity-warning="true"/);
+  assert.match(html, /animate-pulse ring-2 ring-red-500/);
 });
 
 

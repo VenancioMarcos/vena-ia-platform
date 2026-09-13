@@ -82,6 +82,16 @@ export function SimulationWorkspace({ payload, isoBlocks = [], error }: Simulati
 
       <aside className="space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-4" aria-label="Telemetria sincronizada">
         <h2 className="text-lg font-semibold">Telemetry HUD</h2>
+        {payload.chuck_proximity.warning_code === "WARNING_PROXIMITY_CHUCK" ? (
+          <div className="animate-pulse rounded-lg border-2 border-red-400 bg-red-950/70 p-3 text-red-100" role="alert" data-chuck-proximity-alert="true">
+            <p className="font-mono text-sm font-bold">WARNING_PROXIMITY_CHUCK</p>
+            <p className="mt-1 text-xs">Folga mínima {payload.chuck_proximity.minimum_clearance_mm.toFixed(3)} mm · limite {payload.chuck_proximity.threshold_mm.toFixed(1)} mm</p>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-emerald-700 bg-emerald-950/30 p-3 text-xs text-emerald-200" data-chuck-proximity-alert="false">
+            Folga da placa: {payload.chuck_proximity.minimum_clearance_mm.toFixed(3)} mm
+          </div>
+        )}
         <dl className="grid grid-cols-2 gap-3">
           <Metric label="X diâmetro" value={`${telemetry.xDiameterMm.toFixed(3)} mm`} />
           <Metric label="Z" value={`${telemetry.zMm.toFixed(3)} mm`} />

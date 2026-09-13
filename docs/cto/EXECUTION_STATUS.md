@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-126 a AUTO-130
+
+`SIM_ROTA_4_CHUCK_PROXIMITY_AUDIT_COMPLETED_LOCAL`. O PR #49 foi aprovado no
+Frontend CI e integrado por squash em `59c8a0e`. A nova branch calcula a folga
+euclidiana mínima da trajetória à zona da placa, retorna metadados pela API e
+apresenta `WARNING_PROXIMITY_CHUCK` no Canvas/HUD abaixo de 5,0 mm. Validação:
+73 Web, TypeScript, lint, 791 Python/9 ignorados, Ruff, mypy em 210 arquivos e
+diff; sem push ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-121 a AUTO-125
 
 `SIM_ROTA_3_E2E_WORKSPACE_COMPLETED_LOCAL`. O PR #48 foi aprovado no Frontend CI

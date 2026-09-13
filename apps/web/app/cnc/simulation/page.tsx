@@ -21,6 +21,7 @@ const AUDIT_PAYLOAD: ToolpathSimulationPayload = {
     chuck_exclusion_zone: { x_min_mm: 0, x_max_mm: 100, z_min_mm: 55, z_max_mm: 100 },
   },
   stock: { diameter_mm: 52, z_min_mm: -100, z_max_mm: 1 },
+  chuck_proximity: { minimum_clearance_mm: 50, threshold_mm: 5, closest_segment_index: 0, warning_code: null },
   segments: [
     { motion_type: "RAPID", x_start_mm: 50, z_start_mm: 5, x_end_mm: 42, z_end_mm: 2, feed: null, active_tool: "T0101" },
     { motion_type: "LINEAR", x_start_mm: 42, z_start_mm: 2, x_end_mm: 38, z_end_mm: -25, feed: 0.2, active_tool: "T0101" },

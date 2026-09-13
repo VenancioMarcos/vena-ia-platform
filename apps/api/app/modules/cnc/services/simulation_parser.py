@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from math import hypot
 from typing import Literal
 
 from app.modules.cnc.enums import CNCControllerType
 from app.modules.cnc.schemas import (
+    ChuckExclusionZone2D,
+    ChuckProximityAudit,
     MachineEnvelope2D,
     ToolpathSegment2D,
     ToolpathSimulationPayload,
@@ -25,6 +28,7 @@ _FEED_WORD = re.compile(r"F([+]?(?:\d+(?:\.\d*)?|\.\d+))")
 _FANUC_TOOL_WORD = re.compile(r"T(\d{2,4})")
 _SIEMENS_TOOL = re.compile(r'T="([A-Za-z0-9 _-]+)"(?:\s+D(\d{1,2}))?')
 _PARENTHESIZED_COMMENT = re.compile(r"\([^)]*\)")
+_CHUCK_PROXIMITY_THRESHOLD_MM = 5.0
 
 
 class ToolpathSimulationError(ValueError):
@@ -35,6 +39,119 @@ class ToolpathSimulationError(ValueError):
 class _Point2D:
     x_mm: float
     z_mm: float
+
+
+def _orientation(first: _Point2D, second: _Point2D, third: _Point2D) -> float:
+    return (second.x_mm - first.x_mm) * (third.z_mm - first.z_mm) - (
+        second.z_mm - first.z_mm
+    ) * (third.x_mm - first.x_mm)
+
+
+def _on_segment(point: _Point2D, start: _Point2D, end: _Point2D) -> bool:
+    return (
+        min(start.x_mm, end.x_mm) <= point.x_mm <= max(start.x_mm, end.x_mm)
+        and min(start.z_mm, end.z_mm) <= point.z_mm <= max(start.z_mm, end.z_mm)
+    )
+
+
+def _segments_intersect(
+    first_start: _Point2D,
+    first_end: _Point2D,
+    second_start: _Point2D,
+    second_end: _Point2D,
+) -> bool:
+    orientations = (
+        _orientation(first_start, first_end, second_start),
+        _orientation(first_start, first_end, second_end),
+        _orientation(second_start, second_end, first_start),
+        _orientation(second_start, second_end, first_end),
+    )
+    if orientations[0] * orientations[1] < 0 and orientations[2] * orientations[3] < 0:
+        return True
+    return any(
+        orientation == 0 and _on_segment(point, start, end)
+        for orientation, point, start, end in (
+            (orientations[0], second_start, first_start, first_end),
+            (orientations[1], second_end, first_start, first_end),
+            (orientations[2], first_start, second_start, second_end),
+            (orientations[3], first_end, second_start, second_end),
+        )
+    )
+
+
+def _point_to_segment_distance(point: _Point2D, start: _Point2D, end: _Point2D) -> float:
+    delta_x = end.x_mm - start.x_mm
+    delta_z = end.z_mm - start.z_mm
+    squared_length = delta_x * delta_x + delta_z * delta_z
+    if squared_length == 0:
+        return hypot(point.x_mm - start.x_mm, point.z_mm - start.z_mm)
+    projection = max(
+        0.0,
+        min(
+            1.0,
+            ((point.x_mm - start.x_mm) * delta_x + (point.z_mm - start.z_mm) * delta_z)
+            / squared_length,
+        ),
+    )
+    return hypot(
+        point.x_mm - (start.x_mm + projection * delta_x),
+        point.z_mm - (start.z_mm + projection * delta_z),
+    )
+
+
+def _segment_distance(
+    first_start: _Point2D,
+    first_end: _Point2D,
+    second_start: _Point2D,
+    second_end: _Point2D,
+) -> float:
+    if _segments_intersect(first_start, first_end, second_start, second_end):
+        return 0.0
+    return min(
+        _point_to_segment_distance(first_start, second_start, second_end),
+        _point_to_segment_distance(first_end, second_start, second_end),
+        _point_to_segment_distance(second_start, first_start, first_end),
+        _point_to_segment_distance(second_end, first_start, first_end),
+    )
+
+
+def audit_chuck_proximity(
+    segments: tuple[ToolpathSegment2D, ...],
+    chuck_zone: ChuckExclusionZone2D,
+    *,
+    threshold_mm: float = _CHUCK_PROXIMITY_THRESHOLD_MM,
+) -> ChuckProximityAudit:
+    """Return the deterministic minimum path clearance from the chuck boundary."""
+    corners = (
+        _Point2D(chuck_zone.x_min_mm, chuck_zone.z_min_mm),
+        _Point2D(chuck_zone.x_max_mm, chuck_zone.z_min_mm),
+        _Point2D(chuck_zone.x_max_mm, chuck_zone.z_max_mm),
+        _Point2D(chuck_zone.x_min_mm, chuck_zone.z_max_mm),
+    )
+    boundary_edges = tuple(zip(corners, corners[1:] + corners[:1], strict=True))
+    closest_segment_index = 0
+    minimum_clearance = float("inf")
+    for index, segment in enumerate(segments):
+        start = _Point2D(segment.x_start_mm, segment.z_start_mm)
+        end = _Point2D(segment.x_end_mm, segment.z_end_mm)
+        clearance = min(
+            _segment_distance(start, end, edge_start, edge_end)
+            for edge_start, edge_end in boundary_edges
+        )
+        if clearance < minimum_clearance:
+            minimum_clearance = clearance
+            closest_segment_index = index
+
+    minimum_clearance = round(minimum_clearance, 9)
+    warning_code: Literal["WARNING_PROXIMITY_CHUCK"] | None = (
+        "WARNING_PROXIMITY_CHUCK" if minimum_clearance < threshold_mm else None
+    )
+    return ChuckProximityAudit(
+        minimum_clearance_mm=minimum_clearance,
+        threshold_mm=threshold_mm,
+        closest_segment_index=closest_segment_index,
+        warning_code=warning_code,
+    )
 
 
 def _tool_from_line(line: str, current: str | None) -> str | None:
@@ -120,10 +237,15 @@ def parse_toolpath_simulation(
     if not segments:
         raise ToolpathSimulationError("INSUFFICIENT_TOOLPATH_POINTS")
 
+    segment_tuple = tuple(segments)
     return ToolpathSimulationPayload(
         source_plan_id=source_plan_id,
         controller_profile=controller_profile,
-        segments=tuple(segments),
+        segments=segment_tuple,
         machine_envelope=machine_envelope,
         stock=stock,
+        chuck_proximity=audit_chuck_proximity(
+            segment_tuple,
+            machine_envelope.chuck_exclusion_zone,
+        ),
     )
