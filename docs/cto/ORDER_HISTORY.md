@@ -1,5 +1,14 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-209 a AUTO-218
+
+O PR #61 publicou a Rota 13, recebeu Backend e Frontend CI verdes e foi integrado
+por squash em `a8a07cf`, com exclusão da branch remota. A Rota 14 implementa custo e
+tempo analíticos com overheads nominais, taxa horária e custo de aresta tabulados,
+desgaste proporcional por ferramenta e validação cruzada contra ciclo e vida Taylor.
+Relatório, exportador textual e viewer exibem a decomposição. Entrega local sem push
+e sem autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-199 a AUTO-208
 
 O PR #60 publicou a Rota 12, recebeu Backend e Frontend CI verdes e foi integrado

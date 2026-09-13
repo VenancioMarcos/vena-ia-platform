@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-209 a AUTO-218
+
+`CNC_COST_TIME_AUDIT_COMPLETED_LOCAL`. O PR #61 teve Backend e Frontend CI aprovados
+e foi integrado por squash em `a8a07cf`; branch remota removida e main sincronizada.
+A Rota 14 adiciona decomposição de corte/rápido/trocas/setup, custo de máquina e
+desgaste Taylor por ferramenta, perfis BRL/USD, contrato imutável, laudo e painel Web.
+Validação: 109 testes CNC, mypy, Ruff, TypeScript estrito, 10 testes Web e diff.
+Sem push da Rota 14 ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-199 a AUTO-208
 
 `CNC_TAYLOR_TOOL_LIFE_AUDIT_COMPLETED_LOCAL`. O PR #60 teve Backend e Frontend CI
