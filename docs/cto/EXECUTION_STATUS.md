@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-096 a AUTO-100
+
+`CNC_ROTA_2_E2E_GATEWAY_COMPLETED_LOCAL`. A fundação CNC foi publicada no PR #43,
+aprovada pelo Backend CI em 3m26s e integrada por squash merge em `1369418`. A
+branch Rota 2 acrescenta armazenamento process-local de planos CAM, endpoint CNC
+autenticado e isolamento por proprietário. Validação: 766 Python/9 ignorados,
+64 Web, Ruff e mypy em 208 arquivos; commit local em preparação, sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-091 a AUTO-095
 
 `CNC_ROTA_1_GCODE_FOUNDATION_COMPLETED_LOCAL`. O PR #42 já estava integrado em

@@ -1087,3 +1087,30 @@ em 206 arquivos e `git diff --check`.
 Fundação CNC consolidada sob `CNC_ROTA_1_GCODE_FOUNDATION_COMPLETED_LOCAL` para
 commit atômico local. Nenhum push, endpoint de emissão, machine-send, DNC,
 transferência NC, cycle start ou autoridade física foi incorporado.
+
+## 2026-09-13 — CTO-CODEX-AUTO-096
+
+A branch `codex/v5.0-cnc-generation-foundation` foi publicada em `cb323bf` e o
+Draft PR #43 aberto contra `main`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-097
+
+O Backend CI do PR #43 foi aprovado em 3m26s. O PR foi retirado de Draft e
+confirmado `OPEN`, `MERGEABLE` e `CLEAN` no commit `cb323bf`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-098
+
+O PR #43 foi integrado por squash merge em `1369418` às 2026-09-13T11:31:22Z.
+A branch remota foi removida e `main` alinhada estritamente com `origin/main`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-099
+
+A branch `codex/v5.1-cnc-e2e-gateway` foi criada de `1369418`. O endpoint
+autenticado CNC conecta planos CAM process-local pertencentes ao usuário ao
+formatador ISO e responde com candidato revisável e não executável.
+
+## 2026-09-13 — CTO-CODEX-AUTO-100
+
+Testes de integração cobrem sucesso E2E e falhas fechadas 401, 404 e 422, inclusive
+isolamento entre proprietários. Validação: 766 Python/9 ignorados, 64 Web, Ruff,
+mypy em 208 arquivos e `git diff --check`; sem push da branch Rota 2.

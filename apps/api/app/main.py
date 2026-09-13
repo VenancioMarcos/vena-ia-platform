@@ -21,10 +21,12 @@ from app.modules.auth.security_store import build_authentication_security_store
 from app.modules.audit.middleware import AuditCorrelationMiddleware
 from app.modules.chats.api.routes import router as chats_router
 from app.modules.cnc.api.routes import router as cnc_router
+from app.modules.cnc.router import router as cnc_generation_router
 from app.modules.cad.api.routes import ingestion_router as cad_ingestion_router
 from app.modules.cad.api.routes import router as cad_router
 from app.modules.cad.ingestion import build_cad_ingestion_gateway
 from app.modules.cam.router import router as cam_router
+from app.modules.cam.repository import TurningPlanStore
 from app.modules.documents.api.routes import router as documents_router
 from app.modules.documents.dependencies import initialize_document_storage
 from app.modules.engineering.api.routes import router as engineering_router
@@ -61,6 +63,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.state.auth_security_store = build_authentication_security_store(settings)
+    app.state.turning_plan_store = TurningPlanStore()
     app.state.job_queue = build_job_queue()
     app.state.readiness_checker = DefaultReadinessChecker(settings)
     app.state.audit_session_factory = SessionLocal
@@ -176,6 +179,7 @@ def create_app() -> FastAPI:
     app.include_router(manufacturing_router)
     app.include_router(organizations_router)
     app.include_router(cnc_router)
+    app.include_router(cnc_generation_router)
     app.include_router(research_router)
 
     return app
