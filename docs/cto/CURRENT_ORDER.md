@@ -1,24 +1,23 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-154 a AUTO-158
-**Estado:** CNC_ROUTE_7_MACHINING_REPORT_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-159 a AUTO-163
+**Estado:** CNC_ROUTE_8_WEB_VIEWER_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v6.8-cnc-machining-report-exporter`
-**Baseline da branch:** `9d8b2dbe7a2d7c894c08fc463c6dc15a4a15363d`
+**Branch:** `codex/v6.9-cnc-report-viewer-web`
+**Baseline da branch:** `3b6f8e6c2318d563cb65123c132fa88cdc093650`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O PR #54 integrou a Rota 6 CNC por squash em `9d8b2dbe`. A Rota 7 compila a última
-simulação server-generated de um plano pertencente ao usuário em relatório técnico
-JSON. O relatório revalida plano, programa, envelope, proximidade e estimativa e
-mantém toda saída teórica, revisável e sem canal de execução física.
+O PR #55 integrou a Rota 7 por squash em `3b6f8e6`; a branch remota foi removida e
+`main=origin/main`. O visualizador web da Rota seguinte está preparado localmente
+sobre essa baseline, com espelho TypeScript estrito, métricas, ferramentas,
+auditoria, limitações e banner compulsório, sem controles físicos.
 
 ## Continuidade
 
-A branch local está consolidada sem push. O relatório exige uma simulação válida do
-plano no processo corrente; reinício ou evicção requer nova simulação. Nenhuma
-persistência, migration, PDF, assinatura ou download de programa foi introduzido.
+Lote concluído e parecer atualizado solicitado ao CTO. A branch web permanece local
+e não deve receber push até nova ordem explícita.
 
 ## Limites permanentes
 
