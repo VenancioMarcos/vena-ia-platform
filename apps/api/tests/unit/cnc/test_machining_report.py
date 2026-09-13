@@ -23,6 +23,7 @@ from app.modules.cnc.schemas import (
     TurningStock2D,
 )
 from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
+from app.modules.cnc.services.cost_time_estimator import estimate_machining_cost_time
 from app.modules.cnc.services.machining_report import (
     MachiningReportSource,
     compile_machining_report,
@@ -164,6 +165,10 @@ def test_complete_report_replays_deterministically(controller):
     assert report.tool_life_audits[0].tool_id == report.tools[0].tool_id
     assert report.tool_life_audits[0].estimated_tool_life_minutes > 0
     assert report.tool_life_audits[0].tool_life_consumed_percent > 0
+    assert report.cost_time_audit.total_cycle_time_minutes > 15
+    assert report.cost_time_audit.machine_cost_component > 0
+    assert report.cost_time_audit.tooling_wear_cost_component > 0
+    assert report.cost_time_audit.currency == "BRL"
     assert report.governance_stamp == "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
     assert report.safety_flags == GCodeSafetyFlags()
     assert report.source_plan_name is None
@@ -213,6 +218,22 @@ def test_governance_stamp_cannot_be_removed_or_changed():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_valid_cost_audit_from_a_different_cycle():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    other_cycle = report.cycle_time_estimate.model_copy(
+        update={
+            "total_cutting_time_seconds": report.cycle_time_estimate.total_cutting_time_seconds + 60,
+            "total_cycle_time_seconds": report.cycle_time_estimate.total_cycle_time_seconds + 60,
+        }
+    )
+    other_cost = estimate_machining_cost_time(other_cycle, report.tool_life_audits)
+    body = report.model_dump()
+    body["cost_time_audit"] = other_cost.model_dump()
+    with pytest.raises(ValidationError, match="REPORT_COST_TIME_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -242,3 +263,5 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     )
     assert "tool_life[T0101]" in rendered
     assert "ESTIMATIVA ANALÍTICA DE TAYLOR" in rendered
+    assert "cost_time: total_minutes=" in rendered
+    assert "ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA" in rendered

@@ -69,6 +69,14 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
                 ),
                 "ESTIMATIVA ANALÍTICA DE TAYLOR - NÃO CONSIDERA FLUTUAÇÕES "
                 "TÉRMICAS REAIS OU LUBRIFICAÇÃO",
+                "cost_time: total_minutes="
+                f"{validated.cost_time_audit.total_cycle_time_minutes:.9f}; "
+                f"machine_cost={validated.cost_time_audit.machine_cost_component:.9f}; "
+                f"tooling_cost={validated.cost_time_audit.tooling_wear_cost_component:.9f}; "
+                f"total_cost={validated.cost_time_audit.estimated_total_cost:.9f}; "
+                f"currency={validated.cost_time_audit.currency}",
+                "ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA - NÃO CONSIDERA "
+                "FLUTUAÇÕES LOGÍSTICAS, PARADAS NÃO PROGRAMADAS OU IMPOSTOS",
             ),
         ),
         _section(

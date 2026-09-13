@@ -477,6 +477,89 @@ class ToolLifeTaylorAuditPayload(_CNCGenerationContract):
         return self
 
 
+class ToolingWearCostComponent(_CNCGenerationContract):
+    tool_id: str = Field(min_length=1, max_length=64)
+    effective_cutting_time_minutes: float = Field(ge=0)
+    estimated_tool_life_minutes: float = Field(gt=0)
+    consumed_fraction: float = Field(ge=0)
+    cutting_edge_cost: float = Field(ge=0)
+    estimated_wear_cost: float = Field(ge=0)
+
+    @model_validator(mode="after")
+    def validate_wear_cost(self) -> "ToolingWearCostComponent":
+        expected_fraction = self.effective_cutting_time_minutes / self.estimated_tool_life_minutes
+        expected_cost = expected_fraction * self.cutting_edge_cost
+        if not math.isclose(self.consumed_fraction, expected_fraction, abs_tol=5e-9):
+            raise ValueError("TOOLING_WEAR_FRACTION_INCONSISTENT")
+        if not math.isclose(self.estimated_wear_cost, expected_cost, abs_tol=5e-9):
+            raise ValueError("TOOLING_WEAR_COST_INCONSISTENT")
+        return self
+
+
+class MachiningCostTimeAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-machining-cost-time-audit/v1"] = (
+        "vena-ia.cnc-machining-cost-time-audit/v1"
+    )
+    cost_profile: Literal["BRL_STANDARD", "USD_STANDARD"]
+    total_cycle_time_minutes: float = Field(ge=0)
+    cutting_time_minutes: float = Field(ge=0)
+    rapid_time_minutes: float = Field(ge=0)
+    tool_change_count: int = Field(ge=0)
+    tool_change_time_minutes_each: float = Field(ge=0)
+    tool_change_time_minutes: float = Field(ge=0)
+    setup_count: int = Field(ge=0)
+    nominal_setup_time_minutes_each: float = Field(ge=0)
+    nominal_setup_time_minutes: float = Field(ge=0)
+    estimated_total_cost: float = Field(ge=0)
+    machine_cost_component: float = Field(ge=0)
+    tooling_wear_cost_component: float = Field(ge=0)
+    machine_hourly_rate: float = Field(ge=0)
+    cutting_edge_cost: float = Field(ge=0)
+    currency: Literal["BRL", "USD"]
+    per_tool_wear_costs: tuple[ToolingWearCostComponent, ...] = Field(min_length=1)
+    is_theoretical_estimate: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_COST_TIME_EXCLUDES_LOGISTICS_UNPLANNED_DOWNTIME_AND_TAXES"
+    ] = "ANALYTICAL_COST_TIME_EXCLUDES_LOGISTICS_UNPLANNED_DOWNTIME_AND_TAXES"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_cost_time_model(self) -> "MachiningCostTimeAuditPayload":
+        expected_profile = {
+            "BRL_STANDARD": ("BRL", 120.0, 15.0),
+            "USD_STANDARD": ("USD", 25.0, 3.0),
+        }[self.cost_profile]
+        if (self.currency, self.machine_hourly_rate, self.cutting_edge_cost) != expected_profile:
+            raise ValueError("COST_TIME_PROFILE_PARAMETERS_INCONSISTENT")
+        expected_change = self.tool_change_count * self.tool_change_time_minutes_each
+        expected_setup = self.setup_count * self.nominal_setup_time_minutes_each
+        expected_total_time = (
+            self.cutting_time_minutes
+            + self.rapid_time_minutes
+            + expected_change
+            + expected_setup
+        )
+        expected_tooling = math.fsum(item.estimated_wear_cost for item in self.per_tool_wear_costs)
+        expected_machine = expected_total_time / 60 * self.machine_hourly_rate
+        comparisons = (
+            (self.tool_change_time_minutes, expected_change, "TOOL_CHANGE_TIME_INCONSISTENT"),
+            (self.nominal_setup_time_minutes, expected_setup, "SETUP_TIME_INCONSISTENT"),
+            (self.total_cycle_time_minutes, expected_total_time, "TOTAL_CYCLE_TIME_INCONSISTENT"),
+            (self.machine_cost_component, expected_machine, "MACHINE_COST_INCONSISTENT"),
+            (self.tooling_wear_cost_component, expected_tooling, "TOOLING_COST_INCONSISTENT"),
+            (
+                self.estimated_total_cost,
+                expected_machine + expected_tooling,
+                "TOTAL_COST_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9):
+                raise ValueError(code)
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -497,6 +580,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     surface_roughness_audit: SurfaceRoughnessAuditPayload
     power_force_audit: MachiningPowerForceAuditPayload
     tool_life_audits: tuple[ToolLifeTaylorAuditPayload, ...] = Field(min_length=1)
+    cost_time_audit: MachiningCostTimeAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -508,4 +592,33 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     def validate_snapshot_time(self) -> "MachiningTechnicalReportPayload":
         if self.analytical_snapshot_at.tzinfo is None:
             raise ValueError("REPORT_TIMESTAMP_MUST_BE_TIMEZONE_AWARE")
+        if not math.isclose(
+            self.cost_time_audit.cutting_time_minutes,
+            self.cycle_time_estimate.total_cutting_time_seconds / 60,
+            abs_tol=5e-9,
+        ) or not math.isclose(
+            self.cost_time_audit.rapid_time_minutes,
+            self.cycle_time_estimate.total_rapid_time_seconds / 60,
+            abs_tol=5e-9,
+        ):
+            raise ValueError("REPORT_COST_TIME_SOURCE_INCONSISTENT")
+        lives_by_tool = {item.tool_id: item for item in self.tool_life_audits}
+        if len(lives_by_tool) != len(self.tool_life_audits):
+            raise ValueError("REPORT_TOOL_LIFE_DUPLICATE")
+        if {item.tool_id for item in self.cost_time_audit.per_tool_wear_costs} != set(
+            lives_by_tool
+        ):
+            raise ValueError("REPORT_TOOLING_COST_SOURCE_INCONSISTENT")
+        for cost in self.cost_time_audit.per_tool_wear_costs:
+            life = lives_by_tool[cost.tool_id]
+            if not math.isclose(
+                cost.effective_cutting_time_minutes,
+                life.effective_cutting_time_minutes,
+                abs_tol=5e-9,
+            ) or not math.isclose(
+                cost.estimated_tool_life_minutes,
+                life.estimated_tool_life_minutes,
+                abs_tol=5e-9,
+            ):
+                raise ValueError("REPORT_TOOLING_COST_SOURCE_INCONSISTENT")
         return self

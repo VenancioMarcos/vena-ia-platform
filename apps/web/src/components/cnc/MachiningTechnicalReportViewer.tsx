@@ -133,6 +133,37 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "TAYLOR_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_THERMAL_AND_LUBRICATION_VARIATION";
     safety_flags: MachiningReportSafetyFlags;
   }[];
+  cost_time_audit: {
+    schema_version: "vena-ia.cnc-machining-cost-time-audit/v1";
+    cost_profile: "BRL_STANDARD" | "USD_STANDARD";
+    total_cycle_time_minutes: number;
+    cutting_time_minutes: number;
+    rapid_time_minutes: number;
+    tool_change_count: number;
+    tool_change_time_minutes_each: number;
+    tool_change_time_minutes: number;
+    setup_count: number;
+    nominal_setup_time_minutes_each: number;
+    nominal_setup_time_minutes: number;
+    estimated_total_cost: number;
+    machine_cost_component: number;
+    tooling_wear_cost_component: number;
+    machine_hourly_rate: number;
+    cutting_edge_cost: number;
+    currency: "BRL" | "USD";
+    per_tool_wear_costs: readonly {
+      tool_id: string;
+      effective_cutting_time_minutes: number;
+      estimated_tool_life_minutes: number;
+      consumed_fraction: number;
+      cutting_edge_cost: number;
+      estimated_wear_cost: number;
+    }[];
+    is_theoretical_estimate: true;
+    physical_use_authorized: false;
+    model_limitation: "ANALYTICAL_COST_TIME_EXCLUDES_LOGISTICS_UNPLANNED_DOWNTIME_AND_TAXES";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -283,6 +314,25 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </ul>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE TAYLOR - NÃO CONSIDERA FLUTUAÇÕES TÉRMICAS REAIS OU LUBRIFICAÇÃO
+      </p>
+    </section>
+
+    <section aria-labelledby="report-cost-time-heading" className="space-y-3">
+      <h2 id="report-cost-time-heading" className="text-lg font-semibold">Resumo econômico e de tempo</h2>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <Metric label="Tempo total estimado" value={`${report.cost_time_audit.total_cycle_time_minutes.toFixed(2)} min`} />
+        <Metric label="Corte efetivo" value={`${report.cost_time_audit.cutting_time_minutes.toFixed(2)} min`} />
+        <Metric label="Avanço em vazio" value={`${report.cost_time_audit.rapid_time_minutes.toFixed(2)} min`} />
+        <Metric label="Trocas de ferramenta" value={`${report.cost_time_audit.tool_change_time_minutes.toFixed(2)} min`} />
+        <Metric label="Setup nominal" value={`${report.cost_time_audit.nominal_setup_time_minutes.toFixed(2)} min`} />
+      </dl>
+      <dl className="grid gap-3 sm:grid-cols-3">
+        <Metric label="Custo de máquina" value={`${report.cost_time_audit.currency} ${report.cost_time_audit.machine_cost_component.toFixed(2)}`} />
+        <Metric label="Depreciação de insertos" value={`${report.cost_time_audit.currency} ${report.cost_time_audit.tooling_wear_cost_component.toFixed(2)}`} />
+        <Metric label="Custo total estimado" value={`${report.cost_time_audit.currency} ${report.cost_time_audit.estimated_total_cost.toFixed(2)}`} />
+      </dl>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA - NÃO CONSIDERA FLUTUAÇÕES LOGÍSTICAS, PARADAS NÃO PROGRAMADAS OU IMPOSTOS
       </p>
     </section>
 

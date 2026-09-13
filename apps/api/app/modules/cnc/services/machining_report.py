@@ -19,6 +19,7 @@ from app.modules.cnc.schemas import (
     ToolpathSimulationRequest,
 )
 from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
+from app.modules.cnc.services.cost_time_estimator import estimate_machining_cost_time
 from app.modules.cnc.services.geometry_auditor import (
     GeometryDimensionalAuditError,
     require_geometry_dimensions_consistent,
@@ -140,6 +141,7 @@ def compile_machining_report(
         )
         for item in estimate.per_tool_breakdown
     )
+    cost_time_audit = estimate_machining_cost_time(estimate, tool_life_audits)
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -162,6 +164,7 @@ def compile_machining_report(
         surface_roughness_audit=roughness_audit,
         power_force_audit=power_force_audit,
         tool_life_audits=tool_life_audits,
+        cost_time_audit=cost_time_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -176,6 +179,7 @@ def compile_machining_report(
             "Kienzle force and power values are analytical estimates; real dynamic "
             "efficiency, thermal effects and machine behavior are excluded.",
             "Taylor tool-life values exclude real thermal fluctuations and lubrication.",
+            "Cost and time values exclude logistics, unplanned downtime and taxes.",
         ),
     )
 

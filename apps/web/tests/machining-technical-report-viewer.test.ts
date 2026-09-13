@@ -142,6 +142,47 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   }],
+  cost_time_audit: {
+    schema_version: "vena-ia.cnc-machining-cost-time-audit/v1",
+    cost_profile: "BRL_STANDARD",
+    total_cycle_time_minutes: 17.583333333,
+    cutting_time_minutes: 2,
+    rapid_time_minutes: 0.083333333,
+    tool_change_count: 1,
+    tool_change_time_minutes_each: 0.5,
+    tool_change_time_minutes: 0.5,
+    setup_count: 1,
+    nominal_setup_time_minutes_each: 15,
+    nominal_setup_time_minutes: 15,
+    estimated_total_cost: 37.265362,
+    machine_cost_component: 35.166666667,
+    tooling_wear_cost_component: 2.098695333,
+    machine_hourly_rate: 120,
+    cutting_edge_cost: 15,
+    currency: "BRL",
+    per_tool_wear_costs: [{
+      tool_id: "T0101",
+      effective_cutting_time_minutes: 2,
+      estimated_tool_life_minutes: 14.2946,
+      consumed_fraction: 0.139913,
+      cutting_edge_cost: 15,
+      estimated_wear_cost: 2.098695333,
+    }],
+    is_theoretical_estimate: true,
+    physical_use_authorized: false,
+    model_limitation: "ANALYTICAL_COST_TIME_EXCLUDES_LOGISTICS_UNPLANNED_DOWNTIME_AND_TAXES",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -266,4 +307,24 @@ test("renders critical tool-wear warning", () => {
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: critical }));
   assert.match(html, /ALERTA: DESGASTE CRÍTICO/);
   assert.match(html, /aria-valuenow="85"/);
+});
+
+test("renders the analytical time and cost breakdown precisely", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Resumo econômico e de tempo/);
+  assert.match(html, /17\.58 min/);
+  assert.match(html, /Corte efetivo/);
+  assert.match(html, /2\.00 min/);
+  assert.match(html, /Avanço em vazio/);
+  assert.match(html, /0\.08 min/);
+  assert.match(html, /Trocas de ferramenta/);
+  assert.match(html, /0\.50 min/);
+  assert.match(html, /Custo de máquina/);
+  assert.match(html, /BRL 35\.17/);
+  assert.match(html, /Depreciação de insertos/);
+  assert.match(html, /BRL 2\.10/);
+  assert.match(html, /Custo total estimado/);
+  assert.match(html, /BRL 37\.27/);
+  assert.match(html, /ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA - NÃO CONSIDERA FLUTUAÇÕES LOGÍSTICAS, PARADAS NÃO PROGRAMADAS OU IMPOSTOS/);
+  assert.doesNotMatch(html, /<button/i);
 });
