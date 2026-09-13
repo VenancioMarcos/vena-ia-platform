@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.41
+**Versão:** 2.42
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_ROTA_3_CONTROLLER_DIALECTS_COMPLETED_LOCAL`. O PR #44
+  integrou a Rota 2 em `9036a48` após Backend CI aprovado. A branch
+  `codex/v5.2-cnc-controller-dialects` implementa dialetos determinísticos para
+  Fanuc 0i, Siemens 840D e Haas, incluindo seleção de ferramenta, G96/G97,
+  limites G50/LIMS e movimentos próprios. Limites incompatíveis falham fechados;
+  777 Python/9 ignorados, 64 Web, Ruff, mypy e diff foram aprovados. Sem push da
+  Rota 3, emissão, transmissão, ciclo físico ou autoridade de uso.
 
 - **Handoff CTO:** `CNC_ROTA_2_E2E_GATEWAY_COMPLETED_LOCAL`. A Rota 1 CNC foi
   integrada pelo PR #43 em `1369418`, após Backend CI aprovado. A branch

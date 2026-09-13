@@ -85,6 +85,16 @@ class GCodeGenerationRequest(_CNCGenerationContract):
     spindle_mode: SpindleMode = Field(default=SpindleMode.G97_DIRECT_RPM, strict=False)
     feed_value: float = Field(default=0.2, gt=0, le=30_000)
     spindle_value: float = Field(default=1_000.0, gt=0, le=30_000)
+    max_spindle_rpm: float = Field(default=3_000.0, gt=0, le=30_000)
+    max_feed_mm_min: float = Field(default=30_000.0, gt=0, le=30_000)
+    tool_number: int = Field(default=1, ge=1, le=99)
+    tool_offset: int = Field(default=1, ge=1, le=99)
+    tool_name: str = Field(
+        default="FERRAMENTA",
+        min_length=1,
+        max_length=64,
+        pattern=r"^[A-Za-z0-9 _-]+$",
+    )
     safety_level: Literal[ProgramSafetyLevel.AUDIT_ONLY_NON_EXECUTABLE] = (
         ProgramSafetyLevel.AUDIT_ONLY_NON_EXECUTABLE
     )
@@ -106,3 +116,13 @@ class GCodeGatewayRequest(_CNCGenerationContract):
     plan_id: str = Field(min_length=1, max_length=255)
     controller_profile: CNCControllerType = Field(strict=False)
     program_number: int = Field(ge=1, le=99_999_999)
+    max_spindle_rpm: float = Field(default=3_000.0, gt=0, le=30_000)
+    max_feed_mm_min: float = Field(default=30_000.0, gt=0, le=30_000)
+    tool_number: int = Field(default=1, ge=1, le=99)
+    tool_offset: int = Field(default=1, ge=1, le=99)
+    tool_name: str = Field(
+        default="FERRAMENTA",
+        min_length=1,
+        max_length=64,
+        pattern=r"^[A-Za-z0-9 _-]+$",
+    )

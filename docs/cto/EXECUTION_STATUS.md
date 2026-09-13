@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-101 a AUTO-105
+
+`CNC_ROTA_3_CONTROLLER_DIALECTS_COMPLETED_LOCAL`. O PR #44 foi aprovado no CI e
+integrado por squash em `9036a48`; a nova branch acrescenta pós-processamento
+determinístico para Fanuc 0i, Siemens 840D e Haas, com ferramentas, limites CSS e
+movimentos próprios de cada família. Limites incompatíveis falham fechados.
+Validação: 777 Python/9 ignorados, 64 Web, Ruff, mypy em 208 arquivos e diff; sem
+push da Rota 3 ou mudança de autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-096 a AUTO-100
 
 `CNC_ROTA_2_E2E_GATEWAY_COMPLETED_LOCAL`. A fundação CNC foi publicada no PR #43,

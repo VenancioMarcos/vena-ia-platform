@@ -1,23 +1,22 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-096 a AUTO-100
-**Estado:** CNC_ROTA_2_E2E_GATEWAY_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-101 a AUTO-105
+**Estado:** CNC_ROTA_3_CONTROLLER_DIALECTS_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v5.1-cnc-e2e-gateway`
-**Baseline da branch:** `136941809c1acf481f7f7c476664a15009476553`
+**Branch:** `codex/v5.2-cnc-controller-dialects`
+**Baseline da branch:** `9036a48053981f592526eeec2263939155237c92`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O endpoint autenticado `POST /api/v1/cnc/turning/generate` recupera somente planos
-CAM pertencentes ao usuário, normaliza o contrato revisável e invoca o formatador
-ISO determinístico. A resposta permanece `PLANNED_REQUIRES_REVIEW`, auditável e
-não executável.
+O pós-processador revisável seleciona dialetos determinísticos para `FANUC_0I`,
+`SIEMENS_840D` e `HAAS`. Limites configurados de rotação e avanço falham fechados;
+o gateway autenticado propaga ferramenta e limites sem conceder autoridade física.
 
 ## Continuidade
 
-O gateway está consolidado localmente e aguarda parecer do CTO. A Rota 1 foi
-integrada pelo PR #43 em `1369418`; a branch da Rota 2 não foi publicada.
+A Rota 2 foi integrada pelo PR #44 em `9036a48`. A Rota 3 está consolidada
+localmente, sem push, e aguarda parecer do CTO.
 
 ## Limites permanentes
 
