@@ -1,5 +1,12 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-106 a AUTO-110
+
+A Rota 3 CNC foi publicada no PR #45, aprovada pelo Backend CI e integrada por
+squash em `27c48af`. A Rota 4 adiciona validação obrigatória do envelope de máquina
+e da zona da placa sobre pontos e segmentos G0/G1, com falhas fechadas para cursos,
+colisões e movimentos não verificáveis. O pacote foi consolidado localmente sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-101 a AUTO-105
 
 A Rota 2 CNC foi publicada no PR #44, aprovada pelo Backend CI após uma reexecução

@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.42
+**Versão:** 2.43
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_ROTA_4_KINEMATIC_ENVELOPE_VALIDATOR_COMPLETED_LOCAL`.
+  O PR #45 integrou a Rota 3 em `27c48af` após Backend CI aprovado. A branch
+  `codex/v5.3-cnc-kinematic-envelope-validator` exige envelope X-diâmetro/Z e zona
+  de exclusão da placa, analisando pontos e interseções de segmentos G0/G1 antes
+  de retornar qualquer candidato. Cursos excedidos, colisões e movimentos não
+  verificáveis falham fechados; 783 Python/9 ignorados, 64 Web, Ruff, mypy e diff
+  foram aprovados. Sem push da Rota 4, emissão, transmissão, ciclo ou autoridade.
 
 - **Handoff CTO:** `CNC_ROTA_3_CONTROLLER_DIALECTS_COMPLETED_LOCAL`. O PR #44
   integrou a Rota 2 em `9036a48` após Backend CI aprovado. A branch

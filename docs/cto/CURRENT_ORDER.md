@@ -1,21 +1,21 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-101 a AUTO-105
-**Estado:** CNC_ROTA_3_CONTROLLER_DIALECTS_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-106 a AUTO-110
+**Estado:** CNC_ROTA_4_KINEMATIC_ENVELOPE_VALIDATOR_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v5.2-cnc-controller-dialects`
-**Baseline da branch:** `9036a48053981f592526eeec2263939155237c92`
+**Branch:** `codex/v5.3-cnc-kinematic-envelope-validator`
+**Baseline da branch:** `27c48affd7091dd05d4e6cdd67b7b7ab098c8d00`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O pós-processador revisável seleciona dialetos determinísticos para `FANUC_0I`,
-`SIEMENS_840D` e `HAAS`. Limites configurados de rotação e avanço falham fechados;
-o gateway autenticado propaga ferramenta e limites sem conceder autoridade física.
+O formatador exige um envelope X-diâmetro/Z explícito e valida todos os pontos e
+segmentos G0/G1 contra os cursos configurados e a zona retangular da placa.
+Movimentos incompletos, fora do curso ou em colisão falham fechados antes da resposta.
 
 ## Continuidade
 
-A Rota 2 foi integrada pelo PR #44 em `9036a48`. A Rota 3 está consolidada
+A Rota 3 foi integrada pelo PR #45 em `27c48af`. A Rota 4 está consolidada
 localmente, sem push, e aguarda parecer do CTO.
 
 ## Limites permanentes
