@@ -81,6 +81,17 @@ export interface MachiningTechnicalReportPayload {
     findings: readonly string[];
     manifest_generation_allowed: boolean;
   };
+  surface_roughness_audit: {
+    schema_version: "vena-ia.cnc-surface-roughness-audit/v1";
+    ra_theoretical_um: number;
+    rz_theoretical_um: number;
+    finish_feed_mm_per_rev: number;
+    insert_nose_radius_mm: number;
+    nominal_ra_max_um: number | null;
+    compliance_tag: "WITHIN_NOMINAL_RA_TOLERANCE" | "EXCEEDS_NOMINAL_RA_TOLERANCE" | "NOMINAL_RA_TOLERANCE_UNAVAILABLE";
+    model_limitation: "IDEAL_KINEMATIC_MODEL_EXCLUDES_VIBRATION_TOOL_WEAR_AND_MATERIAL_EFFECTS";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -174,6 +185,20 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       <a href={`/api/v1/cnc/turning/plans/${encodeURIComponent(report.plan_id)}/report/download`} download className="inline-flex rounded-lg border border-cyan-500 bg-cyan-950 px-4 py-2 text-sm font-semibold text-cyan-100">
         Exportar laudo textual — {report.governance_stamp}
       </a>
+    </section>
+
+    <section aria-labelledby="report-roughness-heading" className="space-y-3">
+      <h2 id="report-roughness-heading" className="text-lg font-semibold">Acabamento superficial teórico</h2>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Ra teórico" value={`${report.surface_roughness_audit.ra_theoretical_um.toFixed(3)} µm`} />
+        <Metric label="Rz teórico" value={`${report.surface_roughness_audit.rz_theoretical_um.toFixed(3)} µm`} />
+        <Metric label="Avanço" value={`${report.surface_roughness_audit.finish_feed_mm_per_rev.toFixed(3)} mm/rot`} />
+        <Metric label="Raio de ponta" value={`${report.surface_roughness_audit.insert_nose_radius_mm.toFixed(3)} mm`} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">{report.surface_roughness_audit.compliance_tag}</p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        RUGOSIDADE TEÓRICA CINEMÁTICA - NÃO CONSIDERA VIBRAÇÃO OU DESGASTE DA FERRAMENTA
+      </p>
     </section>
 
     <section aria-labelledby="report-limits-heading" className="space-y-2">

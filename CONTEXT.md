@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.55
+**Versão:** 2.56
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,16 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_THEORETICAL_SURFACE_ROUGHNESS_AUDIT_COMPLETED_LOCAL`.
+  O PR #58 integrou a Rota 10 por squash em `8d06fe5`; Backend e Frontend CI foram
+  aprovados, a branch remota foi removida e `main=origin/main`. A branch local
+  `codex/v7.2-cnc-surface-roughness-estimator` calcula Ra/Rz pelo modelo cinemático
+  ideal de avanço e raio de ponta, com valores em µm, tolerância Ra nominal opcional
+  e tag que não presume conformidade quando o limite está ausente. Manifesto, laudo
+  e viewer expõem a estimativa com exclusão explícita de vibração, desgaste e efeitos
+  de material. Validação: 5 testes Web, smoke API, compileall e diff. Sem push ou
+  autoridade física.
 
 - **Handoff CTO:** `CNC_DIMENSIONAL_GATE_AND_TEXT_REPORT_COMPLETED_LOCAL`.
   O PR #57 integrou a Rota 9 por squash em `ac65258`; a branch remota foi removida

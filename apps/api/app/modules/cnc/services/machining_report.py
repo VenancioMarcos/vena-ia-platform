@@ -22,6 +22,7 @@ from app.modules.cnc.services.geometry_auditor import (
     GeometryDimensionalAuditError,
     require_geometry_dimensions_consistent,
 )
+from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 
@@ -41,7 +42,8 @@ def plan_fingerprint(record: TurningPlanRecord) -> str:
     if any(item.operation_type != response.operation_type for item in response.passes):
         raise MachiningReportError("REPORT_PLAN_INCONSISTENT")
     bounds = record.source_brep_bounds.model_dump_json()
-    return sha256((request.model_dump_json() + response.model_dump_json() + bounds).encode()).hexdigest()
+    serialized = request.model_dump_json() + response.model_dump_json() + bounds
+    return sha256(serialized.encode()).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -106,6 +108,11 @@ def compile_machining_report(
         simulation.segments,
         tolerance_mm=record.request.linear_tolerance_mm,
     )
+    roughness_audit = estimate_surface_roughness(
+        record.request.cutting_params.feed_mm_per_rev,
+        record.request.tool_params.tip_radius_mm,
+        nominal_ra_max_um=record.request.nominal_surface_roughness_ra_um,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -125,6 +132,7 @@ def compile_machining_report(
         machine_envelope=request.machine_envelope,
         chuck_proximity=simulation.chuck_proximity,
         geometry_audit=geometry_audit,
+        surface_roughness_audit=roughness_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -134,6 +142,8 @@ def compile_machining_report(
             "No acceleration, tool-change, dwell or physical cycle-time validation.",
             "Declared 2D envelope/proximity only; no G9 approval or machine authority.",
             "BRep nominal bounds passed the analytical dimensional gate.",
+            "Surface roughness is an ideal kinematic estimate; vibration, tool wear and "
+            "material effects are excluded.",
         ),
     )
 

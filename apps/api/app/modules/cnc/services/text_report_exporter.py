@@ -43,10 +43,17 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
         _section(
             "MÉTRICAS ANALÍTICAS",
             (
-                f"total_cycle_time_seconds={validated.cycle_time_estimate.total_cycle_time_seconds:.9f}",
+                "total_cycle_time_seconds="
+                f"{validated.cycle_time_estimate.total_cycle_time_seconds:.9f}",
                 f"total_distance_mm={validated.total_distance_mm:.9f}",
                 f"envelope_audit={validated.envelope_audit}",
                 f"minimum_chuck_clearance_mm={validated.chuck_proximity.minimum_clearance_mm:.9f}",
+                "surface_ra_theoretical_um="
+                f"{validated.surface_roughness_audit.ra_theoretical_um:.9f}",
+                "surface_rz_theoretical_um="
+                f"{validated.surface_roughness_audit.rz_theoretical_um:.9f}",
+                "surface_roughness_compliance="
+                f"{validated.surface_roughness_audit.compliance_tag}",
             ),
         ),
         _section(

@@ -149,6 +149,12 @@ def test_complete_report_replays_deterministically(controller):
     assert report.chuck_proximity.minimum_clearance_mm > 5
     assert report.geometry_audit.status == "PASS"
     assert report.geometry_audit.manifest_generation_allowed is True
+    assert report.surface_roughness_audit.ra_theoretical_um == pytest.approx(1.5625)
+    assert report.surface_roughness_audit.rz_theoretical_um == pytest.approx(6.25)
+    assert (
+        report.surface_roughness_audit.compliance_tag
+        == "NOMINAL_RA_TOLERANCE_UNAVAILABLE"
+    )
     assert report.governance_stamp == "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
     assert report.safety_flags == GCodeSafetyFlags()
     assert report.source_plan_name is None

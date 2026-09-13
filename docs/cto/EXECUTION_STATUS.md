@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-179 a AUTO-188
+
+`CNC_THEORETICAL_SURFACE_ROUGHNESS_AUDIT_COMPLETED_LOCAL`. O PR #58 teve Backend e
+Frontend CI aprovados e foi integrado por squash em `8d06fe5`; branch remota
+removida e main sincronizada. A Rota 11 acrescenta cálculo ideal Ra/Rz, contrato
+estrito, tolerância nominal opcional, manifesto/laudo e viewer com limitação formal.
+Validação disponível: 5 testes Web, smoke API matemático e de integração, compileall
+e diff. Sem dependência de rede, push da Rota 11 ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-169 a AUTO-178
 
 `CNC_DIMENSIONAL_GATE_AND_TEXT_REPORT_COMPLETED_LOCAL`. O PR #57 passou no Backend
