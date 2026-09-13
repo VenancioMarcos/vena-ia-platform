@@ -1,9 +1,11 @@
 from enum import StrEnum
 from typing import Literal
+from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.modules.cam.schemas import TurningStrategyPlanResponse
+from app.modules.cam.enums import TurningOperationType
 from app.modules.cnc.enums import CNCControllerType, FeedMode, ProgramSafetyLevel, SpindleMode
 
 
@@ -62,9 +64,7 @@ class GCodeSafetyFlags(_CNCGenerationContract):
     dnc: Literal[False] = False
     nc_transfer: Literal[False] = False
     cycle_start: Literal[False] = False
-    emission_status: Literal["CONTROLLER_PROFILE_UNRESOLVED"] = (
-        "CONTROLLER_PROFILE_UNRESOLVED"
-    )
+    emission_status: Literal["CONTROLLER_PROFILE_UNRESOLVED"] = "CONTROLLER_PROFILE_UNRESOLVED"
     executable_output: Literal[False] = False
 
 
@@ -234,9 +234,7 @@ class CycleTimeEstimatePayload(_CNCGenerationContract):
 
 
 class ToolpathSimulationPayload(_CNCGenerationContract):
-    status: Literal["SIMULATION_READY_REQUIRES_REVIEW"] = (
-        "SIMULATION_READY_REQUIRES_REVIEW"
-    )
+    status: Literal["SIMULATION_READY_REQUIRES_REVIEW"] = "SIMULATION_READY_REQUIRES_REVIEW"
     source_plan_id: str | None = None
     controller_profile: CNCControllerType
     segments: tuple[ToolpathSegment2D, ...] = Field(min_length=1)
@@ -246,3 +244,38 @@ class ToolpathSimulationPayload(_CNCGenerationContract):
     cycle_time_estimate: CycleTimeEstimatePayload | None = None
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+
+class MachiningReportTool(_CNCGenerationContract):
+    tool_id: str = Field(min_length=1)
+    operations: tuple[TurningOperationType, ...] = Field(min_length=1)
+
+
+class MachiningTechnicalReportPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
+    status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
+    plan_id: str = Field(min_length=1)
+    source_plan_name: None = None
+    cad_job_id: str = Field(min_length=1)
+    controller_profile: CNCControllerType
+    program_number: int = Field(ge=1)
+    program_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    analytical_snapshot_at: datetime
+    tools: tuple[MachiningReportTool, ...] = Field(min_length=1)
+    cycle_time_estimate: CycleTimeEstimatePayload
+    total_distance_mm: float = Field(ge=0)
+    envelope_audit: Literal["PASS_DECLARED_2D_ENVELOPE_ONLY"]
+    machine_envelope: MachineEnvelope2D
+    chuck_proximity: ChuckProximityAudit
+    coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
+    governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
+        "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
+    )
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+    limitations: tuple[str, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_snapshot_time(self) -> "MachiningTechnicalReportPayload":
+        if self.analytical_snapshot_at.tzinfo is None:
+            raise ValueError("REPORT_TIMESTAMP_MUST_BE_TIMEZONE_AWARE")
+        return self

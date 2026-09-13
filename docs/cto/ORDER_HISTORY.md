@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-154 a AUTO-158
+
+Após autorização explícita do proprietário, o PR #54 foi integrado em `9d8b2dbe`
+e a Rota 7 foi criada sobre essa baseline. O exportador entrega JSON analítico de
+uma simulação server-generated vinculada ao plano e ao proprietário. A decisão de
+usar snapshot process-local evita migration e fabricação de dados ausentes; exige
+nova simulação após reinício/evicção e não representa prontidão ou uso físico.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-149 a AUTO-153
 
 A Rota 6 CNC introduz estimativa analítica não física de tempo de ciclo e percurso

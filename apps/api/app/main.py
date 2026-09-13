@@ -22,6 +22,7 @@ from app.modules.audit.middleware import AuditCorrelationMiddleware
 from app.modules.chats.api.routes import router as chats_router
 from app.modules.cnc.api.routes import router as cnc_router
 from app.modules.cnc.router import router as cnc_generation_router
+from app.modules.cnc.report_repository import MachiningReportStore
 from app.modules.cad.api.routes import ingestion_router as cad_ingestion_router
 from app.modules.cad.api.routes import router as cad_router
 from app.modules.cad.ingestion import build_cad_ingestion_gateway
@@ -64,6 +65,7 @@ def create_app() -> FastAPI:
     )
     app.state.auth_security_store = build_authentication_security_store(settings)
     app.state.turning_plan_store = TurningPlanStore()
+    app.state.machining_report_store = MachiningReportStore()
     app.state.job_queue = build_job_queue()
     app.state.readiness_checker = DefaultReadinessChecker(settings)
     app.state.audit_session_factory = SessionLocal

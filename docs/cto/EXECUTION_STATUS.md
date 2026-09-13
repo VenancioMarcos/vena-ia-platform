@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-154 a AUTO-158
+
+`CNC_ROUTE_7_MACHINING_REPORT_COMPLETED_LOCAL`. O PR #54 foi integrado por squash
+em `9d8b2dbe`; `main` local e remota estão alinhadas e a branch remota da Rota 6
+foi removida. A Rota 7 retorna relatório técnico JSON somente após simulação válida
+do plano owner-scoped, reexecuta os gates server-side e inclui ferramenta, operação,
+estimativa teórica, envelope, proximidade, hash e carimbo obrigatório. Cache limitado
+e process-local; ausência, alteração ou inconsistência falham fechadas. Sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-149 a AUTO-153
 
 `CNC_ROUTE_6_CYCLE_TIME_ESTIMATOR_IN_PROGRESS`. Após o squash do PR #53 em

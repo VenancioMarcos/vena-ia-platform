@@ -1,14 +1,22 @@
 from fastapi import APIRouter, HTTPException
+from datetime import datetime, timezone
 from pydantic import ValidationError
 
 from app.modules.auth.dependencies import CurrentUserDependency
 from app.modules.cam.repository import TurningPlanNotFoundError, TurningPlanStoreDependency
 from app.modules.cam.schemas import TurningStrategyPlanResponse
 from app.modules.cnc.enums import FeedMode, SpindleMode
+from app.modules.cnc.report_repository import MachiningReportStoreDependency
+from app.modules.cnc.services.machining_report import (
+    MachiningReportSource,
+    compile_machining_report,
+    plan_fingerprint,
+)
 from app.modules.cnc.schemas import (
     GCodeGatewayRequest,
     GCodeGenerationRequest,
     GCodeGenerationResponse,
+    MachiningTechnicalReportPayload,
     ToolpathSimulationPayload,
     ToolpathSimulationRequest,
 )
@@ -71,6 +79,7 @@ def simulate_turning_toolpath(
     payload: ToolpathSimulationRequest,
     current_user: CurrentUserDependency,
     plan_store: TurningPlanStoreDependency,
+    report_store: MachiningReportStoreDependency,
 ) -> ToolpathSimulationPayload:
     program_text = payload.program_text
     if payload.plan_id is not None:
@@ -115,12 +124,44 @@ def simulate_turning_toolpath(
     if program_text is None:  # guarded by ToolpathSimulationRequest
         raise HTTPException(status_code=422, detail="SIMULATION_SOURCE_REQUIRED")
     try:
-        return parse_toolpath_simulation(
+        simulation = parse_toolpath_simulation(
             program_text,
             controller_profile=payload.controller_profile,
             machine_envelope=payload.machine_envelope,
             stock=payload.stock,
             source_plan_id=payload.plan_id,
         )
-    except (KinematicBoundaryViolation, ToolpathSimulationError, ValidationError) as exc:
+        if payload.plan_id is not None:
+            report_store.save(
+                payload.plan_id,
+                MachiningReportSource(
+                    owner_user_id=str(current_user.id),
+                    plan_fingerprint=plan_fingerprint(record),
+                    request=payload,
+                    program_text=program_text,
+                    captured_at=datetime.now(timezone.utc),
+                ),
+            )
+        return simulation
+    except (ValueError, KinematicBoundaryViolation, ToolpathSimulationError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.get("/turning/plans/{plan_id}/report", response_model=MachiningTechnicalReportPayload)
+def export_machining_report(
+    plan_id: str,
+    current_user: CurrentUserDependency,
+    plan_store: TurningPlanStoreDependency,
+    report_store: MachiningReportStoreDependency,
+) -> MachiningTechnicalReportPayload:
+    try:
+        record = plan_store.get_owned(plan_id, owner_user_id=str(current_user.id))
+    except TurningPlanNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="CAM turning plan not found") from exc
+    source = report_store.get_owned(plan_id, str(current_user.id))
+    if source is None:
+        raise HTTPException(status_code=422, detail="REPORT_TOOLPATH_REQUIRED")
+    try:
+        return compile_machining_report(record, source)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail="REPORT_SOURCE_INVALID") from exc
