@@ -164,6 +164,7 @@ class ToolpathSegment2D(_CNCGenerationContract):
     x_end_mm: float
     z_end_mm: float
     feed: float | None = Field(default=None, gt=0)
+    effective_feed_mm_min: float | None = Field(default=None, gt=0)
     active_tool: str | None = Field(default=None, min_length=1, max_length=64)
 
 
@@ -211,6 +212,27 @@ class ChuckProximityAudit(_CNCGenerationContract):
     warning_code: Literal["WARNING_PROXIMITY_CHUCK"] | None = None
 
 
+class CycleTimeToolBreakdown(_CNCGenerationContract):
+    tool: str
+    cutting_time_seconds: float = Field(ge=0)
+    rapid_time_seconds: float = Field(ge=0)
+    cutting_distance_mm: float = Field(ge=0)
+    rapid_distance_mm: float = Field(ge=0)
+
+
+class CycleTimeEstimatePayload(_CNCGenerationContract):
+    total_cutting_time_seconds: float = Field(ge=0)
+    total_rapid_time_seconds: float = Field(ge=0)
+    total_cycle_time_seconds: float = Field(ge=0)
+    total_cutting_distance_mm: float = Field(ge=0)
+    total_rapid_distance_mm: float = Field(ge=0)
+    rapid_feed_rate_mm_min: float = Field(gt=0)
+    per_tool_breakdown: tuple[CycleTimeToolBreakdown, ...]
+    disclaimer: Literal["THEORETICAL_ANALYTICAL_ESTIMATE_NOT_PHYSICALLY_APPROVED"] = (
+        "THEORETICAL_ANALYTICAL_ESTIMATE_NOT_PHYSICALLY_APPROVED"
+    )
+
+
 class ToolpathSimulationPayload(_CNCGenerationContract):
     status: Literal["SIMULATION_READY_REQUIRES_REVIEW"] = (
         "SIMULATION_READY_REQUIRES_REVIEW"
@@ -221,5 +243,6 @@ class ToolpathSimulationPayload(_CNCGenerationContract):
     machine_envelope: MachineEnvelope2D
     stock: TurningStock2D
     chuck_proximity: ChuckProximityAudit
+    cycle_time_estimate: CycleTimeEstimatePayload | None = None
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)

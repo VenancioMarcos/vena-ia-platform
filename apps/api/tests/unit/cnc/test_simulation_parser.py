@@ -81,9 +81,10 @@ def test_decomposes_supported_dialects_into_deterministic_2d_segments(
         "x_start_mm": 50.0,
         "z_start_mm": 5.0,
         "x_end_mm": 40.0,
-        "z_end_mm": 2.0,
-        "feed": None,
-        "active_tool": expected_tool,
+            "z_end_mm": 2.0,
+            "feed": None,
+            "effective_feed_mm_min": None,
+            "active_tool": expected_tool,
     }
     assert first.segments[1].motion_type == "LINEAR"
     assert first.segments[1].feed == 0.2

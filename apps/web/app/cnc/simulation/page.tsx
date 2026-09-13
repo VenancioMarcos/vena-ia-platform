@@ -22,6 +22,7 @@ const AUDIT_PAYLOAD: ToolpathSimulationPayload = {
   },
   stock: { diameter_mm: 52, z_min_mm: -100, z_max_mm: 1 },
   chuck_proximity: { minimum_clearance_mm: 50, threshold_mm: 5, closest_segment_index: 0, warning_code: null },
+  cycle_time_estimate: { total_cutting_time_seconds: 311.4, total_rapid_time_seconds: 0.11, total_cycle_time_seconds: 311.51, total_cutting_distance_mm: 56.7, total_rapid_distance_mm: 16.8, rapid_feed_rate_mm_min: 10000, disclaimer: "THEORETICAL_ANALYTICAL_ESTIMATE_NOT_PHYSICALLY_APPROVED" },
   segments: [
     { motion_type: "RAPID", x_start_mm: 50, z_start_mm: 5, x_end_mm: 42, z_end_mm: 2, feed: null, active_tool: "T0101" },
     { motion_type: "LINEAR", x_start_mm: 42, z_start_mm: 2, x_end_mm: 38, z_end_mm: -25, feed: 0.2, active_tool: "T0101" },

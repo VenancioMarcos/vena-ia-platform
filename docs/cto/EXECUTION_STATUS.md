@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-149 a AUTO-153
+
+`CNC_ROUTE_6_CYCLE_TIME_ESTIMATOR_IN_PROGRESS`. Após o squash do PR #53 em
+`0228bb96`, a Rota 6 calcula distância rápida/corte, tempo teórico e totais por
+ferramenta no payload de simulação. O HUD exibe o resultado com aviso de que não
+representa tempo físico homologado. Falhas de avanço linear não resolvido são
+fail-closed; a entrega aguarda publicação como Draft PR #54, sem merge nesta etapa.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-146 a AUTO-150
 
 `CNC_ROUTE_5_PR_OPEN_AWAITING_CI_AND_REVIEW`. A Rota 5 está pronta para publicação

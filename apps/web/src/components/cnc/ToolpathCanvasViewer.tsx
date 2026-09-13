@@ -11,7 +11,18 @@ export interface ToolpathSegment2D {
   x_end_mm: number;
   z_end_mm: number;
   feed: number | null;
+  effective_feed_mm_min?: number | null;
   active_tool: string | null;
+}
+
+export interface CycleTimeEstimatePayload {
+  total_cutting_time_seconds: number;
+  total_rapid_time_seconds: number;
+  total_cycle_time_seconds: number;
+  total_cutting_distance_mm: number;
+  total_rapid_distance_mm: number;
+  rapid_feed_rate_mm_min: number;
+  disclaimer: "THEORETICAL_ANALYTICAL_ESTIMATE_NOT_PHYSICALLY_APPROVED";
 }
 
 export interface MachineEnvelope2D {
@@ -46,6 +57,7 @@ export interface ToolpathSimulationPayload {
     closest_segment_index: number;
     warning_code: "WARNING_PROXIMITY_CHUCK" | null;
   };
+  cycle_time_estimate?: CycleTimeEstimatePayload | null;
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   safety_flags: {
     physical_use_authorized: false;
