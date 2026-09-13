@@ -1,23 +1,24 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-159 a AUTO-163
-**Estado:** CNC_ROUTE_8_WEB_VIEWER_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-164 a AUTO-168
+**Estado:** CNC_ROUTE_9_GEOMETRY_DIMENSIONAL_AUDITOR_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v6.9-cnc-report-viewer-web`
-**Baseline da branch:** `3b6f8e6c2318d563cb65123c132fa88cdc093650`
+**Branch:** `codex/v7.0-cnc-geometry-dimensional-auditor`
+**Baseline da branch:** `b43aca729c66e16c0883c5e626dec68ac3239d68`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-O PR #55 integrou a Rota 7 por squash em `3b6f8e6`; a branch remota foi removida e
-`main=origin/main`. O visualizador web da Rota seguinte está preparado localmente
-sobre essa baseline, com espelho TypeScript estrito, métricas, ferramentas,
-auditoria, limitações e banner compulsório, sem controles físicos.
+O PR #56 integrou a Rota 8 por squash em `b43aca7`; a branch remota foi removida e
+`main=origin/main`. O auditor da Rota 9 compara limites nominais do BRep com extremos
+programados, em convenção X-diâmetro/Z, e emite relatório analítico serializável com
+desvios assinados. Divergência dimensional, raio negativo e reversão radial linear
+fecham o gate de manifesto.
 
 ## Continuidade
 
-Lote concluído e parecer atualizado solicitado ao CTO. A branch web permanece local
-e não deve receber push até nova ordem explícita.
+Consolidar o commit local e enviar VTP-AUTO-168-BATCH ao CTO. A branch da Rota 9
+permanece local e não deve receber push nesta etapa.
 
 ## Limites permanentes
 

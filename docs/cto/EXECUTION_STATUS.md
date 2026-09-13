@@ -1,5 +1,15 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-164 a AUTO-168
+
+`CNC_ROUTE_9_GEOMETRY_DIMENSIONAL_AUDITOR_COMPLETED_LOCAL`. O PR #56 foi aberto,
+teve Frontend CI aprovado em 1m03s e foi integrado por squash em `b43aca7` após
+autorização do proprietário; branch remota removida e `main=origin/main`. O auditor
+dimensional v1 produz desvios assinados para raio máximo e limites Z, rejeita raio
+negativo e reversão radial linear e mantém o gate de manifesto fechado em qualquer
+achado. Validação: 832 Python/9 ignorados, 77 Web, TypeScript, Next lint, Ruff, mypy
+em 215 arquivos e diff aprovados. Branch da Rota 9 local, sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-159 a AUTO-163
 
 `CNC_ROUTE_8_WEB_VIEWER_COMPLETED_LOCAL`. Após correção de portabilidade em
