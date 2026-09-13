@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-101 a AUTO-105
+
+A Rota 2 CNC foi publicada no PR #44, aprovada pelo Backend CI após uma reexecução
+de teste concorrente flutuante e integrada por squash em `9036a48`. A Rota 3 cria
+dialetos revisáveis para Fanuc 0i, Siemens 840D e Haas, com limites configuráveis
+de rotação e avanço, cobertura unitária/E2E e todas as travas físicas preservadas.
+O pacote foi consolidado localmente, sem push.
+
 ## Política permanente — fluxo CTO ↔ Codex
 
 O proprietário ativou execução contínua obrigatória: toda task termina com status

@@ -44,6 +44,11 @@ def generate_turning_gcode_candidate(
             spindle_mode=SpindleMode.G96_CONSTANT_SURFACE_SPEED,
             feed_value=record.request.cutting_params.feed_mm_per_rev,
             spindle_value=record.request.cutting_params.vc_m_per_min,
+            max_spindle_rpm=payload.max_spindle_rpm,
+            max_feed_mm_min=payload.max_feed_mm_min,
+            tool_number=payload.tool_number,
+            tool_offset=payload.tool_offset,
+            tool_name=payload.tool_name,
         )
         return format_gcode_candidate(request)
     except (GCodeFormattingError, ValidationError) as exc:

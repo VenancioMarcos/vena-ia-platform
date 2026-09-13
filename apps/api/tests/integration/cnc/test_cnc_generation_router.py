@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -139,6 +140,76 @@ def test_generation_rejects_unsupported_controller_profile(
         plan_id = _create_plan(client, account.headers)
         payload = _generation_payload(plan_id)
         payload["controller_profile"] = "UNCONFIGURED_CONTROLLER"
+
+        response = client.post(
+            "/api/v1/cnc/turning/generate",
+            headers=account.headers,
+            json=payload,
+        )
+
+        assert response.status_code == 422
+    finally:
+        _remove_gateway(gateway)
+
+
+@pytest.mark.parametrize(
+    ("controller_profile", "expected_tokens"),
+    (
+        ("FANUC_0I", ("O9002", "T0101", "G50 S3000", "G96 S180")),
+        (
+            "SIEMENS_840D",
+            ("%_N_VENA_9002_MPF", 'T="FERRAMENTA" D1', "LIMS=3000", "G0 X"),
+        ),
+        ("HAAS", ("O9002", "T0101", "G50 S3000", "M30\n%")),
+    ),
+)
+def test_gateway_generates_selected_controller_dialect(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+    controller_profile: str,
+    expected_tokens: tuple[str, ...],
+) -> None:
+    gateway = _install_gateway(tmp_path)
+    try:
+        account = make_account(f"cnc-dialect-{controller_profile.lower()}@vena-ia.dev")
+        plan_id = _create_plan(client, account.headers)
+        payload = _generation_payload(plan_id)
+        payload["controller_profile"] = controller_profile
+
+        response = client.post(
+            "/api/v1/cnc/turning/generate",
+            headers=account.headers,
+            json=payload,
+        )
+
+        assert response.status_code == 200, response.text
+        program = response.json()["program_text"]
+        assert all(token in program for token in expected_tokens)
+        assert "PHYSICAL_USE_AUTHORIZED=FALSE" in program
+        assert response.json()["safety_flags"]["executable_output"] is False
+    finally:
+        _remove_gateway(gateway)
+
+
+@pytest.mark.parametrize(
+    ("limit_name", "limit_value"),
+    (("max_spindle_rpm", 0), ("max_feed_mm_min", 1)),
+)
+def test_gateway_rejects_invalid_or_incompatible_machine_limits(
+    client: TestClient,
+    make_account,
+    tmp_path: Path,
+    limit_name: str,
+    limit_value: float,
+) -> None:
+    gateway = _install_gateway(tmp_path)
+    try:
+        account = make_account(f"cnc-limit-{limit_name}@vena-ia.dev")
+        plan_id = _create_plan(client, account.headers)
+        payload = _generation_payload(plan_id)
+        payload["controller_profile"] = "FANUC_0I"
+        payload[limit_name] = limit_value
 
         response = client.post(
             "/api/v1/cnc/turning/generate",

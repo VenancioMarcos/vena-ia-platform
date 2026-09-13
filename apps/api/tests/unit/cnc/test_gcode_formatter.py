@@ -5,9 +5,9 @@ from pydantic import ValidationError
 
 from app.modules.cam.enums import TurningOperationType
 from app.modules.cam.schemas import MachiningPass, RzPoint, TurningStrategyPlanResponse
-from app.modules.cnc.enums import CNCControllerType
+from app.modules.cnc.enums import CNCControllerType, FeedMode, SpindleMode
 from app.modules.cnc.schemas import GCodeGenerationRequest
-from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
+from app.modules.cnc.services.gcode_formatter import GCodeFormattingError, format_gcode_candidate
 
 
 def _plan() -> TurningStrategyPlanResponse:
@@ -87,3 +87,79 @@ def test_rejects_missing_review_authentication_fail_closed() -> None:
 
     with pytest.raises(ValidationError, match="review_authentication"):
         GCodeGenerationRequest(**values)
+
+
+def test_formats_fanuc_0i_dialect_with_tool_and_css_limit() -> None:
+    result = format_gcode_candidate(
+        _request(
+            controller_profile=CNCControllerType.FANUC_0I,
+            spindle_mode=SpindleMode.G96_CONSTANT_SURFACE_SPEED,
+            max_spindle_rpm=2_500.0,
+            tool_number=7,
+            tool_offset=3,
+        )
+    )
+
+    assert result.program_text.startswith("O9001")
+    assert "\nT0703\nG21\nG18\nG95\nG50 S2500\nG96 S1000\n" in result.program_text
+    assert "G00 X24 Z2" in result.program_text
+    assert "G01 X20 Z2 F0.2" in result.program_text
+
+
+def test_formats_siemens_840d_dialect_with_named_tool_and_lims() -> None:
+    result = format_gcode_candidate(
+        _request(
+            controller_profile=CNCControllerType.SIEMENS_840D,
+            spindle_mode=SpindleMode.G96_CONSTANT_SURFACE_SPEED,
+            max_spindle_rpm=2_200.0,
+            tool_name="FERRAMENTA",
+            tool_offset=1,
+        )
+    )
+
+    assert result.program_text.startswith("%_N_VENA_9001_MPF")
+    assert 'T="FERRAMENTA" D1' in result.program_text
+    assert "\nLIMS=2200\nG96 S1000\n" in result.program_text
+    assert "G0 X24 Z2" in result.program_text
+    assert "G1 X20 Z2 F0.2" in result.program_text
+
+
+def test_formats_haas_dialect_with_clean_termination() -> None:
+    result = format_gcode_candidate(
+        _request(controller_profile=CNCControllerType.HAAS, tool_number=2, tool_offset=2)
+    )
+
+    assert result.program_text.startswith("O9001")
+    assert "\nT0202\n" in result.program_text
+    assert result.program_text.endswith("M05\nM30\n%")
+
+
+def test_rejects_direct_rpm_above_configured_spindle_limit() -> None:
+    with pytest.raises(
+        GCodeFormattingError,
+        match="SPINDLE_SPEED_EXCEEDS_CONFIGURED_MACHINE_LIMIT",
+    ):
+        format_gcode_candidate(
+            _request(
+                spindle_mode=SpindleMode.G97_DIRECT_RPM,
+                spindle_value=4_000.0,
+                max_spindle_rpm=3_000.0,
+            )
+        )
+
+
+def test_rejects_effective_feed_above_configured_machine_limit() -> None:
+    with pytest.raises(GCodeFormattingError, match="FEED_EXCEEDS_CONFIGURED_MACHINE_LIMIT"):
+        format_gcode_candidate(
+            _request(
+                feed_mode=FeedMode.G95_PER_REVOLUTION,
+                feed_value=20.0,
+                spindle_value=1_000.0,
+                max_feed_mm_min=10_000.0,
+            )
+        )
+
+
+def test_rejects_tool_name_that_could_inject_controller_blocks() -> None:
+    with pytest.raises(ValidationError, match="tool_name"):
+        _request(tool_name='FERRAMENTA"\nM30')

@@ -46,22 +46,95 @@ def _path_length(path: tuple[RzPoint, ...]) -> float:
     )
 
 
-def _pass_blocks(item: MachiningPass, feed_value: float) -> list[str]:
+def _pass_blocks(
+    item: MachiningPass,
+    feed_value: float,
+    *,
+    rapid_code: str = "G00",
+    feed_code: str = "G01",
+) -> list[str]:
     start, *remaining = item.coordinates_rz_mm
     blocks = [
         f"(PASS {item.sequence}: {item.operation_type.value})",
-        f"G00 {_point_words(start)}",
+        f"{rapid_code} {_point_words(start)}",
     ]
-    blocks.extend(f"G01 {_point_words(point)} F{_number(feed_value)}" for point in remaining)
+    blocks.extend(
+        f"{feed_code} {_point_words(point)} F{_number(feed_value)}" for point in remaining
+    )
     return blocks
 
 
-def _estimated_seconds(request: GCodeGenerationRequest, path_length_mm: float) -> float:
+def _effective_feed_mm_min(request: GCodeGenerationRequest) -> float:
     if request.feed_mode is FeedMode.G94_PER_MINUTE:
-        mm_per_minute = request.feed_value
-    else:
-        mm_per_minute = request.feed_value * request.spindle_value
-    return path_length_mm / mm_per_minute * 60.0
+        return request.feed_value
+    spindle_rpm = (
+        request.max_spindle_rpm
+        if request.spindle_mode is SpindleMode.G96_CONSTANT_SURFACE_SPEED
+        else request.spindle_value
+    )
+    return request.feed_value * spindle_rpm
+
+
+def _estimated_seconds(request: GCodeGenerationRequest, path_length_mm: float) -> float:
+    return path_length_mm / _effective_feed_mm_min(request) * 60.0
+
+
+def _validate_machine_limits(request: GCodeGenerationRequest) -> None:
+    effective_feed_mm_min = _effective_feed_mm_min(request)
+    if effective_feed_mm_min > request.max_feed_mm_min:
+        raise GCodeFormattingError("FEED_EXCEEDS_CONFIGURED_MACHINE_LIMIT")
+    if (
+        request.spindle_mode is SpindleMode.G97_DIRECT_RPM
+        and request.spindle_value > request.max_spindle_rpm
+    ):
+        raise GCodeFormattingError("SPINDLE_SPEED_EXCEEDS_CONFIGURED_MACHINE_LIMIT")
+
+
+def _fanuc_family_preamble(request: GCodeGenerationRequest) -> list[str]:
+    tool_word = f"T{request.tool_number:02d}{request.tool_offset:02d}"
+    spindle_code = (
+        "G96" if request.spindle_mode is SpindleMode.G96_CONSTANT_SURFACE_SPEED else "G97"
+    )
+    blocks = [f"O{request.program_number}", tool_word, "G21", "G18"]
+    blocks.append("G94" if request.feed_mode is FeedMode.G94_PER_MINUTE else "G95")
+    if request.spindle_mode is SpindleMode.G96_CONSTANT_SURFACE_SPEED:
+        blocks.append(f"G50 S{_number(request.max_spindle_rpm)}")
+    blocks.append(f"{spindle_code} S{_number(request.spindle_value)}")
+    return blocks
+
+
+def _siemens_preamble(request: GCodeGenerationRequest) -> list[str]:
+    spindle_code = (
+        "G96" if request.spindle_mode is SpindleMode.G96_CONSTANT_SURFACE_SPEED else "G97"
+    )
+    blocks = [
+        f"%_N_VENA_{request.program_number}_MPF",
+        f'T="{request.tool_name}" D{request.tool_offset}',
+        "G21",
+        "G18",
+        "G94" if request.feed_mode is FeedMode.G94_PER_MINUTE else "G95",
+    ]
+    if request.spindle_mode is SpindleMode.G96_CONSTANT_SURFACE_SPEED:
+        blocks.append(f"LIMS={_number(request.max_spindle_rpm)}")
+    blocks.append(f"{spindle_code} S{_number(request.spindle_value)}")
+    return blocks
+
+
+def _controller_preamble(request: GCodeGenerationRequest) -> list[str]:
+    if request.controller_profile in (CNCControllerType.FANUC_0I, CNCControllerType.HAAS):
+        return _fanuc_family_preamble(request)
+    if request.controller_profile is CNCControllerType.SIEMENS_840D:
+        return _siemens_preamble(request)
+    return [
+        f"O{request.program_number}",
+        "G21",
+        "G18",
+        "G94" if request.feed_mode is FeedMode.G94_PER_MINUTE else "G95",
+        (
+            "G96" if request.spindle_mode is SpindleMode.G96_CONSTANT_SURFACE_SPEED else "G97"
+        )
+        + f" S{_number(request.spindle_value)}",
+    ]
 
 
 def format_gcode_candidate(request: GCodeGenerationRequest) -> GCodeGenerationResponse:
@@ -79,20 +152,23 @@ def format_gcode_candidate(request: GCodeGenerationRequest) -> GCodeGenerationRe
     if request.cam_plan_data.emission_status != "CONTROLLER_PROFILE_UNRESOLVED":
         raise GCodeFormattingError("CAM_PLAN_EMISSION_INVARIANT_VIOLATION")
 
-    feed_code = "G94" if request.feed_mode is FeedMode.G94_PER_MINUTE else "G95"
-    spindle_code = "G96" if request.spindle_mode is SpindleMode.G96_CONSTANT_SURFACE_SPEED else "G97"
+    _validate_machine_limits(request)
+    preamble = _controller_preamble(request)
+    program_id, *modal_blocks = preamble
     lines = [
-        f"O{request.program_number}",
+        program_id,
         f"(VENA_IA PLAN_ID={request.plan_id})",
         f"(CONTROLLER_PROFILE={request.controller_profile.value})",
         *SAFETY_HEADER,
-        "G21",
-        "G18",
-        feed_code,
-        f"{spindle_code} S{_number(request.spindle_value)}",
+        *modal_blocks,
     ]
+    motion_codes = (
+        {"rapid_code": "G0", "feed_code": "G1"}
+        if request.controller_profile is CNCControllerType.SIEMENS_840D
+        else {}
+    )
     for item in request.cam_plan_data.passes:
-        lines.extend(_pass_blocks(item, request.feed_value))
+        lines.extend(_pass_blocks(item, request.feed_value, **motion_codes))
     lines.extend(("M05", "M30", "%"))
 
     path_length_mm = math.fsum(_path_length(item.coordinates_rz_mm) for item in request.cam_plan_data.passes)
