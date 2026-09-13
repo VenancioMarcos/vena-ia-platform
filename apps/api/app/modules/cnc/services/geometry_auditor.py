@@ -5,79 +5,15 @@ from __future__ import annotations
 import math
 from typing import Literal, Sequence
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
-
 from app.modules.cam.schemas import TurningBoundingBox
-from app.modules.cnc.schemas import GCodeSafetyFlags, ToolpathSegment2D
+from app.modules.cnc.schemas import (
+    DimensionalDeviation,
+    GeometryDimensionalAuditReport,
+    ToolpathSegment2D,
+)
 
 
-AuditStatus = Literal["PASS", "REJECTED"]
 AuditAxis = Literal["MAX_RADIUS", "MIN_Z", "MAX_Z"]
-
-
-class _GeometryAuditContract(BaseModel):
-    model_config = ConfigDict(
-        strict=True,
-        extra="forbid",
-        frozen=True,
-        allow_inf_nan=False,
-        revalidate_instances="always",
-    )
-
-
-class DimensionalDeviation(_GeometryAuditContract):
-    axis: AuditAxis
-    nominal_mm: float
-    programmed_mm: float
-    signed_deviation_mm: float
-    tolerance_mm: float = Field(gt=0, le=1.0)
-    within_tolerance: bool
-
-    @model_validator(mode="after")
-    def validate_calculation(self) -> DimensionalDeviation:
-        expected = self.programmed_mm - self.nominal_mm
-        if not math.isclose(
-            self.signed_deviation_mm,
-            expected,
-            abs_tol=1e-12,
-            rel_tol=1e-12,
-        ):
-            raise ValueError("DIMENSIONAL_DEVIATION_INCONSISTENT")
-        expected_within = math.isclose(
-            self.programmed_mm,
-            self.nominal_mm,
-            abs_tol=self.tolerance_mm,
-            rel_tol=0,
-        )
-        if self.within_tolerance != expected_within:
-            raise ValueError("DIMENSIONAL_TOLERANCE_RESULT_INCONSISTENT")
-        return self
-
-
-class GeometryDimensionalAuditReport(_GeometryAuditContract):
-    schema_version: Literal["vena-ia.cnc-geometry-dimensional-audit/v1"] = (
-        "vena-ia.cnc-geometry-dimensional-audit/v1"
-    )
-    status: AuditStatus
-    source_brep_bounds: TurningBoundingBox
-    programmed_min_radius_mm: float
-    programmed_max_radius_mm: float
-    programmed_min_z_mm: float
-    programmed_max_z_mm: float
-    deviations: tuple[DimensionalDeviation, DimensionalDeviation, DimensionalDeviation]
-    findings: tuple[str, ...]
-    manifest_generation_allowed: bool
-    coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
-    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
-
-    @model_validator(mode="after")
-    def validate_outcome(self) -> GeometryDimensionalAuditReport:
-        passed = not self.findings and all(item.within_tolerance for item in self.deviations)
-        if (self.status == "PASS") != passed:
-            raise ValueError("GEOMETRY_AUDIT_STATUS_INCONSISTENT")
-        if self.manifest_generation_allowed != passed:
-            raise ValueError("GEOMETRY_AUDIT_GATE_INCONSISTENT")
-        return self
 
 
 class GeometryDimensionalAuditError(ValueError):

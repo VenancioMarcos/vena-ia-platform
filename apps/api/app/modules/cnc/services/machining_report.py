@@ -12,14 +12,18 @@ from app.modules.cam.schemas import (
 )
 from app.modules.cnc.enums import FeedMode, SpindleMode
 from app.modules.cnc.schemas import (
-    MachiningReportTool,
     GCodeGenerationRequest,
+    MachiningReportTool,
     MachiningTechnicalReportPayload,
     ToolpathSimulationRequest,
 )
+from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
+from app.modules.cnc.services.geometry_auditor import (
+    GeometryDimensionalAuditError,
+    require_geometry_dimensions_consistent,
+)
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
-from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
 
 
 class MachiningReportError(ValueError):
@@ -36,7 +40,8 @@ def plan_fingerprint(record: TurningPlanRecord) -> str:
         raise MachiningReportError("REPORT_PLAN_INCONSISTENT")
     if any(item.operation_type != response.operation_type for item in response.passes):
         raise MachiningReportError("REPORT_PLAN_INCONSISTENT")
-    return sha256((request.model_dump_json() + response.model_dump_json()).encode()).hexdigest()
+    bounds = record.source_brep_bounds.model_dump_json()
+    return sha256((request.model_dump_json() + response.model_dump_json() + bounds).encode()).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -96,6 +101,11 @@ def compile_machining_report(
         raise MachiningReportError("REPORT_TOOLPATH_REQUIRED")
     if any(item.active_tool is None for item in simulation.segments):
         raise MachiningReportError("REPORT_TOOL_REQUIRED")
+    geometry_audit = require_geometry_dimensions_consistent(
+        record.source_brep_bounds,
+        simulation.segments,
+        tolerance_mm=record.request.linear_tolerance_mm,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -114,6 +124,7 @@ def compile_machining_report(
         envelope_audit="PASS_DECLARED_2D_ENVELOPE_ONLY",
         machine_envelope=request.machine_envelope,
         chuck_proximity=simulation.chuck_proximity,
+        geometry_audit=geometry_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -122,5 +133,15 @@ def compile_machining_report(
             "G96/CSS RPM conversion is not physically validated.",
             "No acceleration, tool-change, dwell or physical cycle-time validation.",
             "Declared 2D envelope/proximity only; no G9 approval or machine authority.",
+            "BRep nominal bounds passed the analytical dimensional gate.",
         ),
     )
+
+
+__all__ = (
+    "GeometryDimensionalAuditError",
+    "MachiningReportError",
+    "MachiningReportSource",
+    "compile_machining_report",
+    "plan_fingerprint",
+)

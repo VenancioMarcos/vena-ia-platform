@@ -98,5 +98,6 @@ def create_turning_plan(
         owner_user_id=str(current_user.id),
         request=payload,
         response=response,
+        source_brep_bounds=request.bounding_box,
     )
     return response

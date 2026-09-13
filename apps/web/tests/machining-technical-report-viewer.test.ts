@@ -49,6 +49,17 @@ const report: MachiningTechnicalReportPayload = {
     closest_segment_index: 0,
     warning_code: null,
   },
+  geometry_audit: {
+    schema_version: "vena-ia.cnc-geometry-dimensional-audit/v1",
+    status: "PASS",
+    deviations: [
+      { axis: "MAX_RADIUS", nominal_mm: 26, programmed_mm: 26, signed_deviation_mm: 0, tolerance_mm: 0.001, within_tolerance: true },
+      { axis: "MIN_Z", nominal_mm: -100, programmed_mm: -100, signed_deviation_mm: 0, tolerance_mm: 0.001, within_tolerance: true },
+      { axis: "MAX_Z", nominal_mm: 1, programmed_mm: 1, signed_deviation_mm: 0, tolerance_mm: 0.001, within_tolerance: true },
+    ],
+    findings: [],
+    manifest_generation_allowed: true,
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -77,6 +88,10 @@ test("renders report metrics, tools, audit evidence, and mandatory governance", 
   assert.match(html, /G9=PENDING_AUTHORITATIVE_REVIEW/);
   assert.match(html, /CONTROLLER_PROFILE_UNRESOLVED/);
   assert.match(html, /executable_output=false/);
+  assert.match(html, /AUDITORIA GEOMÉTRICA CONFORME/);
+  assert.match(html, /MAX_RADIUS/);
+  assert.match(html, /Exportar laudo textual/);
+  assert.match(html, /report\/download/);
 });
 
 test("contains no physical execution or machine-send controls", () => {
@@ -94,4 +109,23 @@ test("renders chuck proximity warning as an alert", () => {
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>WARNING_PROXIMITY_CHUCK/);
   assert.match(html, /4\.000 mm/);
+});
+
+test("renders detected dimensional deviations without physical controls", () => {
+  const rejectedReport: MachiningTechnicalReportPayload = {
+    ...report,
+    geometry_audit: {
+      ...report.geometry_audit,
+      status: "REJECTED",
+      manifest_generation_allowed: false,
+      findings: ["BREP_MAX_RADIUS_MISMATCH"],
+      deviations: report.geometry_audit.deviations.map((item) => item.axis === "MAX_RADIUS"
+        ? { ...item, programmed_mm: 27, signed_deviation_mm: 1, within_tolerance: false }
+        : item),
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: rejectedReport }));
+  assert.match(html, /DESVIO DETECTADO/);
+  assert.match(html, /1\.000 mm/);
+  assert.doesNotMatch(html, /<button/i);
 });

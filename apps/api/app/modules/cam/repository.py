@@ -3,7 +3,11 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 
-from app.modules.cam.schemas import TurningPlanGatewayRequest, TurningPlanGatewayResponse
+from app.modules.cam.schemas import (
+    TurningBoundingBox,
+    TurningPlanGatewayRequest,
+    TurningPlanGatewayResponse,
+)
 
 
 class TurningPlanNotFoundError(LookupError):
@@ -15,6 +19,7 @@ class TurningPlanRecord:
     owner_user_id: str
     request: TurningPlanGatewayRequest
     response: TurningPlanGatewayResponse
+    source_brep_bounds: TurningBoundingBox
 
 
 class TurningPlanStore:
@@ -29,11 +34,13 @@ class TurningPlanStore:
         owner_user_id: str,
         request: TurningPlanGatewayRequest,
         response: TurningPlanGatewayResponse,
+        source_brep_bounds: TurningBoundingBox,
     ) -> None:
         self._records[response.plan_id] = TurningPlanRecord(
             owner_user_id=owner_user_id,
             request=request,
             response=response,
+            source_brep_bounds=source_brep_bounds,
         )
 
     def get_owned(self, plan_id: str, *, owner_user_id: str) -> TurningPlanRecord:
