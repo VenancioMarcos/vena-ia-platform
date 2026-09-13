@@ -1,5 +1,11 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-149 a AUTO-153
+
+A Rota 6 CNC introduz estimativa analítica não física de tempo de ciclo e percurso
+por ferramenta. O resultado exige avanço linear determinístico, apresenta aviso de
+não homologação e seguirá como Draft PR #54 após a validação local.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-146
 
 A Rota 5 CNC foi consolidada para publicação upstream a partir de `ba88f3f`.

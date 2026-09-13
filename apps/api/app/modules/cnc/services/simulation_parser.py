@@ -15,6 +15,7 @@ from app.modules.cnc.schemas import (
     TurningStock2D,
 )
 from app.modules.cnc.services.envelope_validator import validate_kinematic_envelope
+from app.modules.cnc.services.cycle_time_estimator import estimate_cycle_time
 
 
 _MOTION_CODES: dict[str, Literal["RAPID", "LINEAR"]] = {
@@ -25,6 +26,7 @@ _MOTION_CODES: dict[str, Literal["RAPID", "LINEAR"]] = {
 }
 _COORDINATE_WORD = re.compile(r"([XZ])([+-]?(?:\d+(?:\.\d*)?|\.\d+))")
 _FEED_WORD = re.compile(r"F([+]?(?:\d+(?:\.\d*)?|\.\d+))")
+_SPINDLE_WORD = re.compile(r"S([+]?(?:\d+(?:\.\d*)?|\.\d+))")
 _FANUC_TOOL_WORD = re.compile(r"T(\d{2,4})")
 _SIEMENS_TOOL = re.compile(r'T="([A-Za-z0-9 _-]+)"(?:\s+D(\d{1,2}))?')
 _PARENTHESIZED_COMMENT = re.compile(r"\([^)]*\)")
@@ -180,6 +182,8 @@ def parse_toolpath_simulation(
     current: _Point2D | None = None
     active_tool: str | None = None
     modal_feed: float | None = None
+    modal_feed_mode = "G94"
+    modal_spindle_rpm: float | None = None
     segments: list[ToolpathSegment2D] = []
 
     for raw_line in program_text.splitlines():
@@ -188,6 +192,14 @@ def parse_toolpath_simulation(
             continue
         active_tool = _tool_from_line(line, active_tool)
         words = line.split()
+        if "G94" in words:
+            modal_feed_mode = "G94"
+        elif "G95" in words:
+            modal_feed_mode = "G95"
+        for word in words:
+            spindle_match = _SPINDLE_WORD.fullmatch(word)
+            if spindle_match is not None and float(spindle_match.group(1)) > 0:
+                modal_spindle_rpm = float(spindle_match.group(1))
         motion_words = [word for word in words if word in _MOTION_CODES]
         if not motion_words:
             continue
@@ -221,6 +233,15 @@ def parse_toolpath_simulation(
             z_mm=coordinates.get("Z", current.z_mm),
         )
         motion_type = _MOTION_CODES[motion_words[0]]
+        effective_feed = None
+        if motion_type == "LINEAR" and modal_feed is not None:
+            effective_feed = (
+                modal_feed
+                if modal_feed_mode == "G94"
+                else modal_feed * modal_spindle_rpm
+                if modal_spindle_rpm is not None
+                else None
+            )
         segments.append(
             ToolpathSegment2D(
                 motion_type=motion_type,
@@ -229,6 +250,7 @@ def parse_toolpath_simulation(
                 x_end_mm=target.x_mm,
                 z_end_mm=target.z_mm,
                 feed=modal_feed if motion_type == "LINEAR" else None,
+                effective_feed_mm_min=effective_feed,
                 active_tool=active_tool,
             )
         )
@@ -248,4 +270,5 @@ def parse_toolpath_simulation(
             segment_tuple,
             machine_envelope.chuck_exclusion_zone,
         ),
+        cycle_time_estimate=estimate_cycle_time(segment_tuple),
     )

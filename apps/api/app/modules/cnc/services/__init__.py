@@ -15,6 +15,10 @@ from app.modules.cnc.services.syntax_linter import (
     audit_gcode_syntax,
     require_valid_gcode_syntax,
 )
+from app.modules.cnc.services.cycle_time_estimator import (
+    CycleTimeEstimatorError,
+    estimate_cycle_time,
+)
 
 __all__ = [
     "GCodeFormattingError",
@@ -26,4 +30,6 @@ __all__ = [
     "GCodeSyntaxAuditError",
     "audit_gcode_syntax",
     "require_valid_gcode_syntax",
+    "CycleTimeEstimatorError",
+    "estimate_cycle_time",
 ]

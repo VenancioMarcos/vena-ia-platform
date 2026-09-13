@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { SimulationWorkspace, telemetryAtStep } from "../src/components/cnc/SimulationWorkspace";
+import { SimulationWorkspace, formatCycleSeconds, telemetryAtStep } from "../src/components/cnc/SimulationWorkspace";
 import type { ToolpathSimulationPayload } from "../src/components/cnc/ToolpathCanvasViewer";
 
 const payload: ToolpathSimulationPayload = {
@@ -13,6 +13,7 @@ const payload: ToolpathSimulationPayload = {
   machine_envelope: { x_min_mm: 0, x_max_mm: 100, z_min_mm: -100, z_max_mm: 100, chuck_exclusion_zone: { x_min_mm: 0, x_max_mm: 100, z_min_mm: 60, z_max_mm: 100 } },
   stock: { diameter_mm: 50, z_min_mm: -80, z_max_mm: 0 },
   chuck_proximity: { minimum_clearance_mm: 55, threshold_mm: 5, closest_segment_index: 0, warning_code: null },
+  cycle_time_estimate: { total_cutting_time_seconds: 120, total_rapid_time_seconds: 1, total_cycle_time_seconds: 121, total_cutting_distance_mm: 40, total_rapid_distance_mm: 10, rapid_feed_rate_mm_min: 10000, disclaimer: "THEORETICAL_ANALYTICAL_ESTIMATE_NOT_PHYSICALLY_APPROVED" },
   segments: [
     { motion_type: "RAPID", x_start_mm: 50, z_start_mm: 5, x_end_mm: 40, z_end_mm: 2, feed: null, active_tool: "T0101" },
     { motion_type: "LINEAR", x_start_mm: 40, z_start_mm: 2, x_end_mm: 36, z_end_mm: -20, feed: 0.2, active_tool: "T0101" },
@@ -30,6 +31,11 @@ test("renders the integrated canvas, HUD, read-only program, and mandatory alert
   assert.match(html, /ESTADO: AUDITORIA NÃO-EXECUTÁVEL/);
   assert.match(html, /AUDIT ONLY - PHYSICAL_USE_AUTHORIZED=FALSE/);
   assert.match(html, /G9=PENDING_AUTHORITATIVE_REVIEW/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA TEÓRICA - NÃO REPRESENTA TEMPO FÍSICO HOMOLOGADO/);
+});
+
+test("formats theoretical cycle time as MM:SS", () => {
+  assert.equal(formatCycleSeconds(121), "02:01");
 });
 
 test("maps each scrub step to synchronized endpoint telemetry and ISO block", () => {

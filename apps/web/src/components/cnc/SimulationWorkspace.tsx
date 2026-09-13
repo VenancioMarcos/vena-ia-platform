@@ -47,6 +47,11 @@ function Metric({ label, value }: { label: string; value: string }) {
   </div>;
 }
 
+export function formatCycleSeconds(seconds: number): string {
+  const safe = Math.max(0, Math.round(seconds));
+  return `${String(Math.floor(safe / 60)).padStart(2, "0")}:${String(safe % 60).padStart(2, "0")}`;
+}
+
 export function SimulationWorkspace({ payload, isoBlocks = [], error }: SimulationWorkspaceProps) {
   const [visibleSegments, setVisibleSegments] = useState(payload?.segments.length ?? 0);
 
@@ -66,6 +71,7 @@ export function SimulationWorkspace({ payload, isoBlocks = [], error }: Simulati
   }
 
   const telemetry = telemetryAtStep(payload, isoBlocks, visibleSegments);
+  const cycleEstimate = payload.cycle_time_estimate;
 
   return <section className="space-y-6" aria-label="Workspace integrado de simulação CNC">
     <div className="rounded-lg border border-amber-500/60 bg-amber-950/40 p-4 text-amber-100">
@@ -98,6 +104,12 @@ export function SimulationWorkspace({ payload, isoBlocks = [], error }: Simulati
           <Metric label="Feed F" value={telemetry.feed === null ? "—" : telemetry.feed.toFixed(3)} />
           <Metric label="Ferramenta" value={telemetry.activeTool ?? "—"} />
         </dl>
+        {cycleEstimate ? <section className="rounded-lg border border-violet-700 bg-violet-950/30 p-3" aria-label="Estimativa analítica de ciclo">
+          <p className="text-xs font-semibold uppercase tracking-wide text-violet-200">Estimativa de ciclo</p>
+          <p className="mt-1 font-mono text-xl text-violet-100">{formatCycleSeconds(cycleEstimate.total_cycle_time_seconds)}</p>
+          <p className="mt-1 text-xs text-violet-100">Corte: {cycleEstimate.total_cutting_distance_mm.toFixed(3)} mm · Rápido: {cycleEstimate.total_rapid_distance_mm.toFixed(3)} mm</p>
+          <p className="mt-2 text-xs font-semibold text-amber-200">ESTIMATIVA ANALÍTICA TEÓRICA - NÃO REPRESENTA TEMPO FÍSICO HOMOLOGADO</p>
+        </section> : <div className="rounded-lg border border-amber-700 bg-amber-950/30 p-3 text-xs text-amber-100" role="status">Estimativa analítica indisponível para este payload.</div>}
         <div className="rounded-lg border border-cyan-800 bg-slate-950 p-3">
           <p className="text-xs uppercase tracking-wide text-slate-400">Bloco ISO ativo</p>
           <code className="mt-2 block break-words text-sm text-cyan-200">{telemetry.isoBlock}</code>
