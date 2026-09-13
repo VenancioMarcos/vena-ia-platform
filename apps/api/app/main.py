@@ -24,6 +24,7 @@ from app.modules.cnc.api.routes import router as cnc_router
 from app.modules.cad.api.routes import ingestion_router as cad_ingestion_router
 from app.modules.cad.api.routes import router as cad_router
 from app.modules.cad.ingestion import build_cad_ingestion_gateway
+from app.modules.cam.router import router as cam_router
 from app.modules.documents.api.routes import router as documents_router
 from app.modules.documents.dependencies import initialize_document_storage
 from app.modules.engineering.api.routes import router as engineering_router
@@ -171,6 +172,7 @@ def create_app() -> FastAPI:
     app.include_router(jobs_router)
     app.include_router(cad_router)
     app.include_router(cad_ingestion_router)
+    app.include_router(cam_router)
     app.include_router(manufacturing_router)
     app.include_router(organizations_router)
     app.include_router(cnc_router)

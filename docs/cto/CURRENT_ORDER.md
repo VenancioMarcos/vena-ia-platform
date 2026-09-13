@@ -1,22 +1,23 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-084
-**Estado:** CAM_ROTA_3_GROOVING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW
-**Data:** 2026-09-12
-**Branch:** `codex/v4.2-cam-grooving-strategy`
-**Baseline da branch:** `2703e37741f276b4aac6b68595513810848eab8b`
+**Missão:** CTO-CODEX-AUTO-088
+**Estado:** CAM_ROTA_4_E2E_GATEWAY_PR_OPEN_AWAITING_CI_AND_REVIEW
+**Data:** 2026-09-13
+**Branch:** `codex/v4.3-cam-e2e-planning-gateway`
+**Baseline da branch:** `ad231f8a044e47e51fd4c1335a5fc0ad84fa4de0`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/62dacc664840eafe
 
 ## Estado vigente
 
-A estratégia `GROOVING` foi aprovada pelo CTO no commit `7653641`, com mergulho
-radial controlado, recuo de alívio e stepovers em Z derivados da largura e do raio
-de canto da pastilha. A regressão homologou 754 Python e 64 Web.
+O endpoint autenticado `POST /api/v1/cam/turning/plan` liga jobs CAD concluídos e
+pertencentes ao usuário ao motor analítico CAM. Somente perfis com estado
+`PROFILE_AVAILABLE_REQUIRES_REVIEW` são aceitos; a resposta mantém
+`PLANNED_REQUIRES_REVIEW`, `executable_output=false` e todas as salvaguardas.
 
 ## Continuidade
 
-Consolidar governança, publicar a branch, abrir Draft PR contra `main`, coletar o
-CI inicial e enviar VTP-AUTO-084 ao CTO. Nenhum merge está autorizado nesta etapa.
+Consolidar a governança, publicar a branch, abrir o Draft PR contra `main`, coletar
+o estado inicial do CI e enviar o VTP-AUTO-088. Nenhum merge está autorizado.
 
 ## Limites permanentes
 
