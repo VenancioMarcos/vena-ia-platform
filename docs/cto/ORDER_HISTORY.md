@@ -1157,3 +1157,30 @@ O endpoint autenticado `/api/v1/cnc/turning/simulate-toolpath` aceita um program
 ISO ou um plano CAM pertencente ao usuário e retorna payload revisável para UI 2D.
 Validação: 789 Python/9 ignorados, 64 Web, Ruff, mypy em 210 arquivos e diff;
 sem push da Rota SIM 1 ou autoridade física.
+
+## 2026-09-13 — CTO-CODEX-AUTO-116
+
+A branch `codex/v6.0-sim-toolpath-visualizer-foundation` foi publicada em
+`d34cd3d` e o Draft PR #47 aberto contra `main`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-117
+
+O Backend CI do PR #47 foi aprovado em 3m09s. O PR foi retirado de Draft e
+confirmado `OPEN`, `MERGEABLE` e `CLEAN` no commit `d34cd3d`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-118
+
+O PR #47 foi integrado por squash merge em `36c21e7` às 2026-09-13T13:07:37Z.
+A branch remota foi removida e `main` alinhada estritamente com `origin/main`.
+
+## 2026-09-13 — CTO-CODEX-AUTO-119
+
+A branch `codex/v6.1-sim-canvas-toolpath-viewer` foi criada de `36c21e7`.
+O componente Canvas renderiza eixos, stock, zona da placa e segmentos G00/G01,
+com controles Play/Pause/Scrub e banner permanente de auditoria.
+
+## 2026-09-13 — CTO-CODEX-AUTO-120
+
+Três testes novos cobrem payload válido, estado vazio e aviso obrigatório. Gate
+Web: 67 testes, TypeScript e lint aprovados; backend previamente homologado com
+789 Python/9 ignorados, Ruff e mypy. Sem push ou autoridade física.

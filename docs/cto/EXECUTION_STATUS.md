@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-116 a AUTO-120
+
+`SIM_ROTA_2_CANVAS_TOOLPATH_VIEWER_COMPLETED_LOCAL`. O PR #47 foi aprovado no
+Backend CI e integrado por squash em `36c21e7`. A nova branch adiciona visualizador
+Canvas tipado com stock, envelope, zona da placa, G00/G01, Play/Pause/Scrub e aviso
+de auditoria obrigatório. Validação: 67 Web, TypeScript, lint, 789 Python/9
+ignorados, Ruff, mypy em 210 arquivos e diff; sem push ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-111 a AUTO-115
 
 `SIM_ROTA_1_TOOLPATH_VISUALIZER_FOUNDATION_COMPLETED_LOCAL`. O PR #46 foi aprovado
