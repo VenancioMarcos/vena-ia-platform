@@ -45,8 +45,8 @@ class TurningToolParams(_CamContract):
     insert_width_mm: float | None = Field(default=None, gt=0)
     cutting_edge_angle_deg: float = Field(gt=0, lt=180)
     cutting_edge_length_mm: float = Field(gt=0)
-    orientation: ToolOrientation
-    compensation: CompensationType = CompensationType.NONE
+    orientation: ToolOrientation = Field(strict=False)
+    compensation: CompensationType = Field(default=CompensationType.NONE, strict=False)
 
 
 class CuttingParameters(_CamContract):
@@ -69,7 +69,7 @@ class MachiningPass(_CamContract):
 
 
 class TurningStrategyPlanRequest(_CamContract):
-    operation_type: TurningOperationType
+    operation_type: TurningOperationType = Field(strict=False)
     profile_data: tuple[RzPoint, ...] = Field(min_length=2, max_length=10_000)
     bounding_box: TurningBoundingBox
     linear_tolerance_mm: float = Field(gt=0, le=1.0)
@@ -113,3 +113,21 @@ class TurningStrategyPlanResponse(_CamContract):
         ):
             raise ValueError("material removal volume must match the pass estimates")
         return self
+
+
+class TurningPlanGatewayRequest(_CamContract):
+    cad_job_id: str = Field(min_length=1, max_length=255)
+    operation_type: TurningOperationType = Field(strict=False)
+    tool_params: TurningToolParams
+    cutting_params: CuttingParameters
+    linear_tolerance_mm: float = Field(gt=0, le=1.0)
+    material_reference: str = Field(min_length=1, max_length=255)
+    stock_radius_mm: float = Field(gt=0)
+    stock_front_z_mm: float
+    target_front_z_mm: float
+    finish_allowance_mm: float = Field(default=0.0, ge=0, le=5.0)
+
+
+class TurningPlanGatewayResponse(TurningStrategyPlanResponse):
+    plan_id: str = Field(min_length=1, max_length=255)
+    cad_job_id: str = Field(min_length=1, max_length=255)

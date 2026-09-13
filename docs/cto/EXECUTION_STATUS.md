@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-087
+
+`CAM_ROTA_4_E2E_GATEWAY_IN_PROGRESS`. Gateway CAM autenticado integrado ao estado
+process-local de jobs CAD e ao motor determinístico de estratégias. O endpoint
+aceita somente perfil revisável pertencente ao usuário e retorna plano matemático
+com saída executável desativada. Validação: 758 Python, 9 ignorados, 64 Web,
+TypeScript, Next lint, Ruff, mypy e diff aprovados; sem push ou autoridade física.
+
 ## 2026-09-12 — CTO-CODEX-AUTO-084
 
 `CAM_ROTA_3_GROOVING_STRATEGY_PR_OPEN_AWAITING_CI_AND_REVIEW`. AUTO-083 foi
