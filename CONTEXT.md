@@ -29,7 +29,7 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-13
 
-- **Handoff CTO:** `CNC_ROUTE_5_STATIC_SYNTAX_AUDIT_IN_PROGRESS`. O PR #52
+- **Handoff CTO:** `CNC_ROUTE_5_PR_OPEN_AWAITING_CI_AND_REVIEW`. O PR #52
   integrou o hardening de concorrência CAD por squash em `dd950938` após Backend
   CI aprovado. A branch `codex/v6.6-cnc-gcode-syntax-linter` adiciona auditor
   estático de candidatos não executáveis para Fanuc, Siemens e Haas. O gate exige
@@ -37,7 +37,8 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
   valores F/S positivos e ausência de conflitos G00/G01; falhas são estruturadas
   por linha e bloqueadas antes da validação cinemática. Validação: 795 Python,
   9 ignorados, TypeScript, Next lint, Ruff, mypy e diff aprovados. Nenhum programa
-  é enviado ou liberado para uso físico.
+  é enviado ou liberado para uso físico. A branch está pronta para publicação como
+  Draft PR #53; CI remoto, revisão e merge permanecem gates obrigatórios.
 
 - **Handoff CTO:** `CAD_E2E_CONCURRENCY_HARDENING_COMPLETED_LOCAL`.
   O PR documental #51 integrou o marco v0.3.0-sim-rc1 em `1857018`, e a tag

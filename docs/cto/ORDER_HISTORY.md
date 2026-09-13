@@ -1,5 +1,11 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-146
+
+A Rota 5 CNC foi consolidada para publicação upstream a partir de `ba88f3f`.
+O Draft PR #53 deverá preservar o auditor de texto puramente estático e todas as
+salvaguardas não produtivas; CI remoto é obrigatório antes de revisão ou integração.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-141 a AUTO-145
 
 O PR #52 publicou o hardening do E2E CAD, passou no Backend CI em 3m36s, foi

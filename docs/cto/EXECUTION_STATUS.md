@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-146 a AUTO-150
+
+`CNC_ROUTE_5_PR_OPEN_AWAITING_CI_AND_REVIEW`. A Rota 5 está pronta para publicação
+como Draft PR #53 a partir de `ba88f3f`. O linter opera exclusivamente sobre texto,
+mantém a barreira fail-closed e não transmite nem libera programas para máquina.
+O CI remoto deve ser aprovado antes de promover o PR para revisão ou integrá-lo.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-141 a AUTO-145
 
 `CNC_ROUTE_5_STATIC_SYNTAX_AUDIT_IN_PROGRESS`. O PR #52 foi aprovado pelo Backend
