@@ -12,6 +12,7 @@ const payload: ToolpathSimulationPayload = {
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   machine_envelope: { x_min_mm: 0, x_max_mm: 100, z_min_mm: -100, z_max_mm: 100, chuck_exclusion_zone: { x_min_mm: 0, x_max_mm: 100, z_min_mm: 60, z_max_mm: 100 } },
   stock: { diameter_mm: 50, z_min_mm: -80, z_max_mm: 0 },
+  chuck_proximity: { minimum_clearance_mm: 55, threshold_mm: 5, closest_segment_index: 0, warning_code: null },
   segments: [
     { motion_type: "RAPID", x_start_mm: 50, z_start_mm: 5, x_end_mm: 40, z_end_mm: 2, feed: null, active_tool: "T0101" },
     { motion_type: "LINEAR", x_start_mm: 40, z_start_mm: 2, x_end_mm: 36, z_end_mm: -20, feed: 0.2, active_tool: "T0101" },
@@ -35,6 +36,18 @@ test("maps each scrub step to synchronized endpoint telemetry and ISO block", ()
   assert.deepEqual(telemetryAtStep(payload, blocks, 0), { xDiameterMm: 50, zMm: 5, feed: null, activeTool: "T0101", isoBlock: blocks[0] });
   assert.deepEqual(telemetryAtStep(payload, blocks, 1), { xDiameterMm: 40, zMm: 2, feed: null, activeTool: "T0101", isoBlock: blocks[1] });
   assert.deepEqual(telemetryAtStep(payload, blocks, 2), { xDiameterMm: 36, zMm: -20, feed: 0.2, activeTool: "T0101", isoBlock: blocks[2] });
+});
+
+test("renders the critical chuck proximity badge in the HUD", () => {
+  const warningPayload: ToolpathSimulationPayload = {
+    ...payload,
+    chuck_proximity: { minimum_clearance_mm: 4, threshold_mm: 5, closest_segment_index: 1, warning_code: "WARNING_PROXIMITY_CHUCK" },
+  };
+  const html = renderToStaticMarkup(createElement(SimulationWorkspace, { payload: warningPayload, isoBlocks: blocks }));
+
+  assert.match(html, /data-chuck-proximity-alert="true"/);
+  assert.match(html, /WARNING_PROXIMITY_CHUCK/);
+  assert.match(html, /Folga mínima 4.000 mm/);
 });
 
 test("bounds out-of-range scrub steps defensively", () => {

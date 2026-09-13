@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.46
+**Versão:** 2.47
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `SIM_ROTA_4_CHUCK_PROXIMITY_AUDIT_COMPLETED_LOCAL`.
+  O PR #49 publicou a Rota SIM 3, passou no Frontend CI e foi integrado por squash
+  em `59c8a0e`. A branch `codex/v6.3-sim-chuck-proximity-audit` calcula a folga
+  euclidiana mínima entre a trajetória e o contorno da zona da placa, retorna
+  `chuck_proximity` na API e destaca `WARNING_PROXIMITY_CHUCK` no Canvas/HUD para
+  folga inferior a 5,0 mm. Invasões continuam bloqueadas. Validação: 73 Web,
+  TypeScript, lint, 791 Python/9 ignorados, Ruff, mypy em 210 arquivos e diff.
+  Sem push da Rota SIM 4, transmissão, ciclo ou autoridade física.
 
 - **Handoff CTO:** `SIM_ROTA_3_E2E_WORKSPACE_COMPLETED_LOCAL`.
   O PR #48 publicou a Rota SIM 2, passou no Frontend CI e foi integrado por squash

@@ -321,6 +321,13 @@ def test_simulation_endpoint_returns_safe_payload_from_owned_plan(
         assert body["status"] == "SIMULATION_READY_REQUIRES_REVIEW"
         assert body["segments"]
         assert body["segments"][0]["active_tool"] == "T0101"
+        assert body["chuck_proximity"]["minimum_clearance_mm"] >= 0
+        assert body["chuck_proximity"]["threshold_mm"] == 5.0
+        assert body["chuck_proximity"]["closest_segment_index"] >= 0
+        assert body["chuck_proximity"]["warning_code"] in (
+            None,
+            "WARNING_PROXIMITY_CHUCK",
+        )
         assert body["safety_flags"]["machine_send"] is False
         assert body["safety_flags"]["executable_output"] is False
     finally:

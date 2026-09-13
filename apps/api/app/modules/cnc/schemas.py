@@ -204,6 +204,13 @@ class ToolpathSimulationRequest(_CNCGenerationContract):
         return self
 
 
+class ChuckProximityAudit(_CNCGenerationContract):
+    minimum_clearance_mm: float = Field(ge=0)
+    threshold_mm: float = Field(default=5.0, gt=0)
+    closest_segment_index: int = Field(ge=0)
+    warning_code: Literal["WARNING_PROXIMITY_CHUCK"] | None = None
+
+
 class ToolpathSimulationPayload(_CNCGenerationContract):
     status: Literal["SIMULATION_READY_REQUIRES_REVIEW"] = (
         "SIMULATION_READY_REQUIRES_REVIEW"
@@ -213,5 +220,6 @@ class ToolpathSimulationPayload(_CNCGenerationContract):
     segments: tuple[ToolpathSegment2D, ...] = Field(min_length=1)
     machine_envelope: MachineEnvelope2D
     stock: TurningStock2D
+    chuck_proximity: ChuckProximityAudit
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)

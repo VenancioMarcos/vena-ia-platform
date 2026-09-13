@@ -1,5 +1,12 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-126 a AUTO-130
+
+A Rota SIM 3 foi publicada no PR #49, aprovada pelo Frontend CI e integrada por
+squash em `59c8a0e`. A Rota SIM 4 mede a menor distância euclidiana entre cada
+segmento e o contorno da zona da placa, inclui os metadados no endpoint de simulação
+e aciona alerta visual abaixo de 5,0 mm. O pacote foi consolidado localmente sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-121 a AUTO-125
 
 A Rota SIM 2 foi publicada no PR #48, aprovada pelo Frontend CI e integrada por

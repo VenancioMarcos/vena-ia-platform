@@ -40,6 +40,12 @@ export interface ToolpathSimulationPayload {
   segments: readonly ToolpathSegment2D[];
   machine_envelope: MachineEnvelope2D;
   stock: TurningStock2D;
+  chuck_proximity: {
+    minimum_clearance_mm: number;
+    threshold_mm: number;
+    closest_segment_index: number;
+    warning_code: "WARNING_PROXIMITY_CHUCK" | null;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   safety_flags: {
     physical_use_authorized: false;
@@ -140,8 +146,10 @@ function drawToolpath(
   );
 
   const chuck = envelope.chuck_exclusion_zone;
-  context.fillStyle = "rgba(239, 68, 68, 0.28)";
-  context.strokeStyle = "#ef4444";
+  const proximityWarning = payload.chuck_proximity.warning_code === "WARNING_PROXIMITY_CHUCK";
+  context.fillStyle = proximityWarning ? "rgba(239, 68, 68, 0.48)" : "rgba(239, 68, 68, 0.28)";
+  context.strokeStyle = proximityWarning ? "#fca5a5" : "#ef4444";
+  context.lineWidth = proximityWarning ? 4 : 1;
   context.fillRect(
     toCanvasX(chuck.z_min_mm),
     toCanvasY(chuck.x_max_mm),
@@ -183,6 +191,7 @@ export function ToolpathCanvasViewer({
     payload.segments.length,
     Math.max(0, visibleSegmentCount ?? internalVisibleSegments),
   );
+  const proximityWarning = payload.chuck_proximity.warning_code === "WARNING_PROXIMITY_CHUCK";
 
   const updateVisibleSegments = (count: number) => {
     const boundedCount = Math.min(payload.segments.length, Math.max(0, count));
@@ -236,9 +245,10 @@ export function ToolpathCanvasViewer({
             ref={canvasRef}
             width={width}
             height={height}
-            className="h-auto w-full rounded-md border border-slate-800"
+            className={`h-auto w-full rounded-md border border-slate-800 ${proximityWarning ? "animate-pulse ring-2 ring-red-500" : ""}`.trim()}
             aria-label="Trajetória de torneamento em Canvas; eixo Z horizontal e eixo X diâmetro vertical"
             role="img"
+            data-chuck-proximity-warning={proximityWarning ? "true" : "false"}
           />
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <button

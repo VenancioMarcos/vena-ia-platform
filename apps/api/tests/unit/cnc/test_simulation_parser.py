@@ -103,6 +103,43 @@ def test_payload_preserves_visualization_metadata_and_safety_invariants() -> Non
     assert result.coordinate_convention == "LATHE_X_DIAMETER_Z"
     assert result.machine_envelope == _envelope()
     assert result.stock == _stock()
+    assert result.chuck_proximity.minimum_clearance_mm == 48.0
+    assert result.chuck_proximity.threshold_mm == 5.0
+    assert result.chuck_proximity.warning_code is None
     assert result.safety_flags.physical_use_authorized is False
     assert result.safety_flags.machine_send is False
     assert result.safety_flags.executable_output is False
+
+
+def test_emits_deterministic_warning_below_chuck_clearance_threshold() -> None:
+    program = "G00 X40 Z40\nG01 X40 Z46 F0.2"
+
+    first = parse_toolpath_simulation(
+        program,
+        controller_profile=CNCControllerType.FANUC_0I,
+        machine_envelope=_envelope(),
+        stock=_stock(),
+    )
+    second = parse_toolpath_simulation(
+        program,
+        controller_profile=CNCControllerType.FANUC_0I,
+        machine_envelope=_envelope(),
+        stock=_stock(),
+    )
+
+    assert first.chuck_proximity == second.chuck_proximity
+    assert first.chuck_proximity.minimum_clearance_mm == 4.0
+    assert first.chuck_proximity.closest_segment_index == 0
+    assert first.chuck_proximity.warning_code == "WARNING_PROXIMITY_CHUCK"
+
+
+def test_does_not_warn_at_exact_chuck_clearance_threshold() -> None:
+    result = parse_toolpath_simulation(
+        "G00 X40 Z40\nG01 X40 Z45 F0.2",
+        controller_profile=CNCControllerType.FANUC_0I,
+        machine_envelope=_envelope(),
+        stock=_stock(),
+    )
+
+    assert result.chuck_proximity.minimum_clearance_mm == 5.0
+    assert result.chuck_proximity.warning_code is None
