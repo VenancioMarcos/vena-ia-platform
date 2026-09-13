@@ -54,6 +54,13 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
                 f"{validated.surface_roughness_audit.rz_theoretical_um:.9f}",
                 "surface_roughness_compliance="
                 f"{validated.surface_roughness_audit.compliance_tag}",
+                f"cutting_force_nominal_n={validated.power_force_audit.fc_nominal_n:.9f}",
+                f"cutting_power_kw={validated.power_force_audit.pc_cutting_kw:.9f}",
+                f"motor_power_est_kw={validated.power_force_audit.p_motor_est_kw:.9f}",
+                f"material_removal_rate_cm3_min={validated.power_force_audit.mrr_cm3_min:.9f}",
+                f"power_status={validated.power_force_audit.power_status}",
+                "ESTIMATIVA ENERGÉTICA ANALÍTICA DE KIENZLE - NÃO CONSIDERA "
+                "RENDIMENTO DINÂMICO REAL",
             ),
         ),
         _section(

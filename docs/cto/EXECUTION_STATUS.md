@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-189 a AUTO-198
+
+`CNC_KIENZLE_POWER_FORCE_AUDIT_COMPLETED_LOCAL`. O PR #59 teve Backend e Frontend
+CI aprovados e foi integrado por squash em `db1ff2e`; branch remota removida e main
+sincronizada. A Rota 12 adiciona parâmetros tabulados de materiais, cálculo Kienzle
+de força/potência/MRR, limite de máquina, contrato imutável, manifesto/laudo e painel
+Web com alerta visual. Validações disponíveis executadas sem dependências de rede.
+Sem push da Rota 12 ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-179 a AUTO-188
 
 `CNC_THEORETICAL_SURFACE_ROUGHNESS_AUDIT_COMPLETED_LOCAL`. O PR #58 teve Backend e

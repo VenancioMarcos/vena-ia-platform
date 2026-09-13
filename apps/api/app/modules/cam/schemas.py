@@ -127,6 +127,7 @@ class TurningPlanGatewayRequest(_CamContract):
     target_front_z_mm: float
     finish_allowance_mm: float = Field(default=0.0, ge=0, le=5.0)
     nominal_surface_roughness_ra_um: float | None = Field(default=None, gt=0, le=1_000)
+    machine_power_limit_kw: float = Field(default=7.5, gt=0, le=1_000)
 
 
 class TurningPlanGatewayResponse(TurningStrategyPlanResponse):

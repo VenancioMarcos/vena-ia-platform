@@ -96,7 +96,7 @@ def _source(controller=CNCControllerType.FANUC_0I):
         },
         cutting_params={"vc_m_per_min": 180.0, "feed_mm_per_rev": 0.2, "depth_of_cut_mm": 0.5},
         linear_tolerance_mm=0.001,
-        material_reference="synthetic",
+        material_reference="Aço ABNT 1045",
         stock_radius_mm=26.0,
         stock_front_z_mm=2.0,
         target_front_z_mm=0.0,
@@ -155,6 +155,12 @@ def test_complete_report_replays_deterministically(controller):
         report.surface_roughness_audit.compliance_tag
         == "NOMINAL_RA_TOLERANCE_UNAVAILABLE"
     )
+    assert report.power_force_audit.material_profile == "ABNT_1045"
+    assert report.power_force_audit.fc_nominal_n > 0
+    assert report.power_force_audit.pc_cutting_kw > 0
+    assert report.power_force_audit.p_motor_est_kw > report.power_force_audit.pc_cutting_kw
+    assert report.power_force_audit.mrr_cm3_min == pytest.approx(18.0)
+    assert report.power_force_audit.power_status == "POWER_WITHIN_LIMITS"
     assert report.governance_stamp == "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
     assert report.safety_flags == GCodeSafetyFlags()
     assert report.source_plan_name is None
@@ -225,3 +231,9 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert "emission_status=CONTROLLER_PROFILE_UNRESOLVED" in rendered
     assert "executable_output=false" in rendered
     assert "program_text" not in rendered
+    assert "cutting_force_nominal_n=" in rendered
+    assert "power_status=POWER_WITHIN_LIMITS" in rendered
+    assert (
+        "ESTIMATIVA ENERGÉTICA ANALÍTICA DE KIENZLE - NÃO CONSIDERA "
+        "RENDIMENTO DINÂMICO REAL" in rendered
+    )

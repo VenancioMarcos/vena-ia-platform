@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-189 a AUTO-198
+
+O PR #59 publicou a Rota 11, recebeu Backend e Frontend CI verdes e foi integrado
+por squash em `db1ff2e`, com exclusão da branch remota. A Rota 12 implementa a
+formulação Kienzle para AISI 1020, ABNT 1045 e Alumínio 6061-T6, valida parâmetros
+e rotação, calcula Fc/Pc/Pmotor/MRR e propaga o alerta de potência ao relatório,
+exportador textual e viewer. Entrega local sem push e sem autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-179 a AUTO-188
 
 CTO aprovou o Lote 16 com ressalva operacional e autorizou sua validação agregada no
