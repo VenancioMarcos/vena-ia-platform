@@ -42,6 +42,7 @@ class TurningBoundingBox(_CamContract):
 
 class TurningToolParams(_CamContract):
     tip_radius_mm: float = Field(gt=0)
+    insert_width_mm: float | None = Field(default=None, gt=0)
     cutting_edge_angle_deg: float = Field(gt=0, lt=180)
     cutting_edge_length_mm: float = Field(gt=0)
     orientation: ToolOrientation
@@ -99,9 +100,7 @@ class TurningStrategyPlanResponse(_CamContract):
     executable_output: Literal[False] = False
     physical_use_authorized: Literal[False] = False
     g9_status: Literal["PENDING_AUTHORITATIVE_REVIEW"] = "PENDING_AUTHORITATIVE_REVIEW"
-    emission_status: Literal["CONTROLLER_PROFILE_UNRESOLVED"] = (
-        "CONTROLLER_PROFILE_UNRESOLVED"
-    )
+    emission_status: Literal["CONTROLLER_PROFILE_UNRESOLVED"] = "CONTROLLER_PROFILE_UNRESOLVED"
 
     @model_validator(mode="after")
     def validate_volume(self) -> TurningStrategyPlanResponse:

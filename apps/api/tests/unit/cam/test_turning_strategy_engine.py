@@ -27,6 +27,7 @@ def _request(
     finish_allowance_mm: float = 0.0,
     cutting_edge_angle_deg: float = 95.0,
     cutting_edge_length_mm: float = 12.0,
+    insert_width_mm: float | None = None,
 ) -> TurningStrategyPlanRequest:
     return TurningStrategyPlanRequest(
         operation_type=operation_type,
@@ -51,6 +52,7 @@ def _request(
         finish_allowance_mm=finish_allowance_mm,
         tool=TurningToolParams(
             tip_radius_mm=tip_radius_mm,
+            insert_width_mm=insert_width_mm,
             cutting_edge_angle_deg=cutting_edge_angle_deg,
             cutting_edge_length_mm=cutting_edge_length_mm,
             orientation=ToolOrientation.RIGHT_HAND,
@@ -237,8 +239,67 @@ def test_finishing_rejects_insufficient_angle_projected_edge_reach() -> None:
         )
 
 
-def test_grooving_remains_fail_closed() -> None:
-    with pytest.raises(
-        TurningStrategyValidationError, match="OPERATION_NOT_IMPLEMENTED_IN_FOUNDATION"
-    ):
-        plan_turning_strategy(_request(operation_type=TurningOperationType.GROOVING))
+def _groove_profile(width_mm: float) -> tuple[RzPoint, ...]:
+    front = -8.0
+    rear = front - width_mm
+    return (
+        RzPoint(r_mm=0.0, z_mm=0.0),
+        RzPoint(r_mm=10.0, z_mm=0.0),
+        RzPoint(r_mm=10.0, z_mm=front),
+        RzPoint(r_mm=8.0, z_mm=front),
+        RzPoint(r_mm=8.0, z_mm=rear),
+        RzPoint(r_mm=10.0, z_mm=rear),
+        RzPoint(r_mm=10.0, z_mm=-20.0),
+        RzPoint(r_mm=0.0, z_mm=-20.0),
+    )
+
+
+def test_plans_single_groove_plunge_with_relief_retract() -> None:
+    result = plan_turning_strategy(
+        _request(
+            operation_type=TurningOperationType.GROOVING,
+            profile_data=_groove_profile(3.0),
+            insert_width_mm=3.0,
+            depth_of_cut_mm=2.0,
+            tip_radius_mm=0.4,
+        )
+    )
+
+    assert result.operation_type == TurningOperationType.GROOVING
+    assert len(result.passes) == 1
+    assert result.passes[0].coordinates_rz_mm == (
+        RzPoint(r_mm=10.0, z_mm=-9.5),
+        RzPoint(r_mm=8.0, z_mm=-9.5),
+        RzPoint(r_mm=10.0, z_mm=-9.5),
+    )
+    assert math.isclose(result.material_removal_volume_mm3, math.pi * (10**2 - 8**2) * 3)
+
+
+def test_plans_overlapping_stepovers_for_wide_groove_deterministically() -> None:
+    request = _request(
+        operation_type=TurningOperationType.GROOVING,
+        profile_data=_groove_profile(8.0),
+        insert_width_mm=3.0,
+        depth_of_cut_mm=2.0,
+        tip_radius_mm=0.5,
+    )
+
+    result = plan_turning_strategy(request)
+
+    assert result == plan_turning_strategy(request)
+    assert len(result.passes) == 4
+    centers = [item.coordinates_rz_mm[1].z_mm for item in result.passes]
+    assert centers == [-9.5, pytest.approx(-11.1666666667), pytest.approx(-12.8333333333), -14.5]
+    assert all(first - second <= 2.0 for first, second in zip(centers, centers[1:]))
+
+
+def test_grooving_rejects_channel_narrower_than_insert() -> None:
+    with pytest.raises(TurningStrategyValidationError, match="GROOVE_NARROWER_THAN_INSERT"):
+        plan_turning_strategy(
+            _request(
+                operation_type=TurningOperationType.GROOVING,
+                profile_data=_groove_profile(2.5),
+                insert_width_mm=3.0,
+                tip_radius_mm=0.4,
+            )
+        )

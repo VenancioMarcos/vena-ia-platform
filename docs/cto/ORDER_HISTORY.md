@@ -1044,3 +1044,10 @@ O PR #39 foi integrado por squash merge em `4ba57db`; branch remota removida e
 A Rota 2 do CAM implementa acabamento contínuo com compensação analítica do raio
 de ponta, sobremetal e limites geométricos fail-closed. `GROOVING`, pós-processamento,
 G-code e autoridade física permanecem fora do escopo.
+
+## 2026-09-12 — CTO-CODEX-AUTO-083
+
+A Rota 3 do CAM implementa canais analíticos por mergulho radial com recuo de
+alívio e stepovers em Z calculados pela largura e pelo raio de canto da pastilha.
+Canais incompatíveis falham fechado; nenhum push, G-code ou autoridade física foi
+adicionado nesta missão.
