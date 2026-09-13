@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-199 a AUTO-208
+
+`CNC_TAYLOR_TOOL_LIFE_AUDIT_COMPLETED_LOCAL`. O PR #60 teve Backend e Frontend CI
+aprovados e foi integrado por squash em `bc7a582`; branch remota removida e main
+sincronizada. A Rota 13 adiciona estimativa de vida útil de Taylor por ferramenta,
+parâmetros tabulados, consumo pelo tempo efetivo de corte, alerta acima de 80%,
+contrato imutável, laudo e painel Web. Validação: 100 testes CNC, mypy, Ruff,
+TypeScript estrito, 9 testes Web e diff. Sem push da Rota 13 ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-189 a AUTO-198
 
 `CNC_KIENZLE_POWER_FORCE_AUDIT_COMPLETED_LOCAL`. O PR #59 teve Backend e Frontend

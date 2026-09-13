@@ -117,6 +117,22 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "KIENZLE_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_DYNAMIC_EFFICIENCY";
     safety_flags: MachiningReportSafetyFlags;
   };
+  tool_life_audits: readonly {
+    schema_version: "vena-ia.cnc-tool-life-taylor-audit/v1";
+    tool_id: string;
+    tool_material_pair: "CARBIDE_P20_P30_CARBON_STEEL" | "CARBIDE_K10_ALUMINUM_6061_T6";
+    cutting_speed_vc_m_per_min: number;
+    taylor_n: number;
+    taylor_c: number;
+    effective_cutting_time_minutes: number;
+    estimated_tool_life_minutes: number;
+    tool_life_consumed_percent: number;
+    integrity_status: "TOOL_LIFE_SAFE" | "TOOL_LIFE_EXHAUSTED_WARNING";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "TAYLOR_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_THERMAL_AND_LUBRICATION_VARIATION";
+    safety_flags: MachiningReportSafetyFlags;
+  }[];
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -242,6 +258,31 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </dl>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ENERGÉTICA ANALÍTICA DE KIENZLE - NÃO CONSIDERA RENDIMENTO DINÂMICO REAL
+      </p>
+    </section>
+
+    <section aria-labelledby="report-tool-life-heading" className="space-y-3">
+      <h2 id="report-tool-life-heading" className="text-lg font-semibold">Vida útil teórica das ferramentas</h2>
+      <ul className="space-y-3">
+        {report.tool_life_audits.map((audit) => {
+          const safe = audit.integrity_status === "TOOL_LIFE_SAFE";
+          const progress = Math.min(100, Math.max(0, audit.tool_life_consumed_percent));
+          return <li key={audit.tool_id} className="rounded-lg border border-slate-700 bg-slate-950 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-mono text-cyan-100">{audit.tool_id}</span>
+              <span role="status" className={`rounded-full border px-3 py-1 text-xs font-bold ${safe ? "border-emerald-500 text-emerald-100" : "border-red-500 text-red-100"}`}>
+                {safe ? "VIDA ÚTIL SEGURA" : "ALERTA: DESGASTE CRÍTICO"}
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-slate-300">Vida estimada: {audit.estimated_tool_life_minutes.toFixed(2)} min · Consumo: {audit.tool_life_consumed_percent.toFixed(2)}%</p>
+            <div role="progressbar" aria-label={`Consumo de vida útil ${audit.tool_id}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} className="mt-2 h-2 overflow-hidden rounded bg-slate-700">
+              <div className={safe ? "h-full bg-emerald-500" : "h-full bg-red-500"} style={{ width: `${progress}%` }} />
+            </div>
+          </li>;
+        })}
+      </ul>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE TAYLOR - NÃO CONSIDERA FLUTUAÇÕES TÉRMICAS REAIS OU LUBRIFICAÇÃO
       </p>
     </section>
 

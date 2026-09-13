@@ -1,5 +1,14 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-199 a AUTO-208
+
+O PR #60 publicou a Rota 12, recebeu Backend e Frontend CI verdes e foi integrado
+por squash em `bc7a582`, com exclusão da branch remota. A Rota 13 implementa a
+equação de Taylor para pares ferramenta/material tabulados, calcula vida estimada e
+percentual consumido por ferramenta, valida coeficientes e estados contra adulteração
+e propaga o alerta de desgaste ao relatório, exportador textual e viewer. Entrega
+local sem push e sem autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-189 a AUTO-198
 
 O PR #59 publicou a Rota 11, recebeu Backend e Frontend CI verdes e foi integrado

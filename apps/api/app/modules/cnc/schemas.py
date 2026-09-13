@@ -422,6 +422,61 @@ class MachiningPowerForceAuditPayload(_CNCGenerationContract):
         return self
 
 
+class ToolLifeTaylorAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-tool-life-taylor-audit/v1"] = (
+        "vena-ia.cnc-tool-life-taylor-audit/v1"
+    )
+    tool_id: str = Field(min_length=1, max_length=64)
+    tool_material_pair: Literal[
+        "CARBIDE_P20_P30_CARBON_STEEL", "CARBIDE_K10_ALUMINUM_6061_T6"
+    ]
+    cutting_speed_vc_m_per_min: float = Field(gt=0)
+    taylor_n: float = Field(gt=0, lt=1)
+    taylor_c: float = Field(gt=0)
+    effective_cutting_time_minutes: float = Field(ge=0)
+    estimated_tool_life_minutes: float = Field(gt=0)
+    tool_life_consumed_percent: float = Field(ge=0)
+    integrity_status: Literal["TOOL_LIFE_SAFE", "TOOL_LIFE_EXHAUSTED_WARNING"]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "TAYLOR_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_THERMAL_AND_LUBRICATION_VARIATION"
+    ] = "TAYLOR_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_THERMAL_AND_LUBRICATION_VARIATION"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_taylor_model(self) -> "ToolLifeTaylorAuditPayload":
+        expected_profile_parameters = {
+            "CARBIDE_P20_P30_CARBON_STEEL": (0.25, 350.0),
+            "CARBIDE_K10_ALUMINUM_6061_T6": (0.30, 800.0),
+        }[self.tool_material_pair]
+        if (self.taylor_n, self.taylor_c) != expected_profile_parameters:
+            raise ValueError("TAYLOR_PROFILE_PARAMETERS_INCONSISTENT")
+        expected_life = (self.taylor_c / self.cutting_speed_vc_m_per_min) ** (
+            1 / self.taylor_n
+        )
+        expected_consumed = self.effective_cutting_time_minutes / expected_life * 100
+        if not math.isclose(
+            self.estimated_tool_life_minutes, expected_life, abs_tol=5e-9, rel_tol=1e-12
+        ):
+            raise ValueError("TAYLOR_TOOL_LIFE_INCONSISTENT")
+        if not math.isclose(
+            self.tool_life_consumed_percent,
+            expected_consumed,
+            abs_tol=5e-9,
+            rel_tol=1e-12,
+        ):
+            raise ValueError("TAYLOR_CONSUMPTION_INCONSISTENT")
+        expected_status = (
+            "TOOL_LIFE_SAFE"
+            if self.tool_life_consumed_percent <= 80
+            else "TOOL_LIFE_EXHAUSTED_WARNING"
+        )
+        if self.integrity_status != expected_status:
+            raise ValueError("TAYLOR_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -441,6 +496,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     geometry_audit: GeometryDimensionalAuditReport
     surface_roughness_audit: SurfaceRoughnessAuditPayload
     power_force_audit: MachiningPowerForceAuditPayload
+    tool_life_audits: tuple[ToolLifeTaylorAuditPayload, ...] = Field(min_length=1)
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"

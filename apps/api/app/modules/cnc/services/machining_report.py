@@ -27,6 +27,7 @@ from app.modules.cnc.services.power_force_estimator import estimate_cutting_powe
 from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
+from app.modules.cnc.services.tool_life_estimator import estimate_tool_life
 
 
 class MachiningReportError(ValueError):
@@ -130,6 +131,15 @@ def compile_machining_report(
         max_spindle_rpm=request.max_spindle_rpm,
         machine_power_limit_kw=record.request.machine_power_limit_kw,
     )
+    tool_life_audits = tuple(
+        estimate_tool_life(
+            item.tool,
+            record.request.material_reference,
+            cutting_speed_m_per_min=record.request.cutting_params.vc_m_per_min,
+            effective_cutting_time_minutes=item.cutting_time_seconds / 60.0,
+        )
+        for item in estimate.per_tool_breakdown
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -151,6 +161,7 @@ def compile_machining_report(
         geometry_audit=geometry_audit,
         surface_roughness_audit=roughness_audit,
         power_force_audit=power_force_audit,
+        tool_life_audits=tool_life_audits,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -164,6 +175,7 @@ def compile_machining_report(
             "material effects are excluded.",
             "Kienzle force and power values are analytical estimates; real dynamic "
             "efficiency, thermal effects and machine behavior are excluded.",
+            "Taylor tool-life values exclude real thermal fluctuations and lubrication.",
         ),
     )
 

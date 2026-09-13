@@ -116,6 +116,32 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  tool_life_audits: [{
+    schema_version: "vena-ia.cnc-tool-life-taylor-audit/v1",
+    tool_id: "T0101",
+    tool_material_pair: "CARBIDE_P20_P30_CARBON_STEEL",
+    cutting_speed_vc_m_per_min: 180,
+    taylor_n: 0.25,
+    taylor_c: 350,
+    effective_cutting_time_minutes: 2,
+    estimated_tool_life_minutes: 14.2946,
+    tool_life_consumed_percent: 13.9913,
+    integrity_status: "TOOL_LIFE_SAFE",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "TAYLOR_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_THERMAL_AND_LUBRICATION_VARIATION",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  }],
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -215,4 +241,29 @@ test("renders the excessive-power warning badge", () => {
   };
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /ALERTA DE POTÊNCIA EXCESSIVA/);
+});
+
+test("renders Taylor tool-life progress and mandatory note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Vida útil teórica das ferramentas/);
+  assert.match(html, /T0101/);
+  assert.match(html, /VIDA ÚTIL SEGURA/);
+  assert.match(html, /role="progressbar"/);
+  assert.match(html, /13\.99%/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE TAYLOR - NÃO CONSIDERA FLUTUAÇÕES TÉRMICAS REAIS OU LUBRIFICAÇÃO/);
+  assert.doesNotMatch(html, /<button/i);
+});
+
+test("renders critical tool-wear warning", () => {
+  const critical: MachiningTechnicalReportPayload = {
+    ...report,
+    tool_life_audits: [{
+      ...report.tool_life_audits[0],
+      tool_life_consumed_percent: 85,
+      integrity_status: "TOOL_LIFE_EXHAUSTED_WARNING",
+    }],
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: critical }));
+  assert.match(html, /ALERTA: DESGASTE CRÍTICO/);
+  assert.match(html, /aria-valuenow="85"/);
 });
