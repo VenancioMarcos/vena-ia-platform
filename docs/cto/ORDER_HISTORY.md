@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-159 a AUTO-163
+
+CTO aprovou VTP-AUTO-158-BATCH e ordenou publicar/integrar a Rota 7 e criar seu
+visualizador web. PR #55 foi publicado e aprovado pelo Backend CI após correção de
+portabilidade dos testes. Após autorização humana específica, foi integrado por
+squash em `3b6f8e6`, a branch remota foi removida e `main=origin/main`. A Rota web
+foi reancorada sobre a baseline integrada e permanece local, sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-154 a AUTO-158
 
 Após autorização explícita do proprietário, o PR #54 foi integrado em `9d8b2dbe`

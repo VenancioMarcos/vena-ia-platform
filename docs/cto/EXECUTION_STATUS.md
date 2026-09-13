@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-159 a AUTO-163
+
+`CNC_ROUTE_8_WEB_VIEWER_COMPLETED_LOCAL`. Após correção de portabilidade em
+`ef524bb` e Backend CI aprovado em 3m29s, o proprietário autorizou a integração.
+O PR #55 foi integrado por squash em `3b6f8e6`, sua branch remota foi removida e
+`main=origin/main`. A branch web local foi reancorada nessa baseline, espelha o
+relatório e renderiza evidências e flags sem controles físicos; 77 Web e 818 Python
+passaram. A branch web permanece sem push.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-154 a AUTO-158
 
 `CNC_ROUTE_7_MACHINING_REPORT_COMPLETED_LOCAL`. O PR #54 foi integrado por squash

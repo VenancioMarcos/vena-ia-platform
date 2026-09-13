@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.51
+**Versão:** 2.53
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_ROUTE_8_WEB_VIEWER_COMPLETED_LOCAL`. Após autorização
+  explícita do proprietário, o PR #55 foi integrado por squash em `3b6f8e6` e a
+  branch remota da Rota 7 foi removida; `main=origin/main`. A branch local
+  `codex/v6.9-cnc-report-viewer-web` foi reancorada sobre o squash integrado e
+  espelha o schema v1, renderizando métricas, ferramentas, auditoria, limitações e
+  o banner obrigatório sem controles de máquina. Validação homologada: 818 Python,
+  9 ignorados; 77 Web; TypeScript, Next lint, Ruff, mypy e diff aprovados. A branch
+  web permanece sem push.
 
 - **Handoff CTO:** `CNC_ROUTE_7_MACHINING_REPORT_COMPLETED_LOCAL`. O PR #54
   integrou a Rota 6 por squash em `9d8b2dbe`, após Backend e Frontend CI aprovados;
