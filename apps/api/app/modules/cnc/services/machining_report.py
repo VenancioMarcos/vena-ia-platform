@@ -19,6 +19,9 @@ from app.modules.cnc.schemas import (
     ToolpathSimulationRequest,
 )
 from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
+from app.modules.cnc.services.chip_breaking_auditor import (
+    audit_chip_breaking_machinability,
+)
 from app.modules.cnc.services.cost_time_estimator import estimate_machining_cost_time
 from app.modules.cnc.services.geometry_auditor import (
     GeometryDimensionalAuditError,
@@ -280,6 +283,15 @@ def compile_machining_report(
         z_axis_tolerance_um=record.request.linear_tolerance_mm * 1_000.0,
         x_axis_tolerance_um=record.request.linear_tolerance_mm * 1_000.0,
     )
+    chip_breaking_machinability_audit = audit_chip_breaking_machinability(
+        record.request.material_reference,
+        chipbreaker_reference="CNMG_120408_PM_TABULATED",
+        feed_mm_per_rev=record.request.cutting_params.feed_mm_per_rev,
+        depth_of_cut_mm=record.request.cutting_params.depth_of_cut_mm,
+        insert_nose_radius_mm=record.request.tool_params.tip_radius_mm,
+        cutting_edge_angle_deg=record.request.tool_params.cutting_edge_angle_deg,
+        rake_angle_deg=6.0,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -313,6 +325,7 @@ def compile_machining_report(
         part_elastic_deflection_audit=part_elastic_deflection_audit,
         spindle_power_torque_envelope_audit=spindle_power_torque_envelope_audit,
         thermal_expansion_drift_audit=thermal_expansion_drift_audit,
+        chip_breaking_machinability_audit=chip_breaking_machinability_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -346,6 +359,8 @@ def compile_machining_report(
             "and losses caused by machine aging.",
             "Thermal expansion excludes transient local gradients and active internal "
             "cooling compensation.",
+            "Chip formation and breaking are tabulated analytical estimates that exclude "
+            "coolant-pressure dynamics and material microstructure variation.",
         ),
     )
 

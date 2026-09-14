@@ -1,5 +1,22 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-324 a AUTO-329
+
+O `VTP-AUTO-323-BATCH` foi aprovado. A Rota 25 implementou o auditor de
+formação e quebra de cavaco com modelo geométrico h/b, compressão dependente do
+material e ângulo de saída e envelopes PM/PR/PF imutáveis. Manifesto, laudo TEXT
+e painel Web exibem métricas, limites, badge e nota técnica, sem alteração
+automática de parâmetros ou autoridade física. Entrega local pronta para o PR #73.
+
+## 2026-09-14 — CTO-CODEX-AUTO-314 a AUTO-323
+
+O `VTP-AUTO-313-BATCH` foi aprovado. A Rota 24 concluiu o auditor de desgaste
+geométrico, manifesto, TEXT e telemetria Web; o PR #72 foi integrado por squash em
+`2944402` após CI aprovado e a branch remota foi removida. A Rota 25 iniciou um
+contrato Pydantic v2 para formação/quebra de cavaco com razão de compressão,
+comprimento livre e envelope seguro f×ap por quebra-cavaco tabulado. Entrega local
+sem push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-304 a AUTO-313
 
 A Rota 23 foi publicada no PR #71, validada, promovida e integrada por squash em

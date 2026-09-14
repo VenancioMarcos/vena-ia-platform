@@ -23,6 +23,9 @@ from app.modules.cnc.schemas import (
     TurningStock2D,
 )
 from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
+from app.modules.cnc.services.chip_breaking_auditor import (
+    audit_chip_breaking_machinability,
+)
 from app.modules.cnc.services.cost_time_estimator import estimate_machining_cost_time
 from app.modules.cnc.services.machining_report import (
     MachiningReportSource,
@@ -219,6 +222,18 @@ def test_complete_report_replays_deterministically(controller):
     )
     assert report.tool_wear_geometry_audits[0].estimated_flank_wear_vb_mm > 0
     assert report.tool_wear_geometry_audits[0].predicted_radial_deviation_um > 0
+    assert report.chip_breaking_machinability_audit.material_profile == (
+        report.power_force_audit.material_profile
+    )
+    assert report.chip_breaking_machinability_audit.uncut_chip_thickness_mm == pytest.approx(
+        report.power_force_audit.chip_thickness_mm
+    )
+    assert report.chip_breaking_machinability_audit.chip_width_mm == pytest.approx(
+        report.power_force_audit.chip_width_mm
+    )
+    assert report.chip_breaking_machinability_audit.audit_status == (
+        "CHIP_BREAKING_OUTSIDE_TABULATED_SAFE_ENVELOPE_WARNING"
+    )
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -386,6 +401,24 @@ def test_report_rejects_valid_part_deflection_from_another_force_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_chip_breaking_audit_transplanted_from_another_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    body = report.model_dump()
+    transplanted = audit_chip_breaking_machinability(
+        "Aço ABNT 1045",
+        chipbreaker_reference="CNMG_120408_PM_TABULATED",
+        feed_mm_per_rev=0.25,
+        depth_of_cut_mm=report.power_force_audit.depth_of_cut_mm,
+        insert_nose_radius_mm=report.surface_roughness_audit.insert_nose_radius_mm,
+        cutting_edge_angle_deg=report.power_force_audit.cutting_edge_angle_deg,
+        rake_angle_deg=6.0,
+    )
+    body["chip_breaking_machinability_audit"] = transplanted.model_dump()
+    with pytest.raises(ValidationError, match="REPORT_CHIP_BREAKING_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -393,7 +426,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 11
+    assert rendered.count(SAFETY_STAMP) == 12
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -417,6 +450,15 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert (
         "ESTIMATIVA ANALÍTICA DE DESGASTE DE FLANCO - NÃO CONSIDERA LASCAMENTO, "
         "DESGASTE DE CRATERA OU COMPENSAÇÃO ATIVA DE CORRETOR CNC" in rendered
+    )
+    assert "[FORMAÇÃO E QUEBRA DE CAVACO]" in rendered
+    assert "chipbreaker_reference=CNMG_120408_PM_TABULATED" in rendered
+    assert "chip_compression_ratio=2.400000000" in rendered
+    assert "status=CHIP_BREAKING_OUTSIDE_TABULATED_SAFE_ENVELOPE_WARNING" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE FORMAÇÃO E QUEBRA DE CAVACO - NÃO CONSIDERA "
+        "FLUTUAÇÕES DINÂMICAS DE PRESSÃO DE REFRIGERAÇÃO OU VARIAÇÕES "
+        "MICROESTRUTURAIS" in rendered
     )
     assert "ESTIMATIVA ANALÍTICA DE TAYLOR" in rendered
     assert "cost_time: total_minutes=" in rendered

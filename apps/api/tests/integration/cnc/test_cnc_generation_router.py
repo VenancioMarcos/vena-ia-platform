@@ -436,12 +436,19 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 11
+        ) == 12
         assert "[ENVELOPE DE POTÊNCIA E TORQUE DO FUSO]" in response.text
         assert "power_margin_percent=" in response.text
         assert "[EXPANSÃO TÉRMICA E DERIVA DE EIXOS]" in response.text
         assert "[DESGASTE GEOMÉTRICO DA FERRAMENTA]" in response.text
         assert "radial_deviation_um=" in response.text
+        assert "[FORMAÇÃO E QUEBRA DE CAVACO]" in response.text
+        assert "chipbreaker_reference=CNMG_120408_PM_TABULATED" in response.text
+        assert (
+            "ESTIMATIVA ANALÍTICA DE FORMAÇÃO E QUEBRA DE CAVACO - NÃO CONSIDERA "
+            "FLUTUAÇÕES DINÂMICAS DE PRESSÃO DE REFRIGERAÇÃO OU VARIAÇÕES "
+            "MICROESTRUTURAIS" in response.text
+        )
         assert "[FLEXÃO ELÁSTICA DA PEÇA]" in response.text
         assert (
             "ESTIMATIVA ANALÍTICA DE FLEXÃO ELÁSTICA DA PEÇA - NÃO CONSIDERA "

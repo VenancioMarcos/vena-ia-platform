@@ -1722,6 +1722,149 @@ class ToolWearGeometryAuditPayload(_CNCGenerationContract):
         return self
 
 
+class ChipBreakerSafeEnvelope(_CNCGenerationContract):
+    chipbreaker_reference: str = Field(min_length=1, max_length=120)
+    feed_min_mm_per_rev: float = Field(gt=0, le=10)
+    feed_max_mm_per_rev: float = Field(gt=0, le=10)
+    depth_of_cut_min_mm: float = Field(gt=0, le=100)
+    depth_of_cut_max_mm: float = Field(gt=0, le=100)
+
+    @model_validator(mode="after")
+    def validate_ordered_limits(self) -> "ChipBreakerSafeEnvelope":
+        if (
+            self.feed_max_mm_per_rev <= self.feed_min_mm_per_rev
+            or self.depth_of_cut_max_mm <= self.depth_of_cut_min_mm
+        ):
+            raise ValueError("CHIP_BREAKER_SAFE_ENVELOPE_INVALID")
+        return self
+
+
+class ChipBreakingMachinabilityAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-chip-breaking-machinability-audit/v2"] = (
+        "vena-ia.cnc-chip-breaking-machinability-audit/v2"
+    )
+    material_profile: Literal["AISI_1020", "ABNT_1045", "ALUMINUM_6061_T6"]
+    chipbreaker_family: Literal["PM", "PR", "PF"]
+    chipbreaker_reference: str = Field(min_length=1, max_length=120)
+    feed_mm_per_rev: float = Field(gt=0, le=10)
+    depth_of_cut_mm: float = Field(gt=0, le=100)
+    insert_nose_radius_mm: float = Field(gt=0, le=20)
+    cutting_edge_angle_deg: float = Field(gt=0, lt=180)
+    rake_angle_deg: float = Field(ge=-20, le=40)
+    uncut_chip_thickness_mm: float = Field(gt=0, le=10)
+    chip_width_mm: float = Field(gt=0, le=1_000)
+    formed_chip_thickness_mm: float = Field(gt=0, le=100)
+    chip_compression_ratio: float = Field(ge=1, le=100)
+    free_chip_length_mm: float = Field(gt=0, le=10_000)
+    safe_breaking_envelopes: tuple[ChipBreakerSafeEnvelope, ...] = Field(
+        min_length=1
+    )
+    audit_status: Literal[
+        "CHIP_BREAKING_WITHIN_TABULATED_SAFE_ENVELOPE",
+        "CHIP_BREAKING_OUTSIDE_TABULATED_SAFE_ENVELOPE_WARNING",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    automatic_parameter_change_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "TABULATED_CHIP_BREAKING_ENVELOPE_REQUIRES_PHYSICAL_PROCESS_VALIDATION"
+    ] = "TABULATED_CHIP_BREAKING_ENVELOPE_REQUIRES_PHYSICAL_PROCESS_VALIDATION"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_chip_breaking_snapshot(self) -> "ChipBreakingMachinabilityAuditPayload":
+        sin_kr = math.sin(math.radians(self.cutting_edge_angle_deg))
+        if not math.isfinite(sin_kr) or sin_kr <= 0:
+            raise ValueError("CHIP_BREAKING_CUTTING_EDGE_ANGLE_INVALID")
+        expected_uncut_thickness = self.feed_mm_per_rev * sin_kr
+        expected_width = self.depth_of_cut_mm / sin_kr
+        base_compression_ratio = {
+            "AISI_1020": 2.2,
+            "ABNT_1045": 2.4,
+            "ALUMINUM_6061_T6": 1.8,
+        }[self.material_profile]
+        expected_ratio = max(
+            1.0,
+            base_compression_ratio - 0.02 * (self.rake_angle_deg - 6.0),
+        )
+        expected_formed_thickness = expected_uncut_thickness * expected_ratio
+        expected_free_chip_length = 2.0 * math.pi * (
+            self.insert_nose_radius_mm + expected_formed_thickness
+        )
+        comparisons = (
+            (
+                self.uncut_chip_thickness_mm,
+                expected_uncut_thickness,
+                "CHIP_BREAKING_UNCUT_THICKNESS_INCONSISTENT",
+            ),
+            (self.chip_width_mm, expected_width, "CHIP_BREAKING_WIDTH_INCONSISTENT"),
+            (
+                self.chip_compression_ratio,
+                expected_ratio,
+                "CHIP_COMPRESSION_RATIO_INCONSISTENT",
+            ),
+            (
+                self.formed_chip_thickness_mm,
+                expected_formed_thickness,
+                "CHIP_BREAKING_FORMED_THICKNESS_INCONSISTENT",
+            ),
+            (
+                self.free_chip_length_mm,
+                expected_free_chip_length,
+                "CHIP_BREAKING_FREE_LENGTH_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        references = [item.chipbreaker_reference for item in self.safe_breaking_envelopes]
+        if len(references) != len(set(references)):
+            raise ValueError("CHIP_BREAKER_SAFE_ENVELOPE_DUPLICATE")
+        expected_envelopes = {
+            "CNMG_120408_PM_TABULATED": (0.15, 0.40, 1.0, 4.0),
+            "CNMG_120408_PR_TABULATED": (0.25, 0.60, 2.0, 6.0),
+            "CNMG_120408_PF_TABULATED": (0.05, 0.20, 0.2, 2.0),
+        }
+        if set(references) != set(expected_envelopes):
+            raise ValueError("CHIP_BREAKER_SAFE_ENVELOPE_TABLE_INCONSISTENT")
+        for item in self.safe_breaking_envelopes:
+            actual_limits = (
+                item.feed_min_mm_per_rev,
+                item.feed_max_mm_per_rev,
+                item.depth_of_cut_min_mm,
+                item.depth_of_cut_max_mm,
+            )
+            if actual_limits != expected_envelopes[item.chipbreaker_reference]:
+                raise ValueError("CHIP_BREAKER_SAFE_ENVELOPE_TABLE_INCONSISTENT")
+        selected = [
+            item
+            for item in self.safe_breaking_envelopes
+            if item.chipbreaker_reference == self.chipbreaker_reference
+        ]
+        if len(selected) != 1:
+            raise ValueError("CHIP_BREAKER_SAFE_ENVELOPE_REFERENCE_UNRESOLVED")
+        envelope = selected[0]
+        expected_family = envelope.chipbreaker_reference.rsplit("_", 2)[-2]
+        if self.chipbreaker_family != expected_family:
+            raise ValueError("CHIP_BREAKER_FAMILY_INCONSISTENT")
+        inside_envelope = (
+            envelope.feed_min_mm_per_rev
+            <= self.feed_mm_per_rev
+            <= envelope.feed_max_mm_per_rev
+            and envelope.depth_of_cut_min_mm
+            <= self.depth_of_cut_mm
+            <= envelope.depth_of_cut_max_mm
+        )
+        expected_status = (
+            "CHIP_BREAKING_WITHIN_TABULATED_SAFE_ENVELOPE"
+            if inside_envelope
+            else "CHIP_BREAKING_OUTSIDE_TABULATED_SAFE_ENVELOPE_WARNING"
+        )
+        if self.audit_status != expected_status:
+            raise ValueError("CHIP_BREAKING_AUDIT_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -1755,6 +1898,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     part_elastic_deflection_audit: PartElasticDeflectionAuditPayload
     spindle_power_torque_envelope_audit: SpindlePowerTorqueEnvelopeAuditPayload
     thermal_expansion_drift_audit: ThermalExpansionDriftAuditPayload
+    chip_breaking_machinability_audit: ChipBreakingMachinabilityAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -1994,4 +2138,23 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
         thermal = self.thermal_expansion_drift_audit
         if thermal.material_profile != self.power_force_audit.material_profile:
             raise ValueError("REPORT_THERMAL_DRIFT_SOURCE_INCONSISTENT")
+        chip_breaking = self.chip_breaking_machinability_audit
+        chip_breaking_sources = (
+            (chip_breaking.feed_mm_per_rev, self.power_force_audit.feed_mm_per_rev),
+            (chip_breaking.depth_of_cut_mm, self.power_force_audit.depth_of_cut_mm),
+            (
+                chip_breaking.cutting_edge_angle_deg,
+                self.power_force_audit.cutting_edge_angle_deg,
+            ),
+            (
+                chip_breaking.uncut_chip_thickness_mm,
+                self.power_force_audit.chip_thickness_mm,
+            ),
+            (chip_breaking.chip_width_mm, self.power_force_audit.chip_width_mm),
+        )
+        if chip_breaking.material_profile != self.power_force_audit.material_profile or any(
+            not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12)
+            for actual, expected in chip_breaking_sources
+        ):
+            raise ValueError("REPORT_CHIP_BREAKING_SOURCE_INCONSISTENT")
         return self
