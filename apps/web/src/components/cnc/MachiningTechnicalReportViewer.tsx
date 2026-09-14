@@ -371,6 +371,33 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_PART_DEFLECTION_EXCLUDES_TAILSTOCK_AND_STEADY_REST_SUPPORT";
     safety_flags: MachiningReportSafetyFlags;
   };
+  spindle_power_torque_envelope_audit: {
+    schema_version: "vena-ia.cnc-spindle-power-torque-envelope-audit/v2";
+    source_power_force_audit?: MachiningTechnicalReportPayload["power_force_audit"];
+    spindle_rpm_min: number;
+    spindle_rpm_max: number;
+    curve_points: readonly {
+      spindle_rpm: number;
+      available_torque_nm: number;
+      available_power_kw: number;
+    }[];
+    operating_points: readonly {
+      spindle_rpm: number;
+      required_cutting_power_kw: number;
+      required_torque_nm: number;
+      available_power_kw: number;
+      available_torque_nm: number;
+      power_margin_kw: number;
+      power_margin_percent: number;
+      torque_margin_nm: number;
+      status: "WITHIN_POWER_TORQUE_ENVELOPE" | "POWER_TORQUE_ENVELOPE_EXCEEDED";
+    }[];
+    audit_status: "POWER_TORQUE_ENVELOPE_COMPLIANT" | "POWER_TORQUE_ENVELOPE_EXCEEDED_WARNING";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "DECLARED_SPINDLE_POWER_TORQUE_CURVE_REQUIRES_MACHINE_PROFILE_VALIDATION";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -404,6 +431,9 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const residualCompliant = report.residual_stock_audit.status === "UNIFORM_ALLOWANCE_COMPLIANT";
   const gougingDetected = report.residual_stock_audit.status === "CRITICAL_GOUGING_VIOLATION";
   const partRigidityCompliant = report.part_elastic_deflection_audit.deflection_status === "ELASTIC_DEFLECTION_COMPLIANT";
+  const spindleEnvelopeCompliant = report.spindle_power_torque_envelope_audit.audit_status === "POWER_TORQUE_ENVELOPE_COMPLIANT";
+  const spindleOperatingPoint = report.spindle_power_torque_envelope_audit.operating_points[0];
+  const spindleReserve = Math.min(100, Math.max(0, spindleOperatingPoint.power_margin_percent));
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -740,6 +770,35 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       <p className="font-mono text-xs text-slate-300">{report.part_elastic_deflection_audit.deflection_status}</p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE FLEXÃO ELÁSTICA DA PEÇA - NÃO CONSIDERA CONTAPONTO OU LUNETA DE APOIO
+      </p>
+    </section>
+
+    <section aria-labelledby="report-spindle-envelope-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-spindle-envelope-heading" className="text-lg font-semibold">Envelope de potência e torque do fuso</h2>
+        <span role={spindleEnvelopeCompliant ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${spindleEnvelopeCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {spindleEnvelopeCompliant ? "ENVELOPE DO FUSO CONFORME" : "ALERTA: SOBRECARGA DE TORQUE/POTÊNCIA"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <Metric label="RPM de corte" value={`${spindleOperatingPoint.spindle_rpm.toFixed(1)} rpm`} />
+        <Metric label="Torque requerido" value={`${spindleOperatingPoint.required_torque_nm.toFixed(3)} N.m`} />
+        <Metric label="Torque disponível" value={`${spindleOperatingPoint.available_torque_nm.toFixed(3)} N.m`} />
+        <Metric label="Potência requerida" value={`${spindleOperatingPoint.required_cutting_power_kw.toFixed(3)} kW`} />
+        <Metric label="Potência disponível" value={`${spindleOperatingPoint.available_power_kw.toFixed(3)} kW`} />
+      </dl>
+      <div className="rounded-lg border border-slate-700 bg-slate-950 p-3">
+        <div className="flex items-center justify-between gap-2 text-sm">
+          <span>Margem de Reserva do Motor</span>
+          <span className="font-mono">{spindleOperatingPoint.power_margin_percent.toFixed(2)}%</span>
+        </div>
+        <div role="progressbar" aria-label="Margem de Reserva do Motor" aria-valuemin={0} aria-valuemax={100} aria-valuenow={spindleReserve} className="mt-2 h-2 overflow-hidden rounded bg-slate-700">
+          <div className={spindleEnvelopeCompliant ? "h-full bg-emerald-500" : "h-full bg-red-500"} style={{ width: `${spindleReserve}%` }} />
+        </div>
+      </div>
+      <p className="font-mono text-xs text-slate-300">{report.spindle_power_torque_envelope_audit.audit_status}</p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE POTÊNCIA E TORQUE DO FUSO - NÃO CONSIDERA DERATING TÉRMICO CONTÍNUO S1/S6 OU PERDAS POR ENVELHECIMENTO
       </p>
     </section>
 

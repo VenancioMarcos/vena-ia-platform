@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.66
+**Versão:** 2.68
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,27 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_SPINDLE_POWER_TORQUE_ENVELOPE_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou o `VTP-AUTO-293-BATCH`. A Rota 22 agora interpola uma curva declarada
+  de fuso em regimes de torque constante e potência constante, calcula margens de
+  reserva contra a potência Kienzle e falha fechado fora da faixa ou diante de
+  valores não finitos. O manifesto v1, laudo TEXT e viewer Web incorporam torque,
+  potência, RPM, margem, badges e o aviso obrigatório de derating S1/S6. Validação:
+  224 testes CNC, 41 focados, 24 Web, Ruff, mypy em 209 fontes, TypeScript, Next lint
+  e `git diff --check`; branch local sem push e sem autoridade física.
+
+- **Handoff CTO:** `CNC_POWER_TORQUE_ENVELOPE_CONTRACT_V2_SCAFFOLDED_LOCAL`.
+  O CTO aprovou explicitamente o `VTP-AUTO-288-BATCH`. O PR #69 integrou a Rota 21
+  por squash em `35b867f`; Backend e Frontend CI foram aprovados, a branch remota
+  foi removida e `main=origin/main`. A branch local
+  `codex/v8.3-cnc-power-torque-envelope-auditor` inicia o contrato Pydantic v2 para
+  curvas declaradas de potência/torque do fuso. O contrato exige RPM crescente,
+  confere `P=T·2π·rpm/60000`, interpola torque disponível, calcula margens, vincula
+  potência requerida ao snapshot Kienzle e rejeita pontos fora da curva, fontes
+  transplantadas ou status adulterado. Validação: 216 testes CNC, 5 testes focados,
+  Ruff, mypy em 208 fontes, TypeScript, Next lint e `git diff --check`. Entrega
+  local sem push e sem autoridade física.
 
 - **Handoff CTO:** `CNC_PART_ELASTIC_DEFLECTION_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou explicitamente o `VTP-AUTO-278-BATCH`. O PR #68 integrou a Rota 20

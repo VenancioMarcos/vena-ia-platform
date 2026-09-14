@@ -210,6 +210,31 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "ENVELOPE DE POTÊNCIA E TORQUE DO FUSO",
+            (
+                f"status={validated.spindle_power_torque_envelope_audit.audit_status}",
+                "spindle_rpm_min="
+                f"{validated.spindle_power_torque_envelope_audit.spindle_rpm_min:.9f}",
+                "spindle_rpm_max="
+                f"{validated.spindle_power_torque_envelope_audit.spindle_rpm_max:.9f}",
+                *(
+                    f"operating_point[{index}]: spindle_rpm={item.spindle_rpm:.9f}; "
+                    f"required_torque_nm={item.required_torque_nm:.9f}; "
+                    f"available_torque_nm={item.available_torque_nm:.9f}; "
+                    f"required_power_kw={item.required_cutting_power_kw:.9f}; "
+                    f"available_power_kw={item.available_power_kw:.9f}; "
+                    f"power_margin_percent={item.power_margin_percent:.9f}; "
+                    f"status={item.status}"
+                    for index, item in enumerate(
+                        validated.spindle_power_torque_envelope_audit.operating_points,
+                        start=1,
+                    )
+                ),
+                "ESTIMATIVA ANALÍTICA DE POTÊNCIA E TORQUE DO FUSO - NÃO CONSIDERA "
+                "DERATING TÉRMICO CONTÍNUO S1/S6 OU PERDAS POR ENVELHECIMENTO",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

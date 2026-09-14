@@ -199,6 +199,15 @@ def test_complete_report_replays_deterministically(controller):
     assert report.part_elastic_deflection_audit.deflection_status == (
         "ELASTIC_DEFLECTION_COMPLIANT"
     )
+    assert report.spindle_power_torque_envelope_audit.audit_status == (
+        "POWER_TORQUE_ENVELOPE_COMPLIANT"
+    )
+    assert report.spindle_power_torque_envelope_audit.source_power_force_audit == (
+        report.power_force_audit
+    )
+    assert report.spindle_power_torque_envelope_audit.operating_points[0].spindle_rpm == (
+        report.power_force_audit.spindle_rpm_reference
+    )
     assert report.tool_life_audits[0].tool_id == report.tools[0].tool_id
     assert report.tool_life_audits[0].estimated_tool_life_minutes > 0
     assert report.tool_life_audits[0].tool_life_consumed_percent > 0
@@ -376,8 +385,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 8
-    assert rendered.count("[") == 18
+    assert rendered.count(SAFETY_STAMP) == 9
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -427,4 +435,11 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert (
         "ESTIMATIVA ANALÍTICA DE FLEXÃO ELÁSTICA DA PEÇA - NÃO CONSIDERA "
         "CONTAPONTO OU LUNETA DE APOIO" in rendered
+    )
+    assert "[ENVELOPE DE POTÊNCIA E TORQUE DO FUSO]" in rendered
+    assert "power_margin_percent=" in rendered
+    assert "status=POWER_TORQUE_ENVELOPE_COMPLIANT" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE POTÊNCIA E TORQUE DO FUSO - NÃO CONSIDERA "
+        "DERATING TÉRMICO CONTÍNUO S1/S6 OU PERDAS POR ENVELHECIMENTO" in rendered
     )

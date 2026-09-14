@@ -1,5 +1,26 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-294 a AUTO-299
+
+`CNC_SPINDLE_POWER_TORQUE_ENVELOPE_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-293-BATCH`. A Rota 22 interpola a curva declarada do fuso, confere demanda
+Kienzle, calcula margens absoluta e percentual e emite warning diante de sobrecarga.
+Manifesto, TEXT e Web expõem RPM, potência, torque, reserva e ressalva S1/S6, sem
+controles físicos. Validação: 224 CNC, 41 focados, 24 Web, Ruff, mypy em 209 fontes,
+TypeScript, Next lint e diff aprovados. Publicação no PR #70 é a próxima etapa.
+
+## 2026-09-14 — CTO-CODEX-AUTO-289 a AUTO-293
+
+`CNC_POWER_TORQUE_ENVELOPE_CONTRACT_V2_SCAFFOLDED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-288-BATCH`; o PR #69 teve Backend CI em 3m45s e Frontend CI em 1m18s e
+foi integrado por squash em `35b867f`, com branch remota removida e main
+sincronizada. A branch v8.3 inicia o contrato Pydantic v2 para envelope declarado
+de torque/potência do fuso: RPM crescente, identidade potência/torque, interpolação,
+margens, faixa operacional e origem Kienzle são revalidadas; qualquer inconsistência
+falha fechado. Entrega local, sem push ou autoridade física. Validação: 216 testes
+CNC, 5 testes focados, Ruff, mypy em 208 fontes, TypeScript, Next lint e diff
+aprovados.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-279 a AUTO-288
 
 `CNC_PART_ELASTIC_DEFLECTION_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
