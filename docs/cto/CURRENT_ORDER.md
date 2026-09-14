@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
 **Missão:** CTO-CODEX-AUTO-360 a AUTO-369
-**Estado:** CNC_SPINDLE_HARMONIC_DYNAMICS_AUDITOR_COMPLETED_LOCAL
+**Estado:** CNC_SPINDLE_HARMONIC_DYNAMICS_PR_DRAFT_READY
 **Data:** 2026-09-14
 **Branch:** `codex/v9.1-cnc-harmonic-spindle-critical-speed-auditor`
 **Baseline da branch:** `f41f37f94fee2b08923248754a00062f4ec16975`
@@ -17,12 +17,13 @@ painel Web exibem a telemetria e alertas, recalculam as fontes e preservam todos
 bloqueios físicos.
 
 Validação local concluída: 330 testes CNC, 38 testes Web, Ruff, mypy em 235
-fontes, TypeScript estrito, Next lint e `git diff --check`.
+fontes, TypeScript estrito, Next lint e `git diff --check`. A branch foi publicada
+no Draft PR #78; Frontend CI passou em 1m19s e Backend CI em 3m58s.
 
 ## Continuidade
 
-Consolidar a validação, publicar a branch, abrir o Draft PR #78, monitorar o CI e
-emitir `VTP-AUTO-369-BATCH`. Nenhum merge do PR #78 está autorizado nesta missão.
+Emitir `VTP-AUTO-369-BATCH`, solicitar parecer do CTO e aguardar a próxima ordem.
+O PR #78 deve permanecer em rascunho e sem merge.
 
 ## Limites permanentes
 

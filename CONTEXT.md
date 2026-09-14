@@ -29,16 +29,17 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ### 3.1 Síntese vigente — 2026-09-14
 
-- **Handoff CTO:** `CNC_SPINDLE_HARMONIC_DYNAMICS_AUDITOR_COMPLETED_LOCAL`.
+- **Handoff CTO:** `CNC_SPINDLE_HARMONIC_DYNAMICS_PR_DRAFT_READY`.
   O `VTP-AUTO-359-BATCH` foi aprovado e o PR #77 foi integrado por squash em
   `f41f37f`, com branch remota removida e `main=origin/main`. A branch
   `codex/v9.1-cnc-harmonic-spindle-critical-speed-auditor` implementa a Rota 29:
   modelo Jeffcott/Rayleigh simplificado para frequência natural e RPM crítica,
   faixa de exclusão de ±15% e força residual `m·e·ω²`. Contrato, JSON, TEXT e Web
   recalculam fontes e derivados, exibem telemetria, zona de exclusão e alertas e
-  preservam revisão humana e todos os bloqueios físicos. A publicação no Draft PR
-  #78 ocorrerá após a validação local. Validação: 330 testes CNC, 38 Web, Ruff,
-  mypy em 235 fontes, TypeScript, Next lint e `git diff --check`.
+  preservam revisão humana e todos os bloqueios físicos. Validação: 330 testes
+  CNC, 38 Web, Ruff, mypy em 235 fontes, TypeScript, Next lint e diff. A branch
+  foi publicada no Draft PR #78; Frontend CI passou em 1m19s e Backend CI em
+  3m58s. O PR permanece aberto, em rascunho e sem merge.
 
 - **Handoff CTO:** `CNC_TAILSTOCK_THRUST_DEFLECTION_PR_DRAFT_READY`.
   A Rota 28 foi publicada no Draft PR #77 a partir do commit `d659587`. O
