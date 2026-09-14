@@ -527,6 +527,42 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  spindle_power_torque_envelope_audit: {
+    schema_version: "vena-ia.cnc-spindle-power-torque-envelope-audit/v2",
+    spindle_rpm_min: 150,
+    spindle_rpm_max: 3000,
+    curve_points: [
+      { spindle_rpm: 150, available_torque_nm: 47.746482928, available_power_kw: 0.75 },
+      { spindle_rpm: 1500, available_torque_nm: 47.746482928, available_power_kw: 7.5 },
+      { spindle_rpm: 3000, available_torque_nm: 23.873241464, available_power_kw: 7.5 },
+    ],
+    operating_points: [{
+      spindle_rpm: 1500,
+      required_cutting_power_kw: 3.42375,
+      required_torque_nm: 21.796043104,
+      available_power_kw: 7.5,
+      available_torque_nm: 47.746482928,
+      power_margin_kw: 4.07625,
+      power_margin_percent: 54.35,
+      torque_margin_nm: 25.950439824,
+      status: "WITHIN_POWER_TORQUE_ENVELOPE",
+    }],
+    audit_status: "POWER_TORQUE_ENVELOPE_COMPLIANT",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "DECLARED_SPINDLE_POWER_TORQUE_CURVE_REQUIRES_MACHINE_PROFILE_VALIDATION",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -842,6 +878,43 @@ test("renders excessive part-deflection warning without physical controls", () =
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: DEFLEXÃO EXCESSIVA DA PEÇA/);
   assert.match(html, /25\.000 µm/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
+});
+
+test("renders spindle envelope telemetry, reserve margin, and mandatory note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Envelope de potência e torque do fuso/);
+  assert.match(html, /1500\.0 rpm/);
+  assert.match(html, /21\.796 N\.m/);
+  assert.match(html, /47\.746 N\.m/);
+  assert.match(html, /3\.424 kW/);
+  assert.match(html, /7\.500 kW/);
+  assert.match(html, /54\.35%/);
+  assert.match(html, /ENVELOPE DO FUSO CONFORME/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE POTÊNCIA E TORQUE DO FUSO - NÃO CONSIDERA DERATING TÉRMICO CONTÍNUO S1\/S6 OU PERDAS POR ENVELHECIMENTO/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
+});
+
+test("renders spindle overload warning without physical controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    spindle_power_torque_envelope_audit: {
+      ...report.spindle_power_torque_envelope_audit,
+      operating_points: [{
+        ...report.spindle_power_torque_envelope_audit.operating_points[0],
+        available_power_kw: 2,
+        available_torque_nm: 12.732395447,
+        power_margin_kw: -1.42375,
+        power_margin_percent: -71.1875,
+        torque_margin_nm: -9.063647657,
+        status: "POWER_TORQUE_ENVELOPE_EXCEEDED",
+      }],
+      audit_status: "POWER_TORQUE_ENVELOPE_EXCEEDED_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: SOBRECARGA DE TORQUE\/POTÊNCIA/);
+  assert.match(html, /-71\.19%/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
 });
 

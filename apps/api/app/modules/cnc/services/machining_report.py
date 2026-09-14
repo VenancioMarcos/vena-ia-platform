@@ -37,6 +37,10 @@ from app.modules.cnc.services.risk_matrix_evaluator import evaluate_operational_
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
 from app.modules.cnc.services.sustainability_estimator import estimate_sustainability
 from app.modules.cnc.services.stability_auditor import audit_machining_stability
+from app.modules.cnc.services.spindle_envelope_auditor import (
+    audit_spindle_power_torque_envelope,
+    declared_spindle_curve,
+)
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 from app.modules.cnc.services.tool_life_estimator import estimate_tool_life
 
@@ -250,6 +254,10 @@ def compile_machining_report(
         young_modulus_mpa=material_young_modulus_mpa(power_force_audit.material_profile),
         radial_tolerance_mm=0.02,
     )
+    spindle_power_torque_envelope_audit = audit_spindle_power_torque_envelope(
+        power_force_audit,
+        declared_spindle_curve(power_force_audit),
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -280,6 +288,7 @@ def compile_machining_report(
         process_sheet=process_sheet,
         residual_stock_audit=residual_stock_audit,
         part_elastic_deflection_audit=part_elastic_deflection_audit,
+        spindle_power_torque_envelope_audit=spindle_power_torque_envelope_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -307,6 +316,8 @@ def compile_machining_report(
             "measurement.",
             "Part elastic deflection models the full nominal length as an unsupported "
             "cantilever and excludes tailstock or steady-rest support.",
+            "The declared spindle envelope excludes continuous S1/S6 thermal derating "
+            "and losses caused by machine aging.",
         ),
     )
 

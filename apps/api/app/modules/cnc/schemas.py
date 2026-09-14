@@ -1394,6 +1394,7 @@ class SpindlePowerTorqueOperatingPoint(_CNCGenerationContract):
     available_power_kw: float = Field(gt=0)
     available_torque_nm: float = Field(gt=0)
     power_margin_kw: float
+    power_margin_percent: float
     torque_margin_nm: float
     status: Literal[
         "WITHIN_POWER_TORQUE_ENVELOPE",
@@ -1420,6 +1421,12 @@ class SpindlePowerTorqueOperatingPoint(_CNCGenerationContract):
                 self.power_margin_kw,
                 self.available_power_kw - self.required_cutting_power_kw,
                 "SPINDLE_POWER_MARGIN_INCONSISTENT",
+            ),
+            (
+                self.power_margin_percent,
+                ((self.available_power_kw - self.required_cutting_power_kw) / self.available_power_kw)
+                * 100.0,
+                "SPINDLE_POWER_MARGIN_PERCENT_INCONSISTENT",
             ),
             (
                 self.torque_margin_nm,
@@ -1564,6 +1571,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     process_sheet: MachiningProcessSheetPayload
     residual_stock_audit: MachiningResidualStockAuditPayload
     part_elastic_deflection_audit: PartElasticDeflectionAuditPayload
+    spindle_power_torque_envelope_audit: SpindlePowerTorqueEnvelopeAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -1777,4 +1785,14 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             for actual, expected in deflection_sources
         ):
             raise ValueError("REPORT_PART_DEFLECTION_SOURCE_INCONSISTENT")
+        spindle = self.spindle_power_torque_envelope_audit
+        if spindle.source_power_force_audit != self.power_force_audit or not any(
+            math.isclose(
+                point.spindle_rpm,
+                self.power_force_audit.spindle_rpm_reference,
+                abs_tol=5e-9,
+            )
+            for point in spindle.operating_points
+        ):
+            raise ValueError("REPORT_SPINDLE_ENVELOPE_SOURCE_INCONSISTENT")
         return self

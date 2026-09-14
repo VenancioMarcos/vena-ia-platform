@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.67
+**Versão:** 2.68
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_SPINDLE_POWER_TORQUE_ENVELOPE_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou o `VTP-AUTO-293-BATCH`. A Rota 22 agora interpola uma curva declarada
+  de fuso em regimes de torque constante e potência constante, calcula margens de
+  reserva contra a potência Kienzle e falha fechado fora da faixa ou diante de
+  valores não finitos. O manifesto v1, laudo TEXT e viewer Web incorporam torque,
+  potência, RPM, margem, badges e o aviso obrigatório de derating S1/S6. Validação:
+  224 testes CNC, 41 focados, 24 Web, Ruff, mypy em 209 fontes, TypeScript, Next lint
+  e `git diff --check`; branch local sem push e sem autoridade física.
 
 - **Handoff CTO:** `CNC_POWER_TORQUE_ENVELOPE_CONTRACT_V2_SCAFFOLDED_LOCAL`.
   O CTO aprovou explicitamente o `VTP-AUTO-288-BATCH`. O PR #69 integrou a Rota 21

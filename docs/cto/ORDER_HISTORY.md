@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-294 a AUTO-299
+
+O `VTP-AUTO-293-BATCH` foi aprovado. O serviço de envelope da Rota 22 foi concluído
+com curva declarada de torque/potência, interpolação determinística, margens de
+reserva e validação cruzada Kienzle. O manifesto, laudo TEXT e viewer Web exibem a
+telemetria e o aviso de derating S1/S6 sem qualquer controle físico. A branch está
+pronta para publicação e abertura do PR #70.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-289 a AUTO-293
 
 O CTO aprovou o `VTP-AUTO-288-BATCH`. O PR #69 publicou a Rota 21, recebeu Backend

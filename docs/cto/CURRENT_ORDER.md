@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-289 a AUTO-293
-**Estado:** CNC_POWER_TORQUE_ENVELOPE_CONTRACT_V2_SCAFFOLDED_LOCAL
+**Missão:** CTO-CODEX-AUTO-294 a AUTO-303
+**Estado:** CNC_SPINDLE_POWER_TORQUE_ENVELOPE_AUDITOR_COMPLETED_LOCAL
 **Data:** 2026-09-14
 **Branch:** `codex/v8.3-cnc-power-torque-envelope-auditor`
 **Baseline da branch:** `35b867f4833574fa4355aad08b2ade17f56c1043`
@@ -9,17 +9,15 @@
 
 ## Estado vigente
 
-O CTO aprovou explicitamente o `VTP-AUTO-288-BATCH`. O PR #69 publicou a Rota 21,
-teve Backend e Frontend CI aprovados e foi integrado por squash em `35b867f`; sua
-branch remota foi removida e `main=origin/main`. A Rota 22 iniciou o contrato
-Pydantic v2 para conferir curvas declaradas de torque/potência por RPM. Pontos de
-curva e operação revalidam a identidade entre potência, torque e rotação, margens,
-interpolação, faixa e vínculo ao snapshot Kienzle, sempre fail-closed.
+O CTO aprovou explicitamente o `VTP-AUTO-293-BATCH`. A Rota 22 implementa o serviço
+determinístico de curva do fuso, integra o contrato v2 ao manifesto e laudo textual
+e apresenta RPM, potência, torque e margem de reserva no viewer Web. Curva, fontes,
+interpolação, margens e status são revalidados fail-closed, sem autoridade física.
 
 ## Continuidade
 
-Emitir `VTP-AUTO-293-BATCH` ao CTO e aguardar parecer e próxima ordem. A branch
-permanece local e não deve receber push nesta etapa.
+Publicar a branch, abrir o PR #70, acompanhar CI, promover para review e integrar por
+squash. Depois iniciar a Rota 23 e emitir `VTP-AUTO-303-BATCH` sem push.
 
 ## Limites permanentes
 

@@ -50,6 +50,7 @@ def _operating_point(
         available_power_kw=available_power,
         available_torque_nm=available_torque_nm,
         power_margin_kw=power_margin,
+        power_margin_percent=(power_margin / available_power) * 100.0,
         torque_margin_nm=torque_margin,
         status=(
             "WITHIN_POWER_TORQUE_ENVELOPE"
