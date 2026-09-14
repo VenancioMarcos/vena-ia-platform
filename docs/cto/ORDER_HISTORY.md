@@ -1,5 +1,15 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-279 a AUTO-288
+
+O CTO aprovou o `VTP-AUTO-278-BATCH`. O PR #68 publicou a Rota 20, recebeu Backend
+e Frontend CI verdes e foi integrado por squash em `bacaaa0`, com exclusão da branch
+remota. A Rota 21 audita a flexão elástica da peça pela solução fechada de uma viga
+cilíndrica em balanço, usando metade da força Kienzle como carga radial e o menor
+diâmetro do perfil nominal. Contrato, laudo e viewer vinculam as fontes, sinalizam
+deflexão acima de 0,02 mm e declaram a ausência de contraponto/luneta no modelo.
+Entrega local sem push e sem autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-269 a AUTO-278
 
 O CTO aprovou o `VTP-AUTO-268-BATCH`. O PR #67 publicou a Rota 19, recebeu Backend

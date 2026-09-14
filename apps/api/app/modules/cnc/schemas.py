@@ -1304,6 +1304,69 @@ class MachiningResidualStockAuditPayload(_CNCGenerationContract):
         return self
 
 
+class PartElasticDeflectionAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-part-elastic-deflection-audit/v1"] = (
+        "vena-ia.cnc-part-elastic-deflection-audit/v1"
+    )
+    part_unsupported_length_mm: float = Field(gt=0)
+    minimum_diameter_mm: float = Field(gt=0)
+    radial_cutting_force_n: float = Field(gt=0)
+    young_modulus_mpa: float = Field(gt=0)
+    second_moment_area_mm4: float = Field(gt=0)
+    calculated_stiffness_n_per_mm: float = Field(gt=0)
+    radial_tolerance_mm: float = Field(gt=0)
+    max_deflection_um: float = Field(gt=0)
+    deflection_status: Literal[
+        "ELASTIC_DEFLECTION_COMPLIANT",
+        "PART_DEFLECTION_EXCEEDS_TOLERANCE_WARNING",
+    ]
+    theoretical: Literal[True] = True
+    physical: Literal[False] = False
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_PART_DEFLECTION_EXCLUDES_TAILSTOCK_AND_STEADY_REST_SUPPORT"
+    ] = "ANALYTICAL_PART_DEFLECTION_EXCLUDES_TAILSTOCK_AND_STEADY_REST_SUPPORT"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_analytical_model(self) -> "PartElasticDeflectionAuditPayload":
+        expected_area = math.pi * self.minimum_diameter_mm**4 / 64.0
+        expected_stiffness = (
+            3.0 * self.young_modulus_mpa * expected_area
+            / self.part_unsupported_length_mm**3
+        )
+        expected_deflection_um = self.radial_cutting_force_n / expected_stiffness * 1_000.0
+        comparisons = (
+            (
+                self.second_moment_area_mm4,
+                expected_area,
+                "PART_DEFLECTION_SECOND_MOMENT_INCONSISTENT",
+            ),
+            (
+                self.calculated_stiffness_n_per_mm,
+                expected_stiffness,
+                "PART_DEFLECTION_STIFFNESS_INCONSISTENT",
+            ),
+            (
+                self.max_deflection_um,
+                expected_deflection_um,
+                "PART_DEFLECTION_VALUE_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "PART_DEFLECTION_EXCEEDS_TOLERANCE_WARNING"
+            if self.max_deflection_um > self.radial_tolerance_mm * 1_000.0
+            else "ELASTIC_DEFLECTION_COMPLIANT"
+        )
+        if self.deflection_status != expected_status:
+            raise ValueError("PART_DEFLECTION_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -1331,6 +1394,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     risk_matrix: MachiningRiskMatrixPayload
     process_sheet: MachiningProcessSheetPayload
     residual_stock_audit: MachiningResidualStockAuditPayload
+    part_elastic_deflection_audit: PartElasticDeflectionAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -1520,4 +1584,28 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             or not math.isclose(nominal_max_z, geometry_by_axis["MAX_Z"].nominal_mm, abs_tol=5e-9)
         ):
             raise ValueError("REPORT_RESIDUAL_STOCK_SOURCE_INCONSISTENT")
+        deflection = self.part_elastic_deflection_audit
+        positive_nominal_radii = tuple(
+            point.r_mm
+            for point in residual.source_nominal_profile
+            if point.r_mm > residual.linear_tolerance_mm
+        )
+        expected_minimum_diameter = min(positive_nominal_radii) * 2.0
+        expected_unsupported_length = nominal_max_z - nominal_min_z
+        expected_young_modulus = {
+            "AISI_1020": 210_000.0,
+            "ABNT_1045": 210_000.0,
+            "ALUMINUM_6061_T6": 69_000.0,
+        }[self.power_force_audit.material_profile]
+        deflection_sources = (
+            (deflection.part_unsupported_length_mm, expected_unsupported_length),
+            (deflection.minimum_diameter_mm, expected_minimum_diameter),
+            (deflection.radial_cutting_force_n, self.power_force_audit.fc_nominal_n * 0.5),
+            (deflection.young_modulus_mpa, expected_young_modulus),
+        )
+        if any(
+            not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12)
+            for actual, expected in deflection_sources
+        ):
+            raise ValueError("REPORT_PART_DEFLECTION_SOURCE_INCONSISTENT")
         return self

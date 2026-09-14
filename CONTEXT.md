@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.65
+**Versão:** 2.66
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,19 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_PART_ELASTIC_DEFLECTION_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou explicitamente o `VTP-AUTO-278-BATCH`. O PR #68 integrou a Rota 20
+  por squash em `bacaaa0`; Backend e Frontend CI foram aprovados, a branch remota
+  foi removida e `main=origin/main`. A branch local
+  `codex/v8.2-cnc-part-elastic-deflection-auditor` calcula a flexão máxima da peça
+  torneada como viga cilíndrica engastada, com `Fr = 0,5 × Fc`, `I = πD⁴/64` e
+  `δ = FrL³/(3EI)`. O menor diâmetro e o comprimento livre vêm do perfil BRep; o
+  módulo de Young é fixado pelo material auditado. Contrato, relatório e Web
+  cruzam as fontes, comparam a deflexão à tolerância radial de 0,02 mm e declaram
+  que contraponto e luneta não são considerados. Validação: 900 testes API/2
+  ignorados, 211 CNC, 38 focados, 22 Web, mypy em 208 fontes, Ruff, TypeScript,
+  Next lint e `git diff --check`. Entrega local sem push e sem autoridade física.
 
 - **Handoff CTO:** `CNC_RESIDUAL_STOCK_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou explicitamente o `VTP-AUTO-268-BATCH`. O PR #67 integrou a Rota 19

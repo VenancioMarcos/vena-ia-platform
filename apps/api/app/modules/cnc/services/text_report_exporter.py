@@ -187,6 +187,29 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "FLEXÃO ELÁSTICA DA PEÇA",
+            (
+                "part_unsupported_length_mm="
+                f"{validated.part_elastic_deflection_audit.part_unsupported_length_mm:.9f}",
+                "minimum_diameter_mm="
+                f"{validated.part_elastic_deflection_audit.minimum_diameter_mm:.9f}",
+                "radial_cutting_force_N="
+                f"{validated.part_elastic_deflection_audit.radial_cutting_force_n:.9f}",
+                "young_modulus_mpa="
+                f"{validated.part_elastic_deflection_audit.young_modulus_mpa:.9f}",
+                "calculated_stiffness_n_per_mm="
+                f"{validated.part_elastic_deflection_audit.calculated_stiffness_n_per_mm:.9f}",
+                "max_deflection_um="
+                f"{validated.part_elastic_deflection_audit.max_deflection_um:.9f}",
+                "radial_tolerance_mm="
+                f"{validated.part_elastic_deflection_audit.radial_tolerance_mm:.9f}",
+                "deflection_status="
+                f"{validated.part_elastic_deflection_audit.deflection_status}",
+                "ESTIMATIVA ANALÍTICA DE FLEXÃO ELÁSTICA DA PEÇA - NÃO CONSIDERA "
+                "CONTAPONTO OU LUNETA DE APOIO",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",
