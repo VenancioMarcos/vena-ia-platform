@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.81
+**Versão:** 2.82
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_JAW_CLAMPING_PRESSURE_INDENTATION_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou o `VTP-AUTO-369-BATCH`. O PR #78 foi promovido e integrado por
+  squash em `9440211`; a branch remota foi removida e `main=origin/main`. A branch
+  `codex/v9.2-cnc-jaw-clamping-pressure-indentation-auditor` implementa a Rota 30:
+  divide a força dinâmica residual da Rota 27 entre três castanhas, calcula a
+  pressão sobre a área nominal e compara o resultado à pressão mínima de retenção
+  e a 60% do escoamento tabulado de AISI 1020, ABNT 1045 ou alumínio 6061-T6.
+  Contrato, JSON, TEXT e Web recalculam fontes, mostram telemetria e alertas de
+  pressão insuficiente ou risco de marcas/deformação. Validação: 348 testes CNC,
+  40 Web, Ruff, mypy em 236 fontes, TypeScript, Next lint e diff; branch local sem
+  push e sem autoridade física.
 
 - **Handoff CTO:** `CNC_SPINDLE_HARMONIC_DYNAMICS_PR_DRAFT_READY`.
   O `VTP-AUTO-359-BATCH` foi aprovado e o PR #77 foi integrado por squash em

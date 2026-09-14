@@ -35,6 +35,9 @@ from app.modules.cnc.services.harmonic_spindle_auditor import (
     cylindrical_workpiece_mass_kg,
     material_density_kg_m3,
 )
+from app.modules.cnc.services.jaw_contact_pressure_auditor import (
+    audit_jaw_contact_pressure,
+)
 from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
 from app.modules.cnc.services.parameter_optimizer import optimize_cutting_parameters
 from app.modules.cnc.services.part_deflection_auditor import (
@@ -344,6 +347,12 @@ def compile_machining_report(
         bearing_admissible_force_n=10_000.0,
         resonance_exclusion_percent=15.0,
     )
+    jaw_clamping_pressure_audit = audit_jaw_contact_pressure(
+        workholding_clamping_audit,
+        material_profile=power_force_audit.material_profile,
+        jaw_width_mm=20.0,
+        effective_contact_length_mm=30.0,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -382,6 +391,7 @@ def compile_machining_report(
         workholding_clamping_audit=workholding_clamping_audit,
         tailstock_thrust_audit=tailstock_thrust_audit,
         spindle_harmonic_dynamics_audit=spindle_harmonic_dynamics_audit,
+        jaw_clamping_pressure_audit=jaw_clamping_pressure_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -425,6 +435,8 @@ def compile_machining_report(
             "quill-bearing wear.",
             "Critical-speed and residual-unbalance estimates exclude viscous spindle "
             "damping and bearing-race defects.",
+            "Jaw contact-pressure estimates exclude serrations, corner radii and "
+            "nonlinear Hertzian pressure distribution.",
         ),
     )
 

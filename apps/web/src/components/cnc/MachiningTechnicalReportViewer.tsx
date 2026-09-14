@@ -573,6 +573,31 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_CRITICAL_SPEED_EXCLUDES_VISCOUS_DAMPING_AND_BEARING_RACE_DEFECTS";
     safety_flags: MachiningReportSafetyFlags;
   };
+  jaw_clamping_pressure_audit: {
+    schema_version: "vena-ia.cnc-jaw-clamping-pressure-audit/v1";
+    source_workholding_clamping_audit: MachiningTechnicalReportPayload["workholding_clamping_audit"];
+    material_profile: "AISI_1020" | "ABNT_1045" | "ALUMINUM_6061_T6";
+    jaw_count: 3;
+    jaw_width_mm: number;
+    effective_contact_length_mm: number;
+    contact_area_mm2: number;
+    dynamic_force_per_jaw_n: number;
+    minimum_retention_pressure_mpa: number;
+    mean_contact_pressure_mpa: number;
+    material_yield_strength_mpa: number;
+    pressure_ratio_percent: number;
+    clamping_pressure_status:
+      | "JAW_SURFACE_INDENTATION_RISK_WARNING"
+      | "INSUFFICIENT_CLAMPING_PRESSURE_WARNING"
+      | "CLAMPING_PRESSURE_COMPLIANT";
+    theoretical: true;
+    physical: false;
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    automatic_chuck_pressure_control_authorized: false;
+    model_limitation: "ESTIMATIVA ANALÍTICA DE PRESSÃO DE FIXAÇÃO - NÃO CONSIDERA SERRILHADOS, RAIOS DE CANTO OU DISTRIBUIÇÃO HERTZIANA NÃO LINEAR NAS CASTANHAS";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -646,6 +671,13 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
     100,
     Math.max(0, harmonicAudit.resonance_proximity_percent / 30 * 100),
   );
+  const jawPressureAudit = report.jaw_clamping_pressure_audit;
+  const jawPressureCompliant = jawPressureAudit.clamping_pressure_status === "CLAMPING_PRESSURE_COMPLIANT";
+  const jawPressureBadge = jawPressureCompliant
+    ? "PRESSÃO DE CONTATO CONFORME"
+    : jawPressureAudit.clamping_pressure_status === "JAW_SURFACE_INDENTATION_RISK_WARNING"
+      ? "ALERTA: RISCO DE MARCAS/DEFORMAÇÃO PLÁSTICA"
+      : "ALERTA: PRESSÃO DE FIXAÇÃO INSUFICIENTE";
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -1214,6 +1246,27 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </div>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE VELOCIDADE CRÍTICA E RESSONÂNCIA - NÃO CONSIDERA AMORTECIMENTO VISCOSO DO FUSO OU DEFEITOS EM PISTAS DE ROLAMENTO
+      </p>
+    </section>
+
+    <section aria-labelledby="report-jaw-pressure-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-jaw-pressure-heading" className="text-lg font-semibold">Pressão de contato das castanhas</h2>
+        <span role={jawPressureCompliant ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${jawPressureCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {jawPressureBadge}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Área nominal de contato" value={`${jawPressureAudit.contact_area_mm2.toFixed(3)} mm²`} />
+        <Metric label="Pressão média de contato" value={`${jawPressureAudit.mean_contact_pressure_mpa.toFixed(3)} MPa`} />
+        <Metric label="Limite de escoamento" value={`${jawPressureAudit.material_yield_strength_mpa.toFixed(3)} MPa`} />
+        <Metric label="Razão de carregamento" value={`${jawPressureAudit.pressure_ratio_percent.toFixed(2)}%`} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">
+        pressão mínima de retenção {jawPressureAudit.minimum_retention_pressure_mpa.toFixed(3)} MPa · força dinâmica por castanha {jawPressureAudit.dynamic_force_per_jaw_n.toFixed(3)} N · {jawPressureAudit.clamping_pressure_status}
+      </p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        {jawPressureAudit.model_limitation}
       </p>
     </section>
 

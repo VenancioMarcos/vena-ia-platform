@@ -27,6 +27,7 @@ from app.modules.cnc.services.chip_breaking_auditor import (
     audit_chip_breaking_machinability,
 )
 from app.modules.cnc.services.cost_time_estimator import estimate_machining_cost_time
+from app.modules.cnc.services.jaw_contact_pressure_auditor import audit_jaw_contact_pressure
 from app.modules.cnc.services.machining_report import (
     MachiningReportSource,
     compile_machining_report,
@@ -276,6 +277,22 @@ def test_complete_report_replays_deterministically(controller):
     assert report.spindle_harmonic_dynamics_audit.unbalance_force_n >= 0
     assert report.spindle_harmonic_dynamics_audit.physical_use_authorized is False
     assert report.spindle_harmonic_dynamics_audit.automatic_spindle_control_authorized is False
+    assert report.jaw_clamping_pressure_audit.source_workholding_clamping_audit == (
+        report.workholding_clamping_audit
+    )
+    assert report.jaw_clamping_pressure_audit.material_profile == (
+        report.power_force_audit.material_profile
+    )
+    assert report.jaw_clamping_pressure_audit.contact_area_mm2 == pytest.approx(600)
+    assert report.jaw_clamping_pressure_audit.mean_contact_pressure_mpa > 0
+    assert report.jaw_clamping_pressure_audit.clamping_pressure_status == (
+        "CLAMPING_PRESSURE_COMPLIANT"
+    )
+    assert report.jaw_clamping_pressure_audit.physical_use_authorized is False
+    assert (
+        report.jaw_clamping_pressure_audit.automatic_chuck_pressure_control_authorized
+        is False
+    )
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -510,6 +527,39 @@ def test_report_rejects_spindle_harmonic_audit_from_another_speed_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_jaw_pressure_audit_from_another_workholding_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    workholding = report.workholding_clamping_audit
+    other_workholding = audit_workholding_clamping(
+        static_clamping_force_per_jaw_n=(
+            workholding.static_clamping_force_per_jaw_n + 1_000.0
+        ),
+        jaw_mass_kg=workholding.jaw_mass_kg,
+        center_of_mass_radius_mm=workholding.center_of_mass_radius_mm,
+        operating_rpm=workholding.operating_rpm,
+        maximum_declared_rpm=workholding.maximum_declared_rpm,
+        axial_cutting_force_n=workholding.axial_cutting_force_n,
+        friction_coefficient=workholding.friction_coefficient,
+        required_safety_factor=workholding.required_safety_factor,
+    )
+    transplanted = audit_jaw_contact_pressure(
+        other_workholding,
+        material_profile=report.power_force_audit.material_profile,
+        jaw_width_mm=report.jaw_clamping_pressure_audit.jaw_width_mm,
+        effective_contact_length_mm=(
+            report.jaw_clamping_pressure_audit.effective_contact_length_mm
+        ),
+    )
+    body = report.model_dump()
+    body["jaw_clamping_pressure_audit"] = transplanted.model_dump()
+    with pytest.raises(
+        ValidationError,
+        match="REPORT_JAW_CONTACT_PRESSURE_SOURCE_INCONSISTENT",
+    ):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -517,7 +567,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 16
+    assert rendered.count(SAFETY_STAMP) == 17
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -535,6 +585,17 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert "resonance_proximity_percent=" in rendered
     assert "unbalance_force_n=" in rendered
     assert "ESTIMATIVA ANALÍTICA DE VELOCIDADE CRÍTICA E RESSONÂNCIA" in rendered
+    assert "[PRESSÃO DE CONTATO E MARCAS DE CASTANHA]" in rendered
+    assert "contact_area_mm2=600.000000000" in rendered
+    assert "mean_contact_pressure_mpa=" in rendered
+    assert "material_yield_strength_mpa=350.000000000" in rendered
+    assert "pressure_ratio_percent=" in rendered
+    assert "status=CLAMPING_PRESSURE_COMPLIANT" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE PRESSÃO DE FIXAÇÃO - NÃO CONSIDERA SERRILHADOS, "
+        "RAIOS DE CANTO OU DISTRIBUIÇÃO HERTZIANA NÃO LINEAR NAS CASTANHAS"
+        in rendered
+    )
     assert "cutting_force_nominal_n=" in rendered
     assert "power_status=POWER_WITHIN_LIMITS" in rendered
     assert (

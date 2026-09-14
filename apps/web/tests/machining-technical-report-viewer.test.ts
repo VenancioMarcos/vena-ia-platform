@@ -847,6 +847,69 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  jaw_clamping_pressure_audit: {
+    schema_version: "vena-ia.cnc-jaw-clamping-pressure-audit/v1",
+    source_workholding_clamping_audit: {
+      schema_version: "vena-ia.cnc-workholding-clamping-audit/v1",
+      static_clamping_force_per_jaw_n: 15000,
+      jaw_mass_kg: 0.25,
+      center_of_mass_radius_mm: 40,
+      operating_rpm: 1000,
+      maximum_declared_rpm: 6000,
+      axial_cutting_force_n: 1000,
+      friction_coefficient: 0.3,
+      required_safety_factor: 2,
+      centrifugal_force_per_jaw_n: 109.662271123,
+      total_centrifugal_loss_n: 328.986813369,
+      dynamic_clamping_force_total_n: 44671.013186631,
+      friction_resistance_n: 13401.303955989,
+      clamping_safety_factor: 13.401303956,
+      clamping_status: "DYNAMIC_CLAMPING_SAFE",
+      is_theoretical_model: true,
+      physical_use_authorized: false,
+      automatic_chuck_control_authorized: false,
+      model_limitation: "ANALYTICAL_CLAMPING_ESTIMATE_REQUIRES_PHYSICAL_CHUCK_LOAD_MEASUREMENT",
+      safety_flags: {
+        physical_use_authorized: false,
+        g9: "PENDING_AUTHORITATIVE_REVIEW",
+        no_human_review_bypass: true,
+        machine_send: false,
+        dnc: false,
+        nc_transfer: false,
+        cycle_start: false,
+        emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+        executable_output: false,
+      },
+    },
+    material_profile: "ABNT_1045",
+    jaw_count: 3,
+    jaw_width_mm: 20,
+    effective_contact_length_mm: 30,
+    contact_area_mm2: 600,
+    dynamic_force_per_jaw_n: 14890.337728877,
+    minimum_retention_pressure_mpa: 3.703703704,
+    mean_contact_pressure_mpa: 24.817229548,
+    material_yield_strength_mpa: 350,
+    pressure_ratio_percent: 7.090637014,
+    clamping_pressure_status: "CLAMPING_PRESSURE_COMPLIANT",
+    theoretical: true,
+    physical: false,
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    automatic_chuck_pressure_control_authorized: false,
+    model_limitation: "ESTIMATIVA ANALÍTICA DE PRESSÃO DE FIXAÇÃO - NÃO CONSIDERA SERRILHADOS, RAIOS DE CANTO OU DISTRIBUIÇÃO HERTZIANA NÃO LINEAR NAS CASTANHAS",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1357,6 +1420,32 @@ test("renders critical-speed warning without spindle controls", () => {
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: PROXIMIDADE DE VELOCIDADE CRÍTICA/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|controlar rotação|acionar fuso/i);
+});
+
+test("renders jaw contact pressure values, compliant badge, and mandatory note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Pressão de contato das castanhas/);
+  assert.match(html, /600\.000 mm²/);
+  assert.match(html, /24\.817 MPa/);
+  assert.match(html, /350\.000 MPa/);
+  assert.match(html, /7\.09%/);
+  assert.match(html, /PRESSÃO DE CONTATO CONFORME/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE PRESSÃO DE FIXAÇÃO - NÃO CONSIDERA SERRILHADOS, RAIOS DE CANTO OU DISTRIBUIÇÃO HERTZIANA NÃO LINEAR NAS CASTANHAS/);
+});
+
+test("renders jaw indentation warning without hydraulic or pneumatic controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    jaw_clamping_pressure_audit: {
+      ...report.jaw_clamping_pressure_audit,
+      mean_contact_pressure_mpa: 220,
+      pressure_ratio_percent: 62.857142857,
+      clamping_pressure_status: "JAW_SURFACE_INDENTATION_RISK_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE MARCAS\/DEFORMAÇÃO PLÁSTICA/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|controle hidráulico|controle pneumático|acionar castanha/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {

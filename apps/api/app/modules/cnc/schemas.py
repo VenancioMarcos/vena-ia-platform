@@ -2219,6 +2219,100 @@ class SpindleHarmonicDynamicsAuditPayload(_CNCGenerationContract):
         return self
 
 
+class JawClampingPressureAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-jaw-clamping-pressure-audit/v1"] = (
+        "vena-ia.cnc-jaw-clamping-pressure-audit/v1"
+    )
+    source_workholding_clamping_audit: WorkholdingClampingAuditPayload
+    material_profile: Literal["AISI_1020", "ABNT_1045", "ALUMINUM_6061_T6"]
+    jaw_count: Literal[3] = 3
+    jaw_width_mm: float = Field(gt=0, le=10_000)
+    effective_contact_length_mm: float = Field(gt=0, le=100_000)
+    contact_area_mm2: float = Field(gt=0)
+    dynamic_force_per_jaw_n: float = Field(gt=0)
+    minimum_retention_pressure_mpa: float = Field(gt=0)
+    mean_contact_pressure_mpa: float = Field(gt=0)
+    material_yield_strength_mpa: float = Field(gt=0)
+    pressure_ratio_percent: float = Field(gt=0)
+    clamping_pressure_status: Literal[
+        "JAW_SURFACE_INDENTATION_RISK_WARNING",
+        "INSUFFICIENT_CLAMPING_PRESSURE_WARNING",
+        "CLAMPING_PRESSURE_COMPLIANT",
+    ]
+    theoretical: Literal[True] = True
+    physical: Literal[False] = False
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    automatic_chuck_pressure_control_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ESTIMATIVA ANALÍTICA DE PRESSÃO DE FIXAÇÃO - NÃO CONSIDERA SERRILHADOS, RAIOS DE CANTO OU DISTRIBUIÇÃO HERTZIANA NÃO LINEAR NAS CASTANHAS"
+    ] = (
+        "ESTIMATIVA ANALÍTICA DE PRESSÃO DE FIXAÇÃO - NÃO CONSIDERA SERRILHADOS, "
+        "RAIOS DE CANTO OU DISTRIBUIÇÃO HERTZIANA NÃO LINEAR NAS CASTANHAS"
+    )
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_jaw_contact_snapshot(self) -> "JawClampingPressureAuditPayload":
+        workholding = self.source_workholding_clamping_audit
+        expected_yield = {
+            "AISI_1020": 250.0,
+            "ABNT_1045": 350.0,
+            "ALUMINUM_6061_T6": 276.0,
+        }[self.material_profile]
+        expected_area = self.jaw_width_mm * self.effective_contact_length_mm
+        expected_force_per_jaw = workholding.dynamic_clamping_force_total_n / self.jaw_count
+        expected_pressure = expected_force_per_jaw / expected_area
+        expected_minimum_pressure = (
+            workholding.required_safety_factor
+            * workholding.axial_cutting_force_n
+            / workholding.friction_coefficient
+            / self.jaw_count
+            / expected_area
+        )
+        expected_ratio = expected_pressure / expected_yield * 100.0
+        comparisons = (
+            (self.contact_area_mm2, expected_area, "JAW_CONTACT_AREA_INCONSISTENT"),
+            (
+                self.dynamic_force_per_jaw_n,
+                expected_force_per_jaw,
+                "JAW_CONTACT_FORCE_PER_JAW_INCONSISTENT",
+            ),
+            (
+                self.minimum_retention_pressure_mpa,
+                expected_minimum_pressure,
+                "JAW_CONTACT_MINIMUM_RETENTION_PRESSURE_INCONSISTENT",
+            ),
+            (
+                self.mean_contact_pressure_mpa,
+                expected_pressure,
+                "JAW_CONTACT_MEAN_PRESSURE_INCONSISTENT",
+            ),
+            (
+                self.material_yield_strength_mpa,
+                expected_yield,
+                "JAW_CONTACT_YIELD_STRENGTH_INCONSISTENT",
+            ),
+            (
+                self.pressure_ratio_percent,
+                expected_ratio,
+                "JAW_CONTACT_PRESSURE_RATIO_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        if expected_pressure > 0.6 * expected_yield:
+            expected_status = "JAW_SURFACE_INDENTATION_RISK_WARNING"
+        elif expected_pressure < expected_minimum_pressure:
+            expected_status = "INSUFFICIENT_CLAMPING_PRESSURE_WARNING"
+        else:
+            expected_status = "CLAMPING_PRESSURE_COMPLIANT"
+        if self.clamping_pressure_status != expected_status:
+            raise ValueError("JAW_CONTACT_PRESSURE_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -2257,6 +2351,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     workholding_clamping_audit: WorkholdingClampingAuditPayload
     tailstock_thrust_audit: TailstockThrustAuditPayload
     spindle_harmonic_dynamics_audit: SpindleHarmonicDynamicsAuditPayload
+    jaw_clamping_pressure_audit: JawClampingPressureAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -2596,4 +2691,11 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             )
         ):
             raise ValueError("REPORT_SPINDLE_HARMONIC_SOURCE_INCONSISTENT")
+        jaw_pressure = self.jaw_clamping_pressure_audit
+        if (
+            jaw_pressure.safety_flags != self.safety_flags
+            or jaw_pressure.source_workholding_clamping_audit != workholding
+            or jaw_pressure.material_profile != self.power_force_audit.material_profile
+        ):
+            raise ValueError("REPORT_JAW_CONTACT_PRESSURE_SOURCE_INCONSISTENT")
         return self
