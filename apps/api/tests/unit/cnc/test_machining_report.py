@@ -164,6 +164,9 @@ def test_complete_report_replays_deterministically(controller):
     assert report.power_force_audit.p_motor_est_kw > report.power_force_audit.pc_cutting_kw
     assert report.power_force_audit.mrr_cm3_min == pytest.approx(18.0)
     assert report.power_force_audit.power_status == "POWER_WITHIN_LIMITS"
+    assert report.parameter_optimizations[0].tool_id == report.tools[0].tool_id
+    assert report.parameter_optimizations[0].optimization_status == "OPTIMAL_TRADE_OFF_FOUND"
+    assert report.parameter_optimizations[0].predicted_mrr_cm3_min > 0
     assert report.tool_life_audits[0].tool_id == report.tools[0].tool_id
     assert report.tool_life_audits[0].estimated_tool_life_minutes > 0
     assert report.tool_life_audits[0].tool_life_consumed_percent > 0
@@ -273,6 +276,15 @@ def test_report_rejects_valid_stability_audit_from_another_force_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_optimization_transplanted_from_another_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    body = report.model_dump()
+    body["parameter_optimizations"][0]["machine_power_limit_kw"] = 50.0
+    with pytest.raises(ValidationError, match="REPORT_OPTIMIZATION_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -281,7 +293,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
 
     assert rendered == format_machining_report_text(report)
     assert rendered.count(SAFETY_STAMP) == 5
-    assert rendered.count("[") == 7
+    assert rendered.count("[") == 8
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -309,3 +321,6 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert "stability[T0101]: overhang_ratio_l_d=" in rendered
     assert "status=DYNAMICALLY_STABLE" in rendered
     assert "ESTIMATIVA ANALÍTICA DE ESTABILIDADE DINÂMICA" in rendered
+    assert "parameter_optimization[T0101]" in rendered
+    assert "status=OPTIMAL_TRADE_OFF_FOUND" in rendered
+    assert "SUGESTÃO ANALÍTICA DE PARÂMETROS DE CORTE" in rendered

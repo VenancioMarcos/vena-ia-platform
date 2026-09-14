@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.61
+**Versão:** 2.62
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,17 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_PARAMETER_MULTICRITERIA_OPTIMIZER_COMPLETED_LOCAL`.
+  O PR #64 integrou a Rota 16 por squash em `339989d`; Backend e Frontend CI foram
+  aprovados, a branch remota foi removida e `main=origin/main`. A branch local
+  `codex/v7.8-cnc-parameter-multicriteria-optimizer` maximiza MRR dentro de um
+  envelope explícito de Vc/f/ap sujeito simultaneamente à potência Kienzle, Ra
+  cinemática e estabilidade de chatter. Contrato, manifesto, laudo e viewer
+  comparam programado/recomendado, recusam restrições incompatíveis e exigem
+  homologação manual. Validação: 859 testes API/2 ignorados, 156 testes CNC,
+  mypy em 204 fontes, Ruff, TypeScript estrito, 15 testes Web, Next lint e
+  `git diff --check`. Entrega local sem push.
 
 - **Handoff CTO:** `CNC_DYNAMIC_STABILITY_CHATTER_AUDIT_COMPLETED_LOCAL`.
   O PR #63 integrou a Rota 15 por squash em `2d2428e`; Backend e Frontend CI foram

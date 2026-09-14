@@ -242,6 +242,48 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   }],
+  parameter_optimizations: [{
+    schema_version: "vena-ia.cnc-machining-parameter-optimization/v1",
+    tool_id: "T0101",
+    material_profile: "ABNT_1045",
+    programmed_vc_m_min: 180,
+    programmed_feed_mm_rev: 0.2,
+    programmed_ap_mm: 0.5,
+    vc_min_m_min: 90,
+    vc_max_m_min: 225,
+    feed_min_mm_rev: 0.1,
+    feed_max_mm_rev: 0.25,
+    ap_min_mm: 0.25,
+    ap_max_mm: 0.625,
+    target_ra_um: 1.5625,
+    insert_nose_radius_mm: 0.8,
+    cutting_edge_angle_deg: 95,
+    machine_power_limit_kw: 7.5,
+    stability_limit_depth_mm: 0.526315789,
+    overhang_ratio_l_d: 3,
+    recommended_vc_m_min: 225,
+    recommended_feed_mm_rev: 0.2,
+    recommended_ap_mm: 0.526315789,
+    predicted_mrr_cm3_min: 23.684210505,
+    predicted_motor_power_kw: 1.407521,
+    predicted_ra_um: 1.5625,
+    predicted_tool_life_minutes: 5.855967078,
+    optimization_status: "OPTIMAL_TRADE_OFF_FOUND",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ANALYTICAL_CUTTING_PARAMETERS_REQUIRE_MANUAL_PROCESS_ENGINEERING_APPROVAL",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  }],
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -428,4 +470,37 @@ test("renders the chatter high-risk warning badge", () => {
   };
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /ALERTA: RISCO DE CHATTER \(L\/D CRÍTICO\)/);
+});
+
+test("renders programmed and recommended parameters with manual-approval governance", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Otimização multicritério de parâmetros/);
+  assert.match(html, /COMPROMISSO ANALÍTICO ÓTIMO ENCONTRADO/);
+  assert.match(html, /180\.000 m\/min/);
+  assert.match(html, /225\.000 m\/min/);
+  assert.match(html, /23\.684 cm³\/min/);
+  assert.match(html, /SUGESTÃO ANALÍTICA DE PARÂMETROS DE CORTE - APLICAÇÃO EM MÁQUINA REQUER HOMOLOGAÇÃO MANUAL POR ENGENHARIA DE PROCESSOS/);
+  assert.doesNotMatch(html, /<button/i);
+});
+
+test("renders infeasible constraints without any automatic override control", () => {
+  const infeasible: MachiningTechnicalReportPayload = {
+    ...report,
+    parameter_optimizations: [{
+      ...report.parameter_optimizations[0],
+      recommended_vc_m_min: null,
+      recommended_feed_mm_rev: null,
+      recommended_ap_mm: null,
+      predicted_mrr_cm3_min: null,
+      predicted_motor_power_kw: null,
+      predicted_ra_um: null,
+      predicted_tool_life_minutes: null,
+      optimization_status: "OPTIMIZATION_UNFEASIBLE_CONSTRAINTS_VIOLATED",
+    }],
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: infeasible }));
+  assert.match(html, /RESTRIÇÕES INCOMPATÍVEIS — SEM RECOMENDAÇÃO/);
+  assert.match(html, /OPTIMIZATION_UNFEASIBLE_CONSTRAINTS_VIOLATED/);
+  assert.doesNotMatch(html, /<button/i);
+  assert.doesNotMatch(html, /sobrescrever|enviar à máquina/i);
 });

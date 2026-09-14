@@ -203,6 +203,38 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_STABILITY_EXCLUDES_WORKPIECE_AND_SPINDLE_VIBRATION_MODES";
     safety_flags: MachiningReportSafetyFlags;
   }[];
+  parameter_optimizations: readonly {
+    schema_version: "vena-ia.cnc-machining-parameter-optimization/v1";
+    tool_id: string;
+    material_profile: "AISI_1020" | "ABNT_1045" | "ALUMINUM_6061_T6";
+    programmed_vc_m_min: number;
+    programmed_feed_mm_rev: number;
+    programmed_ap_mm: number;
+    vc_min_m_min: number;
+    vc_max_m_min: number;
+    feed_min_mm_rev: number;
+    feed_max_mm_rev: number;
+    ap_min_mm: number;
+    ap_max_mm: number;
+    target_ra_um: number;
+    insert_nose_radius_mm: number;
+    cutting_edge_angle_deg: number;
+    machine_power_limit_kw: number;
+    stability_limit_depth_mm: number;
+    overhang_ratio_l_d: number;
+    recommended_vc_m_min: number | null;
+    recommended_feed_mm_rev: number | null;
+    recommended_ap_mm: number | null;
+    predicted_mrr_cm3_min: number | null;
+    predicted_motor_power_kw: number | null;
+    predicted_ra_um: number | null;
+    predicted_tool_life_minutes: number | null;
+    optimization_status: "OPTIMAL_TRADE_OFF_FOUND" | "OPTIMIZATION_UNFEASIBLE_CONSTRAINTS_VIOLATED";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ANALYTICAL_CUTTING_PARAMETERS_REQUIRE_MANUAL_PROCESS_ENGINEERING_APPROVAL";
+    safety_flags: MachiningReportSafetyFlags;
+  }[];
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -421,6 +453,38 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </ul>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE ESTABILIDADE DINÂMICA - NÃO CONSIDERA MODOS DE VIBRAÇÃO DA PEÇA OU DO FUSO
+      </p>
+    </section>
+
+    <section aria-labelledby="report-optimization-heading" className="space-y-3">
+      <h2 id="report-optimization-heading" className="text-lg font-semibold">Otimização multicritério de parâmetros</h2>
+      <ul className="space-y-3">
+        {report.parameter_optimizations.map((optimization) => {
+          const feasible = optimization.optimization_status === "OPTIMAL_TRADE_OFF_FOUND";
+          return <li key={optimization.tool_id} className="rounded-lg border border-slate-700 bg-slate-950 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-mono text-cyan-100">{optimization.tool_id}</span>
+              <span role="status" className={`rounded-full border px-3 py-1 text-xs font-bold ${feasible ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+                {feasible ? "COMPROMISSO ANALÍTICO ÓTIMO ENCONTRADO" : "RESTRIÇÕES INCOMPATÍVEIS — SEM RECOMENDAÇÃO"}
+              </span>
+            </div>
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full border-collapse text-left text-sm">
+                <thead><tr className="border-b border-slate-700 text-slate-400"><th className="p-2">Parâmetro</th><th className="p-2">Programado</th><th className="p-2">Recomendado</th></tr></thead>
+                <tbody className="font-mono">
+                  <tr className="border-b border-slate-800"><td className="p-2">Vc</td><td className="p-2">{optimization.programmed_vc_m_min.toFixed(3)} m/min</td><td className="p-2">{optimization.recommended_vc_m_min === null ? "—" : `${optimization.recommended_vc_m_min.toFixed(3)} m/min`}</td></tr>
+                  <tr className="border-b border-slate-800"><td className="p-2">Avanço f</td><td className="p-2">{optimization.programmed_feed_mm_rev.toFixed(3)} mm/rot</td><td className="p-2">{optimization.recommended_feed_mm_rev === null ? "—" : `${optimization.recommended_feed_mm_rev.toFixed(3)} mm/rot`}</td></tr>
+                  <tr className="border-b border-slate-800"><td className="p-2">Profundidade ap</td><td className="p-2">{optimization.programmed_ap_mm.toFixed(3)} mm</td><td className="p-2">{optimization.recommended_ap_mm === null ? "—" : `${optimization.recommended_ap_mm.toFixed(3)} mm`}</td></tr>
+                  <tr><td className="p-2">MRR</td><td className="p-2">{report.power_force_audit.mrr_cm3_min.toFixed(3)} cm³/min</td><td className="p-2">{optimization.predicted_mrr_cm3_min === null ? "—" : `${optimization.predicted_mrr_cm3_min.toFixed(3)} cm³/min`}</td></tr>
+                </tbody>
+              </table>
+            </div>
+            {!feasible ? <p role="alert" className="mt-3 font-mono text-sm text-red-200">OPTIMIZATION_UNFEASIBLE_CONSTRAINTS_VIOLATED</p> : null}
+          </li>;
+        })}
+      </ul>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        SUGESTÃO ANALÍTICA DE PARÂMETROS DE CORTE - APLICAÇÃO EM MÁQUINA REQUER HOMOLOGAÇÃO MANUAL POR ENGENHARIA DE PROCESSOS
       </p>
     </section>
 

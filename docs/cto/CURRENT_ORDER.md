@@ -1,23 +1,22 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-229 a AUTO-238
-**Estado:** CNC_DYNAMIC_STABILITY_CHATTER_AUDIT_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-239 a AUTO-248
+**Estado:** CNC_PARAMETER_MULTICRITERIA_OPTIMIZER_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v7.7-cnc-stability-chatter-auditor`
-**Baseline da branch:** `2d2428ed8ba531245649a7762369d6f992a1b5c2`
+**Branch:** `codex/v7.8-cnc-parameter-multicriteria-optimizer`
+**Baseline da branch:** `339989da6de4d41be2b0224fa75116d78237a84d`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O PR #63 integrou a Rota 15 por squash em `2d2428e`; a branch remota foi removida e
-`main=origin/main`. A Rota 16 audita rigidez da haste, deflexão estática, balanço
-`L/D` e limite simplificado de chatter por FRF. O manifesto cruza cada auditoria com
-força, pressão específica e profundidade Kienzle e o viewer mantém caráter apenas
-analítico.
+O PR #64 integrou a Rota 16 por squash em `339989d`; a branch remota foi removida e
+`main=origin/main`. A Rota 17 recomenda Vc, avanço e profundidade pela maximização
+determinística de MRR sob limites simultâneos de potência Kienzle, rugosidade Ra e
+estabilidade de chatter. Restrições incompatíveis retornam estado sem recomendação.
 
 ## Continuidade
 
-Enviar VTP-AUTO-238-BATCH ao CTO e aguardar parecer e próxima ordem. A branch permanece
+Enviar VTP-AUTO-248-BATCH ao CTO e aguardar parecer e próxima ordem. A branch permanece
 local e não deve receber push nesta etapa.
 
 ## Limites permanentes
