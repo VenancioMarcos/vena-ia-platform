@@ -164,6 +164,24 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_COST_TIME_EXCLUDES_LOGISTICS_UNPLANNED_DOWNTIME_AND_TAXES";
     safety_flags: MachiningReportSafetyFlags;
   };
+  sustainability_audit: {
+    schema_version: "vena-ia.cnc-machining-sustainability-audit/v1";
+    electrical_energy_kwh: number;
+    cutting_energy_kwh: number;
+    standby_energy_kwh: number;
+    carbon_emission_kg_co2e: number;
+    grid_region: "BRASIL_SIN" | "USA_AVG" | "EU_AVG";
+    grid_emission_factor_kg_co2e_per_kwh: number;
+    motor_power_kw: number;
+    standby_power_kw: number;
+    cutting_time_minutes: number;
+    total_cycle_time_minutes: number;
+    electrical_efficiency: number;
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ANALYTICAL_ENERGY_CARBON_EXCLUDES_EXTERNAL_COOLING_AND_STARTUP_PEAKS";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -333,6 +351,29 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </dl>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA - NÃO CONSIDERA FLUTUAÇÕES LOGÍSTICAS, PARADAS NÃO PROGRAMADAS OU IMPOSTOS
+      </p>
+    </section>
+
+    <section aria-labelledby="report-sustainability-heading" className="space-y-3">
+      <h2 id="report-sustainability-heading" className="text-lg font-semibold">Resumo ecológico e energético</h2>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Consumo elétrico previsto" value={`${report.sustainability_audit.electrical_energy_kwh.toFixed(4)} kWh`} />
+        <Metric label="Energia de corte" value={`${report.sustainability_audit.cutting_energy_kwh.toFixed(4)} kWh`} />
+        <Metric label="Energia em espera" value={`${report.sustainability_audit.standby_energy_kwh.toFixed(4)} kWh`} />
+        <Metric label="Pegada de carbono" value={`${report.sustainability_audit.carbon_emission_kg_co2e.toFixed(4)} kg CO2e`} />
+      </dl>
+      <div aria-label="Matriz energética regional informativa" className="flex flex-wrap gap-2">
+        {([
+          ["BRASIL_SIN", "Brasil"],
+          ["USA_AVG", "EUA"],
+          ["EU_AVG", "Europa"],
+        ] as const).map(([region, label]) => <span key={region} aria-current={report.sustainability_audit.grid_region === region ? "true" : undefined} className={`rounded-full border px-3 py-1 text-xs ${report.sustainability_audit.grid_region === region ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-slate-600 text-slate-400"}`}>
+          {label} · {region}
+        </span>)}
+      </div>
+      <p className="font-mono text-xs text-slate-300">Fator da matriz: {report.sustainability_audit.grid_emission_factor_kg_co2e_per_kwh.toFixed(3)} kg CO2e/kWh</p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ECOLÓGICA E ENERGÉTICA ANALÍTICA - NÃO CONSIDERA DINÂMICA AUXILIAR DE REFRIGERAÇÃO EXTERNA OU PICOS DE PARTIDA
       </p>
     </section>
 

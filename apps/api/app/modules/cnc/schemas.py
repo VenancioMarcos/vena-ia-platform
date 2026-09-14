@@ -560,6 +560,65 @@ class MachiningCostTimeAuditPayload(_CNCGenerationContract):
         return self
 
 
+class MachiningSustainabilityAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-machining-sustainability-audit/v1"] = (
+        "vena-ia.cnc-machining-sustainability-audit/v1"
+    )
+    electrical_energy_kwh: float = Field(ge=0)
+    cutting_energy_kwh: float = Field(ge=0)
+    standby_energy_kwh: float = Field(ge=0)
+    carbon_emission_kg_co2e: float = Field(ge=0)
+    grid_region: Literal["BRASIL_SIN", "USA_AVG", "EU_AVG"]
+    grid_emission_factor_kg_co2e_per_kwh: float = Field(gt=0)
+    motor_power_kw: float = Field(gt=0)
+    standby_power_kw: float = Field(gt=0)
+    cutting_time_minutes: float = Field(ge=0)
+    total_cycle_time_minutes: float = Field(ge=0)
+    electrical_efficiency: float = Field(gt=0, le=1)
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_ENERGY_CARBON_EXCLUDES_EXTERNAL_COOLING_AND_STARTUP_PEAKS"
+    ] = "ANALYTICAL_ENERGY_CARBON_EXCLUDES_EXTERNAL_COOLING_AND_STARTUP_PEAKS"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_sustainability_model(self) -> "MachiningSustainabilityAuditPayload":
+        expected_factor = {
+            "BRASIL_SIN": 0.085,
+            "USA_AVG": 0.385,
+            "EU_AVG": 0.230,
+        }[self.grid_region]
+        if self.grid_emission_factor_kg_co2e_per_kwh != expected_factor:
+            raise ValueError("SUSTAINABILITY_GRID_FACTOR_INCONSISTENT")
+        if self.total_cycle_time_minutes < self.cutting_time_minutes:
+            raise ValueError("SUSTAINABILITY_TIME_DECOMPOSITION_INVALID")
+        expected_cutting = (
+            self.motor_power_kw * self.cutting_time_minutes / 60 / self.electrical_efficiency
+        )
+        expected_standby = (
+            self.standby_power_kw
+            * (self.total_cycle_time_minutes - self.cutting_time_minutes)
+            / 60
+            / self.electrical_efficiency
+        )
+        expected_total = expected_cutting + expected_standby
+        comparisons = (
+            (self.cutting_energy_kwh, expected_cutting, "CUTTING_ENERGY_INCONSISTENT"),
+            (self.standby_energy_kwh, expected_standby, "STANDBY_ENERGY_INCONSISTENT"),
+            (self.electrical_energy_kwh, expected_total, "TOTAL_ENERGY_INCONSISTENT"),
+            (
+                self.carbon_emission_kg_co2e,
+                expected_total * expected_factor,
+                "CARBON_EMISSION_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9):
+                raise ValueError(code)
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -581,6 +640,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     power_force_audit: MachiningPowerForceAuditPayload
     tool_life_audits: tuple[ToolLifeTaylorAuditPayload, ...] = Field(min_length=1)
     cost_time_audit: MachiningCostTimeAuditPayload
+    sustainability_audit: MachiningSustainabilityAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -621,4 +681,18 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
                 abs_tol=5e-9,
             ):
                 raise ValueError("REPORT_TOOLING_COST_SOURCE_INCONSISTENT")
+        if not math.isclose(
+            self.sustainability_audit.motor_power_kw,
+            self.power_force_audit.p_motor_est_kw,
+            abs_tol=5e-9,
+        ) or not math.isclose(
+            self.sustainability_audit.cutting_time_minutes,
+            self.cost_time_audit.cutting_time_minutes,
+            abs_tol=5e-9,
+        ) or not math.isclose(
+            self.sustainability_audit.total_cycle_time_minutes,
+            self.cost_time_audit.total_cycle_time_minutes,
+            abs_tol=5e-9,
+        ):
+            raise ValueError("REPORT_SUSTAINABILITY_SOURCE_INCONSISTENT")
         return self

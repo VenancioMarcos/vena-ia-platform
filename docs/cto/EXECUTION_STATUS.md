@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-219 a AUTO-228
+
+`CNC_SUSTAINABILITY_CARBON_AUDIT_COMPLETED_LOCAL`. O PR #62 teve Backend e Frontend
+CI aprovados e foi integrado por squash em `7ba19b4`; branch remota removida e main
+sincronizada. A Rota 15 adiciona energia de corte/standby, eficiência elétrica,
+fatores regionais de carbono, contrato imutável, laudo e painel Web informativo.
+Validação: 121 testes CNC, mypy, Ruff, TypeScript estrito, 11 testes Web e diff.
+Sem push da Rota 15 ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-209 a AUTO-218
 
 `CNC_COST_TIME_AUDIT_COMPLETED_LOCAL`. O PR #61 teve Backend e Frontend CI aprovados

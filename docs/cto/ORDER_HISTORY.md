@@ -1,5 +1,14 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-219 a AUTO-228
+
+O PR #62 publicou a Rota 14, recebeu Backend e Frontend CI verdes e foi integrado
+por squash em `7ba19b4`, com exclusão da branch remota. A Rota 15 calcula consumo
+elétrico analítico com estados de corte/standby e converte energia em carbono para
+Brasil SIN, EUA e Europa. Relatório, exportador e viewer exibem a decomposição e a
+matriz informativa, com validação cruzada a Kienzle e ao ciclo. Entrega local sem
+push e sem autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-209 a AUTO-218
 
 O PR #61 publicou a Rota 13, recebeu Backend e Frontend CI verdes e foi integrado

@@ -183,6 +183,34 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  sustainability_audit: {
+    schema_version: "vena-ia.cnc-machining-sustainability-audit/v1",
+    electrical_energy_kwh: 0.527778,
+    cutting_energy_kwh: 0.158507,
+    standby_energy_kwh: 0.369271,
+    carbon_emission_kg_co2e: 0.044861,
+    grid_region: "BRASIL_SIN",
+    grid_emission_factor_kg_co2e_per_kwh: 0.085,
+    motor_power_kw: 4.2796875,
+    standby_power_kw: 1.2,
+    cutting_time_minutes: 2,
+    total_cycle_time_minutes: 17.583333333,
+    electrical_efficiency: 0.9,
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ANALYTICAL_ENERGY_CARBON_EXCLUDES_EXTERNAL_COOLING_AND_STARTUP_PEAKS",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -326,5 +354,19 @@ test("renders the analytical time and cost breakdown precisely", () => {
   assert.match(html, /Custo total estimado/);
   assert.match(html, /BRL 37\.27/);
   assert.match(html, /ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA - NÃO CONSIDERA FLUTUAÇÕES LOGÍSTICAS, PARADAS NÃO PROGRAMADAS OU IMPOSTOS/);
+  assert.doesNotMatch(html, /<button/i);
+});
+
+test("renders sustainability telemetry and the informational grid selector", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Resumo ecológico e energético/);
+  assert.match(html, /0\.5278 kWh/);
+  assert.match(html, /0\.0449 kg CO2e/);
+  assert.match(html, /Brasil · BRASIL_SIN/);
+  assert.match(html, /EUA · USA_AVG/);
+  assert.match(html, /Europa · EU_AVG/);
+  assert.match(html, /aria-current="true"[^>]*>Brasil/);
+  assert.match(html, /0\.085 kg CO2e\/kWh/);
+  assert.match(html, /ESTIMATIVA ECOLÓGICA E ENERGÉTICA ANALÍTICA - NÃO CONSIDERA DINÂMICA AUXILIAR DE REFRIGERAÇÃO EXTERNA OU PICOS DE PARTIDA/);
   assert.doesNotMatch(html, /<button/i);
 });

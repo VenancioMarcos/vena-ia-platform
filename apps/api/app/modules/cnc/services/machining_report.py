@@ -27,6 +27,7 @@ from app.modules.cnc.services.geometry_auditor import (
 from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
 from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
+from app.modules.cnc.services.sustainability_estimator import estimate_sustainability
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 from app.modules.cnc.services.tool_life_estimator import estimate_tool_life
 
@@ -142,6 +143,11 @@ def compile_machining_report(
         for item in estimate.per_tool_breakdown
     )
     cost_time_audit = estimate_machining_cost_time(estimate, tool_life_audits)
+    sustainability_audit = estimate_sustainability(
+        motor_power_kw=power_force_audit.p_motor_est_kw,
+        cutting_time_minutes=cost_time_audit.cutting_time_minutes,
+        total_cycle_time_minutes=cost_time_audit.total_cycle_time_minutes,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -165,6 +171,7 @@ def compile_machining_report(
         power_force_audit=power_force_audit,
         tool_life_audits=tool_life_audits,
         cost_time_audit=cost_time_audit,
+        sustainability_audit=sustainability_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -180,6 +187,7 @@ def compile_machining_report(
             "efficiency, thermal effects and machine behavior are excluded.",
             "Taylor tool-life values exclude real thermal fluctuations and lubrication.",
             "Cost and time values exclude logistics, unplanned downtime and taxes.",
+            "Energy and carbon values exclude external cooling and startup power peaks.",
         ),
     )
 
