@@ -1,24 +1,25 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-349-BATCH
-**Estado:** CNC_WORKHOLDING_CLAMPING_PR_READY
+**Missão:** CTO-CODEX-AUTO-350 a AUTO-359
+**Estado:** CNC_TAILSTOCK_THRUST_DEFLECTION_PR_DRAFT_READY
 **Data:** 2026-09-14
-**Branch:** `codex/v8.9-cnc-workholding-clamping-auditor`
-**Baseline da branch:** `e6da01d0f18e4da143078f6c1cfc33b401257bd0`
+**Branch:** `codex/v9.0-cnc-tailstock-thrust-deflection-auditor`
+**Baseline da branch:** `c0df9eeb8cd95ed8d712bffc1598a494f21b8628`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O `VTP-AUTO-348-BATCH` foi aprovado. A branch da Rota 27 foi publicada e o Draft
-PR #76 aberto contra `main`. O Frontend CI passou em 1m16s; o Backend CI passou em
-3m08s na reexecução após uma falha externa `504 Gateway Timeout` no download da
-imagem MinIO. O PR foi promovido e está `OPEN`, `isDraft=false`,
-`MERGEABLE/CLEAN`, sem autorização de merge nesta ordem.
+O `VTP-AUTO-349-BATCH` foi aprovado. O PR #76 foi integrado por squash em
+`c0df9ee`, e a `main` foi sincronizada. A Rota 28 calcula deflexão biapoiada e
+carga crítica de Euler, alerta acima de 30% da carga crítica e integra contrato,
+JSON, TEXT e Web com verificação física obrigatória e sem controles do mangote.
+O commit `d659587` foi publicado no Draft PR #77; Frontend CI passou em 1m20s e
+Backend CI em 3m28s. O PR permanece aberto, em rascunho e sem merge.
 
 ## Continuidade
 
-Emitir `VTP-AUTO-349-BATCH`, solicitar parecer e aguardar a próxima ordem sem
-executar merge.
+Emitir `VTP-AUTO-359-BATCH`, solicitar parecer do CTO e aguardar a próxima
+ordem. O PR #77 deve permanecer em rascunho e sem merge.
 
 ## Limites permanentes
 

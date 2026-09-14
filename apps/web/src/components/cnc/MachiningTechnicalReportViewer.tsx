@@ -527,6 +527,29 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_CLAMPING_ESTIMATE_REQUIRES_PHYSICAL_CHUCK_LOAD_MEASUREMENT";
     safety_flags: MachiningReportSafetyFlags;
   };
+  tailstock_thrust_audit: {
+    schema_version: "vena-ia.cnc-tailstock-thrust-audit/v1";
+    tailstock_force_n: number;
+    critical_buckling_load_n: number;
+    max_supported_deflection_um: number;
+    engagement_z_coordinate_mm: number;
+    total_supported_length_mm: number;
+    minimum_diameter_mm: number;
+    cutting_load_position_mm: number;
+    radial_cutting_force_n: number;
+    young_modulus_mpa: number;
+    second_moment_area_mm4: number;
+    effective_length_factor: number;
+    warning_threshold_n: number;
+    tailstock_status:
+      | "TAILSTOCK_SUPPORT_COMPLIANT"
+      | "TAILSTOCK_THRUST_BUCKLING_RISK_WARNING";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    automatic_tailstock_control_authorized: false;
+    model_limitation: "ANALYTICAL_TAILSTOCK_SUPPORT_EXCLUDES_CENTER_ECCENTRICITY_AND_QUILL_BEARING_WEAR";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -587,6 +610,8 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const coolantDemandAdequate = coolantAudit.thermal_dissipation_status === "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS";
   const workholdingAudit = report.workholding_clamping_audit;
   const dynamicClampingSafe = workholdingAudit.clamping_status === "DYNAMIC_CLAMPING_SAFE";
+  const tailstockAudit = report.tailstock_thrust_audit;
+  const tailstockSupportCompliant = tailstockAudit.tailstock_status === "TAILSTOCK_SUPPORT_COMPLIANT";
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -1106,6 +1131,27 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE FORÇA DE FIXAÇÃO - NÃO SUBSTITUI VERIFICAÇÃO COM MEDIDOR FÍSICO DE CARGA EM PLACA
+      </p>
+    </section>
+
+    <section aria-labelledby="report-tailstock-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-tailstock-heading" className="text-lg font-semibold">Painel de contraponto</h2>
+        <span role={tailstockSupportCompliant ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${tailstockSupportCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {tailstockSupportCompliant ? "APOIO CONFORME" : "ALERTA: RISCO DE FLAMBAGEM POR PRÉ-CARGA"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Força de apoio" value={`${tailstockAudit.tailstock_force_n.toFixed(3)} N`} />
+        <Metric label="Carga crítica de flambagem" value={`${tailstockAudit.critical_buckling_load_n.toFixed(3)} N`} />
+        <Metric label="Deflexão biapoiada máxima" value={`${tailstockAudit.max_supported_deflection_um.toFixed(3)} µm`} />
+        <Metric label="Cota de engajamento Z" value={`${tailstockAudit.engagement_z_coordinate_mm.toFixed(3)} mm`} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">
+        L={tailstockAudit.total_supported_length_mm.toFixed(3)} mm · Fr={tailstockAudit.radial_cutting_force_n.toFixed(3)} N · limite 30%={tailstockAudit.warning_threshold_n.toFixed(3)} N · {tailstockAudit.tailstock_status}
+      </p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE CARGA E APOIO DE CONTRAPONTO - NÃO CONSIDERA EXCENTRICIDADE DO PONTO DE CENTRO OU DESGASTE DE ROLAMENTOS DO MANGOTE
       </p>
     </section>
 

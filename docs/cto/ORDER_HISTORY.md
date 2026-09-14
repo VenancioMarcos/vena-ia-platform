@@ -1,5 +1,20 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-359-BATCH
+
+A Rota 28 foi publicada no Draft PR #77 pelo commit `d659587`. O Frontend CI
+passou em 1m20s e o Backend CI em 3m28s. O PR permanece aberto, em rascunho e sem
+merge, pronto para parecer do CTO. Os limites de autoridade física continuam
+inalterados.
+
+## 2026-09-14 — CTO-CODEX-AUTO-350 a AUTO-358
+
+O `VTP-AUTO-349-BATCH` foi aprovado. O PR #76 foi integrado por squash em
+`c0df9ee`, com branch remota removida e main sincronizada. A Rota 28 implementa
+apoio de contraponto, deflexão biapoiada, carga crítica de Euler e warning de
+pré-carga; manifesto, TEXT e Web preservam revisão física obrigatória e ausência
+de controles do mangote. Entrega local pronta para o PR #77.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-349-BATCH
 
 O `VTP-AUTO-348-BATCH` foi aprovado. A Rota 27 foi publicada no Draft PR #76.

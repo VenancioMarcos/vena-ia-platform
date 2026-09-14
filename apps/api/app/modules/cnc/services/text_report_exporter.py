@@ -340,6 +340,25 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "APOIO E EMPUXO DO CONTRAPONTO",
+            (
+                f"tailstock_force_n={validated.tailstock_thrust_audit.tailstock_force_n:.9f}",
+                "critical_buckling_load_n="
+                f"{validated.tailstock_thrust_audit.critical_buckling_load_n:.9f}",
+                "warning_threshold_n="
+                f"{validated.tailstock_thrust_audit.warning_threshold_n:.9f}",
+                "max_supported_deflection_um="
+                f"{validated.tailstock_thrust_audit.max_supported_deflection_um:.9f}",
+                "engagement_z_coordinate_mm="
+                f"{validated.tailstock_thrust_audit.engagement_z_coordinate_mm:.9f}",
+                "cutting_load_position_mm="
+                f"{validated.tailstock_thrust_audit.cutting_load_position_mm:.9f}",
+                f"status={validated.tailstock_thrust_audit.tailstock_status}",
+                "ESTIMATIVA ANALÍTICA DE CARGA E APOIO DE CONTRAPONTO - NÃO CONSIDERA "
+                "EXCENTRICIDADE DO PONTO DE CENTRO OU DESGASTE DE ROLAMENTOS DO MANGOTE",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",
