@@ -1,24 +1,24 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-259 a AUTO-268
-**Estado:** CNC_OPERATIONAL_PROCESS_ROUTING_SHEET_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-269 a AUTO-278
+**Estado:** CNC_RESIDUAL_STOCK_AUDITOR_COMPLETED_LOCAL
 **Data:** 2026-09-14
-**Branch:** `codex/v8.0-cnc-process-routing-sheet`
-**Baseline da branch:** `b2d897e87248e4d87c6341635826c0c8b8b014a4`
+**Branch:** `codex/v8.1-cnc-residual-stock-auditor`
+**Baseline da branch:** `70515987d1b19758d549e8a6ff188dfa81116188`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O CTO aprovou explicitamente o `VTP-AUTO-258-BATCH`. O PR #66 publicou a Rota 18,
-teve Backend e Frontend CI aprovados e foi integrado por squash em `b2d897e`; sua
-branch remota foi removida e `main=origin/main`. A Rota 19 compila uma Folha de
-Processo teórica com setup, sequência CAM, ferramenta/inserto, Vc/f/ap, rpm, avanço,
-tempos, fixação e balanço. O contrato revalida ordem e snapshots e o relatório JSON,
-TEXT e Web mantém revisão humana obrigatória.
+O CTO aprovou explicitamente o `VTP-AUTO-268-BATCH`. O PR #67 publicou a Rota 19,
+teve Backend e Frontend CI aprovados e foi integrado por squash em `7051598`; sua
+branch remota foi removida e `main=origin/main`. A Rota 20 preserva e vincula o
+perfil BRep nominal, calcula sobremetal residual por seção axial, acusa gouging,
+excesso de material e degraus incompatíveis com a ferramenta. O contrato, o laudo
+TEXT e o painel Web revalidam as fontes e mantêm revisão física CMM obrigatória.
 
 ## Continuidade
 
-Emitir `VTP-AUTO-268-BATCH` ao CTO e aguardar parecer e próxima ordem. A branch
+Emitir `VTP-AUTO-278-BATCH` ao CTO e aguardar parecer e próxima ordem. A branch
 permanece local e não deve receber push nesta etapa.
 
 ## Limites permanentes

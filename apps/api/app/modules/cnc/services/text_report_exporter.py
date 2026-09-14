@@ -163,6 +163,30 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "AUDITORIA DE MATERIAL REMANESCENTE",
+            (
+                f"status={validated.residual_stock_audit.status}",
+                f"max_residual_stock_mm={validated.residual_stock_audit.max_residual_stock_mm:.9f}",
+                f"min_residual_stock_mm={validated.residual_stock_audit.min_residual_stock_mm:.9f}",
+                "average_stock_allowance_mm="
+                f"{validated.residual_stock_audit.average_stock_allowance_mm:.9f}",
+                f"gouging_detected={str(validated.residual_stock_audit.gouging_detected).lower()}",
+                *(
+                    f"residual_section[{index}]: front_z_mm={item.front_z_mm:.9f}; "
+                    f"rear_z_mm={item.rear_z_mm:.9f}; "
+                    f"nominal_radius_mm={item.nominal_radius_mm:.9f}; "
+                    f"in_process_radius_mm={item.in_process_radius_mm:.9f}; "
+                    f"residual_stock_mm={item.residual_stock_mm:.9f}"
+                    for index, item in enumerate(
+                        validated.residual_stock_audit.sections,
+                        start=1,
+                    )
+                ),
+                "AUDITORIA ANALÍTICA DE MATERIAL REMANESCENTE - NÃO SUBSTITUI "
+                "MEDIÇÃO TRIDIMENSIONAL FÍSICA EM CMM",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

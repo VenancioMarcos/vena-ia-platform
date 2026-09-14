@@ -442,6 +442,63 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  residual_stock_audit: {
+    schema_version: "vena-ia.cnc-residual-stock-audit/v1",
+    source_plan_id: "plan-report-001",
+    source_cam_plan: {
+      status: "PLANNED_REQUIRES_REVIEW",
+      operation_type: "ROUGH_TURNING",
+      passes: [{
+        sequence: 1,
+        operation_type: "ROUGH_TURNING",
+        coordinates_rz_mm: [{ r_mm: 26, z_mm: 1 }, { r_mm: 25, z_mm: -100 }],
+        estimated_removed_volume_mm3: 1000,
+      }],
+      material_removal_volume_mm3: 1000,
+      warnings: ["ANALYTICAL_2D_REQUIRES_HUMAN_REVIEW"],
+      executable_output: false,
+      physical_use_authorized: false,
+      g9_status: "PENDING_AUTHORITATIVE_REVIEW",
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+    },
+    source_nominal_profile: [
+      { r_mm: 0, z_mm: 1 },
+      { r_mm: 26, z_mm: 1 },
+      { r_mm: 25.5, z_mm: 1 },
+      { r_mm: 25.5, z_mm: -100 },
+      { r_mm: 0, z_mm: -100 },
+    ],
+    stock_radius_mm: 26,
+    finish_allowance_nominal_mm: 0,
+    linear_tolerance_mm: 0.001,
+    tool_cutting_edge_length_mm: 12,
+    sections: [{
+      front_z_mm: 1,
+      rear_z_mm: -100,
+      nominal_radius_mm: 25.5,
+      in_process_radius_mm: 25.5,
+      residual_stock_mm: 0,
+    }],
+    max_residual_stock_mm: 0,
+    min_residual_stock_mm: 0,
+    average_stock_allowance_mm: 0,
+    gouging_detected: false,
+    status: "UNIFORM_ALLOWANCE_COMPLIANT",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ANALYTICAL_RESIDUAL_STOCK_AUDIT_DOES_NOT_REPLACE_PHYSICAL_CMM_MEASUREMENT",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -697,6 +754,41 @@ test("renders the chronological process sheet, clamping metadata, and governance
   assert.match(html, /T0101 · ROUGHING TOOL · INSERT_R0\.800_RIGHT_HAND/);
   assert.match(html, /Vc 180\.000 m\/min · f 0\.200 mm\/rot · ap 2\.000 mm · 1500\.0 rpm/);
   assert.match(html, /FOLHA DE PROCESSO TEÓRICA ANALÍTICA - DOCUMENTO ORIENTATIVO SUJEITO À APROVAÇÃO DO PREPARADOR DE MÁQUINAS/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
+});
+
+test("renders compliant residual-stock telemetry and physical CMM limitation", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Integridade do sobremetal residual/);
+  assert.match(html, /SOBREMETAL HOMOGÊNEO/);
+  assert.match(html, /Sobremetal máximo/);
+  assert.match(html, /Sobremetal mínimo/);
+  assert.match(html, /UNIFORM_ALLOWANCE_COMPLIANT/);
+  assert.match(html, /AUDITORIA ANALÍTICA DE MATERIAL REMANESCENTE - NÃO SUBSTITUI MEDIÇÃO TRIDIMENSIONAL FÍSICA EM CMM/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
+});
+
+test("renders critical gouging as a red alert without operational controls", () => {
+  const gougingReport: MachiningTechnicalReportPayload = {
+    ...report,
+    residual_stock_audit: {
+      ...report.residual_stock_audit,
+      sections: [{
+        ...report.residual_stock_audit.sections[0],
+        in_process_radius_mm: 25.49,
+        residual_stock_mm: -0.01,
+      }],
+      max_residual_stock_mm: -0.01,
+      min_residual_stock_mm: -0.01,
+      average_stock_allowance_mm: -0.01,
+      gouging_detected: true,
+      status: "CRITICAL_GOUGING_VIOLATION",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: gougingReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: SUBCORTE DETECTADO \(GOUGING\)/);
+  assert.match(html, /CRITICAL_GOUGING_VIOLATION/);
+  assert.match(html, /-0\.010 mm/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
 });
 

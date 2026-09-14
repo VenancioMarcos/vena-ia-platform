@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.64
+**Versão:** 2.65
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,20 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_RESIDUAL_STOCK_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou explicitamente o `VTP-AUTO-268-BATCH`. O PR #67 integrou a Rota 19
+  por squash em `7051598`; Backend e Frontend CI foram aprovados, a branch remota
+  foi removida e `main=origin/main`. A branch local
+  `codex/v8.1-cnc-residual-stock-auditor` preserva o perfil BRep nominal no registro
+  do plano e o inclui no fingerprint. O auditor compara o envelope final alcançado
+  pelo CAM com cada seção axial nominal, mede sobremetal mínimo/máximo/médio, acusa
+  qualquer subcorte negativo, excesso acima de `finish_allowance + 0,05 mm` e
+  degraus incompatíveis com a aresta. Contrato, JSON, TEXT e Web revalidam as fontes,
+  exibem telemetria e exigem medição física CMM, sem controles operacionais. Entrega
+  local sem push e sem autoridade física. Validação: 889 testes API/2 ignorados,
+  186 CNC, 46 focados, 20 Web, mypy em 226 fontes, Ruff, TypeScript, Next lint e
+  `git diff --check`.
 
 - **Handoff CTO:** `CNC_OPERATIONAL_PROCESS_ROUTING_SHEET_COMPLETED_LOCAL`.
   O CTO aprovou explicitamente o `VTP-AUTO-258-BATCH`. O PR #66 integrou a Rota 18
