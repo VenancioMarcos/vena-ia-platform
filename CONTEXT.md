@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.70
+**Versão:** 2.71
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,13 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_TOOL_WEAR_GEOMETRY_CONTRACT_V2_SCAFFOLDED_LOCAL`.
+  O PR #71 integrou a Rota 23 por squash em `dd099b0` após Frontend CI em 1m10s e
+  Backend CI em 2m55s; branch remota removida e `main=origin/main`. A Rota 24
+  iniciou contrato v2 de desgaste progressivo do inserto, vinculando VB estimado ao
+  consumo Taylor, raio de quina efetivo e desvios geométricos X/Z. Validação: 240
+  CNC, 6 focados, Ruff, mypy em 210 fontes e diff; branch local sem push.
 
 - **Handoff CTO:** `CNC_THERMAL_EXPANSION_DRIFT_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou o `VTP-AUTO-303-BATCH`. A Rota 23 calcula `ΔL=α·L·ΔT` para o

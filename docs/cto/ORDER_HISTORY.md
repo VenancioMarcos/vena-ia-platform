@@ -1,5 +1,11 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-304 a AUTO-313
+
+A Rota 23 foi publicada no PR #71, validada, promovida e integrada por squash em
+`dd099b0`. A Rota 24 iniciou o contrato v2 de desgaste progressivo e desvio
+geométrico do inserto, vinculando a fonte Taylor e mantendo compensação desativada.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-304 a AUTO-309
 
 O `VTP-AUTO-303-BATCH` foi aprovado. A Rota 23 concluiu serviço, contratos,

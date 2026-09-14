@@ -1,21 +1,21 @@
 # Ordem CTO atual
 
 **Missão:** CTO-CODEX-AUTO-304 a AUTO-313
-**Estado:** CNC_THERMAL_EXPANSION_DRIFT_AUDITOR_COMPLETED_LOCAL
+**Estado:** CNC_TOOL_WEAR_GEOMETRY_CONTRACT_V2_SCAFFOLDED_LOCAL
 **Data:** 2026-09-14
-**Branch:** `codex/v8.4-cnc-thermal-expansion-drift-auditor`
-**Baseline da branch:** `eae463ee990b66c70c874e21a4cba9f7c36c01e9`
+**Branch:** `codex/v8.5-cnc-tool-wear-compensation-geometry-auditor`
+**Baseline da branch:** `dd099b0deb29a11dd96deb827ca9a540ae76c50a`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O CTO aprovou o `VTP-AUTO-303-BATCH`. A Rota 23 implementa o motor térmico, integra
-o contrato v2 ao manifesto/TEXT e exibe temperaturas, deriva X/Z, impacto e badges
-no viewer Web. Fórmulas, coeficientes, fontes e status são revalidados fail-closed.
+O CTO aprovou o `VTP-AUTO-303-BATCH`. O PR #71 integrou a Rota 23 em `dd099b0` com
+CI aprovado, branch remota removida e main sincronizada. A Rota 24 iniciou contrato
+v2 de VB, desgaste de flanco, raio efetivo e desvio geométrico vinculado à vida Taylor.
 
 ## Continuidade
 
-Publicar a Rota 23 no PR #71, acompanhar CI, integrar por squash e iniciar a Rota 24.
+Emitir `VTP-AUTO-313-BATCH` e aguardar parecer. A branch permanece local sem push.
 
 ## Limites permanentes
 

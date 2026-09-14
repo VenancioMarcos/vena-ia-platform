@@ -1661,6 +1661,59 @@ class ThermalExpansionDriftAuditPayload(_CNCGenerationContract):
         return self
 
 
+class ToolWearGeometryAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-tool-wear-geometry-audit/v2"] = (
+        "vena-ia.cnc-tool-wear-geometry-audit/v2"
+    )
+    source_tool_life_audit: ToolLifeTaylorAuditPayload
+    nominal_nose_radius_mm: float = Field(gt=0, le=100)
+    maximum_allowable_flank_wear_vb_mm: float = Field(gt=0, le=5)
+    estimated_flank_wear_vb_mm: float = Field(ge=0, le=5)
+    flank_wear_progress_percent: float = Field(ge=0)
+    effective_nose_radius_mm: float = Field(gt=0, le=100)
+    predicted_radial_deviation_um: float = Field(ge=0)
+    predicted_axial_deviation_um: float = Field(ge=0)
+    geometry_tolerance_um: float = Field(gt=0)
+    audit_status: Literal[
+        "TOOL_WEAR_GEOMETRY_WITHIN_TOLERANCE",
+        "TOOL_WEAR_GEOMETRY_EXCEEDED_WARNING",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    compensation_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_TOOL_WEAR_GEOMETRY_DOES_NOT_AUTHORIZE_AUTOMATIC_OFFSET_COMPENSATION"
+    ] = "ANALYTICAL_TOOL_WEAR_GEOMETRY_DOES_NOT_AUTHORIZE_AUTOMATIC_OFFSET_COMPENSATION"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_progressive_wear_model(self) -> "ToolWearGeometryAuditPayload":
+        expected_progress = self.source_tool_life_audit.tool_life_consumed_percent
+        expected_wear = self.maximum_allowable_flank_wear_vb_mm * expected_progress / 100.0
+        expected_radius = self.nominal_nose_radius_mm - expected_wear / 2.0
+        if expected_radius <= 0:
+            raise ValueError("TOOL_WEAR_EFFECTIVE_NOSE_RADIUS_NON_PHYSICAL")
+        comparisons = (
+            (self.flank_wear_progress_percent, expected_progress, "TOOL_WEAR_PROGRESS_INCONSISTENT"),
+            (self.estimated_flank_wear_vb_mm, expected_wear, "TOOL_WEAR_VB_MAX_INCONSISTENT"),
+            (self.effective_nose_radius_mm, expected_radius, "TOOL_WEAR_NOSE_RADIUS_INCONSISTENT"),
+            (self.predicted_radial_deviation_um, expected_wear * 1_000.0, "TOOL_WEAR_RADIAL_DEVIATION_INCONSISTENT"),
+            (self.predicted_axial_deviation_um, expected_wear * 500.0, "TOOL_WEAR_AXIAL_DEVIATION_INCONSISTENT"),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "TOOL_WEAR_GEOMETRY_EXCEEDED_WARNING"
+            if max(self.predicted_radial_deviation_um, self.predicted_axial_deviation_um)
+            > self.geometry_tolerance_um
+            else "TOOL_WEAR_GEOMETRY_WITHIN_TOLERANCE"
+        )
+        if self.audit_status != expected_status:
+            raise ValueError("TOOL_WEAR_GEOMETRY_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
