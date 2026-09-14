@@ -2313,6 +2313,132 @@ class JawClampingPressureAuditPayload(_CNCGenerationContract):
         return self
 
 
+class GuidewayLoadAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-guideway-load-audit/v1"] = (
+        "vena-ia.cnc-guideway-load-audit/v1"
+    )
+    source_power_force_audit: MachiningPowerForceAuditPayload
+    block_count: Literal[4] = 4
+    feed_force_ratio: float = Field(gt=0, le=2.0)
+    radial_force_ratio: float = Field(gt=0, le=2.0)
+    tangential_cutting_force_n: float = Field(gt=0, le=10_000_000)
+    axial_feed_force_n: float = Field(gt=0, le=10_000_000)
+    radial_cutting_force_n: float = Field(gt=0, le=10_000_000)
+    lever_arm_x_mm: float = Field(gt=0, le=100_000)
+    lever_arm_y_mm: float = Field(gt=0, le=100_000)
+    lever_arm_z_mm: float = Field(gt=0, le=100_000)
+    block_spacing_x_mm: float = Field(gt=0, le=100_000)
+    rail_spacing_y_mm: float = Field(gt=0, le=100_000)
+    block_spacing_z_mm: float = Field(gt=0, le=100_000)
+    pitching_moment_nm: float = Field(gt=0)
+    yawing_moment_nm: float = Field(gt=0)
+    rolling_moment_nm: float = Field(gt=0)
+    direct_load_per_block_n: float = Field(gt=0)
+    pitching_reaction_per_block_n: float = Field(gt=0)
+    yawing_reaction_per_block_n: float = Field(gt=0)
+    rolling_reaction_per_block_n: float = Field(gt=0)
+    max_block_load_n: float = Field(gt=0)
+    static_capacity_n: float = Field(gt=0, le=1_000_000_000)
+    load_ratio_percent: float = Field(gt=0)
+    guideway_status: Literal[
+        "GUIDEWAY_DYNAMIC_OVERLOAD_WARNING",
+        "GUIDEWAY_LOAD_COMPLIANT",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ESTIMATIVA ANALÍTICA DE CARGA NOS GUIAS LINEARES - NÃO CONSIDERA PRÉ-CARGA INTERNA DOS PATINS, ERROS DE GEOMETRIA DO BARRAMENTO OU DESGASTE DE ESFERAS/ROLETES"
+    ] = (
+        "ESTIMATIVA ANALÍTICA DE CARGA NOS GUIAS LINEARES - NÃO CONSIDERA PRÉ-CARGA "
+        "INTERNA DOS PATINS, ERROS DE GEOMETRIA DO BARRAMENTO OU DESGASTE DE "
+        "ESFERAS/ROLETES"
+    )
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_guideway_load_snapshot(self) -> "GuidewayLoadAuditPayload":
+        tangential_force = self.source_power_force_audit.fc_nominal_n
+        axial_force = tangential_force * self.feed_force_ratio
+        radial_force = tangential_force * self.radial_force_ratio
+        pitching_moment = (
+            axial_force * self.lever_arm_z_mm
+            + tangential_force * self.lever_arm_x_mm
+        ) / 1_000.0
+        yawing_moment = (
+            axial_force * self.lever_arm_y_mm
+            + radial_force * self.lever_arm_z_mm
+        ) / 1_000.0
+        rolling_moment = (
+            radial_force * self.lever_arm_y_mm
+            + tangential_force * self.lever_arm_z_mm
+        ) / 1_000.0
+        direct_load = math.sqrt(
+            tangential_force**2 + axial_force**2 + radial_force**2
+        ) / self.block_count
+        pitching_reaction = (
+            pitching_moment * 1_000.0 / (2.0 * self.block_spacing_z_mm)
+        )
+        yawing_reaction = (
+            yawing_moment * 1_000.0 / (2.0 * self.block_spacing_x_mm)
+        )
+        rolling_reaction = (
+            rolling_moment * 1_000.0 / (2.0 * self.rail_spacing_y_mm)
+        )
+        max_block_load = (
+            direct_load + pitching_reaction + yawing_reaction + rolling_reaction
+        )
+        load_ratio = max_block_load / self.static_capacity_n * 100.0
+        comparisons = (
+            (
+                self.tangential_cutting_force_n,
+                tangential_force,
+                "GUIDEWAY_TANGENTIAL_FORCE_INCONSISTENT",
+            ),
+            (self.axial_feed_force_n, axial_force, "GUIDEWAY_AXIAL_FORCE_INCONSISTENT"),
+            (
+                self.radial_cutting_force_n,
+                radial_force,
+                "GUIDEWAY_RADIAL_FORCE_INCONSISTENT",
+            ),
+            (self.pitching_moment_nm, pitching_moment, "GUIDEWAY_PITCHING_MOMENT_INCONSISTENT"),
+            (self.yawing_moment_nm, yawing_moment, "GUIDEWAY_YAWING_MOMENT_INCONSISTENT"),
+            (self.rolling_moment_nm, rolling_moment, "GUIDEWAY_ROLLING_MOMENT_INCONSISTENT"),
+            (
+                self.direct_load_per_block_n,
+                direct_load,
+                "GUIDEWAY_DIRECT_LOAD_INCONSISTENT",
+            ),
+            (
+                self.pitching_reaction_per_block_n,
+                pitching_reaction,
+                "GUIDEWAY_PITCH_REACTION_INCONSISTENT",
+            ),
+            (
+                self.yawing_reaction_per_block_n,
+                yawing_reaction,
+                "GUIDEWAY_YAW_REACTION_INCONSISTENT",
+            ),
+            (
+                self.rolling_reaction_per_block_n,
+                rolling_reaction,
+                "GUIDEWAY_ROLL_REACTION_INCONSISTENT",
+            ),
+            (self.max_block_load_n, max_block_load, "GUIDEWAY_MAX_BLOCK_LOAD_INCONSISTENT"),
+            (self.load_ratio_percent, load_ratio, "GUIDEWAY_LOAD_RATIO_INCONSISTENT"),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "GUIDEWAY_DYNAMIC_OVERLOAD_WARNING"
+            if max_block_load > 0.5 * self.static_capacity_n
+            else "GUIDEWAY_LOAD_COMPLIANT"
+        )
+        if self.guideway_status != expected_status:
+            raise ValueError("GUIDEWAY_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -2352,6 +2478,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     tailstock_thrust_audit: TailstockThrustAuditPayload
     spindle_harmonic_dynamics_audit: SpindleHarmonicDynamicsAuditPayload
     jaw_clamping_pressure_audit: JawClampingPressureAuditPayload
+    guideway_load_audit: GuidewayLoadAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -2698,4 +2825,10 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             or jaw_pressure.material_profile != self.power_force_audit.material_profile
         ):
             raise ValueError("REPORT_JAW_CONTACT_PRESSURE_SOURCE_INCONSISTENT")
+        guideway = self.guideway_load_audit
+        if (
+            guideway.safety_flags != self.safety_flags
+            or guideway.source_power_force_audit != self.power_force_audit
+        ):
+            raise ValueError("REPORT_GUIDEWAY_LOAD_SOURCE_INCONSISTENT")
         return self

@@ -27,6 +27,7 @@ from app.modules.cnc.services.chip_breaking_auditor import (
     audit_chip_breaking_machinability,
 )
 from app.modules.cnc.services.cost_time_estimator import estimate_machining_cost_time
+from app.modules.cnc.services.guideway_load_auditor import audit_guideway_load
 from app.modules.cnc.services.jaw_contact_pressure_auditor import audit_jaw_contact_pressure
 from app.modules.cnc.services.machining_report import (
     MachiningReportSource,
@@ -34,6 +35,7 @@ from app.modules.cnc.services.machining_report import (
     plan_fingerprint,
 )
 from app.modules.cnc.services.part_deflection_auditor import audit_part_elastic_deflection
+from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
 from app.modules.cnc.services.sustainability_estimator import estimate_sustainability
 from app.modules.cnc.services.stability_auditor import audit_machining_stability
 from app.modules.cnc.services.text_report_exporter import (
@@ -293,6 +295,16 @@ def test_complete_report_replays_deterministically(controller):
         report.jaw_clamping_pressure_audit.automatic_chuck_pressure_control_authorized
         is False
     )
+    assert report.guideway_load_audit.source_power_force_audit == report.power_force_audit
+    assert report.guideway_load_audit.tangential_cutting_force_n == pytest.approx(
+        report.power_force_audit.fc_nominal_n
+    )
+    assert report.guideway_load_audit.pitching_moment_nm > 0
+    assert report.guideway_load_audit.yawing_moment_nm > 0
+    assert report.guideway_load_audit.rolling_moment_nm > 0
+    assert report.guideway_load_audit.max_block_load_n > 0
+    assert report.guideway_load_audit.guideway_status == "GUIDEWAY_LOAD_COMPLIANT"
+    assert report.guideway_load_audit.physical_use_authorized is False
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -560,6 +572,41 @@ def test_report_rejects_jaw_pressure_audit_from_another_workholding_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_guideway_audit_from_another_kienzle_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    current = report.power_force_audit
+    other_source = estimate_cutting_power_force(
+        current.material_profile,
+        feed_mm_per_rev=current.feed_mm_per_rev * 0.9,
+        depth_of_cut_mm=current.depth_of_cut_mm,
+        cutting_edge_angle_deg=current.cutting_edge_angle_deg,
+        cutting_speed_m_per_min=current.cutting_speed_m_per_min,
+        spindle_rpm_reference=current.spindle_rpm_reference,
+        max_spindle_rpm=current.max_spindle_rpm,
+        machine_power_limit_kw=current.machine_power_limit_kw,
+    )
+    transplanted = audit_guideway_load(
+        other_source,
+        feed_force_ratio=report.guideway_load_audit.feed_force_ratio,
+        radial_force_ratio=report.guideway_load_audit.radial_force_ratio,
+        lever_arm_x_mm=report.guideway_load_audit.lever_arm_x_mm,
+        lever_arm_y_mm=report.guideway_load_audit.lever_arm_y_mm,
+        lever_arm_z_mm=report.guideway_load_audit.lever_arm_z_mm,
+        block_spacing_x_mm=report.guideway_load_audit.block_spacing_x_mm,
+        rail_spacing_y_mm=report.guideway_load_audit.rail_spacing_y_mm,
+        block_spacing_z_mm=report.guideway_load_audit.block_spacing_z_mm,
+        static_capacity_n=report.guideway_load_audit.static_capacity_n,
+    )
+    body = report.model_dump()
+    body["guideway_load_audit"] = transplanted.model_dump()
+    with pytest.raises(
+        ValidationError,
+        match="REPORT_GUIDEWAY_LOAD_SOURCE_INCONSISTENT",
+    ):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -567,7 +614,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 17
+    assert rendered.count(SAFETY_STAMP) == 18
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -595,6 +642,18 @@ def test_text_export_is_deterministic_and_stamps_every_section():
         "ESTIMATIVA ANALÍTICA DE PRESSÃO DE FIXAÇÃO - NÃO CONSIDERA SERRILHADOS, "
         "RAIOS DE CANTO OU DISTRIBUIÇÃO HERTZIANA NÃO LINEAR NAS CASTANHAS"
         in rendered
+    )
+    assert "[CARGA E MOMENTOS NOS GUIAS LINEARES]" in rendered
+    assert "pitching_moment_nm=" in rendered
+    assert "yawing_moment_nm=" in rendered
+    assert "rolling_moment_nm=" in rendered
+    assert "max_block_load_n=" in rendered
+    assert "static_capacity_n=80000.000000000" in rendered
+    assert "status=GUIDEWAY_LOAD_COMPLIANT" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE CARGA NOS GUIAS LINEARES - NÃO CONSIDERA PRÉ-CARGA "
+        "INTERNA DOS PATINS, ERROS DE GEOMETRIA DO BARRAMENTO OU DESGASTE DE "
+        "ESFERAS/ROLETES" in rendered
     )
     assert "cutting_force_nominal_n=" in rendered
     assert "power_status=POWER_WITHIN_LIMITS" in rendered

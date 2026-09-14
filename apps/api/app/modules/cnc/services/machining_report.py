@@ -30,6 +30,7 @@ from app.modules.cnc.services.geometry_auditor import (
     GeometryDimensionalAuditError,
     require_geometry_dimensions_consistent,
 )
+from app.modules.cnc.services.guideway_load_auditor import audit_guideway_load
 from app.modules.cnc.services.harmonic_spindle_auditor import (
     audit_spindle_harmonic_dynamics,
     cylindrical_workpiece_mass_kg,
@@ -353,6 +354,18 @@ def compile_machining_report(
         jaw_width_mm=20.0,
         effective_contact_length_mm=30.0,
     )
+    guideway_load_audit = audit_guideway_load(
+        power_force_audit,
+        feed_force_ratio=0.30,
+        radial_force_ratio=0.50,
+        lever_arm_x_mm=120.0,
+        lever_arm_y_mm=180.0,
+        lever_arm_z_mm=220.0,
+        block_spacing_x_mm=240.0,
+        rail_spacing_y_mm=300.0,
+        block_spacing_z_mm=360.0,
+        static_capacity_n=80_000.0,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -392,6 +405,7 @@ def compile_machining_report(
         tailstock_thrust_audit=tailstock_thrust_audit,
         spindle_harmonic_dynamics_audit=spindle_harmonic_dynamics_audit,
         jaw_clamping_pressure_audit=jaw_clamping_pressure_audit,
+        guideway_load_audit=guideway_load_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -437,6 +451,8 @@ def compile_machining_report(
             "damping and bearing-race defects.",
             "Jaw contact-pressure estimates exclude serrations, corner radii and "
             "nonlinear Hertzian pressure distribution.",
+            "Guideway load estimates use declared force ratios and nominal block spacing; "
+            "internal preload, bed geometry errors and rolling-element wear are excluded.",
         ),
     )
 

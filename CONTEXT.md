@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.82
+**Versão:** 2.83
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_GUIDEWAY_CUTTING_MOMENT_LOAD_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou o `VTP-AUTO-379-BATCH`. A Rota 30 foi publicada no PR #79, teve
+  Frontend CI aprovado em 1m10s e Backend CI em 3m42s e foi integrada por squash
+  em `09d5df2`; a branch remota foi removida e `main=origin/main`. A branch
+  `codex/v9.3-cnc-guideway-cutting-moment-load-auditor` implementa a Rota 31:
+  vincula `Fc`, `Ff` e `Fr` ao snapshot Kienzle, calcula os momentos `Mx`, `My` e
+  `Mz` e combina carga direta e reações nos quatro patins. Cargas acima de 50% da
+  capacidade estática `C0` geram warning. Contrato, JSON, TEXT e Web revalidam
+  fontes e derivados, exibem telemetria e preservam todos os bloqueios físicos.
+  Validação: 363 testes CNC, 42 Web, Ruff, mypy em 237 fontes, TypeScript, Next
+  lint e diff; branch local sem push.
 
 - **Handoff CTO:** `CNC_JAW_CLAMPING_PRESSURE_INDENTATION_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou o `VTP-AUTO-369-BATCH`. O PR #78 foi promovido e integrado por

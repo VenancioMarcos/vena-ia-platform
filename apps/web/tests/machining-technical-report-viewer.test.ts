@@ -910,6 +910,81 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  guideway_load_audit: {
+    schema_version: "vena-ia.cnc-guideway-load-audit/v1",
+    source_power_force_audit: {
+      schema_version: "vena-ia.cnc-machining-power-force-audit/v1",
+      material_profile: "ABNT_1045",
+      kc1_1_n_per_mm2: 1900,
+      kienzle_exponent_mc: 0.26,
+      feed_mm_per_rev: 0.2,
+      depth_of_cut_mm: 2,
+      cutting_edge_angle_deg: 95,
+      chip_thickness_mm: 0.19923894,
+      chip_width_mm: 2.007639675,
+      cutting_speed_m_per_min: 180,
+      spindle_rpm_reference: 1500,
+      max_spindle_rpm: 3000,
+      fc_nominal_n: 1141.25,
+      pc_cutting_kw: 3.42375,
+      p_motor_est_kw: 4.2796875,
+      mrr_cm3_min: 72,
+      machine_power_limit_kw: 7.5,
+      power_status: "POWER_WITHIN_LIMITS",
+      spindle_efficiency: 0.8,
+      is_theoretical_model: true,
+      physical_use_authorized: false,
+      model_limitation: "KIENZLE_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_DYNAMIC_EFFICIENCY",
+      safety_flags: {
+        physical_use_authorized: false,
+        g9: "PENDING_AUTHORITATIVE_REVIEW",
+        no_human_review_bypass: true,
+        machine_send: false,
+        dnc: false,
+        nc_transfer: false,
+        cycle_start: false,
+        emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+        executable_output: false,
+      },
+    },
+    block_count: 4,
+    feed_force_ratio: 0.3,
+    radial_force_ratio: 0.5,
+    tangential_cutting_force_n: 1141.25,
+    axial_feed_force_n: 342.375,
+    radial_cutting_force_n: 570.625,
+    lever_arm_x_mm: 120,
+    lever_arm_y_mm: 180,
+    lever_arm_z_mm: 220,
+    block_spacing_x_mm: 240,
+    rail_spacing_y_mm: 300,
+    block_spacing_z_mm: 360,
+    pitching_moment_nm: 212.2725,
+    yawing_moment_nm: 187.165,
+    rolling_moment_nm: 353.7875,
+    direct_load_per_block_n: 330.278,
+    pitching_reaction_per_block_n: 294.823,
+    yawing_reaction_per_block_n: 389.927,
+    rolling_reaction_per_block_n: 589.646,
+    max_block_load_n: 1604.674,
+    static_capacity_n: 80000,
+    load_ratio_percent: 2.0058425,
+    guideway_status: "GUIDEWAY_LOAD_COMPLIANT",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ESTIMATIVA ANALÍTICA DE CARGA NOS GUIAS LINEARES - NÃO CONSIDERA PRÉ-CARGA INTERNA DOS PATINS, ERROS DE GEOMETRIA DO BARRAMENTO OU DESGASTE DE ESFERAS/ROLETES",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1446,6 +1521,34 @@ test("renders jaw indentation warning without hydraulic or pneumatic controls", 
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE MARCAS\/DEFORMAÇÃO PLÁSTICA/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|controle hidráulico|controle pneumático|acionar castanha/i);
+});
+
+test("renders guideway moments, block load, compliant badge, and mandatory note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Painel de Carga no Barramento/);
+  assert.match(html, /353\.788 N·m/);
+  assert.match(html, /212\.273 N·m/);
+  assert.match(html, /187\.165 N·m/);
+  assert.match(html, /1604\.674 N/);
+  assert.match(html, /80000\.000 N/);
+  assert.match(html, /2\.01%/);
+  assert.match(html, /GUIAS DENTRO DO ENVELOPE ESTÁVEL/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE CARGA NOS GUIAS LINEARES - NÃO CONSIDERA PRÉ-CARGA INTERNA DOS PATINS, ERROS DE GEOMETRIA DO BARRAMENTO OU DESGASTE DE ESFERAS\/ROLETES/);
+});
+
+test("renders guideway dynamic overload warning without hardware controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    guideway_load_audit: {
+      ...report.guideway_load_audit,
+      max_block_load_n: 45000,
+      load_ratio_percent: 56.25,
+      guideway_status: "GUIDEWAY_DYNAMIC_OVERLOAD_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: SOBRECARGA DINÂMICA NOS GUIAS/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|acionar guia|atuador|servo/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {

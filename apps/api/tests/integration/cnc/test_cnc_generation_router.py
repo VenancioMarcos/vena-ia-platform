@@ -436,7 +436,7 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 17
+        ) == 18
         assert "[DINÂMICA HARMÔNICA E VELOCIDADE CRÍTICA DO FUSO]" in response.text
         assert "first_critical_rpm=" in response.text
         assert "[PRESSÃO DE CONTATO E MARCAS DE CASTANHA]" in response.text
@@ -447,6 +447,15 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
             "ESTIMATIVA ANALÍTICA DE PRESSÃO DE FIXAÇÃO - NÃO CONSIDERA SERRILHADOS, "
             "RAIOS DE CANTO OU DISTRIBUIÇÃO HERTZIANA NÃO LINEAR NAS CASTANHAS"
             in response.text
+        )
+        assert "[CARGA E MOMENTOS NOS GUIAS LINEARES]" in response.text
+        assert "pitching_moment_nm=" in response.text
+        assert "max_block_load_n=" in response.text
+        assert "status=GUIDEWAY_LOAD_COMPLIANT" in response.text
+        assert (
+            "ESTIMATIVA ANALÍTICA DE CARGA NOS GUIAS LINEARES - NÃO CONSIDERA "
+            "PRÉ-CARGA INTERNA DOS PATINS, ERROS DE GEOMETRIA DO BARRAMENTO OU "
+            "DESGASTE DE ESFERAS/ROLETES" in response.text
         )
         assert "[ENVELOPE DE POTÊNCIA E TORQUE DO FUSO]" in response.text
         assert "power_margin_percent=" in response.text
