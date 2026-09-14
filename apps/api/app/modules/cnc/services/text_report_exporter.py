@@ -251,6 +251,23 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "DESGASTE GEOMÉTRICO DA FERRAMENTA",
+            (
+                *(
+                    f"tool_wear[{item.source_tool_life_audit.tool_id}]: "
+                    f"estimated_vb_mm={item.estimated_flank_wear_vb_mm:.9f}; "
+                    f"radial_deviation_um={item.predicted_radial_deviation_um:.9f}; "
+                    f"axial_deviation_um={item.predicted_axial_deviation_um:.9f}; "
+                    f"effective_nose_radius_mm={item.effective_nose_radius_mm:.9f}; "
+                    f"geometry_tolerance_um={item.geometry_tolerance_um:.9f}; "
+                    f"status={item.audit_status}"
+                    for item in validated.tool_wear_geometry_audits
+                ),
+                "ESTIMATIVA ANALÍTICA DE DESGASTE DE FLANCO - NÃO CONSIDERA "
+                "LASCAMENTO, DESGASTE DE CRATERA OU COMPENSAÇÃO ATIVA DE CORRETOR CNC",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

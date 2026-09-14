@@ -142,6 +142,61 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   }],
+  tool_wear_geometry_audits: [{
+    schema_version: "vena-ia.cnc-tool-wear-geometry-audit/v2",
+    source_tool_life_audit: {
+      schema_version: "vena-ia.cnc-tool-life-taylor-audit/v1",
+      tool_id: "T0101",
+      tool_material_pair: "CARBIDE_P20_P30_CARBON_STEEL",
+      cutting_speed_vc_m_per_min: 180,
+      taylor_n: 0.25,
+      taylor_c: 350,
+      effective_cutting_time_minutes: 2,
+      estimated_tool_life_minutes: 14.2946,
+      tool_life_consumed_percent: 13.9913,
+      integrity_status: "TOOL_LIFE_SAFE",
+      is_theoretical_model: true,
+      physical_use_authorized: false,
+      model_limitation: "TAYLOR_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_THERMAL_AND_LUBRICATION_VARIATION",
+      safety_flags: {
+        physical_use_authorized: false,
+        g9: "PENDING_AUTHORITATIVE_REVIEW",
+        no_human_review_bypass: true,
+        machine_send: false,
+        dnc: false,
+        nc_transfer: false,
+        cycle_start: false,
+        emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+        executable_output: false,
+      },
+    },
+    nominal_nose_radius_mm: 0.8,
+    clearance_angle_deg: 7,
+    position_angle_deg: 95,
+    maximum_allowable_flank_wear_vb_mm: 0.3,
+    estimated_flank_wear_vb_mm: 0.112214,
+    flank_wear_progress_percent: 13.9913,
+    effective_nose_radius_mm: 0.806889,
+    predicted_radial_deviation_um: 13.778,
+    predicted_axial_deviation_um: 1.205,
+    geometry_tolerance_um: 100,
+    audit_status: "TOOL_WEAR_GEOMETRY_WITHIN_TOLERANCE",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    compensation_authorized: false,
+    model_limitation: "ANALYTICAL_TOOL_WEAR_GEOMETRY_DOES_NOT_AUTHORIZE_AUTOMATIC_OFFSET_COMPENSATION",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  }],
   cost_time_audit: {
     schema_version: "vena-ia.cnc-machining-cost-time-audit/v1",
     cost_profile: "BRL_STANDARD",
@@ -980,6 +1035,31 @@ test("renders thermal tolerance warning without physical controls", () => {
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: DERIVA TÉRMICA EXCEDE TOLERÂNCIA/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
+});
+
+test("renders tool wear geometry telemetry and acceptable badge", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Desgaste geométrico estimado/);
+  assert.match(html, /0\.1122 mm/);
+  assert.match(html, /13\.778 µm/);
+  assert.match(html, /0\.8069 mm/);
+  assert.match(html, /13\.78%/);
+  assert.match(html, /DESGASTE GEOMÉTRICO ACEITÁVEL/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE DESGASTE DE FLANCO - NÃO CONSIDERA LASCAMENTO, DESGASTE DE CRATERA OU COMPENSAÇÃO ATIVA DE CORRETOR CNC/);
+});
+
+test("renders critical tool wear warning without compensation controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    tool_wear_geometry_audits: [{
+      ...report.tool_wear_geometry_audits[0],
+      geometry_tolerance_um: 20,
+      audit_status: "TOOL_WEAR_EXCEEDS_TOLERANCE_WARNING",
+    }],
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: DESVIO POR DESGASTE CRÍTICO/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|compensar corretor/i);
 });
 
 test("renders high and critical consolidated risk badges without operational controls", () => {

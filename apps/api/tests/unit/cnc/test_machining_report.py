@@ -214,6 +214,11 @@ def test_complete_report_replays_deterministically(controller):
     assert report.tool_life_audits[0].tool_id == report.tools[0].tool_id
     assert report.tool_life_audits[0].estimated_tool_life_minutes > 0
     assert report.tool_life_audits[0].tool_life_consumed_percent > 0
+    assert report.tool_wear_geometry_audits[0].source_tool_life_audit == (
+        report.tool_life_audits[0]
+    )
+    assert report.tool_wear_geometry_audits[0].estimated_flank_wear_vb_mm > 0
+    assert report.tool_wear_geometry_audits[0].predicted_radial_deviation_um > 0
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -388,7 +393,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 10
+    assert rendered.count(SAFETY_STAMP) == 11
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -408,6 +413,11 @@ def test_text_export_is_deterministic_and_stamps_every_section():
         "RENDIMENTO DINÂMICO REAL" in rendered
     )
     assert "tool_life[T0101]" in rendered
+    assert "tool_wear[T0101]" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE DESGASTE DE FLANCO - NÃO CONSIDERA LASCAMENTO, "
+        "DESGASTE DE CRATERA OU COMPENSAÇÃO ATIVA DE CORRETOR CNC" in rendered
+    )
     assert "ESTIMATIVA ANALÍTICA DE TAYLOR" in rendered
     assert "cost_time: total_minutes=" in rendered
     assert "ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA" in rendered

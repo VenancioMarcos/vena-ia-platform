@@ -1667,6 +1667,8 @@ class ToolWearGeometryAuditPayload(_CNCGenerationContract):
     )
     source_tool_life_audit: ToolLifeTaylorAuditPayload
     nominal_nose_radius_mm: float = Field(gt=0, le=100)
+    clearance_angle_deg: float = Field(gt=0, lt=90)
+    position_angle_deg: float = Field(gt=0, lt=180)
     maximum_allowable_flank_wear_vb_mm: float = Field(gt=0, le=5)
     estimated_flank_wear_vb_mm: float = Field(ge=0, le=5)
     flank_wear_progress_percent: float = Field(ge=0)
@@ -1676,7 +1678,7 @@ class ToolWearGeometryAuditPayload(_CNCGenerationContract):
     geometry_tolerance_um: float = Field(gt=0)
     audit_status: Literal[
         "TOOL_WEAR_GEOMETRY_WITHIN_TOLERANCE",
-        "TOOL_WEAR_GEOMETRY_EXCEEDED_WARNING",
+        "TOOL_WEAR_EXCEEDS_TOLERANCE_WARNING",
     ]
     is_theoretical_model: Literal[True] = True
     physical_use_authorized: Literal[False] = False
@@ -1689,24 +1691,30 @@ class ToolWearGeometryAuditPayload(_CNCGenerationContract):
     @model_validator(mode="after")
     def validate_progressive_wear_model(self) -> "ToolWearGeometryAuditPayload":
         expected_progress = self.source_tool_life_audit.tool_life_consumed_percent
-        expected_wear = self.maximum_allowable_flank_wear_vb_mm * expected_progress / 100.0
-        expected_radius = self.nominal_nose_radius_mm - expected_wear / 2.0
+        if math.isclose(self.position_angle_deg, 90.0, abs_tol=1e-9):
+            raise ValueError("TOOL_WEAR_POSITION_ANGLE_INVALID")
+        expected_wear = self.maximum_allowable_flank_wear_vb_mm * math.sqrt(
+            expected_progress / 100.0
+        )
+        radial_deviation = expected_wear * math.tan(math.radians(self.clearance_angle_deg))
+        effective_position_angle = min(self.position_angle_deg, 180.0 - self.position_angle_deg)
+        axial_deviation = radial_deviation / math.tan(math.radians(effective_position_angle))
+        expected_radius = self.nominal_nose_radius_mm + radial_deviation / 2.0
         if expected_radius <= 0:
             raise ValueError("TOOL_WEAR_EFFECTIVE_NOSE_RADIUS_NON_PHYSICAL")
         comparisons = (
             (self.flank_wear_progress_percent, expected_progress, "TOOL_WEAR_PROGRESS_INCONSISTENT"),
             (self.estimated_flank_wear_vb_mm, expected_wear, "TOOL_WEAR_VB_MAX_INCONSISTENT"),
             (self.effective_nose_radius_mm, expected_radius, "TOOL_WEAR_NOSE_RADIUS_INCONSISTENT"),
-            (self.predicted_radial_deviation_um, expected_wear * 1_000.0, "TOOL_WEAR_RADIAL_DEVIATION_INCONSISTENT"),
-            (self.predicted_axial_deviation_um, expected_wear * 500.0, "TOOL_WEAR_AXIAL_DEVIATION_INCONSISTENT"),
+            (self.predicted_radial_deviation_um, radial_deviation * 1_000.0, "TOOL_WEAR_RADIAL_DEVIATION_INCONSISTENT"),
+            (self.predicted_axial_deviation_um, axial_deviation * 1_000.0, "TOOL_WEAR_AXIAL_DEVIATION_INCONSISTENT"),
         )
         for actual, expected, code in comparisons:
             if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
                 raise ValueError(code)
         expected_status = (
-            "TOOL_WEAR_GEOMETRY_EXCEEDED_WARNING"
-            if max(self.predicted_radial_deviation_um, self.predicted_axial_deviation_um)
-            > self.geometry_tolerance_um
+            "TOOL_WEAR_EXCEEDS_TOLERANCE_WARNING"
+            if self.predicted_radial_deviation_um > self.geometry_tolerance_um * 0.5
             else "TOOL_WEAR_GEOMETRY_WITHIN_TOLERANCE"
         )
         if self.audit_status != expected_status:
@@ -1734,6 +1742,9 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     surface_roughness_audit: SurfaceRoughnessAuditPayload
     power_force_audit: MachiningPowerForceAuditPayload
     tool_life_audits: tuple[ToolLifeTaylorAuditPayload, ...] = Field(min_length=1)
+    tool_wear_geometry_audits: tuple[ToolWearGeometryAuditPayload, ...] = Field(
+        min_length=1
+    )
     cost_time_audit: MachiningCostTimeAuditPayload
     sustainability_audit: MachiningSustainabilityAuditPayload
     stability_audits: tuple[MachiningStabilityAuditPayload, ...] = Field(min_length=1)
@@ -1768,6 +1779,19 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
         lives_by_tool = {item.tool_id: item for item in self.tool_life_audits}
         if len(lives_by_tool) != len(self.tool_life_audits):
             raise ValueError("REPORT_TOOL_LIFE_DUPLICATE")
+        wear_by_tool = {
+            item.source_tool_life_audit.tool_id: item
+            for item in self.tool_wear_geometry_audits
+        }
+        if (
+            len(wear_by_tool) != len(self.tool_wear_geometry_audits)
+            or set(wear_by_tool) != set(lives_by_tool)
+            or any(
+                item.source_tool_life_audit != lives_by_tool[tool_id]
+                for tool_id, item in wear_by_tool.items()
+            )
+        ):
+            raise ValueError("REPORT_TOOL_WEAR_GEOMETRY_SOURCE_INCONSISTENT")
         if {item.tool_id for item in self.cost_time_audit.per_tool_wear_costs} != set(
             lives_by_tool
         ):

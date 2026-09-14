@@ -43,6 +43,7 @@ from app.modules.cnc.services.spindle_envelope_auditor import (
 )
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 from app.modules.cnc.services.tool_life_estimator import estimate_tool_life
+from app.modules.cnc.services.tool_wear_geometry_auditor import audit_tool_wear_geometry
 from app.modules.cnc.services.thermal_expansion_auditor import audit_thermal_expansion_drift
 
 
@@ -159,6 +160,16 @@ def compile_machining_report(
             effective_cutting_time_minutes=item.cutting_time_seconds / 60.0,
         )
         for item in estimate.per_tool_breakdown
+    )
+    tool_wear_geometry_audits = tuple(
+        audit_tool_wear_geometry(
+            item,
+            nominal_nose_radius_mm=record.request.tool_params.tip_radius_mm,
+            clearance_angle_deg=7.0,
+            position_angle_deg=record.request.tool_params.cutting_edge_angle_deg,
+            geometry_tolerance_um=record.request.linear_tolerance_mm * 1_000.0,
+        )
+        for item in tool_life_audits
     )
     cost_time_audit = estimate_machining_cost_time(estimate, tool_life_audits)
     sustainability_audit = estimate_sustainability(
@@ -291,6 +302,7 @@ def compile_machining_report(
         surface_roughness_audit=roughness_audit,
         power_force_audit=power_force_audit,
         tool_life_audits=tool_life_audits,
+        tool_wear_geometry_audits=tool_wear_geometry_audits,
         cost_time_audit=cost_time_audit,
         sustainability_audit=sustainability_audit,
         stability_audits=stability_audits,
@@ -315,6 +327,8 @@ def compile_machining_report(
             "Kienzle force and power values are analytical estimates; real dynamic "
             "efficiency, thermal effects and machine behavior are excluded.",
             "Taylor tool-life values exclude real thermal fluctuations and lubrication.",
+            "Flank-wear geometry excludes chipping, crater wear and active CNC offset "
+            "compensation.",
             "Cost and time values exclude logistics, unplanned downtime and taxes.",
             "Energy and carbon values exclude external cooling and startup power peaks.",
             "Stability assumes a 20 mm steel holder, 60 mm free overhang and declared "
