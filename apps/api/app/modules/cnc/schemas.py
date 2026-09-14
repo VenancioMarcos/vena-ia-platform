@@ -2048,6 +2048,96 @@ class WorkholdingClampingAuditPayload(_CNCGenerationContract):
         return self
 
 
+class TailstockThrustAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-tailstock-thrust-audit/v1"] = (
+        "vena-ia.cnc-tailstock-thrust-audit/v1"
+    )
+    tailstock_force_n: float = Field(gt=0, le=10_000_000)
+    critical_buckling_load_n: float = Field(gt=0)
+    max_supported_deflection_um: float = Field(gt=0)
+    engagement_z_coordinate_mm: float
+    total_supported_length_mm: float = Field(gt=0, le=100_000)
+    minimum_diameter_mm: float = Field(gt=0, le=10_000)
+    cutting_load_position_mm: float = Field(gt=0, le=100_000)
+    radial_cutting_force_n: float = Field(gt=0, le=10_000_000)
+    young_modulus_mpa: float = Field(gt=0, le=1_000_000)
+    second_moment_area_mm4: float = Field(gt=0)
+    effective_length_factor: float = Field(gt=0, le=2)
+    warning_threshold_n: float = Field(gt=0)
+    tailstock_status: Literal[
+        "TAILSTOCK_SUPPORT_COMPLIANT",
+        "TAILSTOCK_THRUST_BUCKLING_RISK_WARNING",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    automatic_tailstock_control_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_TAILSTOCK_SUPPORT_EXCLUDES_CENTER_ECCENTRICITY_AND_QUILL_BEARING_WEAR"
+    ] = "ANALYTICAL_TAILSTOCK_SUPPORT_EXCLUDES_CENTER_ECCENTRICITY_AND_QUILL_BEARING_WEAR"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_tailstock_snapshot(self) -> "TailstockThrustAuditPayload":
+        if self.cutting_load_position_mm >= self.total_supported_length_mm:
+            raise ValueError("TAILSTOCK_CUTTING_POSITION_OUTSIDE_SUPPORT_SPAN")
+        expected_second_moment = math.pi * self.minimum_diameter_mm**4 / 64.0
+        distance_to_tailstock = (
+            self.total_supported_length_mm - self.cutting_load_position_mm
+        )
+        expected_deflection_um = (
+            self.radial_cutting_force_n
+            * self.cutting_load_position_mm**2
+            * distance_to_tailstock**2
+            / (
+                3.0
+                * self.young_modulus_mpa
+                * expected_second_moment
+                * self.total_supported_length_mm
+            )
+            * 1_000.0
+        )
+        expected_critical_load = (
+            math.pi**2
+            * self.young_modulus_mpa
+            * expected_second_moment
+            / (self.effective_length_factor * self.total_supported_length_mm) ** 2
+        )
+        expected_threshold = 0.3 * expected_critical_load
+        comparisons = (
+            (
+                self.second_moment_area_mm4,
+                expected_second_moment,
+                "TAILSTOCK_SECOND_MOMENT_INCONSISTENT",
+            ),
+            (
+                self.max_supported_deflection_um,
+                expected_deflection_um,
+                "TAILSTOCK_DEFLECTION_INCONSISTENT",
+            ),
+            (
+                self.critical_buckling_load_n,
+                expected_critical_load,
+                "TAILSTOCK_CRITICAL_BUCKLING_LOAD_INCONSISTENT",
+            ),
+            (
+                self.warning_threshold_n,
+                expected_threshold,
+                "TAILSTOCK_WARNING_THRESHOLD_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "TAILSTOCK_THRUST_BUCKLING_RISK_WARNING"
+            if self.tailstock_force_n > expected_threshold
+            else "TAILSTOCK_SUPPORT_COMPLIANT"
+        )
+        if self.tailstock_status != expected_status:
+            raise ValueError("TAILSTOCK_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -2084,6 +2174,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     chip_breaking_machinability_audit: ChipBreakingMachinabilityAuditPayload
     coolant_pressure_flow_audit: CoolantPressureFlowAuditPayload
     workholding_clamping_audit: WorkholdingClampingAuditPayload
+    tailstock_thrust_audit: TailstockThrustAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -2364,4 +2455,32 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             rel_tol=1e-12,
         ):
             raise ValueError("REPORT_WORKHOLDING_SOURCE_INCONSISTENT")
+        tailstock = self.tailstock_thrust_audit
+        tailstock_sources = (
+            (
+                tailstock.radial_cutting_force_n,
+                self.power_force_audit.fc_nominal_n * 0.5,
+            ),
+            (
+                tailstock.total_supported_length_mm,
+                self.part_elastic_deflection_audit.part_unsupported_length_mm,
+            ),
+            (
+                tailstock.minimum_diameter_mm,
+                self.part_elastic_deflection_audit.minimum_diameter_mm,
+            ),
+            (
+                tailstock.young_modulus_mpa,
+                self.part_elastic_deflection_audit.young_modulus_mpa,
+            ),
+            (tailstock.engagement_z_coordinate_mm, nominal_max_z),
+        )
+        if (
+            tailstock.safety_flags != self.safety_flags
+            or any(
+                not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12)
+                for actual, expected in tailstock_sources
+            )
+        ):
+            raise ValueError("REPORT_TAILSTOCK_SOURCE_INCONSISTENT")
         return self

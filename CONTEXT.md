@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.78
+**Versão:** 2.79
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,17 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_TAILSTOCK_THRUST_DEFLECTION_AUDITOR_COMPLETED_LOCAL`.
+  O `VTP-AUTO-349-BATCH` foi aprovado. O PR #76 foi integrado por squash em
+  `c0df9ee`, a branch remota foi removida e `main=origin/main`. A branch
+  `codex/v9.0-cnc-tailstock-thrust-deflection-auditor` modela a peça entre placa e
+  contraponto pela fórmula biapoiada, compara a pré-carga do mangote a 30% da
+  carga crítica de Euler e vincula força radial, geometria e módulo ao snapshot
+  Kienzle/deflexão existente. Contrato, JSON, TEXT e Web exibem apoio, flambagem,
+  deflexão e cota Z com falha fechada e sem controles hidráulicos. Validação: 301
+  testes CNC unitários, 14 de integração, 36 Web, Ruff, mypy em 234 fontes,
+  TypeScript, Next lint e `git diff --check`; entrega local pronta para publicação.
 
 - **Handoff CTO:** `CNC_WORKHOLDING_CLAMPING_PR_READY`.
   O `VTP-AUTO-348-BATCH` foi aprovado. A branch da Rota 27 foi publicada e o

@@ -1,5 +1,15 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-350 a AUTO-359
+
+`CNC_TAILSTOCK_THRUST_DEFLECTION_AUDITOR_COMPLETED_LOCAL`. O PR #76 foi integrado
+por squash em `c0df9ee` após CI verde, e a main foi sincronizada. A Rota 28 modela
+a peça fixa/apoiada, deflexão sob `Fr=0,5·Fc` e carga crítica de Euler, emitindo
+warning quando a pré-carga supera 30% do limite. Contrato, JSON, TEXT e Web
+revalidam fontes e valores derivados, exibem telemetria e mantêm ausência de
+controles físicos. Validação: 301 testes CNC unitários, 14 de integração, 36 Web,
+Ruff, mypy em 234 fontes, TypeScript, Next lint e diff; branch local sem push.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-349-BATCH
 
 `CNC_WORKHOLDING_CLAMPING_PR_READY`. O `VTP-AUTO-348-BATCH` foi aprovado. A

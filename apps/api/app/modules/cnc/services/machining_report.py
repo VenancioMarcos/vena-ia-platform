@@ -51,6 +51,7 @@ from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 from app.modules.cnc.services.tool_life_estimator import estimate_tool_life
 from app.modules.cnc.services.tool_wear_geometry_auditor import audit_tool_wear_geometry
 from app.modules.cnc.services.thermal_expansion_auditor import audit_thermal_expansion_drift
+from app.modules.cnc.services.tailstock_auditor import audit_tailstock_thrust_deflection
 from app.modules.cnc.services.workholding_auditor import audit_workholding_clamping
 
 
@@ -266,11 +267,12 @@ def compile_machining_report(
         )
         * 2.0
     )
+    material_modulus_mpa = material_young_modulus_mpa(power_force_audit.material_profile)
     part_elastic_deflection_audit = audit_part_elastic_deflection(
         part_unsupported_length_mm=record.source_brep_bounds.total_z_length_mm,
         minimum_diameter_mm=minimum_diameter_mm,
         radial_cutting_force_n=power_force_audit.fc_nominal_n * 0.5,
-        young_modulus_mpa=material_young_modulus_mpa(power_force_audit.material_profile),
+        young_modulus_mpa=material_modulus_mpa,
         radial_tolerance_mm=0.02,
     )
     spindle_power_torque_envelope_audit = audit_spindle_power_torque_envelope(
@@ -311,6 +313,16 @@ def compile_machining_report(
         friction_coefficient=0.30,
         required_safety_factor=2.0,
     )
+    tailstock_thrust_audit = audit_tailstock_thrust_deflection(
+        tailstock_force_n=5_000.0,
+        total_supported_length_mm=record.source_brep_bounds.total_z_length_mm,
+        minimum_diameter_mm=minimum_diameter_mm,
+        cutting_load_position_mm=record.source_brep_bounds.total_z_length_mm / 2.0,
+        radial_cutting_force_n=power_force_audit.fc_nominal_n * 0.5,
+        young_modulus_mpa=material_modulus_mpa,
+        engagement_z_coordinate_mm=record.source_brep_bounds.max_z_mm,
+        effective_length_factor=0.7,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -347,6 +359,7 @@ def compile_machining_report(
         chip_breaking_machinability_audit=chip_breaking_machinability_audit,
         coolant_pressure_flow_audit=coolant_pressure_flow_audit,
         workholding_clamping_audit=workholding_clamping_audit,
+        tailstock_thrust_audit=tailstock_thrust_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -386,6 +399,8 @@ def compile_machining_report(
             "machine, pump, valve and nozzle behavior require physical validation.",
             "Chuck clamping force and centrifugal loss are analytical estimates and require "
             "verification with a physical chuck load meter.",
+            "Tailstock preload and fixed-pinned deflection exclude center eccentricity and "
+            "quill-bearing wear.",
         ),
     )
 

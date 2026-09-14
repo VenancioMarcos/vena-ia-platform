@@ -786,6 +786,37 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  tailstock_thrust_audit: {
+    schema_version: "vena-ia.cnc-tailstock-thrust-audit/v1",
+    tailstock_force_n: 5000,
+    critical_buckling_load_n: 830000,
+    max_supported_deflection_um: 101.051,
+    engagement_z_coordinate_mm: 0.5,
+    total_supported_length_mm: 200,
+    minimum_diameter_mm: 20,
+    cutting_load_position_mm: 100,
+    radial_cutting_force_n: 1000,
+    young_modulus_mpa: 210000,
+    second_moment_area_mm4: 7853.981634,
+    effective_length_factor: 0.7,
+    warning_threshold_n: 249000,
+    tailstock_status: "TAILSTOCK_SUPPORT_COMPLIANT",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    automatic_tailstock_control_authorized: false,
+    model_limitation: "ANALYTICAL_TAILSTOCK_SUPPORT_EXCLUDES_CENTER_ECCENTRICITY_AND_QUILL_BEARING_WEAR",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1245,6 +1276,31 @@ test("renders critical centrifugal loss warning without chuck actuator controls"
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: PERDA CRÍTICA DE APERTO POR CENTRÍFUGA/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|acionar placa|atuador da placa/i);
+});
+
+test("renders tailstock thrust, reduced deflection, compliant badge, and governance note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Painel de contraponto/);
+  assert.match(html, /5000\.000 N/);
+  assert.match(html, /830000\.000 N/);
+  assert.match(html, /101\.051 µm/);
+  assert.match(html, /0\.500 mm/);
+  assert.match(html, /APOIO CONFORME/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE CARGA E APOIO DE CONTRAPONTO - NÃO CONSIDERA EXCENTRICIDADE DO PONTO DE CENTRO OU DESGASTE DE ROLAMENTOS DO MANGOTE/);
+});
+
+test("renders tailstock buckling warning without quill or hydraulic controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    tailstock_thrust_audit: {
+      ...report.tailstock_thrust_audit,
+      tailstock_force_n: 250000,
+      tailstock_status: "TAILSTOCK_THRUST_BUCKLING_RISK_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE FLAMBAGEM POR PRÉ-CARGA/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|acionar mangote|controle hidráulico/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {

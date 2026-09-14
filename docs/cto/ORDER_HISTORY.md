@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-350 a AUTO-358
+
+O `VTP-AUTO-349-BATCH` foi aprovado. O PR #76 foi integrado por squash em
+`c0df9ee`, com branch remota removida e main sincronizada. A Rota 28 implementa
+apoio de contraponto, deflexão biapoiada, carga crítica de Euler e warning de
+pré-carga; manifesto, TEXT e Web preservam revisão física obrigatória e ausência
+de controles do mangote. Entrega local pronta para o PR #77.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-349-BATCH
 
 O `VTP-AUTO-348-BATCH` foi aprovado. A Rota 27 foi publicada no Draft PR #76.

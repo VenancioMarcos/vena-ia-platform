@@ -436,7 +436,7 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 14
+        ) == 15
         assert "[ENVELOPE DE POTÊNCIA E TORQUE DO FUSO]" in response.text
         assert "power_margin_percent=" in response.text
         assert "[EXPANSÃO TÉRMICA E DERIVA DE EIXOS]" in response.text
@@ -462,6 +462,14 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert (
             "ESTIMATIVA ANALÍTICA DE FORÇA DE FIXAÇÃO - NÃO SUBSTITUI VERIFICAÇÃO "
             "COM MEDIDOR FÍSICO DE CARGA EM PLACA" in response.text
+        )
+        assert "[APOIO E EMPUXO DO CONTRAPONTO]" in response.text
+        assert "critical_buckling_load_n=" in response.text
+        assert "status=TAILSTOCK_SUPPORT_COMPLIANT" in response.text
+        assert (
+            "ESTIMATIVA ANALÍTICA DE CARGA E APOIO DE CONTRAPONTO - NÃO CONSIDERA "
+            "EXCENTRICIDADE DO PONTO DE CENTRO OU DESGASTE DE ROLAMENTOS DO MANGOTE"
+            in response.text
         )
         assert "[FLEXÃO ELÁSTICA DA PEÇA]" in response.text
         assert (

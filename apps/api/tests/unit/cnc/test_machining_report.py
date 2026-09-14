@@ -39,6 +39,7 @@ from app.modules.cnc.services.text_report_exporter import (
     SAFETY_STAMP,
     format_machining_report_text,
 )
+from app.modules.cnc.services.tailstock_auditor import audit_tailstock_thrust_deflection
 from app.modules.cnc.services.workholding_auditor import audit_workholding_clamping
 
 
@@ -253,6 +254,18 @@ def test_complete_report_replays_deterministically(controller):
     assert report.workholding_clamping_audit.clamping_status == "DYNAMIC_CLAMPING_SAFE"
     assert report.workholding_clamping_audit.physical_use_authorized is False
     assert report.workholding_clamping_audit.automatic_chuck_control_authorized is False
+    assert report.tailstock_thrust_audit.radial_cutting_force_n == pytest.approx(
+        report.power_force_audit.fc_nominal_n * 0.5
+    )
+    assert report.tailstock_thrust_audit.max_supported_deflection_um < (
+        report.part_elastic_deflection_audit.max_deflection_um
+    )
+    assert report.tailstock_thrust_audit.engagement_z_coordinate_mm == pytest.approx(
+        max(point.z_mm for point in report.residual_stock_audit.source_nominal_profile)
+    )
+    assert report.tailstock_thrust_audit.tailstock_status == "TAILSTOCK_SUPPORT_COMPLIANT"
+    assert report.tailstock_thrust_audit.physical_use_authorized is False
+    assert report.tailstock_thrust_audit.automatic_tailstock_control_authorized is False
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -458,6 +471,26 @@ def test_report_rejects_workholding_audit_from_another_force_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_tailstock_audit_from_another_force_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    current = report.tailstock_thrust_audit
+    other = audit_tailstock_thrust_deflection(
+        tailstock_force_n=current.tailstock_force_n,
+        total_supported_length_mm=current.total_supported_length_mm,
+        minimum_diameter_mm=current.minimum_diameter_mm,
+        cutting_load_position_mm=current.cutting_load_position_mm,
+        radial_cutting_force_n=current.radial_cutting_force_n + 100.0,
+        young_modulus_mpa=current.young_modulus_mpa,
+        engagement_z_coordinate_mm=current.engagement_z_coordinate_mm,
+        effective_length_factor=current.effective_length_factor,
+    )
+    body = report.model_dump()
+    body["tailstock_thrust_audit"] = other.model_dump()
+    with pytest.raises(ValidationError, match="REPORT_TAILSTOCK_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -465,7 +498,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 14
+    assert rendered.count(SAFETY_STAMP) == 15
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -514,6 +547,14 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert (
         "ESTIMATIVA ANALÍTICA DE FORÇA DE FIXAÇÃO - NÃO SUBSTITUI VERIFICAÇÃO "
         "COM MEDIDOR FÍSICO DE CARGA EM PLACA" in rendered
+    )
+    assert "[APOIO E EMPUXO DO CONTRAPONTO]" in rendered
+    assert "critical_buckling_load_n=" in rendered
+    assert "status=TAILSTOCK_SUPPORT_COMPLIANT" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE CARGA E APOIO DE CONTRAPONTO - NÃO CONSIDERA "
+        "EXCENTRICIDADE DO PONTO DE CENTRO OU DESGASTE DE ROLAMENTOS DO MANGOTE"
+        in rendered
     )
     assert "ESTIMATIVA ANALÍTICA DE TAYLOR" in rendered
     assert "cost_time: total_minutes=" in rendered
