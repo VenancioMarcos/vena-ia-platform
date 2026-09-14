@@ -323,6 +323,125 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  process_sheet: {
+    schema_version: "vena-ia.cnc-machining-process-sheet/v1",
+    part_id: "cad-report-001",
+    revision: "ANALYTICAL-1",
+    source_plan_id: "plan-report-001",
+    source_cam_plan: {
+      status: "PLANNED_REQUIRES_REVIEW",
+      operation_type: "ROUGH_TURNING",
+      passes: [{
+        sequence: 1,
+        operation_type: "ROUGH_TURNING",
+        coordinates_rz_mm: [{ r_mm: 26, z_mm: 1 }, { r_mm: 25, z_mm: -100 }],
+        estimated_removed_volume_mm3: 1000,
+      }],
+      material_removal_volume_mm3: 1000,
+      warnings: ["ANALYTICAL_2D_REQUIRES_HUMAN_REVIEW"],
+      executable_output: false,
+      physical_use_authorized: false,
+      g9_status: "PENDING_AUTHORITATIVE_REVIEW",
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+    },
+    source_stock: { diameter_mm: 52, z_min_mm: -100, z_max_mm: 1 },
+    source_machine_envelope: {
+      x_min_mm: 0,
+      x_max_mm: 100,
+      z_min_mm: -200,
+      z_max_mm: 200,
+      chuck_exclusion_zone: { x_min_mm: 0, x_max_mm: 100, z_min_mm: 50, z_max_mm: 100 },
+    },
+    source_chuck_proximity: {
+      minimum_clearance_mm: 12.5,
+      threshold_mm: 5,
+      closest_segment_index: 0,
+      warning_code: null,
+    },
+    source_cycle_time_estimate: {
+      total_cutting_time_seconds: 120,
+      total_rapid_time_seconds: 5,
+      total_cycle_time_seconds: 125,
+      total_cutting_distance_mm: 40,
+      total_rapid_distance_mm: 10,
+      rapid_feed_rate_mm_min: 10000,
+      per_tool_breakdown: [{
+        tool: "T0101",
+        cutting_time_seconds: 120,
+        rapid_time_seconds: 5,
+        cutting_distance_mm: 40,
+        rapid_distance_mm: 10,
+      }],
+      disclaimer: "THEORETICAL_ANALYTICAL_ESTIMATE_NOT_PHYSICALLY_APPROVED",
+    },
+    raw_stock_dimensions: { diameter_mm: 52, axial_length_mm: 101, z_min_mm: -100, z_max_mm: 1 },
+    clamping_setup: {
+      setup_type: "DECLARED_CHUCK_ENVELOPE_REQUIRES_MANUAL_SETUP",
+      chuck_exclusion_zone: { x_min_mm: 0, x_max_mm: 100, z_min_mm: 50, z_max_mm: 100 },
+      minimum_clearance_mm: 12.5,
+      proximity_threshold_mm: 5,
+      estimated_setup_time_min: 15,
+      clamping_instruction: "CONFIRM_CHUCK_CONTACT_AND_STOCK_PROJECTION_MANUALLY_BEFORE_PROCESS_APPROVAL",
+      balance_requirement: "MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED",
+    },
+    sequence_operations: [
+      {
+        sequence: 1,
+        operation_id: "OP010",
+        phase: "SETUP",
+        source_pass_sequence: null,
+        tool_id: null,
+        tool_description: null,
+        insert_reference: null,
+        cutting_speed_vc_m_per_min: null,
+        feed_mm_per_rev: null,
+        depth_of_cut_ap_mm: null,
+        spindle_rpm: null,
+        feed_rate_mm_min: null,
+        estimated_time_min: 15,
+        fixture_requirement: "USE_DECLARED_CHUCK_ENVELOPE_AND_VERIFY_CLEARANCE_MANUALLY",
+        balance_requirement: "MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED",
+      },
+      {
+        sequence: 2,
+        operation_id: "OP020",
+        phase: "ROUGH_TURNING",
+        source_pass_sequence: 1,
+        tool_id: "T0101",
+        tool_description: "ROUGHING TOOL",
+        insert_reference: "INSERT_R0.800_RIGHT_HAND",
+        cutting_speed_vc_m_per_min: 180,
+        feed_mm_per_rev: 0.2,
+        depth_of_cut_ap_mm: 2,
+        spindle_rpm: 1500,
+        feed_rate_mm_min: 300,
+        estimated_time_min: 2.083333333,
+        fixture_requirement: "USE_DECLARED_CHUCK_ENVELOPE_AND_VERIFY_CLEARANCE_MANUALLY",
+        balance_requirement: "MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED",
+      },
+    ],
+    total_operations_count: 2,
+    estimated_total_time_min: 17.083333333,
+    safety_instructions: [
+      "Confirmar manualmente a fixação, a projeção do material e a folga em relação à placa.",
+      "Conferir ferramenta, inserto, corretores e parâmetros com a engenharia de processos.",
+      "Submeter a folha ao preparador de máquinas; este documento não concede permissão física.",
+    ],
+    is_theoretical_sheet: true,
+    physical_use_authorized: false,
+    model_limitation: "ANALYTICAL_PROCESS_SHEET_REQUIRES_MACHINE_SETUP_APPROVAL",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -558,6 +677,27 @@ test("renders the operational risk panel, category scores, mitigations, and gove
   assert.match(html, /Manter revisão humana e homologação de processo/);
   assert.match(html, /MATRIZ DE RISCO ANALÍTICA CONSOLIDADA - AVALIAÇÃO PRELIMINAR DE PROCESSO SEM VALIDADE DE LAUDO PERICIAL/);
   assert.doesNotMatch(html, /<button/i);
+});
+
+test("renders the chronological process sheet, clamping metadata, and governance note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Folha de processo operacional/);
+  assert.match(html, /Peça cad-report-001 · Revisão ANALYTICAL-1/);
+  assert.match(html, /2 operações · 17\.083 min/);
+  assert.match(html, /Diâmetro do bruto/);
+  assert.match(html, /52\.000 mm/);
+  assert.match(html, /Comprimento do bruto/);
+  assert.match(html, /101\.000 mm/);
+  assert.match(html, /CONFIRM_CHUCK_CONTACT_AND_STOCK_PROJECTION_MANUALLY_BEFORE_PROCESS_APPROVAL/);
+  assert.match(html, /MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED/);
+  assert.match(html, /OP010/);
+  assert.match(html, /SETUP/);
+  assert.match(html, /OP020/);
+  assert.match(html, /ROUGH_TURNING/);
+  assert.match(html, /T0101 · ROUGHING TOOL · INSERT_R0\.800_RIGHT_HAND/);
+  assert.match(html, /Vc 180\.000 m\/min · f 0\.200 mm\/rot · ap 2\.000 mm · 1500\.0 rpm/);
+  assert.match(html, /FOLHA DE PROCESSO TEÓRICA ANALÍTICA - DOCUMENTO ORIENTATIVO SUJEITO À APROVAÇÃO DO PREPARADOR DE MÁQUINAS/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
 });
 
 test("renders high and critical consolidated risk badges without operational controls", () => {

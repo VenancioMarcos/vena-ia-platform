@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-259 a AUTO-268
+
+`CNC_OPERATIONAL_PROCESS_ROUTING_SHEET_COMPLETED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-258-BATCH`; o PR #66 teve Backend CI em 3m38s e Frontend CI em 1m24s e
+foi integrado por squash em `b2d897e`, com branch remota removida e main
+sincronizada. A Rota 19 produz folha sequencial de setup/operações, liga ferramenta,
+inserto, Vc/f/ap, rpm, avanço, tempo, fixação e balanço aos snapshots CAM e de ciclo,
+e rejeita sequência, parâmetros, tempo, estoque ou fixação inconsistentes. JSON,
+TEXT e viewer Web incluem a folha e a nota obrigatória sem controles físicos.
+Validação terminal: 883 testes API/2 ignorados, 180 CNC, 48 focados, 18 Web, mypy em
+193 fontes, Ruff, TypeScript, Next lint e diff. Sem push da Rota 19 ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-249 a AUTO-258
 
 `CNC_OPERATIONAL_RISK_MATRIX_COMPLETED_LOCAL`. O PR #65 teve Backend e Frontend CI

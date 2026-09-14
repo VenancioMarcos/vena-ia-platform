@@ -1,5 +1,15 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-259 a AUTO-268
+
+O CTO aprovou o `VTP-AUTO-258-BATCH`. O PR #66 publicou a Rota 18, recebeu Backend
+e Frontend CI verdes e foi integrado por squash em `b2d897e`, com exclusão da branch
+remota. A Rota 19 gera uma Folha de Processo analítica a partir do CAM, estoque,
+envelope, proximidade e tempo de ciclo, incluindo setup, fases, ferramenta/inserto,
+parâmetros, tempos, fixação e balanço. Contrato, manifesto, laudo e viewer recusam
+snapshots transplantados e preservam revisão humana. Entrega local sem push e sem
+autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-249 a AUTO-258
 
 O PR #65 publicou a Rota 17, recebeu Backend e Frontend CI verdes e foi integrado

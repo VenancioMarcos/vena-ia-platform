@@ -1,24 +1,25 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-249 a AUTO-258
-**Estado:** CNC_OPERATIONAL_RISK_MATRIX_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-259 a AUTO-268
+**Estado:** CNC_OPERATIONAL_PROCESS_ROUTING_SHEET_COMPLETED_LOCAL
 **Data:** 2026-09-14
-**Branch:** `codex/v7.9-cnc-operational-risk-matrix`
-**Baseline da branch:** `1f6bb75c99336ff003bde8c03a602fe6a6a31e92`
+**Branch:** `codex/v8.0-cnc-process-routing-sheet`
+**Baseline da branch:** `b2d897e87248e4d87c6341635826c0c8b8b014a4`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O PR #65 integrou a Rota 17 por squash em `1f6bb75`; a branch remota foi removida e
-`main=origin/main`. A Rota 18 agrega riscos dimensional, dinâmico, energético e de
-desgaste com pesos explícitos, escalonamento determinístico e estado crítico
-compulsório para violação cinemática, dimensional ou colisão. O contrato e o
-relatório rejeitam escores, níveis, recomendações ou snapshots transplantados.
+O CTO aprovou explicitamente o `VTP-AUTO-258-BATCH`. O PR #66 publicou a Rota 18,
+teve Backend e Frontend CI aprovados e foi integrado por squash em `b2d897e`; sua
+branch remota foi removida e `main=origin/main`. A Rota 19 compila uma Folha de
+Processo teórica com setup, sequência CAM, ferramenta/inserto, Vc/f/ap, rpm, avanço,
+tempos, fixação e balanço. O contrato revalida ordem e snapshots e o relatório JSON,
+TEXT e Web mantém revisão humana obrigatória.
 
 ## Continuidade
 
-Enviar VTP-AUTO-258-BATCH ao CTO e aguardar parecer e próxima ordem. A branch permanece
-local e não deve receber push nesta etapa.
+Emitir `VTP-AUTO-268-BATCH` ao CTO e aguardar parecer e próxima ordem. A branch
+permanece local e não deve receber push nesta etapa.
 
 ## Limites permanentes
 

@@ -26,6 +26,7 @@ from app.modules.cnc.services.geometry_auditor import (
 )
 from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
 from app.modules.cnc.services.parameter_optimizer import optimize_cutting_parameters
+from app.modules.cnc.services.process_sheet_generator import generate_process_sheet
 from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
 from app.modules.cnc.services.risk_matrix_evaluator import evaluate_operational_risk
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
@@ -75,12 +76,13 @@ def compile_machining_report(
         or request.program_text is not None
     ):
         raise MachiningReportError("REPORT_SOURCE_MISMATCH")
+    cam_plan = TurningStrategyPlanResponse.model_validate(
+        record.response.model_dump(exclude={"plan_id", "cad_job_id"})
+    )
     expected = format_gcode_candidate(
         GCodeGenerationRequest(
             plan_id=record.response.plan_id,
-            cam_plan_data=TurningStrategyPlanResponse.model_validate(
-                record.response.model_dump(exclude={"plan_id", "cad_job_id"})
-            ),
+            cam_plan_data=cam_plan,
             controller_profile=request.controller_profile,
             program_number=request.program_number,
             machine_envelope=request.machine_envelope,
@@ -197,6 +199,25 @@ def compile_machining_report(
         power_force_audit=power_force_audit,
         tool_life_audits=tool_life_audits,
     )
+    process_sheet = generate_process_sheet(
+        part_id=record.response.cad_job_id,
+        revision="ANALYTICAL-1",
+        source_plan_id=record.response.plan_id,
+        cam_plan=cam_plan,
+        stock=request.stock,
+        machine_envelope=request.machine_envelope,
+        chuck_proximity=simulation.chuck_proximity,
+        cycle_time_estimate=estimate,
+        tool_id=estimate.per_tool_breakdown[0].tool,
+        tool_description=request.tool_name,
+        insert_nose_radius_mm=record.request.tool_params.tip_radius_mm,
+        tool_orientation=record.request.tool_params.orientation.value,
+        cutting_speed_vc_m_per_min=record.request.cutting_params.vc_m_per_min,
+        feed_mm_per_rev=record.request.cutting_params.feed_mm_per_rev,
+        depth_of_cut_ap_mm=record.request.cutting_params.depth_of_cut_mm,
+        spindle_rpm=min(theoretical_rpm, request.max_spindle_rpm),
+        setup_time_min=cost_time_audit.nominal_setup_time_minutes,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -224,6 +245,7 @@ def compile_machining_report(
         stability_audits=stability_audits,
         parameter_optimizations=parameter_optimizations,
         risk_matrix=risk_matrix,
+        process_sheet=process_sheet,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -246,6 +268,7 @@ def compile_machining_report(
             "machine application requires manual process-engineering approval.",
             "The consolidated risk matrix is a preliminary analytical process assessment, "
             "not an expert report or machine authorization.",
+            "The process routing sheet is theoretical and requires machine-setup approval.",
         ),
     )
 
