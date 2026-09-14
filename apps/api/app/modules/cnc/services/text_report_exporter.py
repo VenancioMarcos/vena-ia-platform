@@ -97,6 +97,19 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
                 ),
                 "ESTIMATIVA ANALÍTICA DE ESTABILIDADE DINÂMICA - NÃO CONSIDERA "
                 "MODOS DE VIBRAÇÃO DA PEÇA OU DO FUSO",
+                *(
+                    f"parameter_optimization[{item.tool_id}]: programmed_vc_m_min="
+                    f"{item.programmed_vc_m_min:.9f}; programmed_feed_mm_rev="
+                    f"{item.programmed_feed_mm_rev:.9f}; programmed_ap_mm="
+                    f"{item.programmed_ap_mm:.9f}; recommended_vc_m_min="
+                    f"{item.recommended_vc_m_min}; recommended_feed_mm_rev="
+                    f"{item.recommended_feed_mm_rev}; recommended_ap_mm="
+                    f"{item.recommended_ap_mm}; predicted_mrr_cm3_min="
+                    f"{item.predicted_mrr_cm3_min}; status={item.optimization_status}"
+                    for item in validated.parameter_optimizations
+                ),
+                "SUGESTÃO ANALÍTICA DE PARÂMETROS DE CORTE - APLICAÇÃO EM MÁQUINA "
+                "REQUER HOMOLOGAÇÃO MANUAL POR ENGENHARIA DE PROCESSOS",
             ),
         ),
         _section(

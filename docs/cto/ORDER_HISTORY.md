@@ -1,5 +1,14 @@
 # Histórico de ordens do CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-239 a AUTO-248
+
+O PR #64 publicou a Rota 16, recebeu Backend e Frontend CI verdes e foi integrado
+por squash em `339989d`, com exclusão da branch remota. A Rota 17 maximiza MRR em
+envelope determinístico de Vc/f/ap, limitado por potência Kienzle, acabamento Ra e
+estabilidade contra chatter. Contrato, laudo e viewer rejeitam dados transplantados,
+mostram programado versus recomendado e não oferecem aplicação automática. Entrega
+local sem push e sem autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-229 a AUTO-238
 
 O PR #63 publicou a Rota 15, recebeu Backend e Frontend CI verdes e foi integrado

@@ -25,6 +25,7 @@ from app.modules.cnc.services.geometry_auditor import (
     require_geometry_dimensions_consistent,
 )
 from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
+from app.modules.cnc.services.parameter_optimizer import optimize_cutting_parameters
 from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
 from app.modules.cnc.services.sustainability_estimator import estimate_sustainability
@@ -162,6 +163,31 @@ def compile_machining_report(
         )
         for item in estimate.per_tool_breakdown
     )
+    roughness_target_um = (
+        roughness_audit.nominal_ra_max_um or roughness_audit.ra_theoretical_um
+    )
+    parameter_optimizations = tuple(
+        optimize_cutting_parameters(
+            record.request.material_reference,
+            tool_id=stability.tool_id,
+            programmed_vc_m_min=power_force_audit.cutting_speed_m_per_min,
+            programmed_feed_mm_rev=power_force_audit.feed_mm_per_rev,
+            programmed_ap_mm=power_force_audit.depth_of_cut_mm,
+            vc_min_m_min=power_force_audit.cutting_speed_m_per_min * 0.5,
+            vc_max_m_min=power_force_audit.cutting_speed_m_per_min * 1.25,
+            feed_min_mm_rev=power_force_audit.feed_mm_per_rev * 0.5,
+            feed_max_mm_rev=power_force_audit.feed_mm_per_rev * 1.25,
+            ap_min_mm=power_force_audit.depth_of_cut_mm * 0.5,
+            ap_max_mm=power_force_audit.depth_of_cut_mm * 1.25,
+            target_ra_um=roughness_target_um,
+            insert_nose_radius_mm=roughness_audit.insert_nose_radius_mm,
+            cutting_edge_angle_deg=power_force_audit.cutting_edge_angle_deg,
+            machine_power_limit_kw=power_force_audit.machine_power_limit_kw,
+            max_spindle_rpm=power_force_audit.max_spindle_rpm,
+            stability_audit=stability,
+        )
+        for stability in stability_audits
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -187,6 +213,7 @@ def compile_machining_report(
         cost_time_audit=cost_time_audit,
         sustainability_audit=sustainability_audit,
         stability_audits=stability_audits,
+        parameter_optimizations=parameter_optimizations,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -205,6 +232,8 @@ def compile_machining_report(
             "Energy and carbon values exclude external cooling and startup power peaks.",
             "Stability assumes a 20 mm steel holder, 60 mm free overhang and declared "
             "analytical FRF compliance; workpiece and spindle modes are excluded.",
+            "Cutting-parameter recommendations maximize an analytical constrained envelope; "
+            "machine application requires manual process-engineering approval.",
         ),
     )
 

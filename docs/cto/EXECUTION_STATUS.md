@@ -1,5 +1,15 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-239 a AUTO-248
+
+`CNC_PARAMETER_MULTICRITERIA_OPTIMIZER_COMPLETED_LOCAL`. O PR #64 teve Backend e
+Frontend CI aprovados e foi integrado por squash em `339989d`; branch remota
+removida e main sincronizada. A Rota 17 otimiza Vc/f/ap para MRR sob potência,
+rugosidade e estabilidade, revalida Kienzle/Taylor/Ra no contrato e exibe comparação
+Web sem sobrescrita automática. Validação: 859 API/2 ignorados, 156 CNC, mypy em 204
+fontes, Ruff, TypeScript estrito, 15 testes Web, Next lint e diff. Sem push da Rota
+17 ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-229 a AUTO-238
 
 `CNC_DYNAMIC_STABILITY_CHATTER_AUDIT_COMPLETED_LOCAL`. O PR #63 teve Backend e

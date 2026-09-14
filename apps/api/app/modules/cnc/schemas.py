@@ -685,6 +685,148 @@ class MachiningStabilityAuditPayload(_CNCGenerationContract):
         return self
 
 
+class MachiningParameterOptimizationPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-machining-parameter-optimization/v1"] = (
+        "vena-ia.cnc-machining-parameter-optimization/v1"
+    )
+    tool_id: str = Field(min_length=1, max_length=64)
+    material_profile: Literal["AISI_1020", "ABNT_1045", "ALUMINUM_6061_T6"]
+    programmed_vc_m_min: float = Field(gt=0)
+    programmed_feed_mm_rev: float = Field(gt=0)
+    programmed_ap_mm: float = Field(gt=0)
+    vc_min_m_min: float = Field(gt=0)
+    vc_max_m_min: float = Field(gt=0)
+    feed_min_mm_rev: float = Field(gt=0)
+    feed_max_mm_rev: float = Field(gt=0)
+    ap_min_mm: float = Field(gt=0)
+    ap_max_mm: float = Field(gt=0)
+    target_ra_um: float = Field(gt=0)
+    insert_nose_radius_mm: float = Field(gt=0)
+    cutting_edge_angle_deg: float = Field(gt=0, lt=180)
+    machine_power_limit_kw: float = Field(gt=0)
+    stability_limit_depth_mm: float = Field(gt=0)
+    overhang_ratio_l_d: float = Field(gt=0)
+    recommended_vc_m_min: float | None = Field(default=None, gt=0)
+    recommended_feed_mm_rev: float | None = Field(default=None, gt=0)
+    recommended_ap_mm: float | None = Field(default=None, gt=0)
+    predicted_mrr_cm3_min: float | None = Field(default=None, gt=0)
+    predicted_motor_power_kw: float | None = Field(default=None, gt=0)
+    predicted_ra_um: float | None = Field(default=None, gt=0)
+    predicted_tool_life_minutes: float | None = Field(default=None, gt=0)
+    optimization_status: Literal[
+        "OPTIMAL_TRADE_OFF_FOUND", "OPTIMIZATION_UNFEASIBLE_CONSTRAINTS_VIOLATED"
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_CUTTING_PARAMETERS_REQUIRE_MANUAL_PROCESS_ENGINEERING_APPROVAL"
+    ] = "ANALYTICAL_CUTTING_PARAMETERS_REQUIRE_MANUAL_PROCESS_ENGINEERING_APPROVAL"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_optimization_model(self) -> "MachiningParameterOptimizationPayload":
+        if not (
+            self.vc_min_m_min <= self.programmed_vc_m_min <= self.vc_max_m_min
+            and self.feed_min_mm_rev <= self.programmed_feed_mm_rev <= self.feed_max_mm_rev
+            and self.ap_min_mm <= self.programmed_ap_mm <= self.ap_max_mm
+        ):
+            raise ValueError("OPTIMIZATION_PROGRAMMED_PARAMETERS_OUTSIDE_ENVELOPE")
+        recommendations = (
+            self.recommended_vc_m_min,
+            self.recommended_feed_mm_rev,
+            self.recommended_ap_mm,
+            self.predicted_mrr_cm3_min,
+            self.predicted_motor_power_kw,
+            self.predicted_ra_um,
+            self.predicted_tool_life_minutes,
+        )
+        kc, mc = {
+            "AISI_1020": (1_780.0, 0.25),
+            "ABNT_1045": (1_900.0, 0.26),
+            "ALUMINUM_6061_T6": (700.0, 0.23),
+        }[self.material_profile]
+        taylor_n, taylor_c = (
+            (0.30, 800.0)
+            if self.material_profile == "ALUMINUM_6061_T6"
+            else (0.25, 350.0)
+        )
+        expected_feed = min(
+            self.feed_max_mm_rev,
+            math.sqrt(self.target_ra_um * 32 * self.insert_nose_radius_mm / 1_000),
+        )
+        expected_depth = min(self.ap_max_mm, self.stability_limit_depth_mm)
+        sin_kr = math.sin(math.radians(self.cutting_edge_angle_deg))
+        expected_force_at_unit_speed = (
+            kc * (expected_depth / sin_kr) * (expected_feed * sin_kr) ** (1 - mc)
+        )
+        expected_power_at_unit_speed = expected_force_at_unit_speed / 60_000 / 0.80
+        expected_vc = min(
+            self.vc_max_m_min, self.machine_power_limit_kw / expected_power_at_unit_speed
+        )
+        feasible = (
+            self.overhang_ratio_l_d <= 4
+            and expected_feed >= self.feed_min_mm_rev
+            and expected_depth >= self.ap_min_mm
+            and expected_vc >= self.vc_min_m_min
+        )
+        if self.optimization_status == "OPTIMIZATION_UNFEASIBLE_CONSTRAINTS_VIOLATED":
+            if any(value is not None for value in recommendations):
+                raise ValueError("OPTIMIZATION_UNFEASIBLE_RESULT_MUST_BE_EMPTY")
+            if feasible:
+                raise ValueError("OPTIMIZATION_FALSE_UNFEASIBLE_STATUS")
+            return self
+        if not feasible:
+            raise ValueError("OPTIMIZATION_FALSE_FEASIBLE_STATUS")
+        if any(value is None for value in recommendations):
+            raise ValueError("OPTIMIZATION_RECOMMENDATION_REQUIRED")
+        assert self.recommended_vc_m_min is not None
+        assert self.recommended_feed_mm_rev is not None
+        assert self.recommended_ap_mm is not None
+        assert self.predicted_mrr_cm3_min is not None
+        assert self.predicted_motor_power_kw is not None
+        assert self.predicted_ra_um is not None
+        assert self.predicted_tool_life_minutes is not None
+        vc = self.recommended_vc_m_min
+        feed = self.recommended_feed_mm_rev
+        depth = self.recommended_ap_mm
+        mrr = self.predicted_mrr_cm3_min
+        power = self.predicted_motor_power_kw
+        roughness = self.predicted_ra_um
+        tool_life = self.predicted_tool_life_minutes
+        if not (
+            self.vc_min_m_min <= vc <= self.vc_max_m_min
+            and self.feed_min_mm_rev <= feed <= self.feed_max_mm_rev
+            and self.ap_min_mm <= depth <= self.ap_max_mm
+            and self.overhang_ratio_l_d <= 4
+            and depth <= self.stability_limit_depth_mm
+        ):
+            raise ValueError("OPTIMIZATION_RECOMMENDATION_OUTSIDE_CONSTRAINTS")
+        for actual, expected, code in (
+            (vc, expected_vc, "OPTIMIZATION_VC_NOT_OPTIMAL"),
+            (feed, expected_feed, "OPTIMIZATION_FEED_NOT_OPTIMAL"),
+            (depth, expected_depth, "OPTIMIZATION_AP_NOT_OPTIMAL"),
+        ):
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_force = kc * (depth / sin_kr) * (feed * sin_kr) ** (1 - mc)
+        expected_power = expected_force * vc / 60_000 / 0.80
+        expected_ra = feed**2 / (32 * self.insert_nose_radius_mm) * 1_000
+        expected_mrr = vc * feed * depth
+        expected_life = (taylor_c / vc) ** (1 / taylor_n)
+        checks = (
+            (power, expected_power, "OPTIMIZATION_POWER_INCONSISTENT"),
+            (roughness, expected_ra, "OPTIMIZATION_ROUGHNESS_INCONSISTENT"),
+            (mrr, expected_mrr, "OPTIMIZATION_MRR_INCONSISTENT"),
+            (tool_life, expected_life, "OPTIMIZATION_TAYLOR_LIFE_INCONSISTENT"),
+        )
+        for actual, expected, code in checks:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        if power > self.machine_power_limit_kw or roughness > self.target_ra_um:
+            raise ValueError("OPTIMIZATION_RECOMMENDATION_VIOLATES_CONSTRAINT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -708,6 +850,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     cost_time_audit: MachiningCostTimeAuditPayload
     sustainability_audit: MachiningSustainabilityAuditPayload
     stability_audits: tuple[MachiningStabilityAuditPayload, ...] = Field(min_length=1)
+    parameter_optimizations: tuple[MachiningParameterOptimizationPayload, ...] = Field(min_length=1)
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -782,4 +925,31 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
                 abs_tol=5e-9,
             ):
                 raise ValueError("REPORT_STABILITY_SOURCE_INCONSISTENT")
+        optimizations_by_tool = {item.tool_id: item for item in self.parameter_optimizations}
+        if len(optimizations_by_tool) != len(self.parameter_optimizations) or set(
+            optimizations_by_tool
+        ) != set(stability_by_tool):
+            raise ValueError("REPORT_OPTIMIZATION_TOOL_SOURCE_INCONSISTENT")
+        for optimization in self.parameter_optimizations:
+            stability = stability_by_tool[optimization.tool_id]
+            roughness_target = (
+                self.surface_roughness_audit.nominal_ra_max_um
+                or self.surface_roughness_audit.ra_theoretical_um
+            )
+            comparisons = (
+                (optimization.programmed_vc_m_min, self.power_force_audit.cutting_speed_m_per_min),
+                (optimization.programmed_feed_mm_rev, self.power_force_audit.feed_mm_per_rev),
+                (optimization.programmed_ap_mm, self.power_force_audit.depth_of_cut_mm),
+                (optimization.target_ra_um, roughness_target),
+                (optimization.insert_nose_radius_mm, self.surface_roughness_audit.insert_nose_radius_mm),
+                (optimization.cutting_edge_angle_deg, self.power_force_audit.cutting_edge_angle_deg),
+                (optimization.machine_power_limit_kw, self.power_force_audit.machine_power_limit_kw),
+                (optimization.stability_limit_depth_mm, stability.stability_limit_depth_mm),
+                (optimization.overhang_ratio_l_d, stability.overhang_ratio_l_d),
+            )
+            if optimization.material_profile != self.power_force_audit.material_profile or any(
+                not math.isclose(actual, expected, abs_tol=5e-9)
+                for actual, expected in comparisons
+            ):
+                raise ValueError("REPORT_OPTIMIZATION_SOURCE_INCONSISTENT")
         return self
