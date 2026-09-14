@@ -266,6 +266,16 @@ def test_complete_report_replays_deterministically(controller):
     assert report.tailstock_thrust_audit.tailstock_status == "TAILSTOCK_SUPPORT_COMPLIANT"
     assert report.tailstock_thrust_audit.physical_use_authorized is False
     assert report.tailstock_thrust_audit.automatic_tailstock_control_authorized is False
+    assert report.spindle_harmonic_dynamics_audit.operating_rpm == pytest.approx(
+        report.power_force_audit.spindle_rpm_reference
+    )
+    assert report.spindle_harmonic_dynamics_audit.system_stiffness_n_per_m == pytest.approx(
+        report.part_elastic_deflection_audit.calculated_stiffness_n_per_mm * 1_000
+    )
+    assert report.spindle_harmonic_dynamics_audit.first_critical_rpm > 0
+    assert report.spindle_harmonic_dynamics_audit.unbalance_force_n >= 0
+    assert report.spindle_harmonic_dynamics_audit.physical_use_authorized is False
+    assert report.spindle_harmonic_dynamics_audit.automatic_spindle_control_authorized is False
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -491,6 +501,15 @@ def test_report_rejects_tailstock_audit_from_another_force_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_spindle_harmonic_audit_from_another_speed_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    body = report.model_dump()
+    body["spindle_harmonic_dynamics_audit"]["operating_rpm"] += 100.0
+    with pytest.raises(ValidationError):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -498,7 +517,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 15
+    assert rendered.count(SAFETY_STAMP) == 16
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -511,6 +530,11 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert "emission_status=CONTROLLER_PROFILE_UNRESOLVED" in rendered
     assert "executable_output=false" in rendered
     assert "program_text" not in rendered
+    assert "[DINÂMICA HARMÔNICA E VELOCIDADE CRÍTICA DO FUSO]" in rendered
+    assert "first_critical_rpm=" in rendered
+    assert "resonance_proximity_percent=" in rendered
+    assert "unbalance_force_n=" in rendered
+    assert "ESTIMATIVA ANALÍTICA DE VELOCIDADE CRÍTICA E RESSONÂNCIA" in rendered
     assert "cutting_force_nominal_n=" in rendered
     assert "power_status=POWER_WITHIN_LIMITS" in rendered
     assert (

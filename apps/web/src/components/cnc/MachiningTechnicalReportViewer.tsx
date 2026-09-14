@@ -550,6 +550,29 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_TAILSTOCK_SUPPORT_EXCLUDES_CENTER_ECCENTRICITY_AND_QUILL_BEARING_WEAR";
     safety_flags: MachiningReportSafetyFlags;
   };
+  spindle_harmonic_dynamics_audit: {
+    schema_version: "vena-ia.cnc-spindle-harmonic-dynamics-audit/v1";
+    system_stiffness_n_per_m: number;
+    effective_mass_kg: number;
+    workpiece_mass_kg: number;
+    mass_eccentricity_mm: number;
+    natural_angular_frequency_rad_s: number;
+    first_critical_rpm: number;
+    operating_rpm: number;
+    resonance_proximity_percent: number;
+    resonance_exclusion_percent: number;
+    unbalance_force_n: number;
+    bearing_admissible_force_n: number;
+    dynamic_status:
+      | "SPINDLE_DYNAMICS_COMPLIANT"
+      | "HARMONIC_RESONANCE_CRITICAL_RPM_WARNING"
+      | "DYNAMIC_UNBALANCE_EXCESSIVE_FORCE_WARNING";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    automatic_spindle_control_authorized: false;
+    model_limitation: "ANALYTICAL_CRITICAL_SPEED_EXCLUDES_VISCOUS_DAMPING_AND_BEARING_RACE_DEFECTS";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -612,6 +635,17 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const dynamicClampingSafe = workholdingAudit.clamping_status === "DYNAMIC_CLAMPING_SAFE";
   const tailstockAudit = report.tailstock_thrust_audit;
   const tailstockSupportCompliant = tailstockAudit.tailstock_status === "TAILSTOCK_SUPPORT_COMPLIANT";
+  const harmonicAudit = report.spindle_harmonic_dynamics_audit;
+  const spindleDynamicsCompliant = harmonicAudit.dynamic_status === "SPINDLE_DYNAMICS_COMPLIANT";
+  const spindleDynamicsBadge = spindleDynamicsCompliant
+    ? "DINÂMICA DE FUSO ESTÁVEL"
+    : harmonicAudit.dynamic_status === "HARMONIC_RESONANCE_CRITICAL_RPM_WARNING"
+      ? "ALERTA: PROXIMIDADE DE VELOCIDADE CRÍTICA"
+      : "ALERTA: FORÇA DE DESBALANCEAMENTO EXCESSIVA";
+  const harmonicMarkerPosition = Math.min(
+    100,
+    Math.max(0, harmonicAudit.resonance_proximity_percent / 30 * 100),
+  );
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -1152,6 +1186,34 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE CARGA E APOIO DE CONTRAPONTO - NÃO CONSIDERA EXCENTRICIDADE DO PONTO DE CENTRO OU DESGASTE DE ROLAMENTOS DO MANGOTE
+      </p>
+    </section>
+
+    <section aria-labelledby="report-harmonic-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-harmonic-heading" className="text-lg font-semibold">Painel de Dinâmica Rotativa</h2>
+        <span role={spindleDynamicsCompliant ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${spindleDynamicsCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {spindleDynamicsBadge}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Rotação Crítica de Ressonância" value={`${harmonicAudit.first_critical_rpm.toFixed(3)} RPM`} />
+        <Metric label="Rotação Programada" value={`${harmonicAudit.operating_rpm.toFixed(3)} RPM`} />
+        <Metric label="Proximidade Harmônica" value={`${harmonicAudit.resonance_proximity_percent.toFixed(3)}%`} />
+        <Metric label="Força Dinâmica de Desbalanceamento" value={`${harmonicAudit.unbalance_force_n.toFixed(3)} N`} />
+      </dl>
+      <div className="space-y-1" aria-label="Proximidade da rotação crítica">
+        <div className="relative h-4 overflow-hidden rounded-full border border-slate-600 bg-slate-800">
+          <div className="absolute inset-y-0 left-0 w-1/2 bg-red-700" aria-label="Zona vermelha de exclusão operacional até 15%" />
+          <div className="absolute inset-y-0 left-1/2 right-0 bg-emerald-800" />
+          <span className="absolute top-0 h-full w-1 bg-white" style={{ left: `${harmonicMarkerPosition}%` }} />
+        </div>
+        <p className="font-mono text-xs text-slate-300">
+          faixa de exclusão ±{harmonicAudit.resonance_exclusion_percent.toFixed(1)}% · limite dos mancais {harmonicAudit.bearing_admissible_force_n.toFixed(3)} N · {harmonicAudit.dynamic_status}
+        </p>
+      </div>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE VELOCIDADE CRÍTICA E RESSONÂNCIA - NÃO CONSIDERA AMORTECIMENTO VISCOSO DO FUSO OU DEFEITOS EM PISTAS DE ROLAMENTO
       </p>
     </section>
 

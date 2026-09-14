@@ -1,25 +1,29 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-350 a AUTO-359
-**Estado:** CNC_TAILSTOCK_THRUST_DEFLECTION_PR_DRAFT_READY
+**Missão:** CTO-CODEX-AUTO-360 a AUTO-369
+**Estado:** CNC_SPINDLE_HARMONIC_DYNAMICS_PR_DRAFT_READY
 **Data:** 2026-09-14
-**Branch:** `codex/v9.0-cnc-tailstock-thrust-deflection-auditor`
-**Baseline da branch:** `c0df9eeb8cd95ed8d712bffc1598a494f21b8628`
+**Branch:** `codex/v9.1-cnc-harmonic-spindle-critical-speed-auditor`
+**Baseline da branch:** `f41f37f94fee2b08923248754a00062f4ec16975`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O `VTP-AUTO-349-BATCH` foi aprovado. O PR #76 foi integrado por squash em
-`c0df9ee`, e a `main` foi sincronizada. A Rota 28 calcula deflexão biapoiada e
-carga crítica de Euler, alerta acima de 30% da carga crítica e integra contrato,
-JSON, TEXT e Web com verificação física obrigatória e sem controles do mangote.
-O commit `d659587` foi publicado no Draft PR #77; Frontend CI passou em 1m20s e
-Backend CI em 3m28s. O PR permanece aberto, em rascunho e sem merge.
+O `VTP-AUTO-359-BATCH` foi aprovado. O PR #77 foi integrado por squash em
+`f41f37f`, a branch remota foi removida e `main=origin/main`. A Rota 29 calcula
+frequência natural, primeira RPM crítica, proximidade da faixa de exclusão de 15%
+e força residual de desbalanceamento. Contrato, manifesto JSON, laudo TEXT e
+painel Web exibem a telemetria e alertas, recalculam as fontes e preservam todos os
+bloqueios físicos.
+
+Validação local concluída: 330 testes CNC, 38 testes Web, Ruff, mypy em 235
+fontes, TypeScript estrito, Next lint e `git diff --check`. A branch foi publicada
+no Draft PR #78; Frontend CI passou em 1m19s e Backend CI em 3m58s.
 
 ## Continuidade
 
-Emitir `VTP-AUTO-359-BATCH`, solicitar parecer do CTO e aguardar a próxima
-ordem. O PR #77 deve permanecer em rascunho e sem merge.
+Emitir `VTP-AUTO-369-BATCH`, solicitar parecer do CTO e aguardar a próxima ordem.
+O PR #78 deve permanecer em rascunho e sem merge.
 
 ## Limites permanentes
 

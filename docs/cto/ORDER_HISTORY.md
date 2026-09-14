@@ -1,5 +1,16 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-360 a AUTO-369
+
+O `VTP-AUTO-359-BATCH` foi aprovado. O PR #77 foi integrado por squash em
+`f41f37f`, sua branch remota foi removida e `main=origin/main`. A branch v9.1
+implementa a Rota CNC 29: frequência natural, RPM crítica, faixa de exclusão,
+força de desbalanceamento, contrato recalculável, relatório JSON/TEXT e painel
+Web com alerta harmônico. Validação concluída com 330 testes CNC, 38 Web, Ruff,
+mypy em 235 fontes, TypeScript, Next lint e diff; entrega local sem autoridade
+física. A branch foi publicada no Draft PR #78, com Frontend CI aprovado em 1m19s
+e Backend CI em 3m58s; nenhum merge foi executado.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-359-BATCH
 
 A Rota 28 foi publicada no Draft PR #77 pelo commit `d659587`. O Frontend CI
