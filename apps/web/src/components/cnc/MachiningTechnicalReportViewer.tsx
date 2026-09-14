@@ -235,6 +235,33 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_CUTTING_PARAMETERS_REQUIRE_MANUAL_PROCESS_ENGINEERING_APPROVAL";
     safety_flags: MachiningReportSafetyFlags;
   }[];
+  risk_matrix: {
+    schema_version: "vena-ia.cnc-machining-risk-matrix/v1";
+    envelope_audit: "PASS_DECLARED_2D_ENVELOPE_ONLY" | "ENVELOPE_VIOLATION_DETECTED";
+    geometry_audit_status: "PASS" | "REJECTED";
+    geometry_manifest_generation_allowed: boolean;
+    minimum_chuck_clearance_mm: number;
+    chuck_proximity_threshold_mm: number;
+    chuck_proximity_warning: boolean;
+    max_overhang_ratio_l_d: number;
+    dynamic_warning_present: boolean;
+    required_motor_power_kw: number;
+    machine_power_limit_kw: number;
+    power_warning_present: boolean;
+    max_tool_life_consumed_percent: number;
+    tool_wear_warning_present: boolean;
+    overall_risk_score: number;
+    risk_level: "LOW_RISK" | "MODERATE_RISK" | "HIGH_RISK_REQUIRES_MITIGATION" | "CRITICAL_INTERVENTION_MANDATORY";
+    dimensional_risk_score: number;
+    dynamic_risk_score: number;
+    energy_risk_score: number;
+    tool_wear_risk_score: number;
+    mitigation_recommendations: readonly string[];
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "CONSOLIDATED_ANALYTICAL_RISK_MATRIX_IS_PRELIMINARY_AND_NOT_AN_EXPERT_REPORT";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -265,6 +292,12 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const proximityWarning = report.chuck_proximity.warning_code === "WARNING_PROXIMITY_CHUCK";
   const dimensionalPass = report.geometry_audit.status === "PASS";
   const powerWithinLimits = report.power_force_audit.power_status === "POWER_WITHIN_LIMITS";
+  const riskPresentation = {
+    LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
+    MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
+    HIGH_RISK_REQUIRES_MITIGATION: ["ALTO RISCO — MITIGAÇÃO OBRIGATÓRIA", "border-orange-500 bg-orange-950 text-orange-100"],
+    CRITICAL_INTERVENTION_MANDATORY: ["INTERVENÇÃO CRÍTICA OBRIGATÓRIA", "border-red-500 bg-red-950 text-red-100"],
+  }[report.risk_matrix.risk_level];
 
   return <article className="space-y-6 rounded-2xl border border-slate-700 bg-slate-900 p-6 text-slate-100" aria-label="Relatório técnico CNC">
     <header className="space-y-3">
@@ -485,6 +518,38 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </ul>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         SUGESTÃO ANALÍTICA DE PARÂMETROS DE CORTE - APLICAÇÃO EM MÁQUINA REQUER HOMOLOGAÇÃO MANUAL POR ENGENHARIA DE PROCESSOS
+      </p>
+    </section>
+
+    <section aria-labelledby="report-risk-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-risk-heading" className="text-lg font-semibold">Matriz de risco operacional</h2>
+        <span role="status" className={`rounded-full border px-3 py-1 text-xs font-bold ${riskPresentation[1]}`}>
+          {riskPresentation[0]}
+        </span>
+      </div>
+      <Metric label="Score consolidado" value={`${report.risk_matrix.overall_risk_score.toFixed(1)} / 100`} />
+      <div aria-label="Painel de risco por categoria" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {([
+          ["Dimensional", report.risk_matrix.dimensional_risk_score],
+          ["Dinâmico", report.risk_matrix.dynamic_risk_score],
+          ["Energético", report.risk_matrix.energy_risk_score],
+          ["Desgaste", report.risk_matrix.tool_wear_risk_score],
+        ] as const).map(([label, score]) => <div key={label} className="rounded-lg border border-slate-700 bg-slate-950 p-3">
+          <div className="flex items-center justify-between gap-2 text-sm"><span>{label}</span><span className="font-mono">{score.toFixed(1)}</span></div>
+          <div role="progressbar" aria-label={`Risco ${label}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={score} className="mt-2 h-2 overflow-hidden rounded bg-slate-700">
+            <div className="h-full bg-orange-500" style={{ width: `${Math.min(100, Math.max(0, score))}%` }} />
+          </div>
+        </div>)}
+      </div>
+      <div className="rounded-lg border border-slate-700 bg-slate-950 p-4">
+        <h3 className="text-sm font-semibold">Recomendações analíticas de mitigação</h3>
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-300">
+          {report.risk_matrix.mitigation_recommendations.map((recommendation) => <li key={recommendation}>{recommendation}</li>)}
+        </ul>
+      </div>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        MATRIZ DE RISCO ANALÍTICA CONSOLIDADA - AVALIAÇÃO PRELIMINAR DE PROCESSO SEM VALIDADE DE LAUDO PERICIAL
       </p>
     </section>
 

@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.62
-**Última atualização:** 2026-09-13
+**Versão:** 2.63
+**Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -27,7 +27,19 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-### 3.1 Síntese vigente — 2026-09-13
+### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_OPERATIONAL_RISK_MATRIX_COMPLETED_LOCAL`.
+  O PR #65 integrou a Rota 17 por squash em `1f6bb75`; Backend e Frontend CI foram
+  aprovados, a branch remota foi removida e `main=origin/main`. A branch local
+  `codex/v7.9-cnc-operational-risk-matrix` consolida riscos dimensional, dinâmico,
+  energético e de desgaste em escores ponderados, força violações de envelope,
+  geometria ou colisão para `CRITICAL_INTERVENTION_MANDATORY` e emite mitigações
+  analíticas. Contrato, manifesto, laudo e painel Web vinculam o resultado aos
+  snapshots dos auditores de origem e preservam todas as barreiras físicas.
+  Validação: 874 testes API/2 ignorados, 171 testes CNC, mypy em 205 fontes, Ruff,
+  TypeScript completo, 17 testes Web, Next lint e `git diff --check`. Entrega local
+  sem push.
 
 - **Handoff CTO:** `CNC_PARAMETER_MULTICRITERIA_OPTIMIZER_COMPLETED_LOCAL`.
   O PR #64 integrou a Rota 16 por squash em `339989d`; Backend e Frontend CI foram

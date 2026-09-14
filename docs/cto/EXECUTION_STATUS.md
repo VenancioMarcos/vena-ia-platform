@@ -1,5 +1,16 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-249 a AUTO-258
+
+`CNC_OPERATIONAL_RISK_MATRIX_COMPLETED_LOCAL`. O PR #65 teve Backend e Frontend CI
+aprovados e foi integrado por squash em `1f6bb75`; branch remota removida e main
+sincronizada. A Rota 18 agrega risco dimensional, dinâmico, energético e desgaste,
+força violações cinemáticas/colisão para crítico e vincula os escores aos snapshots
+de geometria, proximidade, estabilidade, Kienzle e Taylor. JSON, TEXT e painel Web
+incluem nível, categorias e mitigações sem controles físicos. Validação: 874 testes
+API/2 ignorados, 171 CNC, 39 focados, 17 Web, mypy em 205 fontes, Ruff, TypeScript,
+Next lint e diff. Sem push da Rota 18 ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-239 a AUTO-248
 
 `CNC_PARAMETER_MULTICRITERIA_OPTIMIZER_COMPLETED_LOCAL`. O PR #64 teve Backend e

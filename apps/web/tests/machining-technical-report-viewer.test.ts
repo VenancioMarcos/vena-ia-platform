@@ -284,6 +284,45 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   }],
+  risk_matrix: {
+    schema_version: "vena-ia.cnc-machining-risk-matrix/v1",
+    envelope_audit: "PASS_DECLARED_2D_ENVELOPE_ONLY",
+    geometry_audit_status: "PASS",
+    geometry_manifest_generation_allowed: true,
+    minimum_chuck_clearance_mm: 12.5,
+    chuck_proximity_threshold_mm: 5,
+    chuck_proximity_warning: false,
+    max_overhang_ratio_l_d: 3,
+    dynamic_warning_present: false,
+    required_motor_power_kw: 4.2796875,
+    machine_power_limit_kw: 7.5,
+    power_warning_present: false,
+    max_tool_life_consumed_percent: 13.9913,
+    tool_wear_warning_present: false,
+    overall_risk_score: 0,
+    risk_level: "LOW_RISK",
+    dimensional_risk_score: 0,
+    dynamic_risk_score: 0,
+    energy_risk_score: 0,
+    tool_wear_risk_score: 0,
+    mitigation_recommendations: [
+      "Manter revisão humana e homologação de processo antes de qualquer aplicação física.",
+    ],
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "CONSOLIDATED_ANALYTICAL_RISK_MATRIX_IS_PRELIMINARY_AND_NOT_AN_EXPERT_REPORT",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -503,4 +542,52 @@ test("renders infeasible constraints without any automatic override control", ()
   assert.match(html, /OPTIMIZATION_UNFEASIBLE_CONSTRAINTS_VIOLATED/);
   assert.doesNotMatch(html, /<button/i);
   assert.doesNotMatch(html, /sobrescrever|enviar à máquina/i);
+});
+
+test("renders the operational risk panel, category scores, mitigations, and governance", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Matriz de risco operacional/);
+  assert.match(html, /RISCO BAIXO/);
+  assert.match(html, /Score consolidado/);
+  assert.match(html, /0\.0 \/ 100/);
+  assert.match(html, /Risco Dimensional/);
+  assert.match(html, /Risco Dinâmico/);
+  assert.match(html, /Risco Energético/);
+  assert.match(html, /Risco Desgaste/);
+  assert.match(html, /Recomendações analíticas de mitigação/);
+  assert.match(html, /Manter revisão humana e homologação de processo/);
+  assert.match(html, /MATRIZ DE RISCO ANALÍTICA CONSOLIDADA - AVALIAÇÃO PRELIMINAR DE PROCESSO SEM VALIDADE DE LAUDO PERICIAL/);
+  assert.doesNotMatch(html, /<button/i);
+});
+
+test("renders high and critical consolidated risk badges without operational controls", () => {
+  const highRisk: MachiningTechnicalReportPayload = {
+    ...report,
+    risk_matrix: {
+      ...report.risk_matrix,
+      overall_risk_score: 48.75,
+      risk_level: "HIGH_RISK_REQUIRES_MITIGATION",
+      dynamic_risk_score: 75,
+      energy_risk_score: 75,
+      tool_wear_risk_score: 75,
+      mitigation_recommendations: ["Revisar os fatores analíticos antes da homologação."],
+    },
+  };
+  const criticalRisk: MachiningTechnicalReportPayload = {
+    ...report,
+    risk_matrix: {
+      ...report.risk_matrix,
+      overall_risk_score: 35,
+      risk_level: "CRITICAL_INTERVENTION_MANDATORY",
+      dimensional_risk_score: 100,
+      mitigation_recommendations: ["Interromper a avaliação do processo."],
+    },
+  };
+  const highHtml = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: highRisk }));
+  const criticalHtml = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: criticalRisk }));
+  assert.match(highHtml, /ALTO RISCO — MITIGAÇÃO OBRIGATÓRIA/);
+  assert.match(highHtml, /aria-label="Risco Dinâmico"[^>]*aria-valuenow="75"/);
+  assert.match(criticalHtml, /INTERVENÇÃO CRÍTICA OBRIGATÓRIA/);
+  assert.match(criticalHtml, /aria-label="Risco Dimensional"[^>]*aria-valuenow="100"/);
+  assert.doesNotMatch(highHtml + criticalHtml, /<button|autorizar|cycle start/i);
 });
