@@ -2138,6 +2138,87 @@ class TailstockThrustAuditPayload(_CNCGenerationContract):
         return self
 
 
+class SpindleHarmonicDynamicsAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-spindle-harmonic-dynamics-audit/v1"] = (
+        "vena-ia.cnc-spindle-harmonic-dynamics-audit/v1"
+    )
+    system_stiffness_n_per_m: float = Field(gt=0, le=1e21)
+    effective_mass_kg: float = Field(gt=0, le=1e6)
+    workpiece_mass_kg: float = Field(gt=0, le=1e6)
+    mass_eccentricity_mm: float = Field(ge=0, le=100)
+    natural_angular_frequency_rad_s: float = Field(gt=0)
+    first_critical_rpm: float = Field(gt=0)
+    operating_rpm: float = Field(gt=0, le=100_000)
+    resonance_proximity_percent: float = Field(ge=0)
+    resonance_exclusion_percent: float = Field(gt=0, lt=100)
+    unbalance_force_n: float = Field(ge=0)
+    bearing_admissible_force_n: float = Field(gt=0, le=100_000_000)
+    dynamic_status: Literal[
+        "SPINDLE_DYNAMICS_COMPLIANT",
+        "HARMONIC_RESONANCE_CRITICAL_RPM_WARNING",
+        "DYNAMIC_UNBALANCE_EXCESSIVE_FORCE_WARNING",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    automatic_spindle_control_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_CRITICAL_SPEED_EXCLUDES_VISCOUS_DAMPING_AND_BEARING_RACE_DEFECTS"
+    ] = "ANALYTICAL_CRITICAL_SPEED_EXCLUDES_VISCOUS_DAMPING_AND_BEARING_RACE_DEFECTS"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_harmonic_snapshot(self) -> "SpindleHarmonicDynamicsAuditPayload":
+        if self.effective_mass_kg > self.workpiece_mass_kg:
+            raise ValueError("SPINDLE_HARMONIC_EFFECTIVE_MASS_INVALID")
+        expected_natural_frequency = math.sqrt(
+            self.system_stiffness_n_per_m / self.effective_mass_kg
+        )
+        expected_critical_rpm = expected_natural_frequency * 60.0 / (2.0 * math.pi)
+        expected_proximity = (
+            abs(self.operating_rpm - expected_critical_rpm) / expected_critical_rpm * 100.0
+        )
+        operating_angular_velocity = 2.0 * math.pi * self.operating_rpm / 60.0
+        expected_unbalance_force = (
+            self.workpiece_mass_kg
+            * (self.mass_eccentricity_mm / 1_000.0)
+            * operating_angular_velocity**2
+        )
+        comparisons = (
+            (
+                self.natural_angular_frequency_rad_s,
+                expected_natural_frequency,
+                "SPINDLE_HARMONIC_NATURAL_FREQUENCY_INCONSISTENT",
+            ),
+            (
+                self.first_critical_rpm,
+                expected_critical_rpm,
+                "SPINDLE_HARMONIC_CRITICAL_RPM_INCONSISTENT",
+            ),
+            (
+                self.resonance_proximity_percent,
+                expected_proximity,
+                "SPINDLE_HARMONIC_PROXIMITY_INCONSISTENT",
+            ),
+            (
+                self.unbalance_force_n,
+                expected_unbalance_force,
+                "SPINDLE_HARMONIC_UNBALANCE_FORCE_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        if expected_proximity <= self.resonance_exclusion_percent:
+            expected_status = "HARMONIC_RESONANCE_CRITICAL_RPM_WARNING"
+        elif expected_unbalance_force > self.bearing_admissible_force_n:
+            expected_status = "DYNAMIC_UNBALANCE_EXCESSIVE_FORCE_WARNING"
+        else:
+            expected_status = "SPINDLE_DYNAMICS_COMPLIANT"
+        if self.dynamic_status != expected_status:
+            raise ValueError("SPINDLE_HARMONIC_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -2175,6 +2256,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     coolant_pressure_flow_audit: CoolantPressureFlowAuditPayload
     workholding_clamping_audit: WorkholdingClampingAuditPayload
     tailstock_thrust_audit: TailstockThrustAuditPayload
+    spindle_harmonic_dynamics_audit: SpindleHarmonicDynamicsAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -2483,4 +2565,35 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             )
         ):
             raise ValueError("REPORT_TAILSTOCK_SOURCE_INCONSISTENT")
+        harmonic = self.spindle_harmonic_dynamics_audit
+        density_by_material = {
+            "AISI_1020": 7_850.0,
+            "ABNT_1045": 7_850.0,
+            "ALUMINUM_6061_T6": 2_700.0,
+        }
+        density = density_by_material[self.power_force_audit.material_profile]
+        radius_m = self.part_elastic_deflection_audit.minimum_diameter_mm / 2_000.0
+        expected_workpiece_mass = (
+            density
+            * math.pi
+            * radius_m**2
+            * (self.part_elastic_deflection_audit.part_unsupported_length_mm / 1_000.0)
+        )
+        harmonic_sources = (
+            (
+                harmonic.system_stiffness_n_per_m,
+                self.part_elastic_deflection_audit.calculated_stiffness_n_per_mm * 1_000.0,
+            ),
+            (harmonic.workpiece_mass_kg, expected_workpiece_mass),
+            (harmonic.effective_mass_kg, expected_workpiece_mass * 0.236),
+            (harmonic.operating_rpm, self.power_force_audit.spindle_rpm_reference),
+        )
+        if (
+            harmonic.safety_flags != self.safety_flags
+            or any(
+                not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12)
+                for actual, expected in harmonic_sources
+            )
+        ):
+            raise ValueError("REPORT_SPINDLE_HARMONIC_SOURCE_INCONSISTENT")
         return self

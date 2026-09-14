@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-360 a AUTO-369
+
+`CNC_SPINDLE_HARMONIC_DYNAMICS_AUDITOR_COMPLETED_LOCAL`. O
+`VTP-AUTO-359-BATCH` foi aprovado, o PR #77 integrado por squash em `f41f37f`, a
+branch remota removida e a main sincronizada. A Rota 29 aplica o modelo
+Jeffcott/Rayleigh simplificado para frequência natural e RPM crítica, delimita a
+faixa de ressonância de ±15% e calcula `F=m·e·ω²` contra o limite declarado dos
+mancais. Contrato Pydantic, JSON, TEXT e painel Web incluem valores, fontes,
+status, zona vermelha e nota técnica, sem controles de fuso ou máquina. Validação
+local: 330 testes CNC, 38 Web, Ruff, mypy em 235 fontes, TypeScript, Next lint e
+diff aprovados. Entrega pronta para publicação no Draft PR #78.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-350 a AUTO-359
 
 `CNC_TAILSTOCK_THRUST_DEFLECTION_PR_DRAFT_READY`. O PR #76 foi integrado por

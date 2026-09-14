@@ -30,6 +30,11 @@ from app.modules.cnc.services.geometry_auditor import (
     GeometryDimensionalAuditError,
     require_geometry_dimensions_consistent,
 )
+from app.modules.cnc.services.harmonic_spindle_auditor import (
+    audit_spindle_harmonic_dynamics,
+    cylindrical_workpiece_mass_kg,
+    material_density_kg_m3,
+)
 from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
 from app.modules.cnc.services.parameter_optimizer import optimize_cutting_parameters
 from app.modules.cnc.services.part_deflection_auditor import (
@@ -323,6 +328,22 @@ def compile_machining_report(
         engagement_z_coordinate_mm=record.source_brep_bounds.max_z_mm,
         effective_length_factor=0.7,
     )
+    workpiece_mass_kg = cylindrical_workpiece_mass_kg(
+        diameter_mm=minimum_diameter_mm,
+        length_mm=record.source_brep_bounds.total_z_length_mm,
+        density_kg_m3=material_density_kg_m3(power_force_audit.material_profile),
+    )
+    spindle_harmonic_dynamics_audit = audit_spindle_harmonic_dynamics(
+        system_stiffness_n_per_m=(
+            part_elastic_deflection_audit.calculated_stiffness_n_per_mm * 1_000.0
+        ),
+        effective_mass_kg=workpiece_mass_kg * 0.236,
+        workpiece_mass_kg=workpiece_mass_kg,
+        mass_eccentricity_mm=0.01,
+        operating_rpm=power_force_audit.spindle_rpm_reference,
+        bearing_admissible_force_n=10_000.0,
+        resonance_exclusion_percent=15.0,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -360,6 +381,7 @@ def compile_machining_report(
         coolant_pressure_flow_audit=coolant_pressure_flow_audit,
         workholding_clamping_audit=workholding_clamping_audit,
         tailstock_thrust_audit=tailstock_thrust_audit,
+        spindle_harmonic_dynamics_audit=spindle_harmonic_dynamics_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -401,6 +423,8 @@ def compile_machining_report(
             "verification with a physical chuck load meter.",
             "Tailstock preload and fixed-pinned deflection exclude center eccentricity and "
             "quill-bearing wear.",
+            "Critical-speed and residual-unbalance estimates exclude viscous spindle "
+            "damping and bearing-race defects.",
         ),
     )
 

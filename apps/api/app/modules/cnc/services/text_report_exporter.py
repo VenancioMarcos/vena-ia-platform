@@ -359,6 +359,27 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "DINÂMICA HARMÔNICA E VELOCIDADE CRÍTICA DO FUSO",
+            (
+                "first_critical_rpm="
+                f"{validated.spindle_harmonic_dynamics_audit.first_critical_rpm:.9f}",
+                "operating_rpm="
+                f"{validated.spindle_harmonic_dynamics_audit.operating_rpm:.9f}",
+                "resonance_proximity_percent="
+                f"{validated.spindle_harmonic_dynamics_audit.resonance_proximity_percent:.9f}",
+                "resonance_exclusion_percent="
+                f"{validated.spindle_harmonic_dynamics_audit.resonance_exclusion_percent:.9f}",
+                "unbalance_force_n="
+                f"{validated.spindle_harmonic_dynamics_audit.unbalance_force_n:.9f}",
+                "bearing_admissible_force_n="
+                f"{validated.spindle_harmonic_dynamics_audit.bearing_admissible_force_n:.9f}",
+                f"status={validated.spindle_harmonic_dynamics_audit.dynamic_status}",
+                "ESTIMATIVA ANALÍTICA DE VELOCIDADE CRÍTICA E RESSONÂNCIA - NÃO "
+                "CONSIDERA AMORTECIMENTO VISCOSO DO FUSO OU DEFEITOS EM PISTAS DE "
+                "ROLAMENTO",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

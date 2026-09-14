@@ -817,6 +817,36 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  spindle_harmonic_dynamics_audit: {
+    schema_version: "vena-ia.cnc-spindle-harmonic-dynamics-audit/v1",
+    system_stiffness_n_per_m: 2000000,
+    effective_mass_kg: 2,
+    workpiece_mass_kg: 5,
+    mass_eccentricity_mm: 0.01,
+    natural_angular_frequency_rad_s: 1000,
+    first_critical_rpm: 5000,
+    operating_rpm: 3000,
+    resonance_proximity_percent: 40,
+    resonance_exclusion_percent: 15,
+    unbalance_force_n: 4.934802,
+    bearing_admissible_force_n: 10000,
+    dynamic_status: "SPINDLE_DYNAMICS_COMPLIANT",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    automatic_spindle_control_authorized: false,
+    model_limitation: "ANALYTICAL_CRITICAL_SPEED_EXCLUDES_VISCOUS_DAMPING_AND_BEARING_RACE_DEFECTS",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1301,6 +1331,32 @@ test("renders tailstock buckling warning without quill or hydraulic controls", (
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE FLAMBAGEM POR PRÉ-CARGA/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|acionar mangote|controle hidráulico/i);
+});
+
+test("renders spindle harmonic telemetry, exclusion zone, and governance note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Painel de Dinâmica Rotativa/);
+  assert.match(html, /5000\.000 RPM/);
+  assert.match(html, /3000\.000 RPM/);
+  assert.match(html, /40\.000%/);
+  assert.match(html, /4\.935 N/);
+  assert.match(html, /DINÂMICA DE FUSO ESTÁVEL/);
+  assert.match(html, /Zona vermelha de exclusão operacional até 15%/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE VELOCIDADE CRÍTICA E RESSONÂNCIA - NÃO CONSIDERA AMORTECIMENTO VISCOSO DO FUSO OU DEFEITOS EM PISTAS DE ROLAMENTO/);
+});
+
+test("renders critical-speed warning without spindle controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    spindle_harmonic_dynamics_audit: {
+      ...report.spindle_harmonic_dynamics_audit,
+      resonance_proximity_percent: 10,
+      dynamic_status: "HARMONIC_RESONANCE_CRITICAL_RPM_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: PROXIMIDADE DE VELOCIDADE CRÍTICA/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|controlar rotação|acionar fuso/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {
