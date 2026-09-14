@@ -1,13 +1,15 @@
 # Estado de execução CTO
 
-## 2026-09-14 — CTO-CODEX-AUTO-294 a AUTO-299
+## 2026-09-14 — CTO-CODEX-AUTO-294 a AUTO-303
 
-`CNC_SPINDLE_POWER_TORQUE_ENVELOPE_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
-`VTP-AUTO-293-BATCH`. A Rota 22 interpola a curva declarada do fuso, confere demanda
-Kienzle, calcula margens absoluta e percentual e emite warning diante de sobrecarga.
-Manifesto, TEXT e Web expõem RPM, potência, torque, reserva e ressalva S1/S6, sem
-controles físicos. Validação: 224 CNC, 41 focados, 24 Web, Ruff, mypy em 209 fontes,
-TypeScript, Next lint e diff aprovados. Publicação no PR #70 é a próxima etapa.
+`CNC_THERMAL_EXPANSION_DRIFT_CONTRACT_V2_SCAFFOLDED_LOCAL`. A Rota 22 foi validada
+localmente com 224 CNC, 41 focados, 24 Web, Ruff, mypy em 209 fontes, TypeScript e
+Next lint; o PR #70 teve Frontend CI em 1m17s e Backend CI em 3m12s após reexecução
+de uma falha externa de download MinIO, e foi integrado por squash em `eae463e`.
+Branch remota removida e main sincronizada. A Rota 23 estrutura o contrato v2 de
+expansão do tarugo e deriva do fuso X/Z com validação matemática, coeficientes
+tabulados e warning por tolerância. Validação terminal: 231 CNC, 7 focados térmicos,
+Ruff, mypy em 209 fontes e diff aprovados; entrega local sem push ou autoridade física.
 
 ## 2026-09-14 — CTO-CODEX-AUTO-289 a AUTO-293
 

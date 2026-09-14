@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.68
+**Versão:** 2.69
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_THERMAL_EXPANSION_DRIFT_CONTRACT_V2_SCAFFOLDED_LOCAL`.
+  O PR #70 integrou a Rota 22 por squash em `eae463e` após Frontend CI em 1m17s e
+  Backend CI em 3m12s; a primeira execução Backend falhou somente por reset no
+  download MinIO e a reexecução passou. A branch remota foi removida e
+  `main=origin/main`. A Rota 23 iniciou o contrato térmico v2 com coeficientes
+  tabulados, expansão do tarugo, deriva do fuso, totais X/Z e warning por tolerância,
+  sempre fail-closed. Validação: 231 testes CNC, 7 focados térmicos, Ruff, mypy em
+  209 fontes e `git diff --check`; branch local sem push e sem autoridade física.
 
 - **Handoff CTO:** `CNC_SPINDLE_POWER_TORQUE_ENVELOPE_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou o `VTP-AUTO-293-BATCH`. A Rota 22 agora interpola uma curva declarada

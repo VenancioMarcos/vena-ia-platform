@@ -1,23 +1,24 @@
 # Ordem CTO atual
 
 **Missão:** CTO-CODEX-AUTO-294 a AUTO-303
-**Estado:** CNC_SPINDLE_POWER_TORQUE_ENVELOPE_AUDITOR_COMPLETED_LOCAL
+**Estado:** CNC_THERMAL_EXPANSION_DRIFT_CONTRACT_V2_SCAFFOLDED_LOCAL
 **Data:** 2026-09-14
-**Branch:** `codex/v8.3-cnc-power-torque-envelope-auditor`
-**Baseline da branch:** `35b867f4833574fa4355aad08b2ade17f56c1043`
+**Branch:** `codex/v8.4-cnc-thermal-expansion-drift-auditor`
+**Baseline da branch:** `eae463ee990b66c70c874e21a4cba9f7c36c01e9`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O CTO aprovou explicitamente o `VTP-AUTO-293-BATCH`. A Rota 22 implementa o serviço
-determinístico de curva do fuso, integra o contrato v2 ao manifesto e laudo textual
-e apresenta RPM, potência, torque e margem de reserva no viewer Web. Curva, fontes,
-interpolação, margens e status são revalidados fail-closed, sem autoridade física.
+O CTO aprovou explicitamente o `VTP-AUTO-293-BATCH`. O PR #70 publicou a Rota 22,
+teve os dois CIs aprovados e foi integrado por squash em `eae463e`; a branch remota
+foi removida e a main foi sincronizada. A Rota 23 iniciou o contrato Pydantic v2 de
+expansão térmica do tarugo e deriva do fuso nos eixos X/Z, com coeficientes tabulados,
+valores derivados revalidados e warning por tolerância.
 
 ## Continuidade
 
-Publicar a branch, abrir o PR #70, acompanhar CI, promover para review e integrar por
-squash. Depois iniciar a Rota 23 e emitir `VTP-AUTO-303-BATCH` sem push.
+Emitir `VTP-AUTO-303-BATCH` ao CTO e aguardar parecer e próxima ordem. A branch da
+Rota 23 permanece local e não deve receber push nesta etapa.
 
 ## Limites permanentes
 
