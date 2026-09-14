@@ -1865,6 +1865,104 @@ class ChipBreakingMachinabilityAuditPayload(_CNCGenerationContract):
         return self
 
 
+class CoolantZoneRequirement(_CNCGenerationContract):
+    cutting_zone: Literal[
+        "PRIMARY_SHEAR_ZONE",
+        "SECONDARY_TOOL_CHIP_INTERFACE",
+        "TERTIARY_TOOL_WORKPIECE_INTERFACE",
+    ]
+    minimum_flow_l_per_min: float = Field(gt=0, le=1_000)
+    minimum_pressure_bar: float = Field(gt=0, le=1_000)
+
+
+class CoolantPressureFlowAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-coolant-pressure-flow-audit/v2"] = (
+        "vena-ia.cnc-coolant-pressure-flow-audit/v2"
+    )
+    coolant_mode: Literal["FLOOD", "MQL"]
+    programmed_flow_l_per_min: float = Field(gt=0, le=1_000)
+    programmed_pressure_bar: float = Field(gt=0, le=1_000)
+    zone_requirements: tuple[CoolantZoneRequirement, ...] = Field(min_length=3, max_length=3)
+    minimum_required_flow_l_per_min: float = Field(gt=0, le=1_000)
+    minimum_required_pressure_bar: float = Field(gt=0, le=1_000)
+    flow_margin_percent: float = Field(ge=-100, le=100_000)
+    pressure_margin_percent: float = Field(ge=-100, le=100_000)
+    thermal_dissipation_status: Literal[
+        "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS",
+        "INSUFFICIENT_THERMAL_DISSIPATION_WARNING",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    automatic_coolant_control_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "TABULATED_COOLANT_DEMAND_REQUIRES_MACHINE_AND_NOZZLE_PHYSICAL_VALIDATION"
+    ] = "TABULATED_COOLANT_DEMAND_REQUIRES_MACHINE_AND_NOZZLE_PHYSICAL_VALIDATION"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_coolant_demand_snapshot(self) -> "CoolantPressureFlowAuditPayload":
+        expected_tables = {
+            "FLOOD": {
+                "PRIMARY_SHEAR_ZONE": (12.0, 4.0),
+                "SECONDARY_TOOL_CHIP_INTERFACE": (15.0, 6.0),
+                "TERTIARY_TOOL_WORKPIECE_INTERFACE": (10.0, 3.0),
+            },
+            "MQL": {
+                "PRIMARY_SHEAR_ZONE": (0.05, 5.0),
+                "SECONDARY_TOOL_CHIP_INTERFACE": (0.08, 6.0),
+                "TERTIARY_TOOL_WORKPIECE_INTERFACE": (0.04, 4.0),
+            },
+        }
+        expected_table = expected_tables[self.coolant_mode]
+        actual_table = {
+            item.cutting_zone: (
+                item.minimum_flow_l_per_min,
+                item.minimum_pressure_bar,
+            )
+            for item in self.zone_requirements
+        }
+        if len(actual_table) != len(self.zone_requirements) or actual_table != expected_table:
+            raise ValueError("COOLANT_ZONE_REQUIREMENTS_INCONSISTENT")
+        required_flow = max(item.minimum_flow_l_per_min for item in self.zone_requirements)
+        required_pressure = max(item.minimum_pressure_bar for item in self.zone_requirements)
+        expected_flow_margin = (
+            self.programmed_flow_l_per_min - required_flow
+        ) / required_flow * 100.0
+        expected_pressure_margin = (
+            self.programmed_pressure_bar - required_pressure
+        ) / required_pressure * 100.0
+        comparisons = (
+            (
+                self.minimum_required_flow_l_per_min,
+                required_flow,
+                "COOLANT_MINIMUM_FLOW_INCONSISTENT",
+            ),
+            (
+                self.minimum_required_pressure_bar,
+                required_pressure,
+                "COOLANT_MINIMUM_PRESSURE_INCONSISTENT",
+            ),
+            (self.flow_margin_percent, expected_flow_margin, "COOLANT_FLOW_MARGIN_INCONSISTENT"),
+            (
+                self.pressure_margin_percent,
+                expected_pressure_margin,
+                "COOLANT_PRESSURE_MARGIN_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS"
+            if self.programmed_flow_l_per_min >= required_flow
+            and self.programmed_pressure_bar >= required_pressure
+            else "INSUFFICIENT_THERMAL_DISSIPATION_WARNING"
+        )
+        if self.thermal_dissipation_status != expected_status:
+            raise ValueError("COOLANT_THERMAL_DISSIPATION_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"

@@ -1,5 +1,15 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-324 a AUTO-333
+
+`CNC_COOLANT_PRESSURE_FLOW_CONTRACT_V2_SCAFFOLDED_LOCAL`. A Rota 25 foi
+publicada no PR #73, corrigida no HEAD `ed51c08`, validada por Frontend CI em
+1m24s e Backend CI em 3m47s e integrada por squash em `abbbcad`. A branch
+remota foi removida e main sincronizada. A Rota 26 estrutura requisitos mínimos
+de vazão e pressão por zona de corte para Flood/MQL, margens e warning térmico
+fail-closed. Validação terminal: 270 CNC, 12 focados, Ruff, mypy em 231 fontes e
+diff; branch local sem push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-324 a AUTO-329
 
 `CNC_CHIP_BREAKING_MACHINABILITY_AUDITOR_COMPLETED_LOCAL`. A Rota 25 calcula

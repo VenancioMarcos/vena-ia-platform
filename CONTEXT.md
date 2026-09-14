@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.74
+**Versão:** 2.75
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_COOLANT_PRESSURE_FLOW_CONTRACT_V2_SCAFFOLDED_LOCAL`.
+  O PR #73 integrou a Rota 25 por squash em `abbbcad` após Frontend CI em
+  1m24s e Backend CI em 3m47s; branch remota removida e `main=origin/main`.
+  A Rota 26 iniciou o contrato v2 para demanda mínima de fluido por zona de
+  corte, com tabelas distintas Flood/MQL, margens de vazão e pressão e alerta
+  de dissipação térmica insuficiente. Tabelas, agregados, status e flags são
+  revalidados com falha fechada. Validação: 270 testes CNC, 12 focados, Ruff,
+  mypy em 231 fontes e `git diff --check`; entrega local sem push.
 
 - **Handoff CTO:** `CNC_CHIP_BREAKING_MACHINABILITY_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou o `VTP-AUTO-323-BATCH`. A Rota 25 calcula `h=f·sin(kr)` e

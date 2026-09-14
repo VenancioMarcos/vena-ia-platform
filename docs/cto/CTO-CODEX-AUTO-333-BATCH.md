@@ -1,9 +1,9 @@
 # Registro de Entrega — CTO-CODEX-AUTO-324 a AUTO-333
 
 **Data:** 2026-09-14
-**Estado intermediário:** `CNC_CHIP_BREAKING_MACHINABILITY_AUDITOR_COMPLETED_LOCAL`
-**Branch:** `codex/v8.6-cnc-chip-breaking-machinability-auditor`
-**Baseline:** `294440258265c8b06afcbce49c426814293c7a85`
+**Estado:** `CNC_COOLANT_PRESSURE_FLOW_CONTRACT_V2_SCAFFOLDED_LOCAL`
+**Branch:** `codex/v8.7-cnc-coolant-pressure-flow-auditor`
+**Baseline:** `abbbcad44964553aa474760910b7afc551e1da88`
 
 ## Objetivo e escopo entregue nas ordens 324–329
 
@@ -37,6 +37,25 @@ MICROESTRUTURAIS”.
   aprovados.
 - Nenhuma dependência externa de rede foi instalada.
 
+## Publicação, CI e integração da Rota 25
+
+- Commit funcional `28b1d6c` e correção de cobertura `ed51c08`.
+- Draft PR #73 promovido após Frontend CI em 1m24s e Backend CI em 3m47s.
+- Estado pré-merge confirmado: `OPEN`, `isDraft=false`, `MERGEABLE/CLEAN`.
+- Squash merge concluído em `abbbcad44964553aa474760910b7afc551e1da88`.
+- Branch remota removida e `main=origin/main`.
+
+## Inicialização da Rota 26
+
+O contrato `vena-ia.cnc-coolant-pressure-flow-audit/v2` registra modo Flood ou
+MQL, vazão e pressão programadas, requisitos mínimos nas zonas primária,
+ferramenta-cavaco e ferramenta-peça, margens e status de dissipação térmica.
+As tabelas são imutáveis por contrato e qualquer duplicata, adulteração,
+valor não finito ou promoção de controle automático falha fechado.
+
+Validação da Rota 26: 270 testes CNC, 12 focados, Ruff, mypy em 231 fontes e
+`git diff --check`.
+
 ## Limites e continuidade
 
 `PHYSICAL_USE_AUTHORIZED=FALSE`; `G9=PENDING_AUTHORITATIVE_REVIEW`;
@@ -44,5 +63,5 @@ MICROESTRUTURAIS”.
 `NC_TRANSFER=FALSE`; `CYCLE_START=FALSE`;
 `emission_status=CONTROLLER_PROFILE_UNRESOLVED`; `executable_output=false`.
 
-Próxima etapa: publicar a branch, abrir o PR #73, validar CI, integrar por
-squash e iniciar a Rota 26 sem push.
+Emitir `VTP-AUTO-333-BATCH`, solicitar parecer do CTO e aguardar a próxima
+ordem sem encerrar a execução. A Rota 26 permanece local sem push.

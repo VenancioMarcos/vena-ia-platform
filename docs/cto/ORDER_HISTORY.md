@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-324 a AUTO-333
+
+A Rota 25 foi publicada, promovida e integrada pelo PR #73 em `abbbcad` após
+os dois CIs aprovados; a branch remota foi removida e a main sincronizada. A
+Rota 26 iniciou contrato Pydantic v2 de demanda de refrigeração, com requisitos
+tabulados por zona para Flood/MQL, margens de vazão/pressão e alerta de
+dissipação térmica insuficiente. Entrega local sem push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-324 a AUTO-329
 
 O `VTP-AUTO-323-BATCH` foi aprovado. A Rota 25 implementou o auditor de
