@@ -1,5 +1,15 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-370 a AUTO-379
+
+O `VTP-AUTO-369-BATCH` foi aprovado. O PR #78 passou pelos gates finais e foi
+integrado por squash em `9440211`; a branch remota foi removida e a main local
+sincronizada. A branch v9.2 implementa a Rota CNC 30: área nominal de contato,
+pressão média por castanha, pressão mínima de retenção, razão frente ao escoamento
+e alertas de baixa pressão ou indentação. Manifesto, laudo TEXT e viewer Web
+preservam revisão humana, ausência de controles físicos e todos os bloqueios
+permanentes. Entrega local sem push.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-360 a AUTO-369
 
 O `VTP-AUTO-359-BATCH` foi aprovado. O PR #77 foi integrado por squash em

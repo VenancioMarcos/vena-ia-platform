@@ -380,6 +380,28 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "PRESSÃO DE CONTATO E MARCAS DE CASTANHA",
+            (
+                f"material_profile={validated.jaw_clamping_pressure_audit.material_profile}",
+                f"jaw_width_mm={validated.jaw_clamping_pressure_audit.jaw_width_mm:.9f}",
+                "effective_contact_length_mm="
+                f"{validated.jaw_clamping_pressure_audit.effective_contact_length_mm:.9f}",
+                f"contact_area_mm2={validated.jaw_clamping_pressure_audit.contact_area_mm2:.9f}",
+                "dynamic_force_per_jaw_n="
+                f"{validated.jaw_clamping_pressure_audit.dynamic_force_per_jaw_n:.9f}",
+                "mean_contact_pressure_mpa="
+                f"{validated.jaw_clamping_pressure_audit.mean_contact_pressure_mpa:.9f}",
+                "minimum_retention_pressure_mpa="
+                f"{validated.jaw_clamping_pressure_audit.minimum_retention_pressure_mpa:.9f}",
+                "material_yield_strength_mpa="
+                f"{validated.jaw_clamping_pressure_audit.material_yield_strength_mpa:.9f}",
+                "pressure_ratio_percent="
+                f"{validated.jaw_clamping_pressure_audit.pressure_ratio_percent:.9f}",
+                f"status={validated.jaw_clamping_pressure_audit.clamping_pressure_status}",
+                validated.jaw_clamping_pressure_audit.model_limitation,
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

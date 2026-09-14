@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-370 a AUTO-379
+
+`CNC_JAW_CLAMPING_PRESSURE_INDENTATION_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-369-BATCH`; o PR #78 foi promovido, validado e integrado por squash em
+`9440211`, com branch remota removida e `main=origin/main`. A Rota 30 deriva a
+pressão média de contato da força dinâmica residual da Rota 27 e da área nominal
+por castanha, compara-a à pressão mínima de retenção e a 60% do escoamento
+tabulado. Contrato, JSON, TEXT e Web incluem fontes, valores, três estados e nota
+técnica obrigatória, sem controles de atuadores. Validação local: 348 testes CNC,
+40 Web, Ruff, mypy em 236 fontes, TypeScript, Next lint e diff. Branch local sem
+push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-360 a AUTO-369
 
 `CNC_SPINDLE_HARMONIC_DYNAMICS_PR_DRAFT_READY`. O
