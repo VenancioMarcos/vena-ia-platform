@@ -39,6 +39,7 @@ from app.modules.cnc.services.text_report_exporter import (
     SAFETY_STAMP,
     format_machining_report_text,
 )
+from app.modules.cnc.services.workholding_auditor import audit_workholding_clamping
 
 
 def _request(**updates: object) -> GCodeGenerationRequest:
@@ -241,6 +242,17 @@ def test_complete_report_replays_deterministically(controller):
         "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS"
     )
     assert report.coolant_pressure_flow_audit.automatic_coolant_control_authorized is False
+    assert report.workholding_clamping_audit.operating_rpm == pytest.approx(
+        report.power_force_audit.spindle_rpm_reference
+    )
+    assert report.workholding_clamping_audit.axial_cutting_force_n == pytest.approx(
+        report.power_force_audit.fc_nominal_n
+    )
+    assert report.workholding_clamping_audit.dynamic_clamping_force_total_n > 0
+    assert report.workholding_clamping_audit.clamping_safety_factor > 2
+    assert report.workholding_clamping_audit.clamping_status == "DYNAMIC_CLAMPING_SAFE"
+    assert report.workholding_clamping_audit.physical_use_authorized is False
+    assert report.workholding_clamping_audit.automatic_chuck_control_authorized is False
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -426,6 +438,26 @@ def test_report_rejects_chip_breaking_audit_transplanted_from_another_snapshot()
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_workholding_audit_from_another_force_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    current = report.workholding_clamping_audit
+    other = audit_workholding_clamping(
+        static_clamping_force_per_jaw_n=current.static_clamping_force_per_jaw_n,
+        jaw_mass_kg=current.jaw_mass_kg,
+        center_of_mass_radius_mm=current.center_of_mass_radius_mm,
+        operating_rpm=current.operating_rpm,
+        maximum_declared_rpm=current.maximum_declared_rpm,
+        axial_cutting_force_n=current.axial_cutting_force_n + 100.0,
+        friction_coefficient=current.friction_coefficient,
+        required_safety_factor=current.required_safety_factor,
+    )
+    body = report.model_dump()
+    body["workholding_clamping_audit"] = other.model_dump()
+    with pytest.raises(ValidationError, match="REPORT_WORKHOLDING_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -433,7 +465,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 13
+    assert rendered.count(SAFETY_STAMP) == 14
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -474,6 +506,14 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert (
         "ESTIMATIVA ANALÍTICA DE DEMANDA DE FLUIDO - NÃO CONTROLA BOMBAS OU "
         "VÁLVULAS DE MÁQUINA" in rendered
+    )
+    assert "[FIXAÇÃO DINÂMICA DA PLACA]" in rendered
+    assert "total_centrifugal_loss_n=" in rendered
+    assert "dynamic_clamping_force_total_n=" in rendered
+    assert "status=DYNAMIC_CLAMPING_SAFE" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE FORÇA DE FIXAÇÃO - NÃO SUBSTITUI VERIFICAÇÃO "
+        "COM MEDIDOR FÍSICO DE CARGA EM PLACA" in rendered
     )
     assert "ESTIMATIVA ANALÍTICA DE TAYLOR" in rendered
     assert "cost_time: total_minutes=" in rendered

@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.76
+**Versão:** 2.77
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_WORKHOLDING_CLAMPING_AUDITOR_COMPLETED_LOCAL`.
+  O `VTP-AUTO-338-BATCH` foi aprovado. O PR #75 publicou o HUD da Rota 26,
+  passou no Frontend CI em 1m21s e no Backend CI em 3m50s e foi integrado por
+  squash em `e6da01d`; a branch remota foi removida e `main=origin/main`. A branch
+  `codex/v8.9-cnc-workholding-clamping-auditor` calcula, para placa autocentrante
+  de três castanhas, a perda centrífuga por `m·r·ω²`, a força dinâmica residual e
+  a margem contra deslizamento. O contrato falha fechado para perda total de
+  aperto, RPM, massa, raio ou atrito inválidos; JSON, TEXT e Web exibem as forças,
+  o fator de segurança e a verificação física obrigatória. Validação: 286 testes
+  CNC unitários, 14 de integração, 34 Web, Ruff, mypy em 233 fontes, TypeScript,
+  Next lint e `git diff --check`; entrega local sem push.
 
 - **Handoff CTO:** `CNC_COOLANT_PRESSURE_FLOW_WEB_HUD_COMPLETED_LOCAL`.
   O `VTP-AUTO-333-BATCH` foi aprovado. O PR #74 publicou o contrato da Rota 26,

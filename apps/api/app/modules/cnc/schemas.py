@@ -1963,6 +1963,91 @@ class CoolantPressureFlowAuditPayload(_CNCGenerationContract):
         return self
 
 
+class WorkholdingClampingAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-workholding-clamping-audit/v1"] = (
+        "vena-ia.cnc-workholding-clamping-audit/v1"
+    )
+    static_clamping_force_per_jaw_n: float = Field(gt=0, le=2_000_000)
+    jaw_mass_kg: float = Field(ge=0.01, le=50)
+    center_of_mass_radius_mm: float = Field(ge=1, le=1_000)
+    operating_rpm: float = Field(gt=0, le=50_000)
+    maximum_declared_rpm: float = Field(gt=0, le=50_000)
+    axial_cutting_force_n: float = Field(gt=0, le=10_000_000)
+    friction_coefficient: float = Field(gt=0, le=1)
+    required_safety_factor: float = Field(ge=2, le=100)
+    centrifugal_force_per_jaw_n: float = Field(gt=0)
+    total_centrifugal_loss_n: float = Field(gt=0)
+    dynamic_clamping_force_total_n: float = Field(gt=0)
+    friction_resistance_n: float = Field(gt=0)
+    clamping_safety_factor: float = Field(gt=0)
+    clamping_status: Literal[
+        "DYNAMIC_CLAMPING_SAFE",
+        "CRITICAL_CENTRIFUGAL_CLAMPING_LOSS_WARNING",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    automatic_chuck_control_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_CLAMPING_ESTIMATE_REQUIRES_PHYSICAL_CHUCK_LOAD_MEASUREMENT"
+    ] = "ANALYTICAL_CLAMPING_ESTIMATE_REQUIRES_PHYSICAL_CHUCK_LOAD_MEASUREMENT"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_workholding_snapshot(self) -> "WorkholdingClampingAuditPayload":
+        if self.operating_rpm > self.maximum_declared_rpm:
+            raise ValueError("WORKHOLDING_OPERATING_RPM_EXCEEDS_DECLARED_LIMIT")
+        angular_velocity = 2.0 * math.pi * self.operating_rpm / 60.0
+        centrifugal_per_jaw = (
+            self.jaw_mass_kg
+            * (self.center_of_mass_radius_mm / 1_000.0)
+            * angular_velocity**2
+        )
+        total_loss = 3.0 * centrifugal_per_jaw
+        dynamic_force = 3.0 * self.static_clamping_force_per_jaw_n - total_loss
+        if dynamic_force <= 0:
+            raise ValueError("WORKHOLDING_TOTAL_CLAMPING_LOSS")
+        friction_resistance = self.friction_coefficient * dynamic_force
+        safety_factor = friction_resistance / self.axial_cutting_force_n
+        comparisons = (
+            (
+                self.centrifugal_force_per_jaw_n,
+                centrifugal_per_jaw,
+                "WORKHOLDING_CENTRIFUGAL_FORCE_INCONSISTENT",
+            ),
+            (
+                self.total_centrifugal_loss_n,
+                total_loss,
+                "WORKHOLDING_CENTRIFUGAL_LOSS_INCONSISTENT",
+            ),
+            (
+                self.dynamic_clamping_force_total_n,
+                dynamic_force,
+                "WORKHOLDING_DYNAMIC_CLAMPING_FORCE_INCONSISTENT",
+            ),
+            (
+                self.friction_resistance_n,
+                friction_resistance,
+                "WORKHOLDING_FRICTION_RESISTANCE_INCONSISTENT",
+            ),
+            (
+                self.clamping_safety_factor,
+                safety_factor,
+                "WORKHOLDING_SAFETY_FACTOR_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "DYNAMIC_CLAMPING_SAFE"
+            if safety_factor >= self.required_safety_factor
+            else "CRITICAL_CENTRIFUGAL_CLAMPING_LOSS_WARNING"
+        )
+        if self.clamping_status != expected_status:
+            raise ValueError("WORKHOLDING_CLAMPING_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -1998,6 +2083,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     thermal_expansion_drift_audit: ThermalExpansionDriftAuditPayload
     chip_breaking_machinability_audit: ChipBreakingMachinabilityAuditPayload
     coolant_pressure_flow_audit: CoolantPressureFlowAuditPayload
+    workholding_clamping_audit: WorkholdingClampingAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -2258,4 +2344,24 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             raise ValueError("REPORT_CHIP_BREAKING_SOURCE_INCONSISTENT")
         if self.coolant_pressure_flow_audit.safety_flags != self.safety_flags:
             raise ValueError("REPORT_COOLANT_SAFETY_FLAGS_INCONSISTENT")
+        workholding = self.workholding_clamping_audit
+        if workholding.safety_flags != self.safety_flags:
+            raise ValueError("REPORT_WORKHOLDING_SAFETY_FLAGS_INCONSISTENT")
+        if not math.isclose(
+            workholding.axial_cutting_force_n,
+            self.power_force_audit.fc_nominal_n,
+            abs_tol=5e-9,
+            rel_tol=1e-12,
+        ) or not math.isclose(
+            workholding.operating_rpm,
+            self.power_force_audit.spindle_rpm_reference,
+            abs_tol=5e-9,
+            rel_tol=1e-12,
+        ) or not math.isclose(
+            workholding.maximum_declared_rpm,
+            self.power_force_audit.max_spindle_rpm,
+            abs_tol=5e-9,
+            rel_tol=1e-12,
+        ):
+            raise ValueError("REPORT_WORKHOLDING_SOURCE_INCONSISTENT")
         return self

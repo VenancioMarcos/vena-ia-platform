@@ -436,7 +436,7 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 13
+        ) == 14
         assert "[ENVELOPE DE POTÊNCIA E TORQUE DO FUSO]" in response.text
         assert "power_margin_percent=" in response.text
         assert "[EXPANSÃO TÉRMICA E DERIVA DE EIXOS]" in response.text
@@ -455,6 +455,13 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert (
             "ESTIMATIVA ANALÍTICA DE DEMANDA DE FLUIDO - NÃO CONTROLA BOMBAS OU "
             "VÁLVULAS DE MÁQUINA" in response.text
+        )
+        assert "[FIXAÇÃO DINÂMICA DA PLACA]" in response.text
+        assert "dynamic_clamping_force_total_n=" in response.text
+        assert "status=DYNAMIC_CLAMPING_SAFE" in response.text
+        assert (
+            "ESTIMATIVA ANALÍTICA DE FORÇA DE FIXAÇÃO - NÃO SUBSTITUI VERIFICAÇÃO "
+            "COM MEDIDOR FÍSICO DE CARGA EM PLACA" in response.text
         )
         assert "[FLEXÃO ELÁSTICA DA PEÇA]" in response.text
         assert (

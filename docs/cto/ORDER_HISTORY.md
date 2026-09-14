@@ -1,5 +1,15 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-339 a AUTO-348
+
+O `VTP-AUTO-338-BATCH` foi aprovado. O PR #75 publicou o HUD da Rota 26, passou
+nas duas esteiras e foi integrado por squash em `e6da01d`, com branch remota
+removida e `main=origin/main`. A branch v8.9 implementa o auditor de fixação de
+três castanhas: perda centrífuga, força residual, resistência ao deslizamento e
+fator de segurança. O manifesto, laudo TEXT e painel Web mostram a telemetria e
+o alerta crítico, exigem medição física e não expõem controles da placa ou da
+máquina. Entrega local sem push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-334 a AUTO-338
 
 O `VTP-AUTO-333-BATCH` foi aprovado. O PR #74 publicou o contrato v2 da Rota 26,
