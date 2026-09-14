@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.modules.cad.dependencies import get_cad_ingestion_gateway
 from app.modules.cad.ingestion import CadIngestionGateway
-from app.modules.cam.schemas import TurningBoundingBox
+from app.modules.cam.schemas import RzPoint, TurningBoundingBox
 
 
 TURNING_FIXTURES = Path(__file__).parents[2] / "fixtures" / "cad" / "turning"
@@ -403,6 +403,12 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
                 max_z_mm=0.5,
                 total_z_length_mm=0.5,
             ),
+            source_profile_data=(
+                RzPoint(r_mm=0.0, z_mm=0.5),
+                RzPoint(r_mm=26.0, z_mm=0.5),
+                RzPoint(r_mm=26.0, z_mm=0.0),
+                RzPoint(r_mm=0.0, z_mm=0.0),
+            ),
         )
         endpoint = f"/api/v1/cnc/turning/plans/{plan_id}/report/download"
 
@@ -430,9 +436,11 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 6
+        ) == 7
         assert "[FOLHA DE PROCESSO]" in response.text
         assert "FOLHA DE PROCESSO TEÓRICA ANALÍTICA" in response.text
+        assert "[AUDITORIA DE MATERIAL REMANESCENTE]" in response.text
+        assert "AUDITORIA ANALÍTICA DE MATERIAL REMANESCENTE" in response.text
         assert "status=PASS" in response.text
         assert "program_text" not in response.text
         assert client.get(endpoint, headers=outsider.headers).status_code == 404

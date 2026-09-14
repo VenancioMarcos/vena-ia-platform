@@ -327,6 +327,32 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_PROCESS_SHEET_REQUIRES_MACHINE_SETUP_APPROVAL";
     safety_flags: MachiningReportSafetyFlags;
   };
+  residual_stock_audit: {
+    schema_version: "vena-ia.cnc-residual-stock-audit/v1";
+    source_plan_id: string;
+    source_cam_plan: MachiningTechnicalReportPayload["process_sheet"]["source_cam_plan"];
+    source_nominal_profile: readonly { r_mm: number; z_mm: number }[];
+    stock_radius_mm: number;
+    finish_allowance_nominal_mm: number;
+    linear_tolerance_mm: number;
+    tool_cutting_edge_length_mm: number;
+    sections: readonly {
+      front_z_mm: number;
+      rear_z_mm: number;
+      nominal_radius_mm: number;
+      in_process_radius_mm: number;
+      residual_stock_mm: number;
+    }[];
+    max_residual_stock_mm: number;
+    min_residual_stock_mm: number;
+    average_stock_allowance_mm: number;
+    gouging_detected: boolean;
+    status: "UNIFORM_ALLOWANCE_COMPLIANT" | "EXCESS_MATERIAL_DETECTED" | "CRITICAL_GOUGING_VIOLATION";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ANALYTICAL_RESIDUAL_STOCK_AUDIT_DOES_NOT_REPLACE_PHYSICAL_CMM_MEASUREMENT";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -357,6 +383,8 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const proximityWarning = report.chuck_proximity.warning_code === "WARNING_PROXIMITY_CHUCK";
   const dimensionalPass = report.geometry_audit.status === "PASS";
   const powerWithinLimits = report.power_force_audit.power_status === "POWER_WITHIN_LIMITS";
+  const residualCompliant = report.residual_stock_audit.status === "UNIFORM_ALLOWANCE_COMPLIANT";
+  const gougingDetected = report.residual_stock_audit.status === "CRITICAL_GOUGING_VIOLATION";
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -655,6 +683,25 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </ul>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         FOLHA DE PROCESSO TEÓRICA ANALÍTICA - DOCUMENTO ORIENTATIVO SUJEITO À APROVAÇÃO DO PREPARADOR DE MÁQUINAS
+      </p>
+    </section>
+
+    <section aria-labelledby="report-residual-stock-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-residual-stock-heading" className="text-lg font-semibold">Integridade do sobremetal residual</h2>
+        <span role={gougingDetected ? "alert" : "status"} className={`rounded-full border px-3 py-1 text-xs font-bold ${residualCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : gougingDetected ? "border-red-500 bg-red-950 text-red-100" : "border-amber-500 bg-amber-950 text-amber-100"}`}>
+          {residualCompliant ? "SOBREMETAL HOMOGÊNEO" : gougingDetected ? "ALERTA: SUBCORTE DETECTADO (GOUGING)" : "EXCESSO DE MATERIAL DETECTADO"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Sobremetal máximo" value={`${report.residual_stock_audit.max_residual_stock_mm.toFixed(3)} mm`} />
+        <Metric label="Sobremetal mínimo" value={`${report.residual_stock_audit.min_residual_stock_mm.toFixed(3)} mm`} />
+        <Metric label="Sobremetal médio" value={`${report.residual_stock_audit.average_stock_allowance_mm.toFixed(3)} mm`} />
+        <Metric label="Limite analítico" value={`${(report.residual_stock_audit.finish_allowance_nominal_mm + 0.05).toFixed(3)} mm`} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">{report.residual_stock_audit.status}</p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        AUDITORIA ANALÍTICA DE MATERIAL REMANESCENTE - NÃO SUBSTITUI MEDIÇÃO TRIDIMENSIONAL FÍSICA EM CMM
       </p>
     </section>
 

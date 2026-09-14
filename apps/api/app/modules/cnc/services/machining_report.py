@@ -27,6 +27,7 @@ from app.modules.cnc.services.geometry_auditor import (
 from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
 from app.modules.cnc.services.parameter_optimizer import optimize_cutting_parameters
 from app.modules.cnc.services.process_sheet_generator import generate_process_sheet
+from app.modules.cnc.services.residual_stock_auditor import audit_residual_stock
 from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
 from app.modules.cnc.services.risk_matrix_evaluator import evaluate_operational_risk
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
@@ -51,7 +52,10 @@ def plan_fingerprint(record: TurningPlanRecord) -> str:
     if any(item.operation_type != response.operation_type for item in response.passes):
         raise MachiningReportError("REPORT_PLAN_INCONSISTENT")
     bounds = record.source_brep_bounds.model_dump_json()
-    serialized = request.model_dump_json() + response.model_dump_json() + bounds
+    if not record.source_profile_data:
+        raise MachiningReportError("REPORT_NOMINAL_PROFILE_REQUIRED")
+    profile = "[" + ",".join(point.model_dump_json() for point in record.source_profile_data) + "]"
+    serialized = request.model_dump_json() + response.model_dump_json() + bounds + profile
     return sha256(serialized.encode()).hexdigest()
 
 
@@ -218,6 +222,15 @@ def compile_machining_report(
         spindle_rpm=min(theoretical_rpm, request.max_spindle_rpm),
         setup_time_min=cost_time_audit.nominal_setup_time_minutes,
     )
+    residual_stock_audit = audit_residual_stock(
+        source_plan_id=record.response.plan_id,
+        cam_plan=cam_plan,
+        nominal_profile=record.source_profile_data,
+        stock_radius_mm=record.request.stock_radius_mm,
+        finish_allowance_nominal_mm=record.request.finish_allowance_mm,
+        linear_tolerance_mm=record.request.linear_tolerance_mm,
+        tool_cutting_edge_length_mm=record.request.tool_params.cutting_edge_length_mm,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -246,6 +259,7 @@ def compile_machining_report(
         parameter_optimizations=parameter_optimizations,
         risk_matrix=risk_matrix,
         process_sheet=process_sheet,
+        residual_stock_audit=residual_stock_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -269,6 +283,8 @@ def compile_machining_report(
             "The consolidated risk matrix is a preliminary analytical process assessment, "
             "not an expert report or machine authorization.",
             "The process routing sheet is theoretical and requires machine-setup approval.",
+            "Residual-stock analysis is theoretical and does not replace physical CMM "
+            "measurement.",
         ),
     )
 

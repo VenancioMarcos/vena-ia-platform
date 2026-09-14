@@ -99,5 +99,6 @@ def create_turning_plan(
         request=payload,
         response=response,
         source_brep_bounds=request.bounding_box,
+        source_profile_data=request.profile_data,
     )
     return response

@@ -1,5 +1,15 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-269 a AUTO-278
+
+O CTO aprovou o `VTP-AUTO-268-BATCH`. O PR #67 publicou a Rota 19, recebeu Backend
+e Frontend CI verdes e foi integrado por squash em `7051598`, com exclusão da branch
+remota. A Rota 20 audita o material remanescente entre o perfil BRep nominal e o
+envelope final alcançado pelo CAM, classifica sobremetal homogêneo, excesso e
+gouging e rejeita degraus incompatíveis com a ferramenta. Contrato, laudo e viewer
+vinculam as fontes e mantêm CMM/revisão humana obrigatórios. Entrega local sem push
+e sem autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-259 a AUTO-268
 
 O CTO aprovou o `VTP-AUTO-258-BATCH`. O PR #66 publicou a Rota 18, recebeu Backend

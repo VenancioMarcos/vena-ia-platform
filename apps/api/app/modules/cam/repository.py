@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends, Request
 
 from app.modules.cam.schemas import (
+    RzPoint,
     TurningBoundingBox,
     TurningPlanGatewayRequest,
     TurningPlanGatewayResponse,
@@ -20,6 +21,7 @@ class TurningPlanRecord:
     request: TurningPlanGatewayRequest
     response: TurningPlanGatewayResponse
     source_brep_bounds: TurningBoundingBox
+    source_profile_data: tuple[RzPoint, ...]
 
 
 class TurningPlanStore:
@@ -35,12 +37,14 @@ class TurningPlanStore:
         request: TurningPlanGatewayRequest,
         response: TurningPlanGatewayResponse,
         source_brep_bounds: TurningBoundingBox,
+        source_profile_data: tuple[RzPoint, ...],
     ) -> None:
         self._records[response.plan_id] = TurningPlanRecord(
             owner_user_id=owner_user_id,
             request=request,
             response=response,
             source_brep_bounds=source_brep_bounds,
+            source_profile_data=source_profile_data,
         )
 
     def get_owned(self, plan_id: str, *, owner_user_id: str) -> TurningPlanRecord:

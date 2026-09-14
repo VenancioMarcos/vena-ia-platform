@@ -6,7 +6,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.modules.cam.enums import TurningOperationType
-from app.modules.cam.schemas import TurningBoundingBox, TurningStrategyPlanResponse
+from app.modules.cam.schemas import RzPoint, TurningBoundingBox, TurningStrategyPlanResponse
 from app.modules.cnc.enums import CNCControllerType, FeedMode, ProgramSafetyLevel, SpindleMode
 
 
@@ -1150,6 +1150,160 @@ class MachiningProcessSheetPayload(_CNCGenerationContract):
         return self
 
 
+class ResidualStockSection(_CNCGenerationContract):
+    front_z_mm: float
+    rear_z_mm: float
+    nominal_radius_mm: float = Field(gt=0)
+    in_process_radius_mm: float = Field(ge=0)
+    residual_stock_mm: float
+
+    @model_validator(mode="after")
+    def validate_section(self) -> "ResidualStockSection":
+        if self.front_z_mm <= self.rear_z_mm:
+            raise ValueError("RESIDUAL_STOCK_SECTION_Z_INVALID")
+        if not math.isclose(
+            self.residual_stock_mm,
+            self.in_process_radius_mm - self.nominal_radius_mm,
+            abs_tol=5e-9,
+            rel_tol=1e-12,
+        ):
+            raise ValueError("RESIDUAL_STOCK_SECTION_DELTA_INCONSISTENT")
+        return self
+
+
+class MachiningResidualStockAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-residual-stock-audit/v1"] = (
+        "vena-ia.cnc-residual-stock-audit/v1"
+    )
+    source_plan_id: str = Field(min_length=1, max_length=255)
+    source_cam_plan: TurningStrategyPlanResponse
+    source_nominal_profile: tuple[RzPoint, ...] = Field(min_length=2, max_length=10_000)
+    stock_radius_mm: float = Field(gt=0)
+    finish_allowance_nominal_mm: float = Field(ge=0, le=5.0)
+    linear_tolerance_mm: float = Field(gt=0, le=1.0)
+    tool_cutting_edge_length_mm: float = Field(gt=0)
+    sections: tuple[ResidualStockSection, ...] = Field(min_length=1, max_length=10_000)
+    max_residual_stock_mm: float
+    min_residual_stock_mm: float
+    average_stock_allowance_mm: float
+    gouging_detected: bool
+    status: Literal[
+        "UNIFORM_ALLOWANCE_COMPLIANT",
+        "EXCESS_MATERIAL_DETECTED",
+        "CRITICAL_GOUGING_VIOLATION",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_RESIDUAL_STOCK_AUDIT_DOES_NOT_REPLACE_PHYSICAL_CMM_MEASUREMENT"
+    ] = "ANALYTICAL_RESIDUAL_STOCK_AUDIT_DOES_NOT_REPLACE_PHYSICAL_CMM_MEASUREMENT"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_audit(self) -> "MachiningResidualStockAuditPayload":
+        nominal_spans = [
+            (
+                max(first.z_mm, second.z_mm),
+                min(first.z_mm, second.z_mm),
+                first.r_mm,
+            )
+            for first, second in zip(
+                self.source_nominal_profile,
+                self.source_nominal_profile[1:],
+            )
+            if first.r_mm > self.linear_tolerance_mm
+            and math.isclose(
+                first.r_mm,
+                second.r_mm,
+                abs_tol=self.linear_tolerance_mm,
+                rel_tol=0,
+            )
+            and abs(first.z_mm - second.z_mm) > self.linear_tolerance_mm
+        ]
+        nominal_spans.sort(key=lambda item: (-item[0], -item[1]))
+        if len(nominal_spans) != len(self.sections):
+            raise ValueError("RESIDUAL_STOCK_SECTION_SOURCE_INCONSISTENT")
+        if any(
+            not math.isclose(
+                current[1],
+                following[0],
+                abs_tol=self.linear_tolerance_mm,
+                rel_tol=0,
+            )
+            for current, following in zip(nominal_spans, nominal_spans[1:])
+        ):
+            raise ValueError("RESIDUAL_STOCK_PROFILE_SPANS_DISCONTINUOUS")
+        if max(point.r_mm for point in self.source_nominal_profile) > (
+            self.stock_radius_mm + self.linear_tolerance_mm
+        ):
+            raise ValueError("RESIDUAL_STOCK_PROFILE_OUTSIDE_STOCK")
+        if any(
+            abs(current[2] - following[2])
+            > self.tool_cutting_edge_length_mm + self.linear_tolerance_mm
+            for current, following in zip(nominal_spans, nominal_spans[1:])
+        ):
+            raise ValueError("RESIDUAL_STOCK_STEP_TOOL_INCOMPATIBLE")
+        for section, (front_z, rear_z, nominal_radius) in zip(self.sections, nominal_spans):
+            source_comparisons = (
+                (section.front_z_mm, front_z),
+                (section.rear_z_mm, rear_z),
+                (section.nominal_radius_mm, nominal_radius),
+            )
+            if any(
+                not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12)
+                for actual, expected in source_comparisons
+            ):
+                raise ValueError("RESIDUAL_STOCK_SECTION_SOURCE_INCONSISTENT")
+            midpoint_z = (front_z + rear_z) / 2.0
+            reached_radii = [self.stock_radius_mm]
+            for machining_pass in self.source_cam_plan.passes:
+                for first, second in zip(
+                    machining_pass.coordinates_rz_mm,
+                    machining_pass.coordinates_rz_mm[1:],
+                ):
+                    delta_z = second.z_mm - first.z_mm
+                    if abs(delta_z) <= self.linear_tolerance_mm:
+                        continue
+                    if midpoint_z < min(first.z_mm, second.z_mm) - self.linear_tolerance_mm:
+                        continue
+                    if midpoint_z > max(first.z_mm, second.z_mm) + self.linear_tolerance_mm:
+                        continue
+                    fraction = (midpoint_z - first.z_mm) / delta_z
+                    reached_radii.append(first.r_mm + fraction * (second.r_mm - first.r_mm))
+            if not math.isclose(
+                section.in_process_radius_mm,
+                min(reached_radii),
+                abs_tol=5e-9,
+                rel_tol=1e-12,
+            ):
+                raise ValueError("RESIDUAL_STOCK_CAM_SOURCE_INCONSISTENT")
+        residuals = tuple(item.residual_stock_mm for item in self.sections)
+        expected_min = min(residuals)
+        expected_max = max(residuals)
+        expected_average = math.fsum(residuals) / len(residuals)
+        comparisons = (
+            (self.min_residual_stock_mm, expected_min),
+            (self.max_residual_stock_mm, expected_max),
+            (self.average_stock_allowance_mm, expected_average),
+        )
+        if any(
+            not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12)
+            for actual, expected in comparisons
+        ):
+            raise ValueError("RESIDUAL_STOCK_AGGREGATE_INCONSISTENT")
+        expected_gouging = expected_min < 0
+        expected_status = (
+            "CRITICAL_GOUGING_VIOLATION"
+            if expected_gouging
+            else "EXCESS_MATERIAL_DETECTED"
+            if expected_max > self.finish_allowance_nominal_mm + 0.05
+            else "UNIFORM_ALLOWANCE_COMPLIANT"
+        )
+        if self.gouging_detected != expected_gouging or self.status != expected_status:
+            raise ValueError("RESIDUAL_STOCK_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -1176,6 +1330,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     parameter_optimizations: tuple[MachiningParameterOptimizationPayload, ...] = Field(min_length=1)
     risk_matrix: MachiningRiskMatrixPayload
     process_sheet: MachiningProcessSheetPayload
+    residual_stock_audit: MachiningResidualStockAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -1345,4 +1500,24 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
                 )
             ):
                 raise ValueError("REPORT_PROCESS_SHEET_PARAMETERS_INCONSISTENT")
+        residual = self.residual_stock_audit
+        nominal_radius = max(point.r_mm for point in residual.source_nominal_profile)
+        nominal_min_z = min(point.z_mm for point in residual.source_nominal_profile)
+        nominal_max_z = max(point.z_mm for point in residual.source_nominal_profile)
+        geometry_by_axis = {item.axis: item for item in self.geometry_audit.deviations}
+        if (
+            residual.source_plan_id != self.plan_id
+            or residual.source_cam_plan != sheet.source_cam_plan
+            or not math.isclose(
+                residual.stock_radius_mm,
+                sheet.source_stock.diameter_mm / 2.0,
+                abs_tol=5e-9,
+            )
+            or not math.isclose(
+                nominal_radius, geometry_by_axis["MAX_RADIUS"].nominal_mm, abs_tol=5e-9
+            )
+            or not math.isclose(nominal_min_z, geometry_by_axis["MIN_Z"].nominal_mm, abs_tol=5e-9)
+            or not math.isclose(nominal_max_z, geometry_by_axis["MAX_Z"].nominal_mm, abs_tol=5e-9)
+        ):
+            raise ValueError("REPORT_RESIDUAL_STOCK_SOURCE_INCONSISTENT")
         return self

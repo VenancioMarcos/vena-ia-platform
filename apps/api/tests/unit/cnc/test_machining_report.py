@@ -118,6 +118,13 @@ def _source(controller=CNCControllerType.FANUC_0I):
             max_z_mm=2.0,
             total_z_length_mm=22.0,
         ),
+        (
+            RzPoint(r_mm=0.0, z_mm=2.0),
+            RzPoint(r_mm=12.0, z_mm=2.0),
+            RzPoint(r_mm=10.0, z_mm=2.0),
+            RzPoint(r_mm=10.0, z_mm=-20.0),
+            RzPoint(r_mm=0.0, z_mm=-20.0),
+        ),
     )
     simulation = ToolpathSimulationRequest(
         plan_id=generation.plan_id,
@@ -179,6 +186,10 @@ def test_complete_report_replays_deterministically(controller):
     assert report.process_sheet.sequence_operations[1].phase == "ROUGH_TURNING"
     assert report.process_sheet.source_cycle_time_estimate == report.cycle_time_estimate
     assert report.process_sheet.physical_use_authorized is False
+    assert report.residual_stock_audit.status == "UNIFORM_ALLOWANCE_COMPLIANT"
+    assert report.residual_stock_audit.max_residual_stock_mm == pytest.approx(0)
+    assert report.residual_stock_audit.min_residual_stock_mm == pytest.approx(0)
+    assert report.residual_stock_audit.gouging_detected is False
     assert report.tool_life_audits[0].tool_id == report.tools[0].tool_id
     assert report.tool_life_audits[0].estimated_tool_life_minutes > 0
     assert report.tool_life_audits[0].tool_life_consumed_percent > 0
@@ -322,6 +333,15 @@ def test_report_rejects_process_sheet_transplanted_from_another_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_residual_stock_audit_transplanted_from_another_plan():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    body = report.model_dump()
+    body["residual_stock_audit"]["source_plan_id"] = "another-plan"
+    with pytest.raises(ValidationError, match="REPORT_RESIDUAL_STOCK_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -329,8 +349,8 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 6
-    assert rendered.count("[") == 15
+    assert rendered.count(SAFETY_STAMP) == 7
+    assert rendered.count("[") == 17
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -368,3 +388,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert "operation[1]: id=OP010; phase=SETUP" in rendered
     assert "operation[2]: id=OP020; phase=ROUGH_TURNING" in rendered
     assert "FOLHA DE PROCESSO TEÓRICA ANALÍTICA" in rendered
+    assert "[AUDITORIA DE MATERIAL REMANESCENTE]" in rendered
+    assert "status=UNIFORM_ALLOWANCE_COMPLIANT" in rendered
+    assert "max_residual_stock_mm=0.000000000" in rendered
+    assert "AUDITORIA ANALÍTICA DE MATERIAL REMANESCENTE" in rendered

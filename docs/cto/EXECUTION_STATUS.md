@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-269 a AUTO-278
+
+`CNC_RESIDUAL_STOCK_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-268-BATCH`; o PR #67 teve Backend CI em 2m49s e Frontend CI em 1m29s e
+foi integrado por squash em `7051598`, com branch remota removida e main
+sincronizada. A Rota 20 persiste o perfil nominal, inclui-o no fingerprint e compara
+o envelope CAM final com as seções axiais do BRep. O contrato recalcula as fontes,
+mínimo, máximo, média, gouging e tolerância de `finish_allowance + 0,05 mm`; TEXT e
+Web mostram a telemetria e a limitação CMM. Entrega local, sem push ou autoridade
+física. Validação: 889 testes API/2 ignorados, 186 CNC, 46 focados, 20 Web, mypy em
+226 fontes, Ruff, TypeScript, Next lint e diff.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-259 a AUTO-268
 
 `CNC_OPERATIONAL_PROCESS_ROUTING_SHEET_COMPLETED_LOCAL`. O CTO aprovou o
