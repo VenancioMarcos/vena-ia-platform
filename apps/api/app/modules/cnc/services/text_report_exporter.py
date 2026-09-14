@@ -268,6 +268,32 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "FORMAÇÃO E QUEBRA DE CAVACO",
+            (
+                "chipbreaker_reference="
+                f"{validated.chip_breaking_machinability_audit.chipbreaker_reference}",
+                "chipbreaker_family="
+                f"{validated.chip_breaking_machinability_audit.chipbreaker_family}",
+                "feed_mm_per_rev="
+                f"{validated.chip_breaking_machinability_audit.feed_mm_per_rev:.9f}",
+                "depth_of_cut_mm="
+                f"{validated.chip_breaking_machinability_audit.depth_of_cut_mm:.9f}",
+                "uncut_chip_thickness_mm="
+                f"{validated.chip_breaking_machinability_audit.uncut_chip_thickness_mm:.9f}",
+                "chip_width_mm="
+                f"{validated.chip_breaking_machinability_audit.chip_width_mm:.9f}",
+                "formed_chip_thickness_mm="
+                f"{validated.chip_breaking_machinability_audit.formed_chip_thickness_mm:.9f}",
+                "chip_compression_ratio="
+                f"{validated.chip_breaking_machinability_audit.chip_compression_ratio:.9f}",
+                "status="
+                f"{validated.chip_breaking_machinability_audit.audit_status}",
+                "ESTIMATIVA ANALÍTICA DE FORMAÇÃO E QUEBRA DE CAVACO - NÃO CONSIDERA "
+                "FLUTUAÇÕES DINÂMICAS DE PRESSÃO DE REFRIGERAÇÃO OU VARIAÇÕES "
+                "MICROESTRUTURAIS",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

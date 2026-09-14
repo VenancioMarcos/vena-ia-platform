@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.73
+**Versão:** 2.74
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,17 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_CHIP_BREAKING_MACHINABILITY_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou o `VTP-AUTO-323-BATCH`. A Rota 25 calcula `h=f·sin(kr)` e
+  `b=ap/sin(kr)`, determina a razão de compressão por material e ângulo de saída
+  e compara o ponto f×ap aos envelopes imutáveis PM/PR/PF. Contrato, manifesto,
+  TEXT e Web vinculam o snapshot aos parâmetros Kienzle, exibem geometria, razão,
+  ponto operacional e aviso compulsório. Geometrias, tabelas, valores ou fontes
+  inconsistentes falham fechado; não existem controles de máquina ou alteração
+  automática. Validação: 258 testes CNC, 53 focados, 30 Web, Ruff, mypy em 231
+  fontes, TypeScript, Next lint e `git diff --check`; branch local pronta para o
+  PR #73.
 
 - **Handoff CTO:** `CNC_CHIP_BREAKING_MACHINABILITY_CONTRACT_V2_SCAFFOLDED_LOCAL`.
   O PR #72 integrou a Rota 24 por squash em `2944402` após Frontend CI em 1m17s e

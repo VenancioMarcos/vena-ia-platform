@@ -1,5 +1,15 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-324 a AUTO-329
+
+`CNC_CHIP_BREAKING_MACHINABILITY_AUDITOR_COMPLETED_LOCAL`. A Rota 25 calcula
+espessura indeformada, largura, espessura formada, razão de compressão e
+comprimento livre do cavaco e classifica f×ap nos envelopes tabulados PM/PR/PF.
+Contrato, relatório JSON/TEXT e viewer Web revalidam a origem Kienzle, exibem o
+ponto operacional e preservam revisão humana sem controles de máquina. Validação:
+258 testes CNC, 53 focados, 30 Web, Ruff, mypy em 231 fontes, TypeScript,
+Next lint e diff aprovados. Branch pronta para o Draft PR #73.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-314 a AUTO-323
 
 `CNC_CHIP_BREAKING_MACHINABILITY_CONTRACT_V2_SCAFFOLDED_LOCAL`. A Rota 24 foi

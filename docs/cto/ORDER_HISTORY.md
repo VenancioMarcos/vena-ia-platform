@@ -1,5 +1,13 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-324 a AUTO-329
+
+O `VTP-AUTO-323-BATCH` foi aprovado. A Rota 25 implementou o auditor de
+formação e quebra de cavaco com modelo geométrico h/b, compressão dependente do
+material e ângulo de saída e envelopes PM/PR/PF imutáveis. Manifesto, laudo TEXT
+e painel Web exibem métricas, limites, badge e nota técnica, sem alteração
+automática de parâmetros ou autoridade física. Entrega local pronta para o PR #73.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-314 a AUTO-323
 
 O `VTP-AUTO-313-BATCH` foi aprovado. A Rota 24 concluiu o auditor de desgaste

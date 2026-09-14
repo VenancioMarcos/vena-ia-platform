@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-314 a AUTO-323
-**Estado:** CNC_CHIP_BREAKING_MACHINABILITY_CONTRACT_V2_SCAFFOLDED_LOCAL
+**Missão:** CTO-CODEX-AUTO-324 a AUTO-333
+**Estado:** CNC_CHIP_BREAKING_MACHINABILITY_AUDITOR_COMPLETED_LOCAL
 **Data:** 2026-09-14
 **Branch:** `codex/v8.6-cnc-chip-breaking-machinability-auditor`
 **Baseline da branch:** `294440258265c8b06afcbce49c426814293c7a85`
@@ -9,13 +9,15 @@
 
 ## Estado vigente
 
-O CTO aprovou o `VTP-AUTO-313-BATCH`. O PR #72 integrou a Rota 24 em `2944402`
-com CI aprovado, branch remota removida e main sincronizada. A Rota 25 iniciou o
-contrato v2 de formação/quebra de cavaco e envelope seguro f×ap tabulado.
+O CTO aprovou o `VTP-AUTO-323-BATCH`. As ordens 324–329 concluíram o motor
+determinístico da Rota 25, integração no manifesto e laudo TEXT, painel Web,
+testes e documentação. O ponto f×ap é comparado aos envelopes PM/PR/PF e o
+snapshot permanece vinculado às fontes Kienzle.
 
 ## Continuidade
 
-Emitir `VTP-AUTO-323-BATCH` e aguardar parecer. A branch permanece local sem push.
+Publicar a branch, abrir o Draft PR #73, aguardar CI, promover, integrar por
+squash, sincronizar a main e iniciar a Rota 26 sem push.
 
 ## Limites permanentes
 

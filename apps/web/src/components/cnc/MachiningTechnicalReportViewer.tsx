@@ -446,6 +446,37 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_THERMAL_DRIFT_EXCLUDES_TRANSIENT_GRADIENTS_COOLANT_AND_MACHINE_COMPENSATION";
     safety_flags: MachiningReportSafetyFlags;
   };
+  chip_breaking_machinability_audit: {
+    schema_version: "vena-ia.cnc-chip-breaking-machinability-audit/v2";
+    material_profile: "AISI_1020" | "ABNT_1045" | "ALUMINUM_6061_T6";
+    chipbreaker_family: "PM" | "PR" | "PF";
+    chipbreaker_reference: string;
+    feed_mm_per_rev: number;
+    depth_of_cut_mm: number;
+    insert_nose_radius_mm: number;
+    cutting_edge_angle_deg: number;
+    rake_angle_deg: number;
+    uncut_chip_thickness_mm: number;
+    chip_width_mm: number;
+    formed_chip_thickness_mm: number;
+    chip_compression_ratio: number;
+    free_chip_length_mm: number;
+    safe_breaking_envelopes: readonly {
+      chipbreaker_reference: string;
+      feed_min_mm_per_rev: number;
+      feed_max_mm_per_rev: number;
+      depth_of_cut_min_mm: number;
+      depth_of_cut_max_mm: number;
+    }[];
+    audit_status:
+      | "CHIP_BREAKING_WITHIN_TABULATED_SAFE_ENVELOPE"
+      | "CHIP_BREAKING_OUTSIDE_TABULATED_SAFE_ENVELOPE_WARNING";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    automatic_parameter_change_authorized: false;
+    model_limitation: "TABULATED_CHIP_BREAKING_ENVELOPE_REQUIRES_PHYSICAL_PROCESS_VALIDATION";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -487,6 +518,21 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
     report.thermal_expansion_drift_audit.total_z_axis_drift_um / report.thermal_expansion_drift_audit.z_axis_tolerance_um,
     report.thermal_expansion_drift_audit.total_x_axis_drift_um / report.thermal_expansion_drift_audit.x_axis_tolerance_um,
   ) * 100;
+  const chipBreaking = report.chip_breaking_machinability_audit;
+  const chipBreakingSafe = chipBreaking.audit_status === "CHIP_BREAKING_WITHIN_TABULATED_SAFE_ENVELOPE";
+  const chipBreakingEnvelope = chipBreaking.safe_breaking_envelopes.find(
+    (item) => item.chipbreaker_reference === chipBreaking.chipbreaker_reference,
+  )!;
+  const chipFeedPosition = Math.min(100, Math.max(
+    0,
+    ((chipBreaking.feed_mm_per_rev - chipBreakingEnvelope.feed_min_mm_per_rev)
+      / (chipBreakingEnvelope.feed_max_mm_per_rev - chipBreakingEnvelope.feed_min_mm_per_rev)) * 100,
+  ));
+  const chipDepthPosition = Math.min(100, Math.max(
+    0,
+    ((chipBreaking.depth_of_cut_mm - chipBreakingEnvelope.depth_of_cut_min_mm)
+      / (chipBreakingEnvelope.depth_of_cut_max_mm - chipBreakingEnvelope.depth_of_cut_min_mm)) * 100,
+  ));
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -906,6 +952,47 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       <p className="font-mono text-xs text-slate-300">Impacto dimensional: {thermalImpact.toFixed(2)}% da menor tolerância declarada</p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE EXPANSÃO TÉRMICA - NÃO CONSIDERA GRADIENTES TÉRMICOS LOCAIS TRANSITÓRIOS OU COMPENSAÇÃO ATIVA POR REFRIGERAÇÃO INTERNA
+      </p>
+    </section>
+
+    <section aria-labelledby="report-chip-breaking-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-chip-breaking-heading" className="text-lg font-semibold">Painel de Quebra de Cavaco</h2>
+        <span role={chipBreakingSafe ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${chipBreakingSafe ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {chipBreakingSafe ? "FORMAÇÃO SEGURA DE CAVACO" : "ALERTA: RISCO DE CAVACO CONTÍNUO/SOBRECARGA"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Geometria Tabulada" value={`${chipBreaking.chipbreaker_family} · ${chipBreaking.chipbreaker_reference}`} />
+        <Metric label="Avanço f" value={`${chipBreaking.feed_mm_per_rev.toFixed(3)} mm/rot`} />
+        <Metric label="Profundidade ap" value={`${chipBreaking.depth_of_cut_mm.toFixed(3)} mm`} />
+        <Metric label="Razão de Compressão de Cavaco" value={chipBreaking.chip_compression_ratio.toFixed(3)} />
+      </dl>
+      <div aria-label="Envelope visual de quebra de cavaco" className="grid gap-3 rounded-lg border border-slate-700 bg-slate-950 p-3 sm:grid-cols-2">
+        <div>
+          <div className="flex justify-between text-xs">
+            <span>f: {chipBreakingEnvelope.feed_min_mm_per_rev.toFixed(3)}–{chipBreakingEnvelope.feed_max_mm_per_rev.toFixed(3)} mm/rot</span>
+            <span>Ponto: {chipBreaking.feed_mm_per_rev.toFixed(3)}</span>
+          </div>
+          <div role="progressbar" aria-label="Ponto operacional de avanço no envelope" aria-valuemin={0} aria-valuemax={100} aria-valuenow={chipFeedPosition} className="mt-2 h-2 overflow-hidden rounded bg-slate-700">
+            <div className={chipBreakingSafe ? "h-full bg-emerald-500" : "h-full bg-red-500"} style={{ width: `${chipFeedPosition}%` }} />
+          </div>
+        </div>
+        <div>
+          <div className="flex justify-between text-xs">
+            <span>ap: {chipBreakingEnvelope.depth_of_cut_min_mm.toFixed(3)}–{chipBreakingEnvelope.depth_of_cut_max_mm.toFixed(3)} mm</span>
+            <span>Ponto: {chipBreaking.depth_of_cut_mm.toFixed(3)}</span>
+          </div>
+          <div role="progressbar" aria-label="Ponto operacional de profundidade no envelope" aria-valuemin={0} aria-valuemax={100} aria-valuenow={chipDepthPosition} className="mt-2 h-2 overflow-hidden rounded bg-slate-700">
+            <div className={chipBreakingSafe ? "h-full bg-emerald-500" : "h-full bg-red-500"} style={{ width: `${chipDepthPosition}%` }} />
+          </div>
+        </div>
+      </div>
+      <p className="font-mono text-xs text-slate-300">
+        h={chipBreaking.uncut_chip_thickness_mm.toFixed(4)} mm · b={chipBreaking.chip_width_mm.toFixed(4)} mm · cavaco formado={chipBreaking.formed_chip_thickness_mm.toFixed(4)} mm
+      </p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE FORMAÇÃO E QUEBRA DE CAVACO - NÃO CONSIDERA FLUTUAÇÕES DINÂMICAS DE PRESSÃO DE REFRIGERAÇÃO OU VARIAÇÕES MICROESTRUTURAIS
       </p>
     </section>
 

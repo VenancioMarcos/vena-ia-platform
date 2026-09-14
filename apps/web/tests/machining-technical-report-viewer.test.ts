@@ -656,6 +656,61 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  chip_breaking_machinability_audit: {
+    schema_version: "vena-ia.cnc-chip-breaking-machinability-audit/v2",
+    material_profile: "ABNT_1045",
+    chipbreaker_family: "PM",
+    chipbreaker_reference: "CNMG_120408_PM_TABULATED",
+    feed_mm_per_rev: 0.25,
+    depth_of_cut_mm: 2,
+    insert_nose_radius_mm: 0.8,
+    cutting_edge_angle_deg: 95,
+    rake_angle_deg: 6,
+    uncut_chip_thickness_mm: 0.249048675,
+    chip_width_mm: 2.007639675,
+    formed_chip_thickness_mm: 0.59771682,
+    chip_compression_ratio: 2.4,
+    free_chip_length_mm: 8.782107241,
+    safe_breaking_envelopes: [
+      {
+        chipbreaker_reference: "CNMG_120408_PM_TABULATED",
+        feed_min_mm_per_rev: 0.15,
+        feed_max_mm_per_rev: 0.4,
+        depth_of_cut_min_mm: 1,
+        depth_of_cut_max_mm: 4,
+      },
+      {
+        chipbreaker_reference: "CNMG_120408_PR_TABULATED",
+        feed_min_mm_per_rev: 0.25,
+        feed_max_mm_per_rev: 0.6,
+        depth_of_cut_min_mm: 2,
+        depth_of_cut_max_mm: 6,
+      },
+      {
+        chipbreaker_reference: "CNMG_120408_PF_TABULATED",
+        feed_min_mm_per_rev: 0.05,
+        feed_max_mm_per_rev: 0.2,
+        depth_of_cut_min_mm: 0.2,
+        depth_of_cut_max_mm: 2,
+      },
+    ],
+    audit_status: "CHIP_BREAKING_WITHIN_TABULATED_SAFE_ENVELOPE",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    automatic_parameter_change_authorized: false,
+    model_limitation: "TABULATED_CHIP_BREAKING_ENVELOPE_REQUIRES_PHYSICAL_PROCESS_VALIDATION",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1035,6 +1090,32 @@ test("renders thermal tolerance warning without physical controls", () => {
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: DERIVA TÉRMICA EXCEDE TOLERÂNCIA/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
+});
+
+test("renders chip-breaking telemetry, envelope, governance, and safe badge", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Painel de Quebra de Cavaco/);
+  assert.match(html, /PM · CNMG_120408_PM_TABULATED/);
+  assert.match(html, /0\.250 mm\/rot/);
+  assert.match(html, /2\.000 mm/);
+  assert.match(html, /2\.400/);
+  assert.match(html, /Ponto operacional de avanço no envelope/);
+  assert.match(html, /FORMAÇÃO SEGURA DE CAVACO/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE FORMAÇÃO E QUEBRA DE CAVACO - NÃO CONSIDERA FLUTUAÇÕES DINÂMICAS DE PRESSÃO DE REFRIGERAÇÃO OU VARIAÇÕES MICROESTRUTURAIS/);
+});
+
+test("renders chip-breaking warning without machine or parameter controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    chip_breaking_machinability_audit: {
+      ...report.chip_breaking_machinability_audit,
+      feed_mm_per_rev: 0.1,
+      audit_status: "CHIP_BREAKING_OUTSIDE_TABULATED_SAFE_ENVELOPE_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE CAVACO CONTÍNUO\/SOBRECARGA/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|alterar parâmetros/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {
