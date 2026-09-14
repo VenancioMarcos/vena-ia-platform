@@ -23,6 +23,9 @@ from app.modules.cnc.services.chip_breaking_auditor import (
     audit_chip_breaking_machinability,
 )
 from app.modules.cnc.services.cost_time_estimator import estimate_machining_cost_time
+from app.modules.cnc.services.coolant_pressure_flow_auditor import (
+    audit_coolant_pressure_flow,
+)
 from app.modules.cnc.services.geometry_auditor import (
     GeometryDimensionalAuditError,
     require_geometry_dimensions_consistent,
@@ -292,6 +295,11 @@ def compile_machining_report(
         cutting_edge_angle_deg=record.request.tool_params.cutting_edge_angle_deg,
         rake_angle_deg=6.0,
     )
+    coolant_pressure_flow_audit = audit_coolant_pressure_flow(
+        coolant_mode="FLOOD",
+        programmed_flow_l_per_min=18.0,
+        programmed_pressure_bar=8.0,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -326,6 +334,7 @@ def compile_machining_report(
         spindle_power_torque_envelope_audit=spindle_power_torque_envelope_audit,
         thermal_expansion_drift_audit=thermal_expansion_drift_audit,
         chip_breaking_machinability_audit=chip_breaking_machinability_audit,
+        coolant_pressure_flow_audit=coolant_pressure_flow_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -361,6 +370,8 @@ def compile_machining_report(
             "cooling compensation.",
             "Chip formation and breaking are tabulated analytical estimates that exclude "
             "coolant-pressure dynamics and material microstructure variation.",
+            "Coolant flow and pressure demand uses immutable tabulated zone requirements; "
+            "machine, pump, valve and nozzle behavior require physical validation.",
         ),
     )
 

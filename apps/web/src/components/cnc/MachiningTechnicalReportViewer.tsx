@@ -477,6 +477,32 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "TABULATED_CHIP_BREAKING_ENVELOPE_REQUIRES_PHYSICAL_PROCESS_VALIDATION";
     safety_flags: MachiningReportSafetyFlags;
   };
+  coolant_pressure_flow_audit: {
+    schema_version: "vena-ia.cnc-coolant-pressure-flow-audit/v2";
+    coolant_mode: "FLOOD" | "MQL";
+    programmed_flow_l_per_min: number;
+    programmed_pressure_bar: number;
+    zone_requirements: readonly {
+      cutting_zone:
+        | "PRIMARY_SHEAR_ZONE"
+        | "SECONDARY_TOOL_CHIP_INTERFACE"
+        | "TERTIARY_TOOL_WORKPIECE_INTERFACE";
+      minimum_flow_l_per_min: number;
+      minimum_pressure_bar: number;
+    }[];
+    minimum_required_flow_l_per_min: number;
+    minimum_required_pressure_bar: number;
+    flow_margin_percent: number;
+    pressure_margin_percent: number;
+    thermal_dissipation_status:
+      | "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS"
+      | "INSUFFICIENT_THERMAL_DISSIPATION_WARNING";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    automatic_coolant_control_authorized: false;
+    model_limitation: "TABULATED_COOLANT_DEMAND_REQUIRES_MACHINE_AND_NOZZLE_PHYSICAL_VALIDATION";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -533,6 +559,8 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
     ((chipBreaking.depth_of_cut_mm - chipBreakingEnvelope.depth_of_cut_min_mm)
       / (chipBreakingEnvelope.depth_of_cut_max_mm - chipBreakingEnvelope.depth_of_cut_min_mm)) * 100,
   ));
+  const coolantAudit = report.coolant_pressure_flow_audit;
+  const coolantDemandAdequate = coolantAudit.thermal_dissipation_status === "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS";
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -993,6 +1021,44 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE FORMAÇÃO E QUEBRA DE CAVACO - NÃO CONSIDERA FLUTUAÇÕES DINÂMICAS DE PRESSÃO DE REFRIGERAÇÃO OU VARIAÇÕES MICROESTRUTURAIS
+      </p>
+    </section>
+
+    <section aria-labelledby="report-coolant-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-coolant-heading" className="text-lg font-semibold">Demanda de fluido por zona térmica</h2>
+        <span role={coolantDemandAdequate ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${coolantDemandAdequate ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {coolantDemandAdequate ? "DISSIPAÇÃO TÉRMICA ADEQUADA" : "ALERTA: INSUFFICIENT_THERMAL_DISSIPATION_WARNING"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Modo de fluido" value={coolantAudit.coolant_mode} />
+        <Metric label="Vazão programada" value={`${coolantAudit.programmed_flow_l_per_min.toFixed(3)} L/min`} />
+        <Metric label="Pressão programada" value={`${coolantAudit.programmed_pressure_bar.toFixed(3)} bar`} />
+        <Metric label="Margens vazão / pressão" value={`${coolantAudit.flow_margin_percent.toFixed(2)}% / ${coolantAudit.pressure_margin_percent.toFixed(2)}%`} />
+      </dl>
+      <div className="overflow-x-auto rounded-lg border border-slate-700">
+        <table className="min-w-full divide-y divide-slate-700 text-left text-sm">
+          <caption className="sr-only">Requisitos analíticos de vazão e pressão por zona de corte</caption>
+          <thead className="bg-slate-950 text-xs uppercase tracking-wide text-slate-400">
+            <tr>
+              <th scope="col" className="px-3 py-2">Zona térmica</th>
+              <th scope="col" className="px-3 py-2">Vazão mínima</th>
+              <th scope="col" className="px-3 py-2">Pressão mínima</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-800 bg-slate-950/60 font-mono text-cyan-100">
+            {coolantAudit.zone_requirements.map((requirement) => <tr key={requirement.cutting_zone}>
+              <th scope="row" className="px-3 py-2 font-medium text-slate-200">{requirement.cutting_zone}</th>
+              <td className="px-3 py-2">{requirement.minimum_flow_l_per_min.toFixed(3)} L/min</td>
+              <td className="px-3 py-2">{requirement.minimum_pressure_bar.toFixed(3)} bar</td>
+            </tr>)}
+          </tbody>
+        </table>
+      </div>
+      <p className="font-mono text-xs text-slate-300">{coolantAudit.thermal_dissipation_status}</p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE DEMANDA DE FLUIDO - NÃO CONTROLA BOMBAS OU VÁLVULAS DE MÁQUINA
       </p>
     </section>
 

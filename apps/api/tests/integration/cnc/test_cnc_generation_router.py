@@ -436,7 +436,7 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 12
+        ) == 13
         assert "[ENVELOPE DE POTÊNCIA E TORQUE DO FUSO]" in response.text
         assert "power_margin_percent=" in response.text
         assert "[EXPANSÃO TÉRMICA E DERIVA DE EIXOS]" in response.text
@@ -448,6 +448,13 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
             "ESTIMATIVA ANALÍTICA DE FORMAÇÃO E QUEBRA DE CAVACO - NÃO CONSIDERA "
             "FLUTUAÇÕES DINÂMICAS DE PRESSÃO DE REFRIGERAÇÃO OU VARIAÇÕES "
             "MICROESTRUTURAIS" in response.text
+        )
+        assert "[DEMANDA DE FLUIDO POR ZONA TÉRMICA]" in response.text
+        assert "zone[SECONDARY_TOOL_CHIP_INTERFACE]" in response.text
+        assert "status=COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS" in response.text
+        assert (
+            "ESTIMATIVA ANALÍTICA DE DEMANDA DE FLUIDO - NÃO CONTROLA BOMBAS OU "
+            "VÁLVULAS DE MÁQUINA" in response.text
         )
         assert "[FLEXÃO ELÁSTICA DA PEÇA]" in response.text
         assert (

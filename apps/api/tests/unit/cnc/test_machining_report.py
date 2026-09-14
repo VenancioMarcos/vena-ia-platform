@@ -234,6 +234,13 @@ def test_complete_report_replays_deterministically(controller):
     assert report.chip_breaking_machinability_audit.audit_status == (
         "CHIP_BREAKING_OUTSIDE_TABULATED_SAFE_ENVELOPE_WARNING"
     )
+    assert report.coolant_pressure_flow_audit.coolant_mode == "FLOOD"
+    assert report.coolant_pressure_flow_audit.programmed_flow_l_per_min == pytest.approx(18)
+    assert report.coolant_pressure_flow_audit.programmed_pressure_bar == pytest.approx(8)
+    assert report.coolant_pressure_flow_audit.thermal_dissipation_status == (
+        "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS"
+    )
+    assert report.coolant_pressure_flow_audit.automatic_coolant_control_authorized is False
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -426,7 +433,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 12
+    assert rendered.count(SAFETY_STAMP) == 13
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -459,6 +466,14 @@ def test_text_export_is_deterministic_and_stamps_every_section():
         "ESTIMATIVA ANALÍTICA DE FORMAÇÃO E QUEBRA DE CAVACO - NÃO CONSIDERA "
         "FLUTUAÇÕES DINÂMICAS DE PRESSÃO DE REFRIGERAÇÃO OU VARIAÇÕES "
         "MICROESTRUTURAIS" in rendered
+    )
+    assert "[DEMANDA DE FLUIDO POR ZONA TÉRMICA]" in rendered
+    assert "zone[PRIMARY_SHEAR_ZONE]" in rendered
+    assert "flow_margin_percent=20.000000000" in rendered
+    assert "status=COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE DEMANDA DE FLUIDO - NÃO CONTROLA BOMBAS OU "
+        "VÁLVULAS DE MÁQUINA" in rendered
     )
     assert "ESTIMATIVA ANALÍTICA DE TAYLOR" in rendered
     assert "cost_time: total_minutes=" in rendered
