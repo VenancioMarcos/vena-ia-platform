@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.79
+**Versão:** 2.80
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_TAILSTOCK_THRUST_DEFLECTION_PR_DRAFT_READY`.
+  A Rota 28 foi publicada no Draft PR #77 a partir do commit `d659587`. O
+  Frontend CI passou em 1m20s e o Backend CI em 3m28s. O PR permanece `OPEN`,
+  `isDraft=true` e sem merge, conforme a ordem. O contrato, JSON, TEXT e Web
+  expõem a força do contraponto, a carga crítica de Euler, a deflexão biapoiada,
+  a cota Z e os badges de conformidade/risco, preservando revisão física e todos
+  os bloqueios permanentes.
 
 - **Handoff CTO:** `CNC_TAILSTOCK_THRUST_DEFLECTION_AUDITOR_COMPLETED_LOCAL`.
   O `VTP-AUTO-349-BATCH` foi aprovado. O PR #76 foi integrado por squash em
