@@ -27,6 +27,7 @@ from app.modules.cnc.services.geometry_auditor import (
 from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
 from app.modules.cnc.services.parameter_optimizer import optimize_cutting_parameters
 from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
+from app.modules.cnc.services.risk_matrix_evaluator import evaluate_operational_risk
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
 from app.modules.cnc.services.sustainability_estimator import estimate_sustainability
 from app.modules.cnc.services.stability_auditor import audit_machining_stability
@@ -188,6 +189,14 @@ def compile_machining_report(
         )
         for stability in stability_audits
     )
+    risk_matrix = evaluate_operational_risk(
+        envelope_audit="PASS_DECLARED_2D_ENVELOPE_ONLY",
+        geometry_audit=geometry_audit,
+        chuck_proximity=simulation.chuck_proximity,
+        stability_audits=stability_audits,
+        power_force_audit=power_force_audit,
+        tool_life_audits=tool_life_audits,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -214,6 +223,7 @@ def compile_machining_report(
         sustainability_audit=sustainability_audit,
         stability_audits=stability_audits,
         parameter_optimizations=parameter_optimizations,
+        risk_matrix=risk_matrix,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -234,6 +244,8 @@ def compile_machining_report(
             "analytical FRF compliance; workpiece and spindle modes are excluded.",
             "Cutting-parameter recommendations maximize an analytical constrained envelope; "
             "machine application requires manual process-engineering approval.",
+            "The consolidated risk matrix is a preliminary analytical process assessment, "
+            "not an expert report or machine authorization.",
         ),
     )
 

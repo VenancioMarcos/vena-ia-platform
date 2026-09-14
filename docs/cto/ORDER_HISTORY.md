@@ -1,5 +1,15 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-249 a AUTO-258
+
+O PR #65 publicou a Rota 17, recebeu Backend e Frontend CI verdes e foi integrado
+por squash em `1f6bb75`, com exclusão da branch remota. A Rota 18 consolida os
+achados de geometria/proximidade, estabilidade, potência Kienzle e desgaste Taylor
+em uma matriz ponderada de quatro categorias. Violações cinemáticas, dimensionais
+ou colisões são críticas por contrato; escores, níveis e mitigações são recalculados
+e vinculados ao relatório. O laudo e o painel Web expõem a avaliação preliminar sem
+autoridade operacional. Entrega local sem push e sem autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-239 a AUTO-248
 
 O PR #64 publicou a Rota 16, recebeu Backend e Frontend CI verdes e foi integrado

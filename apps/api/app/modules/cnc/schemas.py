@@ -827,6 +827,147 @@ class MachiningParameterOptimizationPayload(_CNCGenerationContract):
         return self
 
 
+class MachiningRiskMatrixPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-machining-risk-matrix/v1"] = (
+        "vena-ia.cnc-machining-risk-matrix/v1"
+    )
+    envelope_audit: Literal[
+        "PASS_DECLARED_2D_ENVELOPE_ONLY", "ENVELOPE_VIOLATION_DETECTED"
+    ]
+    geometry_audit_status: Literal["PASS", "REJECTED"]
+    geometry_manifest_generation_allowed: bool
+    minimum_chuck_clearance_mm: float = Field(ge=0)
+    chuck_proximity_threshold_mm: float = Field(gt=0)
+    chuck_proximity_warning: bool
+    max_overhang_ratio_l_d: float = Field(gt=0)
+    dynamic_warning_present: bool
+    required_motor_power_kw: float = Field(gt=0)
+    machine_power_limit_kw: float = Field(gt=0)
+    power_warning_present: bool
+    max_tool_life_consumed_percent: float = Field(ge=0)
+    tool_wear_warning_present: bool
+    overall_risk_score: float = Field(ge=0, le=100)
+    risk_level: Literal[
+        "LOW_RISK",
+        "MODERATE_RISK",
+        "HIGH_RISK_REQUIRES_MITIGATION",
+        "CRITICAL_INTERVENTION_MANDATORY",
+    ]
+    dimensional_risk_score: float = Field(ge=0, le=100)
+    dynamic_risk_score: float = Field(ge=0, le=100)
+    energy_risk_score: float = Field(ge=0, le=100)
+    tool_wear_risk_score: float = Field(ge=0, le=100)
+    mitigation_recommendations: tuple[str, ...] = Field(min_length=1)
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "CONSOLIDATED_ANALYTICAL_RISK_MATRIX_IS_PRELIMINARY_AND_NOT_AN_EXPERT_REPORT"
+    ] = "CONSOLIDATED_ANALYTICAL_RISK_MATRIX_IS_PRELIMINARY_AND_NOT_AN_EXPERT_REPORT"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_risk_matrix(self) -> "MachiningRiskMatrixPayload":
+        hard_dimensional_violation = (
+            self.envelope_audit == "ENVELOPE_VIOLATION_DETECTED"
+            or self.geometry_audit_status == "REJECTED"
+            or not self.geometry_manifest_generation_allowed
+            or self.minimum_chuck_clearance_mm <= 0
+        )
+        proximity_risk = (
+            self.chuck_proximity_warning
+            or self.minimum_chuck_clearance_mm < self.chuck_proximity_threshold_mm
+        )
+        dynamic_risk = self.dynamic_warning_present or self.max_overhang_ratio_l_d > 4
+        energy_risk = (
+            self.power_warning_present
+            or self.required_motor_power_kw > self.machine_power_limit_kw
+        )
+        wear_risk = (
+            self.tool_wear_warning_present
+            or self.max_tool_life_consumed_percent > 80
+        )
+        expected_dimensional = 100.0 if hard_dimensional_violation else 75.0 if proximity_risk else 0.0
+        expected_dynamic = 75.0 if dynamic_risk else 0.0
+        expected_energy = 75.0 if energy_risk else 0.0
+        expected_wear = 75.0 if wear_risk else 0.0
+        expected_overall = round(
+            expected_dimensional * 0.35
+            + expected_dynamic * 0.25
+            + expected_energy * 0.20
+            + expected_wear * 0.20,
+            9,
+        )
+        expected_level = (
+            "CRITICAL_INTERVENTION_MANDATORY"
+            if hard_dimensional_violation
+            else "HIGH_RISK_REQUIRES_MITIGATION"
+            if expected_overall >= 40
+            else "MODERATE_RISK"
+            if expected_overall >= 15
+            else "LOW_RISK"
+        )
+        expected_recommendations: list[str] = []
+        if hard_dimensional_violation:
+            expected_recommendations.append(
+                "Interromper a avaliação do processo e revisar envelope, geometria e trajetória."
+            )
+        elif proximity_risk:
+            expected_recommendations.append(
+                "Revisar trajetória, origem e fixação para ampliar a folga em relação à placa."
+            )
+        if dynamic_risk:
+            expected_recommendations.append(
+                "Reduzir balanço ou profundidade de corte e revisar a rigidez antes da homologação."
+            )
+        if energy_risk:
+            expected_recommendations.append(
+                "Reduzir a carga de corte e conferir a capacidade nominal da máquina."
+            )
+        if wear_risk:
+            expected_recommendations.append(
+                "Planejar inspeção ou troca da aresta antes de qualquer aplicação física."
+            )
+        if not expected_recommendations:
+            expected_recommendations.append(
+                "Manter revisão humana e homologação de processo antes de qualquer aplicação física."
+            )
+        comparisons = (
+            (
+                self.dimensional_risk_score,
+                expected_dimensional,
+                "RISK_MATRIX_DIMENSIONAL_SCORE_INCONSISTENT",
+            ),
+            (
+                self.dynamic_risk_score,
+                expected_dynamic,
+                "RISK_MATRIX_DYNAMIC_SCORE_INCONSISTENT",
+            ),
+            (
+                self.energy_risk_score,
+                expected_energy,
+                "RISK_MATRIX_ENERGY_SCORE_INCONSISTENT",
+            ),
+            (
+                self.tool_wear_risk_score,
+                expected_wear,
+                "RISK_MATRIX_TOOL_WEAR_SCORE_INCONSISTENT",
+            ),
+            (
+                self.overall_risk_score,
+                expected_overall,
+                "RISK_MATRIX_OVERALL_SCORE_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        if self.risk_level != expected_level:
+            raise ValueError("RISK_MATRIX_LEVEL_INCONSISTENT")
+        if self.mitigation_recommendations != tuple(expected_recommendations):
+            raise ValueError("RISK_MATRIX_RECOMMENDATIONS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -851,6 +992,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     sustainability_audit: MachiningSustainabilityAuditPayload
     stability_audits: tuple[MachiningStabilityAuditPayload, ...] = Field(min_length=1)
     parameter_optimizations: tuple[MachiningParameterOptimizationPayload, ...] = Field(min_length=1)
+    risk_matrix: MachiningRiskMatrixPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -952,4 +1094,40 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
                 for actual, expected in comparisons
             ):
                 raise ValueError("REPORT_OPTIMIZATION_SOURCE_INCONSISTENT")
+        risk = self.risk_matrix
+        max_overhang_ratio = max(item.overhang_ratio_l_d for item in self.stability_audits)
+        dynamic_warning = any(
+            item.stability_status == "CHATTER_HIGH_RISK_WARNING"
+            for item in self.stability_audits
+        )
+        max_wear = max(item.tool_life_consumed_percent for item in self.tool_life_audits)
+        wear_warning = any(
+            item.integrity_status == "TOOL_LIFE_EXHAUSTED_WARNING"
+            for item in self.tool_life_audits
+        )
+        risk_comparisons = (
+            (risk.minimum_chuck_clearance_mm, self.chuck_proximity.minimum_clearance_mm),
+            (risk.chuck_proximity_threshold_mm, self.chuck_proximity.threshold_mm),
+            (risk.max_overhang_ratio_l_d, max_overhang_ratio),
+            (risk.required_motor_power_kw, self.power_force_audit.p_motor_est_kw),
+            (risk.machine_power_limit_kw, self.power_force_audit.machine_power_limit_kw),
+            (risk.max_tool_life_consumed_percent, max_wear),
+        )
+        if (
+            risk.envelope_audit != self.envelope_audit
+            or risk.geometry_audit_status != self.geometry_audit.status
+            or risk.geometry_manifest_generation_allowed
+            != self.geometry_audit.manifest_generation_allowed
+            or risk.chuck_proximity_warning
+            != (self.chuck_proximity.warning_code == "WARNING_PROXIMITY_CHUCK")
+            or risk.dynamic_warning_present != dynamic_warning
+            or risk.power_warning_present
+            != (self.power_force_audit.power_status == "POWER_EXCEEDED_WARNING")
+            or risk.tool_wear_warning_present != wear_warning
+            or any(
+                not math.isclose(actual, expected, abs_tol=5e-9)
+                for actual, expected in risk_comparisons
+            )
+        ):
+            raise ValueError("REPORT_RISK_MATRIX_SOURCE_INCONSISTENT")
         return self

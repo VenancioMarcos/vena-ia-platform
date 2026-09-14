@@ -110,6 +110,22 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
                 ),
                 "SUGESTÃO ANALÍTICA DE PARÂMETROS DE CORTE - APLICAÇÃO EM MÁQUINA "
                 "REQUER HOMOLOGAÇÃO MANUAL POR ENGENHARIA DE PROCESSOS",
+                "risk_matrix: overall_score="
+                f"{validated.risk_matrix.overall_risk_score:.9f}; "
+                f"risk_level={validated.risk_matrix.risk_level}; "
+                f"dimensional_score={validated.risk_matrix.dimensional_risk_score:.9f}; "
+                f"dynamic_score={validated.risk_matrix.dynamic_risk_score:.9f}; "
+                f"energy_score={validated.risk_matrix.energy_risk_score:.9f}; "
+                f"tool_wear_score={validated.risk_matrix.tool_wear_risk_score:.9f}",
+                *(
+                    f"risk_mitigation[{index}]={recommendation}"
+                    for index, recommendation in enumerate(
+                        validated.risk_matrix.mitigation_recommendations,
+                        start=1,
+                    )
+                ),
+                "MATRIZ DE RISCO ANALÍTICA CONSOLIDADA - AVALIAÇÃO PRELIMINAR DE "
+                "PROCESSO SEM VALIDADE DE LAUDO PERICIAL",
             ),
         ),
         _section(
