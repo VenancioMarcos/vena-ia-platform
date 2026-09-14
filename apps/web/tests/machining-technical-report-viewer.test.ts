@@ -754,6 +754,38 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  workholding_clamping_audit: {
+    schema_version: "vena-ia.cnc-workholding-clamping-audit/v1",
+    static_clamping_force_per_jaw_n: 15000,
+    jaw_mass_kg: 0.25,
+    center_of_mass_radius_mm: 40,
+    operating_rpm: 1000,
+    maximum_declared_rpm: 6000,
+    axial_cutting_force_n: 1000,
+    friction_coefficient: 0.3,
+    required_safety_factor: 2,
+    centrifugal_force_per_jaw_n: 109.662271123,
+    total_centrifugal_loss_n: 328.986813369,
+    dynamic_clamping_force_total_n: 44671.013186631,
+    friction_resistance_n: 13401.303955989,
+    clamping_safety_factor: 13.401303956,
+    clamping_status: "DYNAMIC_CLAMPING_SAFE",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    automatic_chuck_control_authorized: false,
+    model_limitation: "ANALYTICAL_CLAMPING_ESTIMATE_REQUIRES_PHYSICAL_CHUCK_LOAD_MEASUREMENT",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1187,6 +1219,32 @@ test("renders insufficient coolant warning without pump or valve controls", () =
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: INSUFFICIENT_THERMAL_DISSIPATION_WARNING/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|controlar bomba|controlar válvula/i);
+});
+
+test("renders typed workholding telemetry, safe badge, and physical measurement note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Painel de fixação da placa/);
+  assert.match(html, /45\.000 kN/);
+  assert.match(html, /0\.329 kN/);
+  assert.match(html, /44\.671 kN/);
+  assert.match(html, /13\.40/);
+  assert.match(html, /FIXAÇÃO DINÂMICA SEGURA/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE FORÇA DE FIXAÇÃO - NÃO SUBSTITUI VERIFICAÇÃO COM MEDIDOR FÍSICO DE CARGA EM PLACA/);
+});
+
+test("renders critical centrifugal loss warning without chuck actuator controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    workholding_clamping_audit: {
+      ...report.workholding_clamping_audit,
+      friction_resistance_n: 1500,
+      clamping_safety_factor: 1.5,
+      clamping_status: "CRITICAL_CENTRIFUGAL_CLAMPING_LOSS_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: PERDA CRÍTICA DE APERTO POR CENTRÍFUGA/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|acionar placa|atuador da placa/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {

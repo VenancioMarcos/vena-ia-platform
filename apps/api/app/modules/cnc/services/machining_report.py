@@ -51,6 +51,7 @@ from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 from app.modules.cnc.services.tool_life_estimator import estimate_tool_life
 from app.modules.cnc.services.tool_wear_geometry_auditor import audit_tool_wear_geometry
 from app.modules.cnc.services.thermal_expansion_auditor import audit_thermal_expansion_drift
+from app.modules.cnc.services.workholding_auditor import audit_workholding_clamping
 
 
 class MachiningReportError(ValueError):
@@ -300,6 +301,16 @@ def compile_machining_report(
         programmed_flow_l_per_min=18.0,
         programmed_pressure_bar=8.0,
     )
+    workholding_clamping_audit = audit_workholding_clamping(
+        static_clamping_force_per_jaw_n=15_000.0,
+        jaw_mass_kg=0.25,
+        center_of_mass_radius_mm=40.0,
+        operating_rpm=power_force_audit.spindle_rpm_reference,
+        maximum_declared_rpm=power_force_audit.max_spindle_rpm,
+        axial_cutting_force_n=power_force_audit.fc_nominal_n,
+        friction_coefficient=0.30,
+        required_safety_factor=2.0,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -335,6 +346,7 @@ def compile_machining_report(
         thermal_expansion_drift_audit=thermal_expansion_drift_audit,
         chip_breaking_machinability_audit=chip_breaking_machinability_audit,
         coolant_pressure_flow_audit=coolant_pressure_flow_audit,
+        workholding_clamping_audit=workholding_clamping_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -372,6 +384,8 @@ def compile_machining_report(
             "coolant-pressure dynamics and material microstructure variation.",
             "Coolant flow and pressure demand uses immutable tabulated zone requirements; "
             "machine, pump, valve and nozzle behavior require physical validation.",
+            "Chuck clamping force and centrifugal loss are analytical estimates and require "
+            "verification with a physical chuck load meter.",
         ),
     )
 

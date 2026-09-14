@@ -1,5 +1,27 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-349-BATCH
+
+`CNC_WORKHOLDING_CLAMPING_PR_READY`. O `VTP-AUTO-348-BATCH` foi aprovado. A
+branch `codex/v8.9-cnc-workholding-clamping-auditor` foi publicada e o PR #76
+aberto. O Frontend CI passou em 1m16s. A primeira execução Backend chegou à etapa
+MinIO após concluir os gates do código, mas o registry retornou 504; o rerun do
+job passou em 3m08s sem alteração de código. PR promovido e confirmado `OPEN`,
+`isDraft=false`, `MERGEABLE/CLEAN`. Nenhum merge foi realizado.
+
+## 2026-09-14 — CTO-CODEX-AUTO-339 a AUTO-348
+
+`CNC_WORKHOLDING_CLAMPING_AUDITOR_COMPLETED_LOCAL`. O `VTP-AUTO-338-BATCH` foi
+aprovado. O PR #75 passou no Frontend CI em 1m21s e no Backend CI em 3m50s, foi
+integrado por squash em `e6da01d`, teve a branch remota removida e a main
+sincronizada. A nova auditoria calcula a força centrífuga por castanha, a perda
+total, a força dinâmica residual, a resistência por atrito e o fator de segurança
+contra a demanda axial conservadora vinculada à força Kienzle. Contrato, JSON,
+TEXT e painel Web incluem status seguro/crítico e a nota de medição física
+obrigatória. Validação: 286 testes CNC unitários, 14 de integração, 34 Web, Ruff,
+mypy em 233 fontes, TypeScript, Next lint e diff; branch local sem push ou
+autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-334 a AUTO-338
 
 `CNC_COOLANT_PRESSURE_FLOW_WEB_HUD_COMPLETED_LOCAL`. O `VTP-AUTO-333-BATCH` foi

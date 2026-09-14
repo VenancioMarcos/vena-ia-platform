@@ -1,24 +1,24 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-334 a AUTO-338
-**Estado:** CNC_COOLANT_PRESSURE_FLOW_WEB_HUD_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-349-BATCH
+**Estado:** CNC_WORKHOLDING_CLAMPING_PR_READY
 **Data:** 2026-09-14
-**Branch:** `codex/v8.8-cnc-coolant-web-hud`
-**Baseline da branch:** `979ed4e913495d0e0173027f35d6e29735050a01`
+**Branch:** `codex/v8.9-cnc-workholding-clamping-auditor`
+**Baseline da branch:** `e6da01d0f18e4da143078f6c1cfc33b401257bd0`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O PR #74 publicou o contrato da Rota 26, recebeu Backend CI verde em 3m42s e foi
-integrado por squash em `979ed4e`, com remoção da branch remota e sincronização
-da main. A integração JSON/TEXT/Web agora mostra o modo Flood/MQL, vazão,
-pressão, margens e requisitos por zona, com estados visuais adequado/insuficiente
-e sem qualquer controle de bomba, válvula ou máquina.
+O `VTP-AUTO-348-BATCH` foi aprovado. A branch da Rota 27 foi publicada e o Draft
+PR #76 aberto contra `main`. O Frontend CI passou em 1m16s; o Backend CI passou em
+3m08s na reexecução após uma falha externa `504 Gateway Timeout` no download da
+imagem MinIO. O PR foi promovido e está `OPEN`, `isDraft=false`,
+`MERGEABLE/CLEAN`, sem autorização de merge nesta ordem.
 
 ## Continuidade
 
-Emitir `VTP-AUTO-338-BATCH` e aguardar parecer. A branch permanece local sem
-push.
+Emitir `VTP-AUTO-349-BATCH`, solicitar parecer e aguardar a próxima ordem sem
+executar merge.
 
 ## Limites permanentes
 

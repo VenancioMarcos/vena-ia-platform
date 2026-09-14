@@ -318,6 +318,28 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "FIXAÇÃO DINÂMICA DA PLACA",
+            (
+                "static_clamping_force_per_jaw_n="
+                f"{validated.workholding_clamping_audit.static_clamping_force_per_jaw_n:.9f}",
+                f"jaw_mass_kg={validated.workholding_clamping_audit.jaw_mass_kg:.9f}",
+                "center_of_mass_radius_mm="
+                f"{validated.workholding_clamping_audit.center_of_mass_radius_mm:.9f}",
+                f"operating_rpm={validated.workholding_clamping_audit.operating_rpm:.9f}",
+                "total_centrifugal_loss_n="
+                f"{validated.workholding_clamping_audit.total_centrifugal_loss_n:.9f}",
+                "dynamic_clamping_force_total_n="
+                f"{validated.workholding_clamping_audit.dynamic_clamping_force_total_n:.9f}",
+                "friction_resistance_n="
+                f"{validated.workholding_clamping_audit.friction_resistance_n:.9f}",
+                "clamping_safety_factor="
+                f"{validated.workholding_clamping_audit.clamping_safety_factor:.9f}",
+                f"status={validated.workholding_clamping_audit.clamping_status}",
+                "ESTIMATIVA ANALÍTICA DE FORÇA DE FIXAÇÃO - NÃO SUBSTITUI VERIFICAÇÃO "
+                "COM MEDIDOR FÍSICO DE CARGA EM PLACA",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",
