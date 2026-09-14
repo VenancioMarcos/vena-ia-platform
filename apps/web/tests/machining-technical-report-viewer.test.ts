@@ -563,6 +563,44 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  thermal_expansion_drift_audit: {
+    schema_version: "vena-ia.cnc-thermal-expansion-drift-audit/v2",
+    material_profile: "ABNT_1045",
+    linear_expansion_coefficient_per_c: 0.000012,
+    spindle_expansion_coefficient_per_c: 0.000012,
+    reference_temperature_c: 20,
+    workpiece_mean_temperature_c: 40,
+    spindle_mean_temperature_c: 35,
+    workpiece_mean_temperature_rise_c: 20,
+    spindle_mean_temperature_rise_c: 15,
+    workpiece_axial_reference_length_mm: 101,
+    workpiece_diameter_reference_mm: 52,
+    spindle_z_reference_length_mm: 150,
+    workpiece_z_expansion_um: 24.24,
+    workpiece_x_expansion_um: 6.24,
+    spindle_z_drift_um: 27,
+    total_z_axis_drift_um: 51.24,
+    total_x_axis_drift_um: 6.24,
+    z_axis_tolerance_um: 100,
+    x_axis_tolerance_um: 100,
+    audit_status: "THERMAL_DRIFT_WITHIN_DECLARED_TOLERANCE",
+    theoretical: true,
+    physical: false,
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ANALYTICAL_THERMAL_DRIFT_EXCLUDES_TRANSIENT_GRADIENTS_COOLANT_AND_MACHINE_COMPENSATION",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -915,6 +953,32 @@ test("renders spindle overload warning without physical controls", () => {
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: SOBRECARGA DE TORQUE\/POTÊNCIA/);
   assert.match(html, /-71\.19%/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
+});
+
+test("renders thermal telemetry and tolerated badge", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Expansão térmica e impacto dimensional/);
+  assert.match(html, /40\.0 °C/);
+  assert.match(html, /35\.0 °C/);
+  assert.match(html, /51\.240 µm/);
+  assert.match(html, /6\.240 µm/);
+  assert.match(html, /51\.24% da menor tolerância declarada/);
+  assert.match(html, /DERIVA TÉRMICA TOLERADA/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE EXPANSÃO TÉRMICA - NÃO CONSIDERA GRADIENTES TÉRMICOS LOCAIS TRANSITÓRIOS OU COMPENSAÇÃO ATIVA POR REFRIGERAÇÃO INTERNA/);
+});
+
+test("renders thermal tolerance warning without physical controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    thermal_expansion_drift_audit: {
+      ...report.thermal_expansion_drift_audit,
+      z_axis_tolerance_um: 50,
+      audit_status: "THERMAL_DRIFT_EXCEEDS_DECLARED_TOLERANCE_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: DERIVA TÉRMICA EXCEDE TOLERÂNCIA/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
 });
 

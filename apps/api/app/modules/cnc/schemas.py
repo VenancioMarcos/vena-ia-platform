@@ -1549,16 +1549,18 @@ class ThermalExpansionDriftAuditPayload(_CNCGenerationContract):
     )
     material_profile: Literal["AISI_1020", "ABNT_1045", "ALUMINUM_6061_T6"]
     linear_expansion_coefficient_per_c: float = Field(gt=0, le=0.001)
+    spindle_expansion_coefficient_per_c: float = Field(gt=0, le=0.001)
+    reference_temperature_c: float = Field(default=20.0, ge=20.0, le=20.0)
+    workpiece_mean_temperature_c: float = Field(ge=-40, le=300)
+    spindle_mean_temperature_c: float = Field(ge=-40, le=300)
     workpiece_mean_temperature_rise_c: float = Field(ge=0, le=500)
     spindle_mean_temperature_rise_c: float = Field(ge=0, le=500)
     workpiece_axial_reference_length_mm: float = Field(gt=0, le=100_000)
     workpiece_diameter_reference_mm: float = Field(gt=0, le=100_000)
     spindle_z_reference_length_mm: float = Field(gt=0, le=100_000)
-    spindle_x_reference_length_mm: float = Field(gt=0, le=100_000)
     workpiece_z_expansion_um: float = Field(ge=0)
     workpiece_x_expansion_um: float = Field(ge=0)
     spindle_z_drift_um: float = Field(ge=0)
-    spindle_x_drift_um: float = Field(ge=0)
     total_z_axis_drift_um: float = Field(ge=0)
     total_x_axis_drift_um: float = Field(ge=0)
     z_axis_tolerance_um: float = Field(gt=0)
@@ -1579,9 +1581,9 @@ class ThermalExpansionDriftAuditPayload(_CNCGenerationContract):
     @model_validator(mode="after")
     def validate_thermal_expansion_model(self) -> "ThermalExpansionDriftAuditPayload":
         expected_coefficient = {
-            "AISI_1020": 11.7e-6,
-            "ABNT_1045": 11.7e-6,
-            "ALUMINUM_6061_T6": 23.6e-6,
+            "AISI_1020": 12.0e-6,
+            "ABNT_1045": 12.0e-6,
+            "ALUMINUM_6061_T6": 23.0e-6,
         }[self.material_profile]
         if not math.isclose(
             self.linear_expansion_coefficient_per_c,
@@ -1590,6 +1592,23 @@ class ThermalExpansionDriftAuditPayload(_CNCGenerationContract):
             rel_tol=1e-12,
         ):
             raise ValueError("THERMAL_EXPANSION_COEFFICIENT_INCONSISTENT")
+        if not math.isclose(
+            self.spindle_expansion_coefficient_per_c,
+            12.0e-6,
+            abs_tol=5e-12,
+            rel_tol=1e-12,
+        ):
+            raise ValueError("THERMAL_SPINDLE_COEFFICIENT_INCONSISTENT")
+        if not math.isclose(
+            self.workpiece_mean_temperature_rise_c,
+            self.workpiece_mean_temperature_c - self.reference_temperature_c,
+            abs_tol=5e-9,
+        ) or not math.isclose(
+            self.spindle_mean_temperature_rise_c,
+            self.spindle_mean_temperature_c - self.reference_temperature_c,
+            abs_tol=5e-9,
+        ):
+            raise ValueError("THERMAL_DELTA_TEMPERATURE_INCONSISTENT")
 
         alpha = self.linear_expansion_coefficient_per_c
         workpiece_temperature = self.workpiece_mean_temperature_rise_c
@@ -1602,18 +1621,16 @@ class ThermalExpansionDriftAuditPayload(_CNCGenerationContract):
             ),
             (
                 self.workpiece_x_expansion_um,
-                alpha * self.workpiece_diameter_reference_mm * workpiece_temperature * 1_000,
+                alpha * (self.workpiece_diameter_reference_mm / 2.0) * workpiece_temperature * 1_000,
                 "THERMAL_WORKPIECE_X_EXPANSION_INCONSISTENT",
             ),
             (
                 self.spindle_z_drift_um,
-                alpha * self.spindle_z_reference_length_mm * spindle_temperature * 1_000,
+                self.spindle_expansion_coefficient_per_c
+                * self.spindle_z_reference_length_mm
+                * spindle_temperature
+                * 1_000,
                 "THERMAL_SPINDLE_Z_DRIFT_INCONSISTENT",
-            ),
-            (
-                self.spindle_x_drift_um,
-                alpha * self.spindle_x_reference_length_mm * spindle_temperature * 1_000,
-                "THERMAL_SPINDLE_X_DRIFT_INCONSISTENT",
             ),
         )
         for actual, calculated, code in expected:
@@ -1628,7 +1645,7 @@ class ThermalExpansionDriftAuditPayload(_CNCGenerationContract):
             raise ValueError("THERMAL_TOTAL_Z_DRIFT_INCONSISTENT")
         if not math.isclose(
             self.total_x_axis_drift_um,
-            self.workpiece_x_expansion_um + self.spindle_x_drift_um,
+            self.workpiece_x_expansion_um,
             abs_tol=5e-9,
             rel_tol=1e-12,
         ):
@@ -1673,6 +1690,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     residual_stock_audit: MachiningResidualStockAuditPayload
     part_elastic_deflection_audit: PartElasticDeflectionAuditPayload
     spindle_power_torque_envelope_audit: SpindlePowerTorqueEnvelopeAuditPayload
+    thermal_expansion_drift_audit: ThermalExpansionDriftAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -1896,4 +1914,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             for point in spindle.operating_points
         ):
             raise ValueError("REPORT_SPINDLE_ENVELOPE_SOURCE_INCONSISTENT")
+        thermal = self.thermal_expansion_drift_audit
+        if thermal.material_profile != self.power_force_audit.material_profile:
+            raise ValueError("REPORT_THERMAL_DRIFT_SOURCE_INCONSISTENT")
         return self

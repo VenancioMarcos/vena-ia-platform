@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.69
+**Versão:** 2.70
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_THERMAL_EXPANSION_DRIFT_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou o `VTP-AUTO-303-BATCH`. A Rota 23 calcula `ΔL=α·L·ΔT` para o
+  tarugo em Z/X e a deriva longitudinal do fuso, compara os totais às tolerâncias
+  declaradas e rejeita temperaturas, materiais ou geometrias inválidas. Manifesto,
+  TEXT e Web exibem temperaturas, derivas, impacto e badges sem controles físicos.
+  Validação: 234 CNC, 38 focados, 26 Web, Ruff, mypy em 210 fontes, TypeScript,
+  Next lint e diff; branch local pronta para o PR #71.
 
 - **Handoff CTO:** `CNC_THERMAL_EXPANSION_DRIFT_CONTRACT_V2_SCAFFOLDED_LOCAL`.
   O PR #70 integrou a Rota 22 por squash em `eae463e` após Frontend CI em 1m17s e

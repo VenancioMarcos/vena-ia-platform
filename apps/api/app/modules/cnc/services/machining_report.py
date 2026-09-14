@@ -43,6 +43,7 @@ from app.modules.cnc.services.spindle_envelope_auditor import (
 )
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 from app.modules.cnc.services.tool_life_estimator import estimate_tool_life
+from app.modules.cnc.services.thermal_expansion_auditor import audit_thermal_expansion_drift
 
 
 class MachiningReportError(ValueError):
@@ -258,6 +259,16 @@ def compile_machining_report(
         power_force_audit,
         declared_spindle_curve(power_force_audit),
     )
+    thermal_expansion_drift_audit = audit_thermal_expansion_drift(
+        record.request.material_reference,
+        workpiece_mean_temperature_c=40.0,
+        spindle_mean_temperature_c=35.0,
+        workpiece_length_mm=record.source_brep_bounds.total_z_length_mm,
+        workpiece_diameter_mm=record.source_brep_bounds.max_radius_mm * 2.0,
+        spindle_effective_length_mm=150.0,
+        z_axis_tolerance_um=record.request.linear_tolerance_mm * 1_000.0,
+        x_axis_tolerance_um=record.request.linear_tolerance_mm * 1_000.0,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -289,6 +300,7 @@ def compile_machining_report(
         residual_stock_audit=residual_stock_audit,
         part_elastic_deflection_audit=part_elastic_deflection_audit,
         spindle_power_torque_envelope_audit=spindle_power_torque_envelope_audit,
+        thermal_expansion_drift_audit=thermal_expansion_drift_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -318,6 +330,8 @@ def compile_machining_report(
             "cantilever and excludes tailstock or steady-rest support.",
             "The declared spindle envelope excludes continuous S1/S6 thermal derating "
             "and losses caused by machine aging.",
+            "Thermal expansion excludes transient local gradients and active internal "
+            "cooling compensation.",
         ),
     )
 

@@ -1,5 +1,11 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-304 a AUTO-309
+
+O `VTP-AUTO-303-BATCH` foi aprovado. A Rota 23 concluiu serviço, contratos,
+manifesto, TEXT e telemetria Web de expansão do tarugo e deriva térmica X/Z, com
+warning por tolerância e ausência de controles físicos. Branch pronta para o PR #71.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-294 a AUTO-303
 
 O `VTP-AUTO-293-BATCH` foi aprovado. O serviço de envelope da Rota 22 foi concluído

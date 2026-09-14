@@ -1,5 +1,12 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-304 a AUTO-309
+
+`CNC_THERMAL_EXPANSION_DRIFT_AUDITOR_COMPLETED_LOCAL`. Motor térmico determinístico,
+manifesto, laudo TEXT e painel Web concluídos com validação fail-closed e aviso sobre
+gradientes/compensação ativa. Validação: 234 CNC, 38 focados, 26 Web, Ruff, mypy em
+210 fontes, TypeScript, Next lint e diff aprovados. Próxima etapa: PR #71.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-294 a AUTO-303
 
 `CNC_THERMAL_EXPANSION_DRIFT_CONTRACT_V2_SCAFFOLDED_LOCAL`. A Rota 22 foi validada
