@@ -235,6 +235,22 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "EXPANSÃO TÉRMICA E DERIVA DE EIXOS",
+            (
+                f"status={validated.thermal_expansion_drift_audit.audit_status}",
+                "workpiece_mean_temperature_c="
+                f"{validated.thermal_expansion_drift_audit.workpiece_mean_temperature_c:.9f}",
+                "spindle_mean_temperature_c="
+                f"{validated.thermal_expansion_drift_audit.spindle_mean_temperature_c:.9f}",
+                "total_z_axis_drift_um="
+                f"{validated.thermal_expansion_drift_audit.total_z_axis_drift_um:.9f}",
+                "total_x_axis_drift_um="
+                f"{validated.thermal_expansion_drift_audit.total_x_axis_drift_um:.9f}",
+                "ESTIMATIVA ANALÍTICA DE EXPANSÃO TÉRMICA - NÃO CONSIDERA GRADIENTES "
+                "TÉRMICOS LOCAIS TRANSITÓRIOS OU COMPENSAÇÃO ATIVA POR REFRIGERAÇÃO INTERNA",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

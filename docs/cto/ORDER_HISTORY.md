@@ -1,12 +1,20 @@
 # Histórico de ordens do CTO
 
-## 2026-09-14 — CTO-CODEX-AUTO-294 a AUTO-299
+## 2026-09-14 — CTO-CODEX-AUTO-304 a AUTO-309
+
+O `VTP-AUTO-303-BATCH` foi aprovado. A Rota 23 concluiu serviço, contratos,
+manifesto, TEXT e telemetria Web de expansão do tarugo e deriva térmica X/Z, com
+warning por tolerância e ausência de controles físicos. Branch pronta para o PR #71.
+
+## 2026-09-14 — CTO-CODEX-AUTO-294 a AUTO-303
 
 O `VTP-AUTO-293-BATCH` foi aprovado. O serviço de envelope da Rota 22 foi concluído
 com curva declarada de torque/potência, interpolação determinística, margens de
 reserva e validação cruzada Kienzle. O manifesto, laudo TEXT e viewer Web exibem a
-telemetria e o aviso de derating S1/S6 sem qualquer controle físico. A branch está
-pronta para publicação e abertura do PR #70.
+telemetria e o aviso de derating S1/S6 sem qualquer controle físico. O PR #70 foi
+integrado por squash em `eae463e` após CI aprovado, com branch remota removida e main
+sincronizada. A Rota 23 iniciou o contrato térmico v2 para expansão de tarugo e deriva
+de fuso nos eixos X/Z, sem push ou autoridade física.
 
 ## 2026-09-14 — CTO-CODEX-AUTO-289 a AUTO-293
 

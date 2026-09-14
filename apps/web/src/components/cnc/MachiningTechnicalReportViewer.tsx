@@ -398,6 +398,34 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "DECLARED_SPINDLE_POWER_TORQUE_CURVE_REQUIRES_MACHINE_PROFILE_VALIDATION";
     safety_flags: MachiningReportSafetyFlags;
   };
+  thermal_expansion_drift_audit: {
+    schema_version: "vena-ia.cnc-thermal-expansion-drift-audit/v2";
+    material_profile: "AISI_1020" | "ABNT_1045" | "ALUMINUM_6061_T6";
+    linear_expansion_coefficient_per_c: number;
+    spindle_expansion_coefficient_per_c: number;
+    reference_temperature_c: number;
+    workpiece_mean_temperature_c: number;
+    spindle_mean_temperature_c: number;
+    workpiece_mean_temperature_rise_c: number;
+    spindle_mean_temperature_rise_c: number;
+    workpiece_axial_reference_length_mm: number;
+    workpiece_diameter_reference_mm: number;
+    spindle_z_reference_length_mm: number;
+    workpiece_z_expansion_um: number;
+    workpiece_x_expansion_um: number;
+    spindle_z_drift_um: number;
+    total_z_axis_drift_um: number;
+    total_x_axis_drift_um: number;
+    z_axis_tolerance_um: number;
+    x_axis_tolerance_um: number;
+    audit_status: "THERMAL_DRIFT_WITHIN_DECLARED_TOLERANCE" | "THERMAL_DRIFT_EXCEEDS_DECLARED_TOLERANCE_WARNING";
+    theoretical: true;
+    physical: false;
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ANALYTICAL_THERMAL_DRIFT_EXCLUDES_TRANSIENT_GRADIENTS_COOLANT_AND_MACHINE_COMPENSATION";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -434,6 +462,11 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const spindleEnvelopeCompliant = report.spindle_power_torque_envelope_audit.audit_status === "POWER_TORQUE_ENVELOPE_COMPLIANT";
   const spindleOperatingPoint = report.spindle_power_torque_envelope_audit.operating_points[0];
   const spindleReserve = Math.min(100, Math.max(0, spindleOperatingPoint.power_margin_percent));
+  const thermalDriftTolerated = report.thermal_expansion_drift_audit.audit_status === "THERMAL_DRIFT_WITHIN_DECLARED_TOLERANCE";
+  const thermalImpact = Math.max(
+    report.thermal_expansion_drift_audit.total_z_axis_drift_um / report.thermal_expansion_drift_audit.z_axis_tolerance_um,
+    report.thermal_expansion_drift_audit.total_x_axis_drift_um / report.thermal_expansion_drift_audit.x_axis_tolerance_um,
+  ) * 100;
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -799,6 +832,25 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       <p className="font-mono text-xs text-slate-300">{report.spindle_power_torque_envelope_audit.audit_status}</p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE POTÊNCIA E TORQUE DO FUSO - NÃO CONSIDERA DERATING TÉRMICO CONTÍNUO S1/S6 OU PERDAS POR ENVELHECIMENTO
+      </p>
+    </section>
+
+    <section aria-labelledby="report-thermal-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-thermal-heading" className="text-lg font-semibold">Expansão térmica e impacto dimensional</h2>
+        <span role={thermalDriftTolerated ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${thermalDriftTolerated ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {thermalDriftTolerated ? "DERIVA TÉRMICA TOLERADA" : "ALERTA: DERIVA TÉRMICA EXCEDE TOLERÂNCIA"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Temperatura Média Projetada da Peça" value={`${report.thermal_expansion_drift_audit.workpiece_mean_temperature_c.toFixed(1)} °C`} />
+        <Metric label="Temperatura Média Projetada do Fuso" value={`${report.thermal_expansion_drift_audit.spindle_mean_temperature_c.toFixed(1)} °C`} />
+        <Metric label="Deriva em Z" value={`${report.thermal_expansion_drift_audit.total_z_axis_drift_um.toFixed(3)} µm`} />
+        <Metric label="Deriva em X" value={`${report.thermal_expansion_drift_audit.total_x_axis_drift_um.toFixed(3)} µm`} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">Impacto dimensional: {thermalImpact.toFixed(2)}% da menor tolerância declarada</p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE EXPANSÃO TÉRMICA - NÃO CONSIDERA GRADIENTES TÉRMICOS LOCAIS TRANSITÓRIOS OU COMPENSAÇÃO ATIVA POR REFRIGERAÇÃO INTERNA
       </p>
     </section>
 

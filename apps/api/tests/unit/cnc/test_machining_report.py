@@ -208,6 +208,9 @@ def test_complete_report_replays_deterministically(controller):
     assert report.spindle_power_torque_envelope_audit.operating_points[0].spindle_rpm == (
         report.power_force_audit.spindle_rpm_reference
     )
+    assert report.thermal_expansion_drift_audit.material_profile == (
+        report.power_force_audit.material_profile
+    )
     assert report.tool_life_audits[0].tool_id == report.tools[0].tool_id
     assert report.tool_life_audits[0].estimated_tool_life_minutes > 0
     assert report.tool_life_audits[0].tool_life_consumed_percent > 0
@@ -385,7 +388,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 9
+    assert rendered.count(SAFETY_STAMP) == 10
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -443,3 +446,6 @@ def test_text_export_is_deterministic_and_stamps_every_section():
         "ESTIMATIVA ANALÍTICA DE POTÊNCIA E TORQUE DO FUSO - NÃO CONSIDERA "
         "DERATING TÉRMICO CONTÍNUO S1/S6 OU PERDAS POR ENVELHECIMENTO" in rendered
     )
+    assert "[EXPANSÃO TÉRMICA E DERIVA DE EIXOS]" in rendered
+    assert "total_z_axis_drift_um=" in rendered
+    assert "ESTIMATIVA ANALÍTICA DE EXPANSÃO TÉRMICA" in rendered
