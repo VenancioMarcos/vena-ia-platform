@@ -133,6 +133,26 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "TAYLOR_ANALYTICAL_ESTIMATE_EXCLUDES_REAL_THERMAL_AND_LUBRICATION_VARIATION";
     safety_flags: MachiningReportSafetyFlags;
   }[];
+  tool_wear_geometry_audits: readonly {
+    schema_version: "vena-ia.cnc-tool-wear-geometry-audit/v2";
+    source_tool_life_audit: MachiningTechnicalReportPayload["tool_life_audits"][number];
+    nominal_nose_radius_mm: number;
+    clearance_angle_deg: number;
+    position_angle_deg: number;
+    maximum_allowable_flank_wear_vb_mm: number;
+    estimated_flank_wear_vb_mm: number;
+    flank_wear_progress_percent: number;
+    effective_nose_radius_mm: number;
+    predicted_radial_deviation_um: number;
+    predicted_axial_deviation_um: number;
+    geometry_tolerance_um: number;
+    audit_status: "TOOL_WEAR_GEOMETRY_WITHIN_TOLERANCE" | "TOOL_WEAR_EXCEEDS_TOLERANCE_WARNING";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    compensation_authorized: false;
+    model_limitation: "ANALYTICAL_TOOL_WEAR_GEOMETRY_DOES_NOT_AUTHORIZE_AUTOMATIC_OFFSET_COMPENSATION";
+    safety_flags: MachiningReportSafetyFlags;
+  }[];
   cost_time_audit: {
     schema_version: "vena-ia.cnc-machining-cost-time-audit/v1";
     cost_profile: "BRL_STANDARD" | "USD_STANDARD";
@@ -593,6 +613,41 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </ul>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ANALÍTICA DE TAYLOR - NÃO CONSIDERA FLUTUAÇÕES TÉRMICAS REAIS OU LUBRIFICAÇÃO
+      </p>
+    </section>
+
+    <section aria-labelledby="report-tool-wear-heading" className="space-y-3">
+      <h2 id="report-tool-wear-heading" className="text-lg font-semibold">Desgaste geométrico estimado</h2>
+      <ul className="space-y-3">
+        {report.tool_wear_geometry_audits.map((audit) => {
+          const acceptable = audit.audit_status === "TOOL_WEAR_GEOMETRY_WITHIN_TOLERANCE";
+          const toleranceImpact = Math.min(100, Math.max(0, audit.predicted_radial_deviation_um / audit.geometry_tolerance_um * 100));
+          return <li key={audit.source_tool_life_audit.tool_id} className="rounded-lg border border-slate-700 bg-slate-950 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-mono text-cyan-100">{audit.source_tool_life_audit.tool_id}</span>
+              <span role={acceptable ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${acceptable ? "border-emerald-500 text-emerald-100" : "border-red-500 text-red-100"}`}>
+                {acceptable ? "DESGASTE GEOMÉTRICO ACEITÁVEL" : "ALERTA: DESVIO POR DESGASTE CRÍTICO"}
+              </span>
+            </div>
+            <dl className="mt-3 grid gap-3 sm:grid-cols-3">
+              <Metric label="Desgaste de flanco VB" value={`${audit.estimated_flank_wear_vb_mm.toFixed(4)} mm`} />
+              <Metric label="Desvio radial induzido" value={`${audit.predicted_radial_deviation_um.toFixed(3)} µm`} />
+              <Metric label="Raio de ponta efetivo" value={`${audit.effective_nose_radius_mm.toFixed(4)} mm`} />
+            </dl>
+            <div className="mt-3">
+              <div className="flex items-center justify-between gap-2 text-sm">
+                <span>Desvio induzido vs. tolerância</span>
+                <span className="font-mono">{toleranceImpact.toFixed(2)}%</span>
+              </div>
+              <div role="progressbar" aria-label={`Desvio por desgaste ${audit.source_tool_life_audit.tool_id}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={toleranceImpact} className="mt-2 h-2 overflow-hidden rounded bg-slate-700">
+                <div className={acceptable ? "h-full bg-emerald-500" : "h-full bg-red-500"} style={{ width: `${toleranceImpact}%` }} />
+              </div>
+            </div>
+          </li>;
+        })}
+      </ul>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE DESGASTE DE FLANCO - NÃO CONSIDERA LASCAMENTO, DESGASTE DE CRATERA OU COMPENSAÇÃO ATIVA DE CORRETOR CNC
       </p>
     </section>
 

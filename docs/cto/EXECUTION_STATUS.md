@@ -1,5 +1,13 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-304 a AUTO-313
+
+`CNC_TOOL_WEAR_GEOMETRY_CONTRACT_V2_SCAFFOLDED_LOCAL`. PR #71 integrado por squash
+em `dd099b0` após Frontend CI 1m10s e Backend CI 2m55s, com branch remota removida
+e main sincronizada. A Rota 24 iniciou contrato v2 de desgaste progressivo, VB,
+raio efetivo e desvio geométrico, sem compensação automática. Validação final: 240
+CNC, 6 focados, Ruff, mypy em 210 fontes e diff; sem push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-304 a AUTO-309
 
 `CNC_THERMAL_EXPANSION_DRIFT_AUDITOR_COMPLETED_LOCAL`. Motor térmico determinístico,
