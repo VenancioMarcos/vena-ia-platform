@@ -1,23 +1,23 @@
 # Ordem CTO atual
 
 **Missão:** CTO-CODEX-AUTO-324 a AUTO-333
-**Estado:** CNC_CHIP_BREAKING_MACHINABILITY_AUDITOR_COMPLETED_LOCAL
+**Estado:** CNC_COOLANT_PRESSURE_FLOW_CONTRACT_V2_SCAFFOLDED_LOCAL
 **Data:** 2026-09-14
-**Branch:** `codex/v8.6-cnc-chip-breaking-machinability-auditor`
-**Baseline da branch:** `294440258265c8b06afcbce49c426814293c7a85`
+**Branch:** `codex/v8.7-cnc-coolant-pressure-flow-auditor`
+**Baseline da branch:** `abbbcad44964553aa474760910b7afc551e1da88`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O CTO aprovou o `VTP-AUTO-323-BATCH`. As ordens 324–329 concluíram o motor
-determinístico da Rota 25, integração no manifesto e laudo TEXT, painel Web,
-testes e documentação. O ponto f×ap é comparado aos envelopes PM/PR/PF e o
-snapshot permanece vinculado às fontes Kienzle.
+O PR #73 publicou a Rota 25, recebeu CI integral verde e foi integrado por
+squash em `abbbcad`, com remoção da branch remota e sincronização da main.
+A Rota 26 iniciou o contrato v2 de demanda de fluido Flood/MQL, vazão e pressão
+mínimas por zona e alerta de dissipação térmica insuficiente.
 
 ## Continuidade
 
-Publicar a branch, abrir o Draft PR #73, aguardar CI, promover, integrar por
-squash, sincronizar a main e iniciar a Rota 26 sem push.
+Emitir `VTP-AUTO-333-BATCH` e aguardar parecer. A branch permanece local sem
+push.
 
 ## Limites permanentes
 
