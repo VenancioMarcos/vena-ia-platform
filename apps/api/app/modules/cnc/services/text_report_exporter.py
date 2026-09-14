@@ -86,6 +86,17 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
                 f"grid_region={validated.sustainability_audit.grid_region}",
                 "ESTIMATIVA ECOLÓGICA E ENERGÉTICA ANALÍTICA - NÃO CONSIDERA "
                 "DINÂMICA AUXILIAR DE REFRIGERAÇÃO EXTERNA OU PICOS DE PARTIDA",
+                *(
+                    f"stability[{item.tool_id}]: overhang_ratio_l_d="
+                    f"{item.overhang_ratio_l_d:.9f}; static_deflection_um="
+                    f"{item.static_deflection_um:.9f}; stiffness_n_per_mm="
+                    f"{item.equivalent_stiffness_n_per_mm:.9f}; "
+                    f"stability_limit_depth_mm={item.stability_limit_depth_mm:.9f}; "
+                    f"status={item.stability_status}"
+                    for item in validated.stability_audits
+                ),
+                "ESTIMATIVA ANALÍTICA DE ESTABILIDADE DINÂMICA - NÃO CONSIDERA "
+                "MODOS DE VIBRAÇÃO DA PEÇA OU DO FUSO",
             ),
         ),
         _section(

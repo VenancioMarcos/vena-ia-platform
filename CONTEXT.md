@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.60
+**Versão:** 2.61
 **Última atualização:** 2026-09-13
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,16 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-13
+
+- **Handoff CTO:** `CNC_DYNAMIC_STABILITY_CHATTER_AUDIT_COMPLETED_LOCAL`.
+  O PR #63 integrou a Rota 15 por squash em `2d2428e`; Backend e Frontend CI foram
+  aprovados, a branch remota foi removida e `main=origin/main`. A branch local
+  `codex/v7.7-cnc-stability-chatter-auditor` calcula rigidez de haste cilíndrica
+  engastada, deflexão estática, limite analítico de profundidade por FRF e risco de
+  chatter por `L/D`. Contrato, laudo e viewer vinculam cada ferramenta ao snapshot
+  de força Kienzle e preservam todas as barreiras físicas. Validação local: 139
+  testes CNC, mypy em 203 fontes, Ruff, TypeScript estrito, 13 testes Web e
+  `git diff --check`. Entrega local sem push.
 
 - **Handoff CTO:** `CNC_SUSTAINABILITY_CARBON_AUDIT_COMPLETED_LOCAL`.
   O PR #62 integrou a Rota 14 por squash em `7ba19b4`; Backend e Frontend CI foram

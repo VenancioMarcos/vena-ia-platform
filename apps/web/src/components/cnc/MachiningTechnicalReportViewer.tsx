@@ -182,6 +182,27 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_ENERGY_CARBON_EXCLUDES_EXTERNAL_COOLING_AND_STARTUP_PEAKS";
     safety_flags: MachiningReportSafetyFlags;
   };
+  stability_audits: readonly {
+    schema_version: "vena-ia.cnc-machining-stability-audit/v1";
+    tool_id: string;
+    tool_overhang_mm: number;
+    tool_diameter_mm: number;
+    overhang_ratio_l_d: number;
+    young_modulus_mpa: number;
+    second_moment_area_mm4: number;
+    equivalent_stiffness_n_per_mm: number;
+    cutting_force_n: number;
+    static_deflection_um: number;
+    specific_cutting_pressure_n_per_mm2: number;
+    frf_real_compliance_mm_per_n: number;
+    depth_of_cut_mm: number;
+    stability_limit_depth_mm: number;
+    stability_status: "DYNAMICALLY_STABLE" | "CHATTER_HIGH_RISK_WARNING";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ANALYTICAL_STABILITY_EXCLUDES_WORKPIECE_AND_SPINDLE_VIBRATION_MODES";
+    safety_flags: MachiningReportSafetyFlags;
+  }[];
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -374,6 +395,32 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       <p className="font-mono text-xs text-slate-300">Fator da matriz: {report.sustainability_audit.grid_emission_factor_kg_co2e_per_kwh.toFixed(3)} kg CO2e/kWh</p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         ESTIMATIVA ECOLÓGICA E ENERGÉTICA ANALÍTICA - NÃO CONSIDERA DINÂMICA AUXILIAR DE REFRIGERAÇÃO EXTERNA OU PICOS DE PARTIDA
+      </p>
+    </section>
+
+    <section aria-labelledby="report-stability-heading" className="space-y-3">
+      <h2 id="report-stability-heading" className="text-lg font-semibold">Rigidez e estabilidade dinâmica</h2>
+      <ul className="space-y-3">
+        {report.stability_audits.map((audit) => {
+          const stable = audit.stability_status === "DYNAMICALLY_STABLE";
+          return <li key={audit.tool_id} className="rounded-lg border border-slate-700 bg-slate-950 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-mono text-cyan-100">{audit.tool_id}</span>
+              <span role="status" className={`rounded-full border px-3 py-1 text-xs font-bold ${stable ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-amber-500 bg-amber-950 text-amber-100"}`}>
+                {stable ? "SISTEMA ESTÁVEL" : "ALERTA: RISCO DE CHATTER (L/D CRÍTICO)"}
+              </span>
+            </div>
+            <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Metric label="Relação de balanço L/D" value={audit.overhang_ratio_l_d.toFixed(2)} />
+              <Metric label="Deflexão estática" value={`${audit.static_deflection_um.toFixed(3)} µm`} />
+              <Metric label="Rigidez da haste" value={`${audit.equivalent_stiffness_n_per_mm.toFixed(2)} N/mm`} />
+              <Metric label="ap limite" value={`${audit.stability_limit_depth_mm.toFixed(3)} mm`} />
+            </dl>
+          </li>;
+        })}
+      </ul>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE ESTABILIDADE DINÂMICA - NÃO CONSIDERA MODOS DE VIBRAÇÃO DA PEÇA OU DO FUSO
       </p>
     </section>
 

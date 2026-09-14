@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-13 — CTO-CODEX-AUTO-229 a AUTO-238
+
+`CNC_DYNAMIC_STABILITY_CHATTER_AUDIT_COMPLETED_LOCAL`. O PR #63 teve Backend e
+Frontend CI aprovados e foi integrado por squash em `2d2428e`; branch remota
+removida e main sincronizada. A Rota 16 adiciona rigidez de haste cilíndrica,
+deflexão estática, `L/D`, limite de chatter por FRF, contrato imutável, laudo e
+painel Web por ferramenta. Validação: 139 testes CNC, mypy em 203 fontes, Ruff,
+TypeScript estrito, 13 testes Web e diff. Sem push da Rota 16 ou autoridade física.
+
 ## 2026-09-13 — CTO-CODEX-AUTO-219 a AUTO-228
 
 `CNC_SUSTAINABILITY_CARBON_AUDIT_COMPLETED_LOCAL`. O PR #62 teve Backend e Frontend

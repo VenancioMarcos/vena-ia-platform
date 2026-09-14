@@ -28,6 +28,7 @@ from app.modules.cnc.services.power_force_estimator import estimate_cutting_powe
 from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
 from app.modules.cnc.services.simulation_parser import parse_toolpath_simulation
 from app.modules.cnc.services.sustainability_estimator import estimate_sustainability
+from app.modules.cnc.services.stability_auditor import audit_machining_stability
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 from app.modules.cnc.services.tool_life_estimator import estimate_tool_life
 
@@ -148,6 +149,19 @@ def compile_machining_report(
         cutting_time_minutes=cost_time_audit.cutting_time_minutes,
         total_cycle_time_minutes=cost_time_audit.total_cycle_time_minutes,
     )
+    stability_audits = tuple(
+        audit_machining_stability(
+            tool_id=item.tool,
+            tool_overhang_mm=60.0,
+            tool_diameter_mm=20.0,
+            young_modulus_mpa=210_000.0,
+            cutting_force_n=power_force_audit.fc_nominal_n,
+            specific_cutting_pressure_n_per_mm2=power_force_audit.kc1_1_n_per_mm2,
+            frf_real_compliance_mm_per_n=0.0005,
+            depth_of_cut_mm=power_force_audit.depth_of_cut_mm,
+        )
+        for item in estimate.per_tool_breakdown
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -172,6 +186,7 @@ def compile_machining_report(
         tool_life_audits=tool_life_audits,
         cost_time_audit=cost_time_audit,
         sustainability_audit=sustainability_audit,
+        stability_audits=stability_audits,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -188,6 +203,8 @@ def compile_machining_report(
             "Taylor tool-life values exclude real thermal fluctuations and lubrication.",
             "Cost and time values exclude logistics, unplanned downtime and taxes.",
             "Energy and carbon values exclude external cooling and startup power peaks.",
+            "Stability assumes a 20 mm steel holder, 60 mm free overhang and declared "
+            "analytical FRF compliance; workpiece and spindle modes are excluded.",
         ),
     )
 
