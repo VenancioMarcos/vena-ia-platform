@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.77
+**Versão:** 2.78
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,14 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_WORKHOLDING_CLAMPING_PR_READY`.
+  O `VTP-AUTO-348-BATCH` foi aprovado. A branch da Rota 27 foi publicada e o
+  PR #76 aberto contra `main`. O Frontend CI passou em 1m16s. A primeira execução
+  do Backend CI concluiu código, lint, tipagem, testes e migrações, mas falhou ao
+  baixar a imagem MinIO por `504 Gateway Timeout`; a reexecução do job passou em
+  3m08s sem mudança no código. O PR foi promovido e confirmado `OPEN`,
+  `isDraft=false`, `MERGEABLE/CLEAN`. Nenhum merge foi executado.
 
 - **Handoff CTO:** `CNC_WORKHOLDING_CLAMPING_AUDITOR_COMPLETED_LOCAL`.
   O `VTP-AUTO-338-BATCH` foi aprovado. O PR #75 publicou o HUD da Rota 26,

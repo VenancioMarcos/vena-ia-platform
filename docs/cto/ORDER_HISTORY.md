@@ -1,5 +1,12 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-349-BATCH
+
+O `VTP-AUTO-348-BATCH` foi aprovado. A Rota 27 foi publicada no Draft PR #76.
+Frontend CI passou em 1m16s; Backend CI passou no rerun em 3m08s depois de uma
+falha externa 504 no download da imagem MinIO. O PR foi promovido e confirmado
+`OPEN`, `MERGEABLE/CLEAN`, sem merge nesta ordem.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-339 a AUTO-348
 
 O `VTP-AUTO-338-BATCH` foi aprovado. O PR #75 publicou o HUD da Rota 26, passou

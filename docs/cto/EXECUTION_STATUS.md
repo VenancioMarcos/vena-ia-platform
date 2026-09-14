@@ -1,5 +1,14 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-349-BATCH
+
+`CNC_WORKHOLDING_CLAMPING_PR_READY`. O `VTP-AUTO-348-BATCH` foi aprovado. A
+branch `codex/v8.9-cnc-workholding-clamping-auditor` foi publicada e o PR #76
+aberto. O Frontend CI passou em 1m16s. A primeira execução Backend chegou à etapa
+MinIO após concluir os gates do código, mas o registry retornou 504; o rerun do
+job passou em 3m08s sem alteração de código. PR promovido e confirmado `OPEN`,
+`isDraft=false`, `MERGEABLE/CLEAN`. Nenhum merge foi realizado.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-339 a AUTO-348
 
 `CNC_WORKHOLDING_CLAMPING_AUDITOR_COMPLETED_LOCAL`. O `VTP-AUTO-338-BATCH` foi

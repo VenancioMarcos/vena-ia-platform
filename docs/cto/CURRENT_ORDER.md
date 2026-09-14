@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-339 a AUTO-348
-**Estado:** CNC_WORKHOLDING_CLAMPING_AUDITOR_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-349-BATCH
+**Estado:** CNC_WORKHOLDING_CLAMPING_PR_READY
 **Data:** 2026-09-14
 **Branch:** `codex/v8.9-cnc-workholding-clamping-auditor`
 **Baseline da branch:** `e6da01d0f18e4da143078f6c1cfc33b401257bd0`
@@ -9,17 +9,16 @@
 
 ## Estado vigente
 
-O PR #75 publicou a integração Web/HUD da Rota 26, recebeu Frontend e Backend CI
-verdes e foi integrado por squash em `e6da01d`, com remoção da branch remota e
-sincronização da main. A Rota de fixação calcula perda centrífuga das três
-castanhas, força residual e fator de segurança contra deslizamento. Contrato,
-JSON, TEXT e Web preservam falha fechada, revisão humana e verificação física de
-carga, sem controles da placa ou da máquina.
+O `VTP-AUTO-348-BATCH` foi aprovado. A branch da Rota 27 foi publicada e o Draft
+PR #76 aberto contra `main`. O Frontend CI passou em 1m16s; o Backend CI passou em
+3m08s na reexecução após uma falha externa `504 Gateway Timeout` no download da
+imagem MinIO. O PR foi promovido e está `OPEN`, `isDraft=false`,
+`MERGEABLE/CLEAN`, sem autorização de merge nesta ordem.
 
 ## Continuidade
 
-Emitir `VTP-AUTO-348-BATCH` e aguardar parecer. A branch permanece local sem
-push.
+Emitir `VTP-AUTO-349-BATCH`, solicitar parecer e aguardar a próxima ordem sem
+executar merge.
 
 ## Limites permanentes
 
