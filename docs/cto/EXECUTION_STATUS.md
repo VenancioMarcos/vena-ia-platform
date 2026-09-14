@@ -1,5 +1,18 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-279 a AUTO-288
+
+`CNC_PART_ELASTIC_DEFLECTION_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-278-BATCH`; o PR #68 teve Backend CI em 3m50s e Frontend CI em 1m16s e
+foi integrado por squash em `bacaaa0`, com branch remota removida e main
+sincronizada. A Rota 21 calcula `Fr = 0,5 × Fc`, `I = πD⁴/64`, rigidez e deflexão
+de uma peça cilíndrica engastada, compara o resultado à tolerância radial de
+0,02 mm e falha fechado para entradas não físicas. Contrato, JSON, TEXT e Web
+vinculam força Kienzle, perfil nominal, comprimento e módulo do material, exibindo
+a hipótese de balanço livre sem contraponto ou luneta. Entrega local, sem push ou
+autoridade física. Validação: 900 testes API/2 ignorados, 211 CNC, 38 focados,
+22 Web, mypy em 208 fontes, Ruff, TypeScript, Next lint e diff.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-269 a AUTO-278
 
 `CNC_RESIDUAL_STOCK_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o

@@ -436,7 +436,12 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 7
+        ) == 8
+        assert "[FLEXÃO ELÁSTICA DA PEÇA]" in response.text
+        assert (
+            "ESTIMATIVA ANALÍTICA DE FLEXÃO ELÁSTICA DA PEÇA - NÃO CONSIDERA "
+            "CONTAPONTO OU LUNETA DE APOIO" in response.text
+        )
         assert "[FOLHA DE PROCESSO]" in response.text
         assert "FOLHA DE PROCESSO TEÓRICA ANALÍTICA" in response.text
         assert "[AUDITORIA DE MATERIAL REMANESCENTE]" in response.text

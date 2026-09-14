@@ -29,6 +29,7 @@ from app.modules.cnc.services.machining_report import (
     compile_machining_report,
     plan_fingerprint,
 )
+from app.modules.cnc.services.part_deflection_auditor import audit_part_elastic_deflection
 from app.modules.cnc.services.sustainability_estimator import estimate_sustainability
 from app.modules.cnc.services.stability_auditor import audit_machining_stability
 from app.modules.cnc.services.text_report_exporter import (
@@ -190,6 +191,14 @@ def test_complete_report_replays_deterministically(controller):
     assert report.residual_stock_audit.max_residual_stock_mm == pytest.approx(0)
     assert report.residual_stock_audit.min_residual_stock_mm == pytest.approx(0)
     assert report.residual_stock_audit.gouging_detected is False
+    assert report.part_elastic_deflection_audit.radial_cutting_force_n == pytest.approx(
+        report.power_force_audit.fc_nominal_n * 0.5
+    )
+    assert report.part_elastic_deflection_audit.part_unsupported_length_mm == pytest.approx(22)
+    assert report.part_elastic_deflection_audit.minimum_diameter_mm == pytest.approx(20)
+    assert report.part_elastic_deflection_audit.deflection_status == (
+        "ELASTIC_DEFLECTION_COMPLIANT"
+    )
     assert report.tool_life_audits[0].tool_id == report.tools[0].tool_id
     assert report.tool_life_audits[0].estimated_tool_life_minutes > 0
     assert report.tool_life_audits[0].tool_life_consumed_percent > 0
@@ -342,6 +351,24 @@ def test_report_rejects_residual_stock_audit_transplanted_from_another_plan():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_valid_part_deflection_from_another_force_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    current = report.part_elastic_deflection_audit
+    other = audit_part_elastic_deflection(
+        part_unsupported_length_mm=current.part_unsupported_length_mm,
+        minimum_diameter_mm=current.minimum_diameter_mm,
+        radial_cutting_force_n=current.radial_cutting_force_n + 100.0,
+        young_modulus_mpa=current.young_modulus_mpa,
+        radial_tolerance_mm=current.radial_tolerance_mm,
+    )
+    body = report.model_dump()
+    body["part_elastic_deflection_audit"] = other.model_dump()
+
+    with pytest.raises(ValidationError, match="REPORT_PART_DEFLECTION_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -349,8 +376,8 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 7
-    assert rendered.count("[") == 17
+    assert rendered.count(SAFETY_STAMP) == 8
+    assert rendered.count("[") == 18
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -392,3 +419,12 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert "status=UNIFORM_ALLOWANCE_COMPLIANT" in rendered
     assert "max_residual_stock_mm=0.000000000" in rendered
     assert "AUDITORIA ANALÍTICA DE MATERIAL REMANESCENTE" in rendered
+    assert "[FLEXÃO ELÁSTICA DA PEÇA]" in rendered
+    assert "radial_cutting_force_N=" in rendered
+    assert "calculated_stiffness_n_per_mm=" in rendered
+    assert "max_deflection_um=" in rendered
+    assert "deflection_status=ELASTIC_DEFLECTION_COMPLIANT" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE FLEXÃO ELÁSTICA DA PEÇA - NÃO CONSIDERA "
+        "CONTAPONTO OU LUNETA DE APOIO" in rendered
+    )

@@ -499,6 +499,34 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  part_elastic_deflection_audit: {
+    schema_version: "vena-ia.cnc-part-elastic-deflection-audit/v1",
+    part_unsupported_length_mm: 101,
+    minimum_diameter_mm: 51,
+    radial_cutting_force_n: 570.625,
+    young_modulus_mpa: 210000,
+    second_moment_area_mm4: 332086.0275259113,
+    calculated_stiffness_n_per_mm: 203061.23874607915,
+    radial_tolerance_mm: 0.02,
+    max_deflection_um: 2.8101128680375393,
+    deflection_status: "ELASTIC_DEFLECTION_COMPLIANT",
+    theoretical: true,
+    physical: false,
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ANALYTICAL_PART_DEFLECTION_EXCLUDES_TAILSTOCK_AND_STEADY_REST_SUPPORT",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -789,6 +817,31 @@ test("renders critical gouging as a red alert without operational controls", () 
   assert.match(html, /role="alert"[^>]*>ALERTA: SUBCORTE DETECTADO \(GOUGING\)/);
   assert.match(html, /CRITICAL_GOUGING_VIOLATION/);
   assert.match(html, /-0\.010 mm/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
+});
+
+test("renders compliant part-deflection telemetry and unsupported-overhang note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Rigidez elástica da peça/);
+  assert.match(html, /2\.810 µm/);
+  assert.match(html, /203061\.24 N\/mm/);
+  assert.match(html, /RIGIDEZ DA PEÇA CONFORME/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE FLEXÃO ELÁSTICA DA PEÇA - NÃO CONSIDERA CONTAPONTO OU LUNETA DE APOIO/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
+});
+
+test("renders excessive part-deflection warning without physical controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    part_elastic_deflection_audit: {
+      ...report.part_elastic_deflection_audit,
+      max_deflection_um: 25,
+      deflection_status: "PART_DEFLECTION_EXCEEDS_TOLERANCE_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: DEFLEXÃO EXCESSIVA DA PEÇA/);
+  assert.match(html, /25\.000 µm/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina/i);
 });
 

@@ -353,6 +353,24 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ANALYTICAL_RESIDUAL_STOCK_AUDIT_DOES_NOT_REPLACE_PHYSICAL_CMM_MEASUREMENT";
     safety_flags: MachiningReportSafetyFlags;
   };
+  part_elastic_deflection_audit: {
+    schema_version: "vena-ia.cnc-part-elastic-deflection-audit/v1";
+    part_unsupported_length_mm: number;
+    minimum_diameter_mm: number;
+    radial_cutting_force_n: number;
+    young_modulus_mpa: number;
+    second_moment_area_mm4: number;
+    calculated_stiffness_n_per_mm: number;
+    radial_tolerance_mm: number;
+    max_deflection_um: number;
+    deflection_status: "ELASTIC_DEFLECTION_COMPLIANT" | "PART_DEFLECTION_EXCEEDS_TOLERANCE_WARNING";
+    theoretical: true;
+    physical: false;
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ANALYTICAL_PART_DEFLECTION_EXCLUDES_TAILSTOCK_AND_STEADY_REST_SUPPORT";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -385,6 +403,7 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const powerWithinLimits = report.power_force_audit.power_status === "POWER_WITHIN_LIMITS";
   const residualCompliant = report.residual_stock_audit.status === "UNIFORM_ALLOWANCE_COMPLIANT";
   const gougingDetected = report.residual_stock_audit.status === "CRITICAL_GOUGING_VIOLATION";
+  const partRigidityCompliant = report.part_elastic_deflection_audit.deflection_status === "ELASTIC_DEFLECTION_COMPLIANT";
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -702,6 +721,25 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       <p className="font-mono text-xs text-slate-300">{report.residual_stock_audit.status}</p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         AUDITORIA ANALÍTICA DE MATERIAL REMANESCENTE - NÃO SUBSTITUI MEDIÇÃO TRIDIMENSIONAL FÍSICA EM CMM
+      </p>
+    </section>
+
+    <section aria-labelledby="report-part-deflection-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-part-deflection-heading" className="text-lg font-semibold">Rigidez elástica da peça</h2>
+        <span role={partRigidityCompliant ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${partRigidityCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-amber-500 bg-amber-950 text-amber-100"}`}>
+          {partRigidityCompliant ? "RIGIDEZ DA PEÇA CONFORME" : "ALERTA: DEFLEXÃO EXCESSIVA DA PEÇA"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Deflexão teórica máxima" value={`${report.part_elastic_deflection_audit.max_deflection_um.toFixed(3)} µm`} />
+        <Metric label="Rigidez calculada" value={`${report.part_elastic_deflection_audit.calculated_stiffness_n_per_mm.toFixed(2)} N/mm`} />
+        <Metric label="Comprimento livre" value={`${report.part_elastic_deflection_audit.part_unsupported_length_mm.toFixed(3)} mm`} />
+        <Metric label="Diâmetro mínimo" value={`${report.part_elastic_deflection_audit.minimum_diameter_mm.toFixed(3)} mm`} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">{report.part_elastic_deflection_audit.deflection_status}</p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        ESTIMATIVA ANALÍTICA DE FLEXÃO ELÁSTICA DA PEÇA - NÃO CONSIDERA CONTAPONTO OU LUNETA DE APOIO
       </p>
     </section>
 

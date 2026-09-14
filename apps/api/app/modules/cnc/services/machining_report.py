@@ -26,6 +26,10 @@ from app.modules.cnc.services.geometry_auditor import (
 )
 from app.modules.cnc.services.power_force_estimator import estimate_cutting_power_force
 from app.modules.cnc.services.parameter_optimizer import optimize_cutting_parameters
+from app.modules.cnc.services.part_deflection_auditor import (
+    audit_part_elastic_deflection,
+    material_young_modulus_mpa,
+)
 from app.modules.cnc.services.process_sheet_generator import generate_process_sheet
 from app.modules.cnc.services.residual_stock_auditor import audit_residual_stock
 from app.modules.cnc.services.roughness_estimator import estimate_surface_roughness
@@ -231,6 +235,21 @@ def compile_machining_report(
         linear_tolerance_mm=record.request.linear_tolerance_mm,
         tool_cutting_edge_length_mm=record.request.tool_params.cutting_edge_length_mm,
     )
+    minimum_diameter_mm = (
+        min(
+            point.r_mm
+            for point in record.source_profile_data
+            if point.r_mm > record.request.linear_tolerance_mm
+        )
+        * 2.0
+    )
+    part_elastic_deflection_audit = audit_part_elastic_deflection(
+        part_unsupported_length_mm=record.source_brep_bounds.total_z_length_mm,
+        minimum_diameter_mm=minimum_diameter_mm,
+        radial_cutting_force_n=power_force_audit.fc_nominal_n * 0.5,
+        young_modulus_mpa=material_young_modulus_mpa(power_force_audit.material_profile),
+        radial_tolerance_mm=0.02,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -260,6 +279,7 @@ def compile_machining_report(
         risk_matrix=risk_matrix,
         process_sheet=process_sheet,
         residual_stock_audit=residual_stock_audit,
+        part_elastic_deflection_audit=part_elastic_deflection_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -285,6 +305,8 @@ def compile_machining_report(
             "The process routing sheet is theoretical and requires machine-setup approval.",
             "Residual-stock analysis is theoretical and does not replace physical CMM "
             "measurement.",
+            "Part elastic deflection models the full nominal length as an unsupported "
+            "cantilever and excludes tailstock or steady-rest support.",
         ),
     )
 
