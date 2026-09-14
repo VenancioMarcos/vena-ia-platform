@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.75
+**Versão:** 2.76
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,17 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_COOLANT_PRESSURE_FLOW_WEB_HUD_COMPLETED_LOCAL`.
+  O `VTP-AUTO-333-BATCH` foi aprovado. O PR #74 publicou o contrato da Rota 26,
+  passou no Backend CI em 3m42s e foi integrado por squash em `979ed4e`; a branch
+  remota foi removida e `main=origin/main`. A branch
+  `codex/v8.8-cnc-coolant-web-hud` integra o auditor ao relatório JSON/TEXT e ao
+  viewer Web: modo, vazão, pressão, margens e requisitos imutáveis das zonas
+  primária, ferramenta-cavaco e ferramenta-peça aparecem em tabela tipada, com
+  badges de dissipação adequada ou insuficiente. Não há controles de bomba,
+  válvula ou máquina. Validação: 287 testes CNC, 32 testes Web, Ruff, mypy em 232
+  fontes, TypeScript, Next lint e `git diff --check`; entrega local sem push.
 
 - **Handoff CTO:** `CNC_COOLANT_PRESSURE_FLOW_CONTRACT_V2_SCAFFOLDED_LOCAL`.
   O PR #73 integrou a Rota 25 por squash em `abbbcad` após Frontend CI em

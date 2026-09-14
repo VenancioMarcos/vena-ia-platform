@@ -294,6 +294,30 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "DEMANDA DE FLUIDO POR ZONA TÉRMICA",
+            (
+                f"coolant_mode={validated.coolant_pressure_flow_audit.coolant_mode}",
+                "programmed_flow_l_per_min="
+                f"{validated.coolant_pressure_flow_audit.programmed_flow_l_per_min:.9f}",
+                "programmed_pressure_bar="
+                f"{validated.coolant_pressure_flow_audit.programmed_pressure_bar:.9f}",
+                *(
+                    f"zone[{item.cutting_zone}]: minimum_flow_l_per_min="
+                    f"{item.minimum_flow_l_per_min:.9f}; minimum_pressure_bar="
+                    f"{item.minimum_pressure_bar:.9f}"
+                    for item in validated.coolant_pressure_flow_audit.zone_requirements
+                ),
+                "flow_margin_percent="
+                f"{validated.coolant_pressure_flow_audit.flow_margin_percent:.9f}",
+                "pressure_margin_percent="
+                f"{validated.coolant_pressure_flow_audit.pressure_margin_percent:.9f}",
+                "status="
+                f"{validated.coolant_pressure_flow_audit.thermal_dissipation_status}",
+                "ESTIMATIVA ANALÍTICA DE DEMANDA DE FLUIDO - NÃO CONTROLA BOMBAS OU "
+                "VÁLVULAS DE MÁQUINA",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

@@ -5,6 +5,9 @@ from app.modules.cnc.schemas import (
     CoolantPressureFlowAuditPayload,
     CoolantZoneRequirement,
 )
+from app.modules.cnc.services.coolant_pressure_flow_auditor import (
+    audit_coolant_pressure_flow,
+)
 
 
 def _requirements(mode: str) -> tuple[CoolantZoneRequirement, ...]:
@@ -144,3 +147,32 @@ def test_invalid_numeric_values_and_authority_promotion_fail_closed() -> None:
     body["physical_use_authorized"] = True
     with pytest.raises(ValidationError):
         CoolantPressureFlowAuditPayload.model_validate(body)
+
+
+@pytest.mark.parametrize(
+    ("mode", "flow", "pressure", "status"),
+    [
+        ("FLOOD", 18.0, 8.0, "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS"),
+        ("FLOOD", 10.0, 8.0, "INSUFFICIENT_THERMAL_DISSIPATION_WARNING"),
+        ("MQL", 0.10, 7.0, "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS"),
+    ],
+)
+def test_auditor_builds_deterministic_review_only_snapshot(
+    mode: str,
+    flow: float,
+    pressure: float,
+    status: str,
+) -> None:
+    audit = audit_coolant_pressure_flow(
+        coolant_mode=mode,  # type: ignore[arg-type]
+        programmed_flow_l_per_min=flow,
+        programmed_pressure_bar=pressure,
+    )
+    assert audit.thermal_dissipation_status == status
+    assert audit == audit_coolant_pressure_flow(
+        coolant_mode=mode,  # type: ignore[arg-type]
+        programmed_flow_l_per_min=flow,
+        programmed_pressure_bar=pressure,
+    )
+    assert audit.automatic_coolant_control_authorized is False
+    assert audit.physical_use_authorized is False

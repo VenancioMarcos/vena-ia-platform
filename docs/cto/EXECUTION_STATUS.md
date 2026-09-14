@@ -1,5 +1,16 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-334 a AUTO-338
+
+`CNC_COOLANT_PRESSURE_FLOW_WEB_HUD_COMPLETED_LOCAL`. O `VTP-AUTO-333-BATCH` foi
+aprovado. O PR #74 passou no Backend CI em 3m42s, foi integrado por squash em
+`979ed4e`, teve a branch remota removida e a main sincronizada. A Rota 26 agora
+compila o snapshot de fluido no relatório JSON/TEXT e exibe uma tabela Web por
+zona térmica, vazão, pressão e margens, com badge adequado ou alerta insuficiente
+e nota explícita de ausência de controle de bombas/válvulas. Validação: 287 CNC,
+32 Web, Ruff, mypy em 232 fontes, TypeScript, Next lint e diff; branch local sem
+push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-324 a AUTO-333
 
 `CNC_COOLANT_PRESSURE_FLOW_CONTRACT_V2_SCAFFOLDED_LOCAL`. A Rota 25 foi

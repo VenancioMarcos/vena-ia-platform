@@ -1,5 +1,14 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-334 a AUTO-338
+
+O `VTP-AUTO-333-BATCH` foi aprovado. O PR #74 publicou o contrato v2 da Rota 26,
+passou no Backend CI e foi integrado por squash em `979ed4e`, com remoção da
+branch remota e sincronização da main. A branch v8.8 adiciona o auditor ao
+relatório JSON/TEXT e ao viewer Web, com tabela das três zonas térmicas, telemetria
+de vazão/pressão, margens e badges de dissipação. Entrega local sem push,
+controles de máquina ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-324 a AUTO-333
 
 A Rota 25 foi publicada, promovida e integrada pelo PR #73 em `abbbcad` após

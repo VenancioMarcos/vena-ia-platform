@@ -711,6 +711,49 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  coolant_pressure_flow_audit: {
+    schema_version: "vena-ia.cnc-coolant-pressure-flow-audit/v2",
+    coolant_mode: "FLOOD",
+    programmed_flow_l_per_min: 18,
+    programmed_pressure_bar: 8,
+    zone_requirements: [
+      {
+        cutting_zone: "PRIMARY_SHEAR_ZONE",
+        minimum_flow_l_per_min: 12,
+        minimum_pressure_bar: 4,
+      },
+      {
+        cutting_zone: "SECONDARY_TOOL_CHIP_INTERFACE",
+        minimum_flow_l_per_min: 15,
+        minimum_pressure_bar: 6,
+      },
+      {
+        cutting_zone: "TERTIARY_TOOL_WORKPIECE_INTERFACE",
+        minimum_flow_l_per_min: 10,
+        minimum_pressure_bar: 3,
+      },
+    ],
+    minimum_required_flow_l_per_min: 15,
+    minimum_required_pressure_bar: 6,
+    flow_margin_percent: 20,
+    pressure_margin_percent: 33.333333333,
+    thermal_dissipation_status: "COOLANT_DEMAND_WITHIN_TABULATED_REQUIREMENTS",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    automatic_coolant_control_authorized: false,
+    model_limitation: "TABULATED_COOLANT_DEMAND_REQUIRES_MACHINE_AND_NOZZLE_PHYSICAL_VALIDATION",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1116,6 +1159,34 @@ test("renders chip-breaking warning without machine or parameter controls", () =
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE CAVACO CONTÍNUO\/SOBRECARGA/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|alterar parâmetros/i);
+});
+
+test("renders typed coolant zone demand table, telemetry, and adequate badge", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Demanda de fluido por zona térmica/);
+  assert.match(html, /PRIMARY_SHEAR_ZONE/);
+  assert.match(html, /SECONDARY_TOOL_CHIP_INTERFACE/);
+  assert.match(html, /TERTIARY_TOOL_WORKPIECE_INTERFACE/);
+  assert.match(html, /18\.000 L\/min/);
+  assert.match(html, /8\.000 bar/);
+  assert.match(html, /20\.00% \/ 33\.33%/);
+  assert.match(html, /DISSIPAÇÃO TÉRMICA ADEQUADA/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE DEMANDA DE FLUIDO - NÃO CONTROLA BOMBAS OU VÁLVULAS DE MÁQUINA/);
+});
+
+test("renders insufficient coolant warning without pump or valve controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    coolant_pressure_flow_audit: {
+      ...report.coolant_pressure_flow_audit,
+      programmed_flow_l_per_min: 10,
+      flow_margin_percent: -33.333333333,
+      thermal_dissipation_status: "INSUFFICIENT_THERMAL_DISSIPATION_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: INSUFFICIENT_THERMAL_DISSIPATION_WARNING/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|controlar bomba|controlar válvula/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {

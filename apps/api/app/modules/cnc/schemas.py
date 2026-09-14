@@ -1997,6 +1997,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     spindle_power_torque_envelope_audit: SpindlePowerTorqueEnvelopeAuditPayload
     thermal_expansion_drift_audit: ThermalExpansionDriftAuditPayload
     chip_breaking_machinability_audit: ChipBreakingMachinabilityAuditPayload
+    coolant_pressure_flow_audit: CoolantPressureFlowAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -2255,4 +2256,6 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             for actual, expected in chip_breaking_sources
         ):
             raise ValueError("REPORT_CHIP_BREAKING_SOURCE_INCONSISTENT")
+        if self.coolant_pressure_flow_audit.safety_flags != self.safety_flags:
+            raise ValueError("REPORT_COOLANT_SAFETY_FLAGS_INCONSISTENT")
         return self
