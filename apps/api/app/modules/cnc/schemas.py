@@ -619,6 +619,72 @@ class MachiningSustainabilityAuditPayload(_CNCGenerationContract):
         return self
 
 
+class MachiningStabilityAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-machining-stability-audit/v1"] = (
+        "vena-ia.cnc-machining-stability-audit/v1"
+    )
+    tool_id: str = Field(min_length=1, max_length=64)
+    tool_overhang_mm: float = Field(gt=0)
+    tool_diameter_mm: float = Field(gt=0)
+    overhang_ratio_l_d: float = Field(gt=0)
+    young_modulus_mpa: float = Field(gt=0)
+    second_moment_area_mm4: float = Field(gt=0)
+    equivalent_stiffness_n_per_mm: float = Field(gt=0)
+    cutting_force_n: float = Field(gt=0)
+    static_deflection_um: float = Field(gt=0)
+    specific_cutting_pressure_n_per_mm2: float = Field(gt=0)
+    frf_real_compliance_mm_per_n: float = Field(gt=0)
+    depth_of_cut_mm: float = Field(gt=0)
+    stability_limit_depth_mm: float = Field(gt=0)
+    stability_status: Literal["DYNAMICALLY_STABLE", "CHATTER_HIGH_RISK_WARNING"]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_STABILITY_EXCLUDES_WORKPIECE_AND_SPINDLE_VIBRATION_MODES"
+    ] = "ANALYTICAL_STABILITY_EXCLUDES_WORKPIECE_AND_SPINDLE_VIBRATION_MODES"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_stability_model(self) -> "MachiningStabilityAuditPayload":
+        expected_ratio = self.tool_overhang_mm / self.tool_diameter_mm
+        expected_inertia = math.pi * self.tool_diameter_mm**4 / 64
+        expected_stiffness = (
+            3 * self.young_modulus_mpa * expected_inertia / self.tool_overhang_mm**3
+        )
+        expected_deflection = self.cutting_force_n / expected_stiffness * 1_000
+        expected_limit = 1 / (
+            2
+            * self.specific_cutting_pressure_n_per_mm2
+            * self.frf_real_compliance_mm_per_n
+        )
+        comparisons = (
+            (self.overhang_ratio_l_d, expected_ratio, "STABILITY_OVERHANG_RATIO_INCONSISTENT"),
+            (self.second_moment_area_mm4, expected_inertia, "STABILITY_INERTIA_INCONSISTENT"),
+            (
+                self.equivalent_stiffness_n_per_mm,
+                expected_stiffness,
+                "STABILITY_STIFFNESS_INCONSISTENT",
+            ),
+            (self.static_deflection_um, expected_deflection, "STABILITY_DEFLECTION_INCONSISTENT"),
+            (
+                self.stability_limit_depth_mm,
+                expected_limit,
+                "STABILITY_LIMIT_DEPTH_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "DYNAMICALLY_STABLE"
+            if self.overhang_ratio_l_d <= 4 and self.depth_of_cut_mm <= self.stability_limit_depth_mm
+            else "CHATTER_HIGH_RISK_WARNING"
+        )
+        if self.stability_status != expected_status:
+            raise ValueError("STABILITY_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -641,6 +707,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     tool_life_audits: tuple[ToolLifeTaylorAuditPayload, ...] = Field(min_length=1)
     cost_time_audit: MachiningCostTimeAuditPayload
     sustainability_audit: MachiningSustainabilityAuditPayload
+    stability_audits: tuple[MachiningStabilityAuditPayload, ...] = Field(min_length=1)
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -695,4 +762,24 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             abs_tol=5e-9,
         ):
             raise ValueError("REPORT_SUSTAINABILITY_SOURCE_INCONSISTENT")
+        stability_by_tool = {item.tool_id: item for item in self.stability_audits}
+        if len(stability_by_tool) != len(self.stability_audits) or set(stability_by_tool) != {
+            item.tool_id for item in self.tools
+        }:
+            raise ValueError("REPORT_STABILITY_TOOL_SOURCE_INCONSISTENT")
+        for stability in self.stability_audits:
+            if not math.isclose(
+                stability.cutting_force_n,
+                self.power_force_audit.fc_nominal_n,
+                abs_tol=5e-9,
+            ) or not math.isclose(
+                stability.specific_cutting_pressure_n_per_mm2,
+                self.power_force_audit.kc1_1_n_per_mm2,
+                abs_tol=5e-9,
+            ) or not math.isclose(
+                stability.depth_of_cut_mm,
+                self.power_force_audit.depth_of_cut_mm,
+                abs_tol=5e-9,
+            ):
+                raise ValueError("REPORT_STABILITY_SOURCE_INCONSISTENT")
         return self

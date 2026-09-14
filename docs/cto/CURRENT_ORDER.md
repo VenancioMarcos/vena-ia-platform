@@ -1,22 +1,23 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-219 a AUTO-228
-**Estado:** CNC_SUSTAINABILITY_CARBON_AUDIT_COMPLETED_LOCAL
+**Missão:** CTO-CODEX-AUTO-229 a AUTO-238
+**Estado:** CNC_DYNAMIC_STABILITY_CHATTER_AUDIT_COMPLETED_LOCAL
 **Data:** 2026-09-13
-**Branch:** `codex/v7.6-cnc-sustainability-carbon-estimator`
-**Baseline da branch:** `7ba19b4993dc14d710092e66fcdac40e4e6fac97`
+**Branch:** `codex/v7.7-cnc-stability-chatter-auditor`
+**Baseline da branch:** `2d2428ed8ba531245649a7762369d6f992a1b5c2`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O PR #62 integrou a Rota 14 por squash em `7ba19b4`; a branch remota foi removida e
-`main=origin/main`. A Rota 15 estima consumo elétrico de corte/standby e carbono por
-matriz regional, com vínculo verificável a potência/tempo no contrato, laudo e viewer,
-sempre como análise ecológica teórica.
+O PR #63 integrou a Rota 15 por squash em `2d2428e`; a branch remota foi removida e
+`main=origin/main`. A Rota 16 audita rigidez da haste, deflexão estática, balanço
+`L/D` e limite simplificado de chatter por FRF. O manifesto cruza cada auditoria com
+força, pressão específica e profundidade Kienzle e o viewer mantém caráter apenas
+analítico.
 
 ## Continuidade
 
-Enviar VTP-AUTO-228-BATCH ao CTO e aguardar parecer e próxima ordem. A branch permanece
+Enviar VTP-AUTO-238-BATCH ao CTO e aguardar parecer e próxima ordem. A branch permanece
 local e não deve receber push nesta etapa.
 
 ## Limites permanentes

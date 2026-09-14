@@ -211,6 +211,37 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  stability_audits: [{
+    schema_version: "vena-ia.cnc-machining-stability-audit/v1",
+    tool_id: "T0101",
+    tool_overhang_mm: 60,
+    tool_diameter_mm: 20,
+    overhang_ratio_l_d: 3,
+    young_modulus_mpa: 210000,
+    second_moment_area_mm4: 7853.981633974,
+    equivalent_stiffness_n_per_mm: 22907.446432426,
+    cutting_force_n: 1141.25,
+    static_deflection_um: 49.820044472,
+    specific_cutting_pressure_n_per_mm2: 1900,
+    frf_real_compliance_mm_per_n: 0.0005,
+    depth_of_cut_mm: 0.5,
+    stability_limit_depth_mm: 0.526315789,
+    stability_status: "DYNAMICALLY_STABLE",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ANALYTICAL_STABILITY_EXCLUDES_WORKPIECE_AND_SPINDLE_VIBRATION_MODES",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  }],
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -369,4 +400,32 @@ test("renders sustainability telemetry and the informational grid selector", () 
   assert.match(html, /0\.085 kg CO2e\/kWh/);
   assert.match(html, /ESTIMATIVA ECOLÓGICA E ENERGÉTICA ANALÍTICA - NÃO CONSIDERA DINÂMICA AUXILIAR DE REFRIGERAÇÃO EXTERNA OU PICOS DE PARTIDA/);
   assert.doesNotMatch(html, /<button/i);
+});
+
+test("renders stable rigidity telemetry and the mandatory dynamic limitation", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Rigidez e estabilidade dinâmica/);
+  assert.match(html, /Relação de balanço L\/D/);
+  assert.match(html, /3\.00/);
+  assert.match(html, /49\.820 µm/);
+  assert.match(html, /22907\.45 N\/mm/);
+  assert.match(html, /SISTEMA ESTÁVEL/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE ESTABILIDADE DINÂMICA - NÃO CONSIDERA MODOS DE VIBRAÇÃO DA PEÇA OU DO FUSO/);
+  assert.doesNotMatch(html, /<button/i);
+});
+
+test("renders the chatter high-risk warning badge", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    stability_audits: [{
+      ...report.stability_audits[0],
+      tool_overhang_mm: 100,
+      overhang_ratio_l_d: 5,
+      equivalent_stiffness_n_per_mm: 4948.008429404,
+      static_deflection_um: 230.648359603,
+      stability_status: "CHATTER_HIGH_RISK_WARNING",
+    }],
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /ALERTA: RISCO DE CHATTER \(L\/D CRÍTICO\)/);
 });

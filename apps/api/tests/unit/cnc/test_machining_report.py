@@ -30,6 +30,7 @@ from app.modules.cnc.services.machining_report import (
     plan_fingerprint,
 )
 from app.modules.cnc.services.sustainability_estimator import estimate_sustainability
+from app.modules.cnc.services.stability_auditor import audit_machining_stability
 from app.modules.cnc.services.text_report_exporter import (
     SAFETY_STAMP,
     format_machining_report_text,
@@ -252,6 +253,26 @@ def test_report_rejects_valid_sustainability_audit_from_another_power_snapshot()
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_valid_stability_audit_from_another_force_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    current = report.stability_audits[0]
+    other = audit_machining_stability(
+        tool_id=current.tool_id,
+        tool_overhang_mm=current.tool_overhang_mm,
+        tool_diameter_mm=current.tool_diameter_mm,
+        young_modulus_mpa=current.young_modulus_mpa,
+        cutting_force_n=current.cutting_force_n + 100,
+        specific_cutting_pressure_n_per_mm2=current.specific_cutting_pressure_n_per_mm2,
+        frf_real_compliance_mm_per_n=current.frf_real_compliance_mm_per_n,
+        depth_of_cut_mm=current.depth_of_cut_mm,
+    )
+    body = report.model_dump()
+    body["stability_audits"] = (other.model_dump(),)
+    with pytest.raises(ValidationError, match="REPORT_STABILITY_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -260,7 +281,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
 
     assert rendered == format_machining_report_text(report)
     assert rendered.count(SAFETY_STAMP) == 5
-    assert rendered.count("[") == 6
+    assert rendered.count("[") == 7
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -285,3 +306,6 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert "ESTIMATIVA ECONÔMICA E DE TEMPO ANALÍTICA" in rendered
     assert "sustainability: electrical_energy_kwh=" in rendered
     assert "ESTIMATIVA ECOLÓGICA E ENERGÉTICA ANALÍTICA" in rendered
+    assert "stability[T0101]: overhang_ratio_l_d=" in rendered
+    assert "status=DYNAMICALLY_STABLE" in rendered
+    assert "ESTIMATIVA ANALÍTICA DE ESTABILIDADE DINÂMICA" in rendered
