@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.66
+**Versão:** 2.67
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_POWER_TORQUE_ENVELOPE_CONTRACT_V2_SCAFFOLDED_LOCAL`.
+  O CTO aprovou explicitamente o `VTP-AUTO-288-BATCH`. O PR #69 integrou a Rota 21
+  por squash em `35b867f`; Backend e Frontend CI foram aprovados, a branch remota
+  foi removida e `main=origin/main`. A branch local
+  `codex/v8.3-cnc-power-torque-envelope-auditor` inicia o contrato Pydantic v2 para
+  curvas declaradas de potência/torque do fuso. O contrato exige RPM crescente,
+  confere `P=T·2π·rpm/60000`, interpola torque disponível, calcula margens, vincula
+  potência requerida ao snapshot Kienzle e rejeita pontos fora da curva, fontes
+  transplantadas ou status adulterado. Validação: 216 testes CNC, 5 testes focados,
+  Ruff, mypy em 208 fontes, TypeScript, Next lint e `git diff --check`. Entrega
+  local sem push e sem autoridade física.
 
 - **Handoff CTO:** `CNC_PART_ELASTIC_DEFLECTION_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou explicitamente o `VTP-AUTO-278-BATCH`. O PR #68 integrou a Rota 20

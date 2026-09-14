@@ -1367,6 +1367,175 @@ class PartElasticDeflectionAuditPayload(_CNCGenerationContract):
         return self
 
 
+class SpindlePowerTorqueCurvePoint(_CNCGenerationContract):
+    spindle_rpm: float = Field(gt=0, le=30_000)
+    available_torque_nm: float = Field(gt=0)
+    available_power_kw: float = Field(gt=0)
+
+    @model_validator(mode="after")
+    def validate_power_torque_relation(self) -> "SpindlePowerTorqueCurvePoint":
+        expected_power = (
+            self.available_torque_nm * 2.0 * math.pi * self.spindle_rpm / 60_000.0
+        )
+        if not math.isclose(
+            self.available_power_kw,
+            expected_power,
+            abs_tol=5e-9,
+            rel_tol=1e-12,
+        ):
+            raise ValueError("SPINDLE_CURVE_POWER_TORQUE_INCONSISTENT")
+        return self
+
+
+class SpindlePowerTorqueOperatingPoint(_CNCGenerationContract):
+    spindle_rpm: float = Field(gt=0, le=30_000)
+    required_cutting_power_kw: float = Field(gt=0)
+    required_torque_nm: float = Field(gt=0)
+    available_power_kw: float = Field(gt=0)
+    available_torque_nm: float = Field(gt=0)
+    power_margin_kw: float
+    torque_margin_nm: float
+    status: Literal[
+        "WITHIN_POWER_TORQUE_ENVELOPE",
+        "POWER_TORQUE_ENVELOPE_EXCEEDED",
+    ]
+
+    @model_validator(mode="after")
+    def validate_operating_point(self) -> "SpindlePowerTorqueOperatingPoint":
+        angular_factor = 2.0 * math.pi * self.spindle_rpm / 60_000.0
+        expected_required_torque = self.required_cutting_power_kw / angular_factor
+        expected_available_power = self.available_torque_nm * angular_factor
+        comparisons = (
+            (
+                self.required_torque_nm,
+                expected_required_torque,
+                "SPINDLE_REQUIRED_TORQUE_INCONSISTENT",
+            ),
+            (
+                self.available_power_kw,
+                expected_available_power,
+                "SPINDLE_AVAILABLE_POWER_INCONSISTENT",
+            ),
+            (
+                self.power_margin_kw,
+                self.available_power_kw - self.required_cutting_power_kw,
+                "SPINDLE_POWER_MARGIN_INCONSISTENT",
+            ),
+            (
+                self.torque_margin_nm,
+                self.available_torque_nm - self.required_torque_nm,
+                "SPINDLE_TORQUE_MARGIN_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "WITHIN_POWER_TORQUE_ENVELOPE"
+            if self.power_margin_kw >= 0 and self.torque_margin_nm >= 0
+            else "POWER_TORQUE_ENVELOPE_EXCEEDED"
+        )
+        if self.status != expected_status:
+            raise ValueError("SPINDLE_OPERATING_POINT_STATUS_INCONSISTENT")
+        return self
+
+
+class SpindlePowerTorqueEnvelopeAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-spindle-power-torque-envelope-audit/v2"] = (
+        "vena-ia.cnc-spindle-power-torque-envelope-audit/v2"
+    )
+    source_power_force_audit: MachiningPowerForceAuditPayload
+    spindle_rpm_min: float = Field(gt=0, le=30_000)
+    spindle_rpm_max: float = Field(gt=0, le=30_000)
+    curve_points: tuple[SpindlePowerTorqueCurvePoint, ...] = Field(
+        min_length=2,
+        max_length=1_000,
+    )
+    operating_points: tuple[SpindlePowerTorqueOperatingPoint, ...] = Field(
+        min_length=1,
+        max_length=1_000,
+    )
+    audit_status: Literal[
+        "POWER_TORQUE_ENVELOPE_COMPLIANT",
+        "POWER_TORQUE_ENVELOPE_EXCEEDED_WARNING",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "DECLARED_SPINDLE_POWER_TORQUE_CURVE_REQUIRES_MACHINE_PROFILE_VALIDATION"
+    ] = "DECLARED_SPINDLE_POWER_TORQUE_CURVE_REQUIRES_MACHINE_PROFILE_VALIDATION"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_envelope_sources(self) -> "SpindlePowerTorqueEnvelopeAuditPayload":
+        curve_rpms = tuple(point.spindle_rpm for point in self.curve_points)
+        if any(current >= following for current, following in zip(curve_rpms, curve_rpms[1:])):
+            raise ValueError("SPINDLE_CURVE_RPM_ORDER_INVALID")
+        if (
+            not math.isclose(self.spindle_rpm_min, curve_rpms[0], abs_tol=5e-9)
+            or not math.isclose(self.spindle_rpm_max, curve_rpms[-1], abs_tol=5e-9)
+            or self.spindle_rpm_max > self.source_power_force_audit.max_spindle_rpm
+        ):
+            raise ValueError("SPINDLE_CURVE_RANGE_INCONSISTENT")
+
+        operating_rpms = tuple(point.spindle_rpm for point in self.operating_points)
+        if any(current >= following for current, following in zip(operating_rpms, operating_rpms[1:])):
+            raise ValueError("SPINDLE_OPERATING_POINT_RPM_ORDER_INVALID")
+        if not any(
+            math.isclose(
+                rpm,
+                self.source_power_force_audit.spindle_rpm_reference,
+                abs_tol=5e-9,
+            )
+            for rpm in operating_rpms
+        ):
+            raise ValueError("SPINDLE_REFERENCE_RPM_NOT_AUDITED")
+
+        for operating in self.operating_points:
+            if operating.spindle_rpm < self.spindle_rpm_min or operating.spindle_rpm > (
+                self.spindle_rpm_max
+            ):
+                raise ValueError("SPINDLE_OPERATING_POINT_OUTSIDE_CURVE")
+            if not math.isclose(
+                operating.required_cutting_power_kw,
+                self.source_power_force_audit.pc_cutting_kw,
+                abs_tol=5e-9,
+                rel_tol=1e-12,
+            ):
+                raise ValueError("SPINDLE_POWER_FORCE_SOURCE_INCONSISTENT")
+            lower, upper = next(
+                (first, second)
+                for first, second in zip(self.curve_points, self.curve_points[1:])
+                if first.spindle_rpm <= operating.spindle_rpm <= second.spindle_rpm
+            )
+            fraction = (
+                (operating.spindle_rpm - lower.spindle_rpm)
+                / (upper.spindle_rpm - lower.spindle_rpm)
+            )
+            expected_torque = lower.available_torque_nm + fraction * (
+                upper.available_torque_nm - lower.available_torque_nm
+            )
+            if not math.isclose(
+                operating.available_torque_nm,
+                expected_torque,
+                abs_tol=5e-9,
+                rel_tol=1e-12,
+            ):
+                raise ValueError("SPINDLE_CURVE_INTERPOLATION_INCONSISTENT")
+
+        expected_status = (
+            "POWER_TORQUE_ENVELOPE_EXCEEDED_WARNING"
+            if any(
+                point.status == "POWER_TORQUE_ENVELOPE_EXCEEDED"
+                for point in self.operating_points
+            )
+            else "POWER_TORQUE_ENVELOPE_COMPLIANT"
+        )
+        if self.audit_status != expected_status:
+            raise ValueError("SPINDLE_POWER_TORQUE_AUDIT_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
