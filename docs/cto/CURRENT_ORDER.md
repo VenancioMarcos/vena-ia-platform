@@ -1,21 +1,21 @@
 # Ordem CTO atual
 
-**Missão:** CTO-CODEX-AUTO-304 a AUTO-313
-**Estado:** CNC_TOOL_WEAR_GEOMETRY_CONTRACT_V2_SCAFFOLDED_LOCAL
+**Missão:** CTO-CODEX-AUTO-314 a AUTO-323
+**Estado:** CNC_CHIP_BREAKING_MACHINABILITY_CONTRACT_V2_SCAFFOLDED_LOCAL
 **Data:** 2026-09-14
-**Branch:** `codex/v8.5-cnc-tool-wear-compensation-geometry-auditor`
-**Baseline da branch:** `dd099b0deb29a11dd96deb827ca9a540ae76c50a`
+**Branch:** `codex/v8.6-cnc-chip-breaking-machinability-auditor`
+**Baseline da branch:** `294440258265c8b06afcbce49c426814293c7a85`
 **Emissor técnico:** Gemini, conversa https://gemini.google.com/app/01b0ab8ec45b2268
 
 ## Estado vigente
 
-O CTO aprovou o `VTP-AUTO-303-BATCH`. O PR #71 integrou a Rota 23 em `dd099b0` com
-CI aprovado, branch remota removida e main sincronizada. A Rota 24 iniciou contrato
-v2 de VB, desgaste de flanco, raio efetivo e desvio geométrico vinculado à vida Taylor.
+O CTO aprovou o `VTP-AUTO-313-BATCH`. O PR #72 integrou a Rota 24 em `2944402`
+com CI aprovado, branch remota removida e main sincronizada. A Rota 25 iniciou o
+contrato v2 de formação/quebra de cavaco e envelope seguro f×ap tabulado.
 
 ## Continuidade
 
-Emitir `VTP-AUTO-313-BATCH` e aguardar parecer. A branch permanece local sem push.
+Emitir `VTP-AUTO-323-BATCH` e aguardar parecer. A branch permanece local sem push.
 
 ## Limites permanentes
 

@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.72
+**Versão:** 2.73
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,15 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_CHIP_BREAKING_MACHINABILITY_CONTRACT_V2_SCAFFOLDED_LOCAL`.
+  O PR #72 integrou a Rota 24 por squash em `2944402` após Frontend CI em 1m17s e
+  Backend CI em 3m36s; branch remota removida e `main=origin/main`. A Rota 25
+  iniciou contrato v2 para formação e quebra de cavaco: razão de compressão,
+  comprimento livre e envelope seguro f×ap por quebra-cavaco tabulado. Limites,
+  referências, razão e status são revalidados com falha fechada. Entrega local sem
+  push e sem autoridade para alterar parâmetros ou operar máquina. Validação: 252
+  testes CNC, 5 focados, Ruff, mypy em 211 fontes e `git diff --check`.
 
 - **Handoff CTO:** `CNC_TOOL_WEAR_GEOMETRY_AUDITOR_COMPLETED_LOCAL`.
   A Rota 24 calcula desgaste de flanco progressivo a partir do consumo Taylor,

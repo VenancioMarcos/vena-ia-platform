@@ -1,5 +1,15 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-314 a AUTO-323
+
+`CNC_CHIP_BREAKING_MACHINABILITY_CONTRACT_V2_SCAFFOLDED_LOCAL`. A Rota 24 foi
+validada com 247 testes CNC, 28 Web, Ruff, mypy em 211 fontes, TypeScript e lint;
+o PR #72 teve Frontend CI em 1m17s e Backend CI em 3m36s e foi integrado por squash
+em `2944402`. Branch remota removida e main sincronizada. A Rota 25 estrutura razão
+de compressão, comprimento livre e envelope f×ap por quebra-cavaco tabulado, com
+falha fechada e sem alteração automática de parâmetros. Entrega local sem push.
+Validação terminal: 252 testes CNC, 5 focados, Ruff, mypy em 211 fontes e diff.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-304 a AUTO-313
 
 `CNC_TOOL_WEAR_GEOMETRY_CONTRACT_V2_SCAFFOLDED_LOCAL`. PR #71 integrado por squash

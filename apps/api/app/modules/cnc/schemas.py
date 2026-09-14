@@ -1722,6 +1722,88 @@ class ToolWearGeometryAuditPayload(_CNCGenerationContract):
         return self
 
 
+class ChipBreakerSafeEnvelope(_CNCGenerationContract):
+    chipbreaker_reference: str = Field(min_length=1, max_length=120)
+    feed_min_mm_per_rev: float = Field(gt=0, le=10)
+    feed_max_mm_per_rev: float = Field(gt=0, le=10)
+    depth_of_cut_min_mm: float = Field(gt=0, le=100)
+    depth_of_cut_max_mm: float = Field(gt=0, le=100)
+
+    @model_validator(mode="after")
+    def validate_ordered_limits(self) -> "ChipBreakerSafeEnvelope":
+        if (
+            self.feed_max_mm_per_rev <= self.feed_min_mm_per_rev
+            or self.depth_of_cut_max_mm <= self.depth_of_cut_min_mm
+        ):
+            raise ValueError("CHIP_BREAKER_SAFE_ENVELOPE_INVALID")
+        return self
+
+
+class ChipBreakingMachinabilityAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-chip-breaking-machinability-audit/v2"] = (
+        "vena-ia.cnc-chip-breaking-machinability-audit/v2"
+    )
+    chipbreaker_reference: str = Field(min_length=1, max_length=120)
+    feed_mm_per_rev: float = Field(gt=0, le=10)
+    depth_of_cut_mm: float = Field(gt=0, le=100)
+    uncut_chip_thickness_mm: float = Field(gt=0, le=10)
+    formed_chip_thickness_mm: float = Field(gt=0, le=100)
+    chip_compression_ratio: float = Field(ge=1, le=100)
+    free_chip_length_mm: float = Field(gt=0, le=10_000)
+    safe_breaking_envelopes: tuple[ChipBreakerSafeEnvelope, ...] = Field(
+        min_length=1
+    )
+    audit_status: Literal[
+        "CHIP_BREAKING_WITHIN_TABULATED_SAFE_ENVELOPE",
+        "CHIP_BREAKING_OUTSIDE_TABULATED_SAFE_ENVELOPE_WARNING",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    automatic_parameter_change_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "TABULATED_CHIP_BREAKING_ENVELOPE_REQUIRES_PHYSICAL_PROCESS_VALIDATION"
+    ] = "TABULATED_CHIP_BREAKING_ENVELOPE_REQUIRES_PHYSICAL_PROCESS_VALIDATION"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_chip_breaking_snapshot(self) -> "ChipBreakingMachinabilityAuditPayload":
+        expected_ratio = self.formed_chip_thickness_mm / self.uncut_chip_thickness_mm
+        if not math.isclose(
+            self.chip_compression_ratio,
+            expected_ratio,
+            abs_tol=5e-9,
+            rel_tol=1e-12,
+        ):
+            raise ValueError("CHIP_COMPRESSION_RATIO_INCONSISTENT")
+        references = [item.chipbreaker_reference for item in self.safe_breaking_envelopes]
+        if len(references) != len(set(references)):
+            raise ValueError("CHIP_BREAKER_SAFE_ENVELOPE_DUPLICATE")
+        selected = [
+            item
+            for item in self.safe_breaking_envelopes
+            if item.chipbreaker_reference == self.chipbreaker_reference
+        ]
+        if len(selected) != 1:
+            raise ValueError("CHIP_BREAKER_SAFE_ENVELOPE_REFERENCE_UNRESOLVED")
+        envelope = selected[0]
+        inside_envelope = (
+            envelope.feed_min_mm_per_rev
+            <= self.feed_mm_per_rev
+            <= envelope.feed_max_mm_per_rev
+            and envelope.depth_of_cut_min_mm
+            <= self.depth_of_cut_mm
+            <= envelope.depth_of_cut_max_mm
+        )
+        expected_status = (
+            "CHIP_BREAKING_WITHIN_TABULATED_SAFE_ENVELOPE"
+            if inside_envelope
+            else "CHIP_BREAKING_OUTSIDE_TABULATED_SAFE_ENVELOPE_WARNING"
+        )
+        if self.audit_status != expected_status:
+            raise ValueError("CHIP_BREAKING_AUDIT_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
