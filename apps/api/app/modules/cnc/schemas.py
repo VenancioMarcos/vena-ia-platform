@@ -968,6 +968,188 @@ class MachiningRiskMatrixPayload(_CNCGenerationContract):
         return self
 
 
+class RawStockDimensions(_CNCGenerationContract):
+    diameter_mm: float = Field(gt=0)
+    axial_length_mm: float = Field(gt=0)
+    z_min_mm: float
+    z_max_mm: float
+
+    @model_validator(mode="after")
+    def validate_dimensions(self) -> "RawStockDimensions":
+        if self.z_min_mm >= self.z_max_mm or not math.isclose(
+            self.axial_length_mm,
+            self.z_max_mm - self.z_min_mm,
+            abs_tol=5e-9,
+            rel_tol=1e-12,
+        ):
+            raise ValueError("PROCESS_SHEET_RAW_STOCK_DIMENSIONS_INCONSISTENT")
+        return self
+
+
+class ProcessSheetClampingSetup(_CNCGenerationContract):
+    setup_type: Literal["DECLARED_CHUCK_ENVELOPE_REQUIRES_MANUAL_SETUP"] = (
+        "DECLARED_CHUCK_ENVELOPE_REQUIRES_MANUAL_SETUP"
+    )
+    chuck_exclusion_zone: ChuckExclusionZone2D
+    minimum_clearance_mm: float = Field(gt=0)
+    proximity_threshold_mm: float = Field(gt=0)
+    estimated_setup_time_min: float = Field(gt=0)
+    clamping_instruction: Literal[
+        "CONFIRM_CHUCK_CONTACT_AND_STOCK_PROJECTION_MANUALLY_BEFORE_PROCESS_APPROVAL"
+    ] = "CONFIRM_CHUCK_CONTACT_AND_STOCK_PROJECTION_MANUALLY_BEFORE_PROCESS_APPROVAL"
+    balance_requirement: Literal[
+        "MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED"
+    ] = "MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED"
+
+
+class OperationStep(_CNCGenerationContract):
+    sequence: int = Field(ge=1, le=1_001)
+    operation_id: str = Field(pattern=r"^OP\d{3,4}$")
+    phase: Literal["SETUP", "FACING", "ROUGH_TURNING", "FINISHING", "GROOVING"]
+    source_pass_sequence: int | None = Field(default=None, ge=1, le=1_000)
+    tool_id: str | None = Field(default=None, min_length=1, max_length=64)
+    tool_description: str | None = Field(default=None, min_length=1, max_length=128)
+    insert_reference: str | None = Field(default=None, min_length=1, max_length=128)
+    cutting_speed_vc_m_per_min: float | None = Field(default=None, gt=0)
+    feed_mm_per_rev: float | None = Field(default=None, gt=0)
+    depth_of_cut_ap_mm: float | None = Field(default=None, gt=0)
+    spindle_rpm: float | None = Field(default=None, gt=0)
+    feed_rate_mm_min: float | None = Field(default=None, gt=0)
+    estimated_time_min: float = Field(ge=0)
+    fixture_requirement: Literal[
+        "USE_DECLARED_CHUCK_ENVELOPE_AND_VERIFY_CLEARANCE_MANUALLY"
+    ] = "USE_DECLARED_CHUCK_ENVELOPE_AND_VERIFY_CLEARANCE_MANUALLY"
+    balance_requirement: Literal[
+        "MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED"
+    ] = "MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED"
+
+    @model_validator(mode="after")
+    def validate_step(self) -> "OperationStep":
+        machining_values = (
+            self.tool_id,
+            self.tool_description,
+            self.insert_reference,
+            self.cutting_speed_vc_m_per_min,
+            self.feed_mm_per_rev,
+            self.depth_of_cut_ap_mm,
+            self.spindle_rpm,
+            self.feed_rate_mm_min,
+        )
+        if self.phase == "SETUP":
+            if self.source_pass_sequence is not None or any(
+                value is not None for value in machining_values
+            ):
+                raise ValueError("PROCESS_SHEET_SETUP_PARAMETERS_INVALID")
+            return self
+        if self.source_pass_sequence is None or any(
+            value is None for value in machining_values
+        ):
+            raise ValueError("PROCESS_SHEET_OPERATION_PARAMETERS_REQUIRED")
+        assert self.feed_mm_per_rev is not None
+        assert self.spindle_rpm is not None
+        assert self.feed_rate_mm_min is not None
+        if not math.isclose(
+            self.feed_rate_mm_min,
+            self.feed_mm_per_rev * self.spindle_rpm,
+            abs_tol=5e-9,
+            rel_tol=1e-12,
+        ):
+            raise ValueError("PROCESS_SHEET_FEED_RATE_INCONSISTENT")
+        return self
+
+
+class MachiningProcessSheetPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-machining-process-sheet/v1"] = (
+        "vena-ia.cnc-machining-process-sheet/v1"
+    )
+    part_id: str = Field(min_length=1, max_length=255)
+    revision: str = Field(min_length=1, max_length=32)
+    source_plan_id: str = Field(min_length=1, max_length=255)
+    source_cam_plan: TurningStrategyPlanResponse
+    source_stock: TurningStock2D
+    source_machine_envelope: MachineEnvelope2D
+    source_chuck_proximity: ChuckProximityAudit
+    source_cycle_time_estimate: CycleTimeEstimatePayload
+    raw_stock_dimensions: RawStockDimensions
+    clamping_setup: ProcessSheetClampingSetup
+    sequence_operations: tuple[OperationStep, ...] = Field(min_length=2, max_length=1_001)
+    total_operations_count: int = Field(ge=2, le=1_001)
+    estimated_total_time_min: float = Field(gt=0)
+    safety_instructions: tuple[str, ...] = Field(min_length=3)
+    is_theoretical_sheet: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ANALYTICAL_PROCESS_SHEET_REQUIRES_MACHINE_SETUP_APPROVAL"
+    ] = "ANALYTICAL_PROCESS_SHEET_REQUIRES_MACHINE_SETUP_APPROVAL"
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_process_sheet(self) -> "MachiningProcessSheetPayload":
+        expected_raw = self.raw_stock_dimensions
+        if (
+            not math.isclose(expected_raw.diameter_mm, self.source_stock.diameter_mm, abs_tol=5e-9)
+            or not math.isclose(expected_raw.z_min_mm, self.source_stock.z_min_mm, abs_tol=5e-9)
+            or not math.isclose(expected_raw.z_max_mm, self.source_stock.z_max_mm, abs_tol=5e-9)
+        ):
+            raise ValueError("PROCESS_SHEET_STOCK_SOURCE_INCONSISTENT")
+        clamping = self.clamping_setup
+        if (
+            clamping.chuck_exclusion_zone != self.source_machine_envelope.chuck_exclusion_zone
+            or not math.isclose(
+                clamping.minimum_clearance_mm,
+                self.source_chuck_proximity.minimum_clearance_mm,
+                abs_tol=5e-9,
+            )
+            or not math.isclose(
+                clamping.proximity_threshold_mm,
+                self.source_chuck_proximity.threshold_mm,
+                abs_tol=5e-9,
+            )
+        ):
+            raise ValueError("PROCESS_SHEET_CLAMPING_SOURCE_INCONSISTENT")
+        if self.source_chuck_proximity.minimum_clearance_mm <= 0:
+            raise ValueError("PROCESS_SHEET_CLAMPING_CLEARANCE_INVALID")
+        operations = self.sequence_operations
+        if self.total_operations_count != len(operations):
+            raise ValueError("PROCESS_SHEET_OPERATION_COUNT_INCONSISTENT")
+        if tuple(item.sequence for item in operations) != tuple(range(1, len(operations) + 1)):
+            raise ValueError("PROCESS_SHEET_SEQUENCE_INVALID")
+        if tuple(item.operation_id for item in operations) != tuple(
+            f"OP{index * 10:03d}" for index in range(1, len(operations) + 1)
+        ):
+            raise ValueError("PROCESS_SHEET_OPERATION_ID_INCONSISTENT")
+        if operations[0].phase != "SETUP" or any(
+            item.phase == "SETUP" for item in operations[1:]
+        ):
+            raise ValueError("PROCESS_SHEET_SETUP_SEQUENCE_INVALID")
+        passes = self.source_cam_plan.passes
+        if tuple(item.sequence for item in passes) != tuple(range(1, len(passes) + 1)):
+            raise ValueError("PROCESS_SHEET_CAM_SEQUENCE_INVALID")
+        if any(item.operation_type != self.source_cam_plan.operation_type for item in passes):
+            raise ValueError("PROCESS_SHEET_CAM_OPERATION_INCONSISTENT")
+        machining_steps = operations[1:]
+        if len(machining_steps) != len(passes) or any(
+            step.source_pass_sequence != source.sequence
+            or step.phase != source.operation_type.value
+            for step, source in zip(machining_steps, passes)
+        ):
+            raise ValueError("PROCESS_SHEET_CAM_SOURCE_INCONSISTENT")
+        setup_time = operations[0].estimated_time_min
+        machining_time = math.fsum(item.estimated_time_min for item in machining_steps)
+        source_cycle_minutes = self.source_cycle_time_estimate.total_cycle_time_seconds / 60.0
+        if (
+            not math.isclose(setup_time, clamping.estimated_setup_time_min, abs_tol=5e-9)
+            or not math.isclose(machining_time, source_cycle_minutes, abs_tol=5e-9)
+            or not math.isclose(
+                self.estimated_total_time_min,
+                setup_time + machining_time,
+                abs_tol=5e-9,
+            )
+        ):
+            raise ValueError("PROCESS_SHEET_TIME_SOURCE_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -993,6 +1175,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     stability_audits: tuple[MachiningStabilityAuditPayload, ...] = Field(min_length=1)
     parameter_optimizations: tuple[MachiningParameterOptimizationPayload, ...] = Field(min_length=1)
     risk_matrix: MachiningRiskMatrixPayload
+    process_sheet: MachiningProcessSheetPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -1130,4 +1313,36 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             )
         ):
             raise ValueError("REPORT_RISK_MATRIX_SOURCE_INCONSISTENT")
+        sheet = self.process_sheet
+        if (
+            sheet.part_id != self.cad_job_id
+            or sheet.source_plan_id != self.plan_id
+            or sheet.source_cycle_time_estimate != self.cycle_time_estimate
+            or sheet.source_machine_envelope != self.machine_envelope
+            or sheet.source_chuck_proximity != self.chuck_proximity
+            or {item.tool_id for item in sheet.sequence_operations[1:]}
+            != {item.tool_id for item in self.tools}
+            or {item.phase for item in sheet.sequence_operations[1:]}
+            != {operation.value for item in self.tools for operation in item.operations}
+        ):
+            raise ValueError("REPORT_PROCESS_SHEET_SOURCE_INCONSISTENT")
+        for step in sheet.sequence_operations[1:]:
+            if (
+                not math.isclose(
+                    step.cutting_speed_vc_m_per_min or 0,
+                    self.power_force_audit.cutting_speed_m_per_min,
+                    abs_tol=5e-9,
+                )
+                or not math.isclose(
+                    step.feed_mm_per_rev or 0,
+                    self.power_force_audit.feed_mm_per_rev,
+                    abs_tol=5e-9,
+                )
+                or not math.isclose(
+                    step.depth_of_cut_ap_mm or 0,
+                    self.power_force_audit.depth_of_cut_mm,
+                    abs_tol=5e-9,
+                )
+            ):
+                raise ValueError("REPORT_PROCESS_SHEET_PARAMETERS_INCONSISTENT")
         return self

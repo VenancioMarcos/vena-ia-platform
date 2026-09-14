@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.63
+**Versão:** 2.64
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,19 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_OPERATIONAL_PROCESS_ROUTING_SHEET_COMPLETED_LOCAL`.
+  O CTO aprovou explicitamente o `VTP-AUTO-258-BATCH`. O PR #66 integrou a Rota 18
+  por squash em `b2d897e`; Backend e Frontend CI foram aprovados, a branch remota
+  foi removida e `main=origin/main`. A branch local
+  `codex/v8.0-cnc-process-routing-sheet` compila setup e passes CAM em uma Folha de
+  Processo cronológica com estoque, fixação, balanço, ferramenta/inserto, Vc/f/ap,
+  rpm, avanço e tempos. O contrato recalcula sequência, IDs e duração, vincula os
+  snapshots CAM, estoque, envelope, placa e ciclo e falha fechado contra transplante
+  ou adulteração. JSON, TEXT e painel Web exibem a folha com aprovação manual do
+  preparador obrigatória e sem controles físicos. Validação: 883 testes API/2
+  ignorados, 180 CNC, 48 focados, mypy em 193 fontes, Ruff, TypeScript completo,
+  18 testes Web, Next lint e `git diff --check`. Entrega local sem push.
 
 - **Handoff CTO:** `CNC_OPERATIONAL_RISK_MATRIX_COMPLETED_LOCAL`.
   O PR #65 integrou a Rota 17 por squash em `1f6bb75`; Backend e Frontend CI foram

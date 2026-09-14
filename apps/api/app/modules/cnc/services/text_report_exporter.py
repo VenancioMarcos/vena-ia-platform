@@ -129,6 +129,40 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "FOLHA DE PROCESSO",
+            (
+                f"part_id={validated.process_sheet.part_id}",
+                f"revision={validated.process_sheet.revision}",
+                "raw_stock: diameter_mm="
+                f"{validated.process_sheet.raw_stock_dimensions.diameter_mm:.9f}; "
+                "axial_length_mm="
+                f"{validated.process_sheet.raw_stock_dimensions.axial_length_mm:.9f}",
+                "clamping: setup_type="
+                f"{validated.process_sheet.clamping_setup.setup_type}; "
+                "minimum_clearance_mm="
+                f"{validated.process_sheet.clamping_setup.minimum_clearance_mm:.9f}; "
+                f"balance={validated.process_sheet.clamping_setup.balance_requirement}",
+                *(
+                    f"operation[{item.sequence}]: id={item.operation_id}; phase={item.phase}; "
+                    f"tool={item.tool_id}; insert={item.insert_reference}; "
+                    f"vc_m_min={item.cutting_speed_vc_m_per_min}; "
+                    f"feed_mm_rev={item.feed_mm_per_rev}; ap_mm={item.depth_of_cut_ap_mm}; "
+                    f"rpm={item.spindle_rpm}; feed_rate_mm_min={item.feed_rate_mm_min}; "
+                    f"estimated_time_min={item.estimated_time_min:.9f}"
+                    for item in validated.process_sheet.sequence_operations
+                ),
+                *(
+                    f"safety_instruction[{index}]={instruction}"
+                    for index, instruction in enumerate(
+                        validated.process_sheet.safety_instructions,
+                        start=1,
+                    )
+                ),
+                "FOLHA DE PROCESSO TEÓRICA ANALÍTICA - DOCUMENTO ORIENTATIVO SUJEITO À "
+                "APROVAÇÃO DO PREPARADOR DE MÁQUINAS",
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

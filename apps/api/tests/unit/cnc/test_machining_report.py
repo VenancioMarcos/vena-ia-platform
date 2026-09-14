@@ -172,6 +172,13 @@ def test_complete_report_replays_deterministically(controller):
     assert report.risk_matrix.minimum_chuck_clearance_mm == pytest.approx(
         report.chuck_proximity.minimum_clearance_mm
     )
+    assert report.process_sheet.part_id == report.cad_job_id
+    assert report.process_sheet.source_plan_id == report.plan_id
+    assert report.process_sheet.total_operations_count == 2
+    assert report.process_sheet.sequence_operations[0].phase == "SETUP"
+    assert report.process_sheet.sequence_operations[1].phase == "ROUGH_TURNING"
+    assert report.process_sheet.source_cycle_time_estimate == report.cycle_time_estimate
+    assert report.process_sheet.physical_use_authorized is False
     assert report.tool_life_audits[0].tool_id == report.tools[0].tool_id
     assert report.tool_life_audits[0].estimated_tool_life_minutes > 0
     assert report.tool_life_audits[0].tool_life_consumed_percent > 0
@@ -306,6 +313,15 @@ def test_report_rejects_risk_matrix_transplanted_from_another_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_process_sheet_transplanted_from_another_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    body = report.model_dump()
+    body["process_sheet"]["part_id"] = "another-cad-job"
+    with pytest.raises(ValidationError, match="REPORT_PROCESS_SHEET_SOURCE_INCONSISTENT"):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -313,8 +329,8 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 5
-    assert rendered.count("[") == 9
+    assert rendered.count(SAFETY_STAMP) == 6
+    assert rendered.count("[") == 15
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -348,3 +364,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     assert "risk_matrix: overall_score=0.000000000; risk_level=LOW_RISK" in rendered
     assert "risk_mitigation[1]=Manter revisão humana" in rendered
     assert "MATRIZ DE RISCO ANALÍTICA CONSOLIDADA" in rendered
+    assert "[FOLHA DE PROCESSO]" in rendered
+    assert "operation[1]: id=OP010; phase=SETUP" in rendered
+    assert "operation[2]: id=OP020; phase=ROUGH_TURNING" in rendered
+    assert "FOLHA DE PROCESSO TEÓRICA ANALÍTICA" in rendered

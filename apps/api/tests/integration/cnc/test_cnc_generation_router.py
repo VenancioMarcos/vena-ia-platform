@@ -430,7 +430,9 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 5
+        ) == 6
+        assert "[FOLHA DE PROCESSO]" in response.text
+        assert "FOLHA DE PROCESSO TEÓRICA ANALÍTICA" in response.text
         assert "status=PASS" in response.text
         assert "program_text" not in response.text
         assert client.get(endpoint, headers=outsider.headers).status_code == 404

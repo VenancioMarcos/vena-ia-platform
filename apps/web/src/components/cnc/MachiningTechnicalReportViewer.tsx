@@ -262,6 +262,71 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "CONSOLIDATED_ANALYTICAL_RISK_MATRIX_IS_PRELIMINARY_AND_NOT_AN_EXPERT_REPORT";
     safety_flags: MachiningReportSafetyFlags;
   };
+  process_sheet: {
+    schema_version: "vena-ia.cnc-machining-process-sheet/v1";
+    part_id: string;
+    revision: string;
+    source_plan_id: string;
+    source_cam_plan: {
+      status: "PLANNED_REQUIRES_REVIEW";
+      operation_type: TurningOperation;
+      passes: readonly {
+        sequence: number;
+        operation_type: TurningOperation;
+        coordinates_rz_mm: readonly { r_mm: number; z_mm: number }[];
+        estimated_removed_volume_mm3: number;
+      }[];
+      material_removal_volume_mm3: number;
+      warnings: readonly string[];
+      executable_output: false;
+      physical_use_authorized: false;
+      g9_status: "PENDING_AUTHORITATIVE_REVIEW";
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED";
+    };
+    source_stock: { diameter_mm: number; z_min_mm: number; z_max_mm: number };
+    source_machine_envelope: MachiningTechnicalReportPayload["machine_envelope"];
+    source_chuck_proximity: MachiningTechnicalReportPayload["chuck_proximity"];
+    source_cycle_time_estimate: MachiningCycleTimeEstimate;
+    raw_stock_dimensions: {
+      diameter_mm: number;
+      axial_length_mm: number;
+      z_min_mm: number;
+      z_max_mm: number;
+    };
+    clamping_setup: {
+      setup_type: "DECLARED_CHUCK_ENVELOPE_REQUIRES_MANUAL_SETUP";
+      chuck_exclusion_zone: MachiningTechnicalReportPayload["machine_envelope"]["chuck_exclusion_zone"];
+      minimum_clearance_mm: number;
+      proximity_threshold_mm: number;
+      estimated_setup_time_min: number;
+      clamping_instruction: "CONFIRM_CHUCK_CONTACT_AND_STOCK_PROJECTION_MANUALLY_BEFORE_PROCESS_APPROVAL";
+      balance_requirement: "MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED";
+    };
+    sequence_operations: readonly {
+      sequence: number;
+      operation_id: string;
+      phase: "SETUP" | TurningOperation;
+      source_pass_sequence: number | null;
+      tool_id: string | null;
+      tool_description: string | null;
+      insert_reference: string | null;
+      cutting_speed_vc_m_per_min: number | null;
+      feed_mm_per_rev: number | null;
+      depth_of_cut_ap_mm: number | null;
+      spindle_rpm: number | null;
+      feed_rate_mm_min: number | null;
+      estimated_time_min: number;
+      fixture_requirement: "USE_DECLARED_CHUCK_ENVELOPE_AND_VERIFY_CLEARANCE_MANUALLY";
+      balance_requirement: "MANUAL_STATIC_AND_DYNAMIC_BALANCE_REVIEW_REQUIRED";
+    }[];
+    total_operations_count: number;
+    estimated_total_time_min: number;
+    safety_instructions: readonly string[];
+    is_theoretical_sheet: true;
+    physical_use_authorized: false;
+    model_limitation: "ANALYTICAL_PROCESS_SHEET_REQUIRES_MACHINE_SETUP_APPROVAL";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -550,6 +615,46 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </div>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         MATRIZ DE RISCO ANALÍTICA CONSOLIDADA - AVALIAÇÃO PRELIMINAR DE PROCESSO SEM VALIDADE DE LAUDO PERICIAL
+      </p>
+    </section>
+
+    <section aria-labelledby="report-process-sheet-heading" className="space-y-3">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 id="report-process-sheet-heading" className="text-lg font-semibold">Folha de processo operacional</h2>
+          <p className="text-sm text-slate-300">Peça {report.process_sheet.part_id} · Revisão {report.process_sheet.revision}</p>
+        </div>
+        <span className="font-mono text-xs text-cyan-200">{report.process_sheet.total_operations_count} operações · {report.process_sheet.estimated_total_time_min.toFixed(3)} min</span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Diâmetro do bruto" value={`${report.process_sheet.raw_stock_dimensions.diameter_mm.toFixed(3)} mm`} />
+        <Metric label="Comprimento do bruto" value={`${report.process_sheet.raw_stock_dimensions.axial_length_mm.toFixed(3)} mm`} />
+        <Metric label="Folga da placa" value={`${report.process_sheet.clamping_setup.minimum_clearance_mm.toFixed(3)} mm`} />
+        <Metric label="Tempo de setup" value={`${report.process_sheet.clamping_setup.estimated_setup_time_min.toFixed(3)} min`} />
+      </dl>
+      <div className="rounded-lg border border-slate-700 bg-slate-950 p-4 text-sm text-slate-300">
+        <p><span className="font-semibold text-slate-100">Fixação:</span> {report.process_sheet.clamping_setup.clamping_instruction}</p>
+        <p className="mt-1"><span className="font-semibold text-slate-100">Balanço:</span> {report.process_sheet.clamping_setup.balance_requirement}</p>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-left text-sm" aria-label="Sequência cronológica de operações CNC">
+          <thead><tr className="border-b border-slate-700 text-slate-400">
+            <th className="p-2">Seq.</th><th className="p-2">Fase</th><th className="p-2">Ferramenta / inserto</th><th className="p-2">Parâmetros</th><th className="p-2">Tempo</th>
+          </tr></thead>
+          <tbody>{report.process_sheet.sequence_operations.map((step) => <tr key={step.operation_id} className="border-b border-slate-800 align-top">
+            <td className="p-2 font-mono">{step.operation_id}</td>
+            <td className="p-2">{step.phase}</td>
+            <td className="p-2 font-mono">{step.tool_id === null ? "—" : `${step.tool_id} · ${step.tool_description} · ${step.insert_reference}`}</td>
+            <td className="p-2 font-mono">{step.spindle_rpm === null ? "—" : `Vc ${step.cutting_speed_vc_m_per_min?.toFixed(3)} m/min · f ${step.feed_mm_per_rev?.toFixed(3)} mm/rot · ap ${step.depth_of_cut_ap_mm?.toFixed(3)} mm · ${step.spindle_rpm.toFixed(1)} rpm`}</td>
+            <td className="p-2 font-mono">{step.estimated_time_min.toFixed(3)} min</td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <ul className="list-disc space-y-1 pl-5 text-sm text-slate-300">
+        {report.process_sheet.safety_instructions.map((instruction) => <li key={instruction}>{instruction}</li>)}
+      </ul>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        FOLHA DE PROCESSO TEÓRICA ANALÍTICA - DOCUMENTO ORIENTATIVO SUJEITO À APROVAÇÃO DO PREPARADOR DE MÁQUINAS
       </p>
     </section>
 
