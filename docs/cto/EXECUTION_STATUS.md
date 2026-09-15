@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-390 a AUTO-399
+
+`CNC_BALLSCREW_AXIAL_THRUST_BUCKLING_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-389-BATCH`; o PR #80 passou no Frontend CI em 1m18s e no Backend CI em
+3m42s e foi integrado por squash em `81b5fad`, com branch remota removida e main
+sincronizada. A Rota 32 calcula empuxo axial total a partir da força de avanço,
+atrito nas guias e aceleração do carro, além do limite de Euler e da velocidade
+crítica do fuso. Contrato, JSON, TEXT e Web revalidam fontes, mostram carga,
+rotação, razões e warnings sem controles físicos. Validação: 377 testes CNC, 44
+Web, Ruff, mypy em 238 fontes, TypeScript, Next lint e diff; branch local sem push
+ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-380 a AUTO-389
 
 `CNC_GUIDEWAY_CUTTING_MOMENT_LOAD_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o

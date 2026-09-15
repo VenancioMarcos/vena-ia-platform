@@ -420,6 +420,25 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "ESFORÇOS NO FUSO DE ESFERAS",
+            (
+                "total_axial_thrust_n="
+                f"{validated.ballscrew_axial_mechanics_audit.total_axial_thrust_n:.9f}",
+                "euler_buckling_limit_n="
+                f"{validated.ballscrew_axial_mechanics_audit.euler_buckling_limit_n:.9f}",
+                "operating_ballscrew_rpm="
+                f"{validated.ballscrew_axial_mechanics_audit.operating_ballscrew_rpm:.9f}",
+                "critical_speed_rpm="
+                f"{validated.ballscrew_axial_mechanics_audit.critical_speed_rpm:.9f}",
+                "load_ratio_percent="
+                f"{validated.ballscrew_axial_mechanics_audit.load_ratio_percent:.9f}",
+                "speed_ratio_percent="
+                f"{validated.ballscrew_axial_mechanics_audit.speed_ratio_percent:.9f}",
+                f"status={validated.ballscrew_axial_mechanics_audit.ballscrew_status}",
+                validated.ballscrew_axial_mechanics_audit.model_limitation,
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

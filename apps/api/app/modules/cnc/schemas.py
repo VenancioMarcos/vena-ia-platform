@@ -2439,6 +2439,129 @@ class GuidewayLoadAuditPayload(_CNCGenerationContract):
         return self
 
 
+class BallscrewAxialMechanicsAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-ballscrew-axial-mechanics-audit/v1"] = (
+        "vena-ia.cnc-ballscrew-axial-mechanics-audit/v1"
+    )
+    source_guideway_load_audit: GuidewayLoadAuditPayload
+    guide_friction_coefficient: float = Field(ge=0, le=1.0)
+    carriage_mass_kg: float = Field(gt=0, le=1_000_000)
+    gravitational_acceleration_m_s2: float = Field(
+        default=9.80665, ge=9.80665, le=9.80665
+    )
+    carriage_acceleration_m_s2: float = Field(ge=0, le=1_000)
+    ballscrew_root_diameter_mm: float = Field(gt=0, le=10_000)
+    ballscrew_lead_mm_per_rev: float = Field(gt=0, le=100_000)
+    ballscrew_length_mm: float = Field(gt=0, le=1_000_000)
+    young_modulus_mpa: float = Field(gt=0, le=1_000_000_000)
+    buckling_mounting_factor: float = Field(gt=0, le=1_000)
+    critical_speed_mounting_factor: float = Field(gt=0, le=1_000)
+    axial_feed_rate_mm_per_min: float = Field(ge=0, le=100_000_000)
+    area_moment_of_inertia_mm4: float = Field(gt=0)
+    total_axial_thrust_n: float = Field(gt=0)
+    euler_buckling_limit_n: float = Field(gt=0)
+    critical_speed_rpm: float = Field(gt=0)
+    operating_ballscrew_rpm: float = Field(ge=0)
+    load_ratio_percent: float = Field(gt=0)
+    speed_ratio_percent: float = Field(ge=0)
+    ballscrew_status: Literal[
+        "BALLSCREW_AXIAL_BUCKLING_RISK_WARNING",
+        "BALLSCREW_CRITICAL_SPEED_WARNING",
+        "BALLSCREW_MECHANICS_COMPLIANT",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ESTIMATIVA ANALÍTICA DE ESFORÇOS NO FUSO DE ESFERAS - NÃO CONSIDERA PRÉ-CARGA DE CASTANHA DUPLA, ERROS DE PASSO OU FOLGA AXIAL POR DESGASTE"
+    ] = (
+        "ESTIMATIVA ANALÍTICA DE ESFORÇOS NO FUSO DE ESFERAS - NÃO CONSIDERA "
+        "PRÉ-CARGA DE CASTANHA DUPLA, ERROS DE PASSO OU FOLGA AXIAL POR DESGASTE"
+    )
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_ballscrew_mechanics_snapshot(
+        self,
+    ) -> "BallscrewAxialMechanicsAuditPayload":
+        guideway = self.source_guideway_load_audit
+        expected_inertia = math.pi * self.ballscrew_root_diameter_mm**4 / 64.0
+        expected_thrust = (
+            guideway.axial_feed_force_n
+            + self.guide_friction_coefficient
+            * (
+                self.carriage_mass_kg * self.gravitational_acceleration_m_s2
+                + guideway.radial_cutting_force_n
+            )
+            + self.carriage_mass_kg * self.carriage_acceleration_m_s2
+        )
+        expected_buckling = (
+            self.buckling_mounting_factor
+            * math.pi**2
+            * self.young_modulus_mpa
+            * expected_inertia
+            / self.ballscrew_length_mm**2
+        )
+        expected_critical_speed = (
+            self.critical_speed_mounting_factor
+            * (self.ballscrew_root_diameter_mm / self.ballscrew_length_mm**2)
+            * 10_000_000.0
+        )
+        expected_operating_speed = (
+            self.axial_feed_rate_mm_per_min / self.ballscrew_lead_mm_per_rev
+        )
+        expected_load_ratio = expected_thrust / expected_buckling * 100.0
+        expected_speed_ratio = expected_operating_speed / expected_critical_speed * 100.0
+        comparisons = (
+            (
+                self.area_moment_of_inertia_mm4,
+                expected_inertia,
+                "BALLSCREW_AREA_MOMENT_INCONSISTENT",
+            ),
+            (
+                self.total_axial_thrust_n,
+                expected_thrust,
+                "BALLSCREW_TOTAL_AXIAL_THRUST_INCONSISTENT",
+            ),
+            (
+                self.euler_buckling_limit_n,
+                expected_buckling,
+                "BALLSCREW_EULER_LIMIT_INCONSISTENT",
+            ),
+            (
+                self.critical_speed_rpm,
+                expected_critical_speed,
+                "BALLSCREW_CRITICAL_SPEED_INCONSISTENT",
+            ),
+            (
+                self.operating_ballscrew_rpm,
+                expected_operating_speed,
+                "BALLSCREW_OPERATING_SPEED_INCONSISTENT",
+            ),
+            (
+                self.load_ratio_percent,
+                expected_load_ratio,
+                "BALLSCREW_LOAD_RATIO_INCONSISTENT",
+            ),
+            (
+                self.speed_ratio_percent,
+                expected_speed_ratio,
+                "BALLSCREW_SPEED_RATIO_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        if expected_thrust > 0.5 * expected_buckling:
+            expected_status = "BALLSCREW_AXIAL_BUCKLING_RISK_WARNING"
+        elif expected_operating_speed > 0.8 * expected_critical_speed:
+            expected_status = "BALLSCREW_CRITICAL_SPEED_WARNING"
+        else:
+            expected_status = "BALLSCREW_MECHANICS_COMPLIANT"
+        if self.ballscrew_status != expected_status:
+            raise ValueError("BALLSCREW_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -2479,6 +2602,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     spindle_harmonic_dynamics_audit: SpindleHarmonicDynamicsAuditPayload
     jaw_clamping_pressure_audit: JawClampingPressureAuditPayload
     guideway_load_audit: GuidewayLoadAuditPayload
+    ballscrew_axial_mechanics_audit: BallscrewAxialMechanicsAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -2831,4 +2955,10 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             or guideway.source_power_force_audit != self.power_force_audit
         ):
             raise ValueError("REPORT_GUIDEWAY_LOAD_SOURCE_INCONSISTENT")
+        ballscrew = self.ballscrew_axial_mechanics_audit
+        if (
+            ballscrew.safety_flags != self.safety_flags
+            or ballscrew.source_guideway_load_audit != guideway
+        ):
+            raise ValueError("REPORT_BALLSCREW_MECHANICS_SOURCE_INCONSISTENT")
         return self

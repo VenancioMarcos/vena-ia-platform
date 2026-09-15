@@ -18,6 +18,7 @@ from app.modules.cnc.schemas import (
     MachiningTechnicalReportPayload,
     ToolpathSimulationRequest,
 )
+from app.modules.cnc.services.ballscrew_auditor import audit_ballscrew_mechanics
 from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
 from app.modules.cnc.services.chip_breaking_auditor import (
     audit_chip_breaking_machinability,
@@ -366,6 +367,22 @@ def compile_machining_report(
         block_spacing_z_mm=360.0,
         static_capacity_n=80_000.0,
     )
+    ballscrew_axial_mechanics_audit = audit_ballscrew_mechanics(
+        guideway_load_audit,
+        guide_friction_coefficient=0.003,
+        carriage_mass_kg=400.0,
+        carriage_acceleration_m_s2=1.5,
+        ballscrew_root_diameter_mm=32.0,
+        ballscrew_lead_mm_per_rev=10.0,
+        ballscrew_length_mm=1_000.0,
+        young_modulus_mpa=210_000.0,
+        buckling_mounting_factor=1.0,
+        critical_speed_mounting_factor=1.0,
+        axial_feed_rate_mm_per_min=(
+            power_force_audit.feed_mm_per_rev
+            * power_force_audit.spindle_rpm_reference
+        ),
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -406,6 +423,7 @@ def compile_machining_report(
         spindle_harmonic_dynamics_audit=spindle_harmonic_dynamics_audit,
         jaw_clamping_pressure_audit=jaw_clamping_pressure_audit,
         guideway_load_audit=guideway_load_audit,
+        ballscrew_axial_mechanics_audit=ballscrew_axial_mechanics_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -453,6 +471,8 @@ def compile_machining_report(
             "nonlinear Hertzian pressure distribution.",
             "Guideway load estimates use declared force ratios and nominal block spacing; "
             "internal preload, bed geometry errors and rolling-element wear are excluded.",
+            "Ballscrew axial-thrust, Euler-buckling and critical-speed estimates exclude "
+            "double-nut preload, pitch error and axial backlash caused by wear.",
         ),
     )
 
