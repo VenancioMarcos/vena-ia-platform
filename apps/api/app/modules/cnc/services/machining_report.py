@@ -57,6 +57,9 @@ from app.modules.cnc.services.spindle_envelope_auditor import (
     audit_spindle_power_torque_envelope,
     declared_spindle_curve,
 )
+from app.modules.cnc.services.spindle_bearing_auditor import (
+    audit_spindle_bearing_thermal_load,
+)
 from app.modules.cnc.services.syntax_linter import require_valid_gcode_syntax
 from app.modules.cnc.services.tool_life_estimator import estimate_tool_life
 from app.modules.cnc.services.tool_wear_geometry_auditor import audit_tool_wear_geometry
@@ -383,6 +386,18 @@ def compile_machining_report(
             * power_force_audit.spindle_rpm_reference
         ),
     )
+    spindle_bearing_thermal_audit = audit_spindle_bearing_thermal_load(
+        guideway_load_audit,
+        internal_preload_n=1_500.0,
+        load_friction_factor_f1=0.0005,
+        viscous_friction_factor_f0=2.0,
+        bearing_mean_diameter_mm=70.0,
+        lubricant_kinematic_viscosity_mm2_s=20.0,
+        operating_rpm=power_force_audit.spindle_rpm_reference,
+        convection_coefficient_w_m2_k=50.0,
+        housing_dissipation_area_m2=0.08,
+        max_admissible_temp_c=70.0,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -424,6 +439,7 @@ def compile_machining_report(
         jaw_clamping_pressure_audit=jaw_clamping_pressure_audit,
         guideway_load_audit=guideway_load_audit,
         ballscrew_axial_mechanics_audit=ballscrew_axial_mechanics_audit,
+        spindle_bearing_thermal_audit=spindle_bearing_thermal_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",
@@ -473,6 +489,8 @@ def compile_machining_report(
             "internal preload, bed geometry errors and rolling-element wear are excluded.",
             "Ballscrew axial-thrust, Euler-buckling and critical-speed estimates exclude "
             "double-nut preload, pitch error and axial backlash caused by wear.",
+            "Spindle-bearing thermal load is an analytical steady-state estimate and does "
+            "not replace PT100 sensing or physical headstock thermography.",
         ),
     )
 

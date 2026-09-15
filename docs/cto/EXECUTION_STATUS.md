@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-400 a AUTO-409
+
+`CNC_SPINDLE_BEARING_THERMAL_LOAD_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-399-BATCH`; o PR #81 passou no Frontend CI em 1m17s e no Backend CI em
+3m35s e foi integrado por squash em `f26f20d`, com branch remota removida e main
+sincronizada. A Rota 33 aplica o modelo Palmgren em dois regimes de viscosidade e
+rotação, soma os torques de carga e viscoso, calcula calor e estima a temperatura
+estacionária frente ao limite declarado. Contrato, JSON, TEXT e Web revalidam
+fontes, mostram telemetria e warning térmico sem controles físicos. Validação: 395
+testes CNC, 46 Web, Ruff, mypy em 239 fontes, TypeScript, Next lint e diff; branch
+local sem push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-390 a AUTO-399
 
 `CNC_BALLSCREW_AXIAL_THRUST_BUCKLING_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o

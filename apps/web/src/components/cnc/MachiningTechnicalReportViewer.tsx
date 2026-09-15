@@ -661,6 +661,34 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ESTIMATIVA ANALÍTICA DE ESFORÇOS NO FUSO DE ESFERAS - NÃO CONSIDERA PRÉ-CARGA DE CASTANHA DUPLA, ERROS DE PASSO OU FOLGA AXIAL POR DESGASTE";
     safety_flags: MachiningReportSafetyFlags;
   };
+  spindle_bearing_thermal_audit: {
+    schema_version: "vena-ia.cnc-spindle-bearing-thermal-audit/v1";
+    source_guideway_load_audit: MachiningTechnicalReportPayload["guideway_load_audit"];
+    internal_preload_n: number;
+    combined_equivalent_load_n: number;
+    load_friction_factor_f1: number;
+    viscous_friction_factor_f0: number;
+    bearing_mean_diameter_mm: number;
+    lubricant_kinematic_viscosity_mm2_s: number;
+    operating_rpm: number;
+    convection_coefficient_w_m2_k: number;
+    housing_dissipation_area_m2: number;
+    ambient_temperature_c: 20;
+    max_admissible_temp_c: number;
+    load_torque_nm: number;
+    viscous_torque_nm: number;
+    total_friction_torque_nm: number;
+    total_heat_dissipated_w: number;
+    steady_state_temperature_rise_c: number;
+    estimated_bearing_temp_c: number;
+    bearing_status:
+      | "SPINDLE_BEARING_OVERHEATING_WARNING"
+      | "SPINDLE_BEARING_THERMAL_COMPLIANT";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ESTIMATIVA ANALÍTICA DE CARGA TÉRMICA EM ROLAMENTOS - NÃO SUBSTITUI SENSORES DE TEMPERATURA PT100 OU TERMOGRAFIA FÍSICA DO CABEÇOTE";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -745,6 +773,8 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const guidewayCompliant = guidewayAudit.guideway_status === "GUIDEWAY_LOAD_COMPLIANT";
   const ballscrewAudit = report.ballscrew_axial_mechanics_audit;
   const ballscrewCompliant = ballscrewAudit.ballscrew_status === "BALLSCREW_MECHANICS_COMPLIANT";
+  const spindleBearingAudit = report.spindle_bearing_thermal_audit;
+  const spindleBearingCompliant = spindleBearingAudit.bearing_status === "SPINDLE_BEARING_THERMAL_COMPLIANT";
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -1378,6 +1408,27 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         {ballscrewAudit.model_limitation}
+      </p>
+    </section>
+
+    <section aria-labelledby="report-spindle-bearing-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-spindle-bearing-heading" className="text-lg font-semibold">Carga térmica nos rolamentos do fuso</h2>
+        <span role={spindleBearingCompliant ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${spindleBearingCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {spindleBearingCompliant ? "TEMPERATURA DE MANCAIS ESTÁVEL" : "ALERTA: RISCO DE SUPERAQUECIMENTO NOS ROLAMENTOS"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Torque total de atrito" value={`${spindleBearingAudit.total_friction_torque_nm.toFixed(3)} N·m`} />
+        <Metric label="Calor dissipado" value={`${spindleBearingAudit.total_heat_dissipated_w.toFixed(3)} W`} />
+        <Metric label="Temperatura estimada" value={`${spindleBearingAudit.estimated_bearing_temp_c.toFixed(3)} °C`} />
+        <Metric label="Limite térmico do lubrificante" value={`${spindleBearingAudit.max_admissible_temp_c.toFixed(3)} °C`} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">
+        carga {spindleBearingAudit.load_torque_nm.toFixed(3)} N·m · viscoso {spindleBearingAudit.viscous_torque_nm.toFixed(3)} N·m · {spindleBearingAudit.bearing_status}
+      </p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        {spindleBearingAudit.model_limitation}
       </p>
     </section>
 
