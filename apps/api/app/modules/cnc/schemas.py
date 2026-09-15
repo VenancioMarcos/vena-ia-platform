@@ -2562,6 +2562,135 @@ class BallscrewAxialMechanicsAuditPayload(_CNCGenerationContract):
         return self
 
 
+class SpindleBearingThermalAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-spindle-bearing-thermal-audit/v1"] = (
+        "vena-ia.cnc-spindle-bearing-thermal-audit/v1"
+    )
+    source_guideway_load_audit: GuidewayLoadAuditPayload
+    internal_preload_n: float = Field(gt=0, le=10_000_000)
+    combined_equivalent_load_n: float = Field(gt=0)
+    load_friction_factor_f1: float = Field(gt=0, le=1.0)
+    viscous_friction_factor_f0: float = Field(gt=0, le=1_000)
+    bearing_mean_diameter_mm: float = Field(gt=0, le=10_000)
+    lubricant_kinematic_viscosity_mm2_s: float = Field(gt=0, le=100_000)
+    operating_rpm: float = Field(gt=0, le=100_000)
+    convection_coefficient_w_m2_k: float = Field(gt=0, le=1_000_000)
+    housing_dissipation_area_m2: float = Field(gt=0, le=10_000)
+    ambient_temperature_c: float = Field(default=20.0, ge=20.0, le=20.0)
+    max_admissible_temp_c: float = Field(gt=20.0, le=500)
+    load_torque_nm: float = Field(gt=0)
+    viscous_torque_nm: float = Field(gt=0)
+    total_friction_torque_nm: float = Field(gt=0)
+    total_heat_dissipated_w: float = Field(gt=0)
+    steady_state_temperature_rise_c: float = Field(gt=0)
+    estimated_bearing_temp_c: float = Field(gt=20.0)
+    bearing_status: Literal[
+        "SPINDLE_BEARING_OVERHEATING_WARNING",
+        "SPINDLE_BEARING_THERMAL_COMPLIANT",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ESTIMATIVA ANALÍTICA DE CARGA TÉRMICA EM ROLAMENTOS - NÃO SUBSTITUI SENSORES DE TEMPERATURA PT100 OU TERMOGRAFIA FÍSICA DO CABEÇOTE"
+    ] = (
+        "ESTIMATIVA ANALÍTICA DE CARGA TÉRMICA EM ROLAMENTOS - NÃO SUBSTITUI "
+        "SENSORES DE TEMPERATURA PT100 OU TERMOGRAFIA FÍSICA DO CABEÇOTE"
+    )
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_spindle_bearing_thermal_snapshot(
+        self,
+    ) -> "SpindleBearingThermalAuditPayload":
+        guideway = self.source_guideway_load_audit
+        if self.operating_rpm > guideway.source_power_force_audit.max_spindle_rpm:
+            raise ValueError("SPINDLE_BEARING_OPERATING_RPM_OUTSIDE_ENVELOPE")
+        expected_combined_load = (
+            math.sqrt(
+                guideway.tangential_cutting_force_n**2
+                + guideway.axial_feed_force_n**2
+                + guideway.radial_cutting_force_n**2
+            )
+            + self.internal_preload_n
+        )
+        expected_load_torque = (
+            self.load_friction_factor_f1
+            * expected_combined_load
+            * self.bearing_mean_diameter_mm
+            / 1_000.0
+        )
+        viscosity_speed = self.lubricant_kinematic_viscosity_mm2_s * self.operating_rpm
+        if viscosity_speed >= 2_000.0:
+            viscous_torque_n_mm = (
+                1e-7
+                * self.viscous_friction_factor_f0
+                * viscosity_speed ** (2.0 / 3.0)
+                * self.bearing_mean_diameter_mm**3
+            )
+        else:
+            viscous_torque_n_mm = (
+                160e-7
+                * self.viscous_friction_factor_f0
+                * self.bearing_mean_diameter_mm**3
+            )
+        expected_viscous_torque = viscous_torque_n_mm / 1_000.0
+        expected_total_torque = expected_load_torque + expected_viscous_torque
+        angular_speed = 2.0 * math.pi * self.operating_rpm / 60.0
+        expected_heat = expected_total_torque * angular_speed
+        expected_rise = expected_heat / (
+            self.convection_coefficient_w_m2_k * self.housing_dissipation_area_m2
+        )
+        expected_temperature = self.ambient_temperature_c + expected_rise
+        comparisons = (
+            (
+                self.combined_equivalent_load_n,
+                expected_combined_load,
+                "SPINDLE_BEARING_EQUIVALENT_LOAD_INCONSISTENT",
+            ),
+            (
+                self.load_torque_nm,
+                expected_load_torque,
+                "SPINDLE_BEARING_LOAD_TORQUE_INCONSISTENT",
+            ),
+            (
+                self.viscous_torque_nm,
+                expected_viscous_torque,
+                "SPINDLE_BEARING_VISCOUS_TORQUE_INCONSISTENT",
+            ),
+            (
+                self.total_friction_torque_nm,
+                expected_total_torque,
+                "SPINDLE_BEARING_TOTAL_TORQUE_INCONSISTENT",
+            ),
+            (
+                self.total_heat_dissipated_w,
+                expected_heat,
+                "SPINDLE_BEARING_HEAT_INCONSISTENT",
+            ),
+            (
+                self.steady_state_temperature_rise_c,
+                expected_rise,
+                "SPINDLE_BEARING_TEMPERATURE_RISE_INCONSISTENT",
+            ),
+            (
+                self.estimated_bearing_temp_c,
+                expected_temperature,
+                "SPINDLE_BEARING_TEMPERATURE_INCONSISTENT",
+            ),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "SPINDLE_BEARING_OVERHEATING_WARNING"
+            if expected_temperature > self.max_admissible_temp_c
+            else "SPINDLE_BEARING_THERMAL_COMPLIANT"
+        )
+        if self.bearing_status != expected_status:
+            raise ValueError("SPINDLE_BEARING_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -2603,6 +2732,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     jaw_clamping_pressure_audit: JawClampingPressureAuditPayload
     guideway_load_audit: GuidewayLoadAuditPayload
     ballscrew_axial_mechanics_audit: BallscrewAxialMechanicsAuditPayload
+    spindle_bearing_thermal_audit: SpindleBearingThermalAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -2961,4 +3091,16 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             or ballscrew.source_guideway_load_audit != guideway
         ):
             raise ValueError("REPORT_BALLSCREW_MECHANICS_SOURCE_INCONSISTENT")
+        bearing = self.spindle_bearing_thermal_audit
+        if (
+            bearing.safety_flags != self.safety_flags
+            or bearing.source_guideway_load_audit != guideway
+            or not math.isclose(
+                bearing.operating_rpm,
+                self.power_force_audit.spindle_rpm_reference,
+                abs_tol=5e-9,
+                rel_tol=1e-12,
+            )
+        ):
+            raise ValueError("REPORT_SPINDLE_BEARING_SOURCE_INCONSISTENT")
         return self

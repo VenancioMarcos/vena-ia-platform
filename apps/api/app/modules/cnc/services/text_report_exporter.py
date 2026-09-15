@@ -439,6 +439,27 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "CARGA TÉRMICA NOS ROLAMENTOS DO FUSO",
+            (
+                "combined_equivalent_load_n="
+                f"{validated.spindle_bearing_thermal_audit.combined_equivalent_load_n:.9f}",
+                "load_torque_nm="
+                f"{validated.spindle_bearing_thermal_audit.load_torque_nm:.9f}",
+                "viscous_torque_nm="
+                f"{validated.spindle_bearing_thermal_audit.viscous_torque_nm:.9f}",
+                "total_friction_torque_nm="
+                f"{validated.spindle_bearing_thermal_audit.total_friction_torque_nm:.9f}",
+                "total_heat_dissipated_w="
+                f"{validated.spindle_bearing_thermal_audit.total_heat_dissipated_w:.9f}",
+                "estimated_bearing_temp_c="
+                f"{validated.spindle_bearing_thermal_audit.estimated_bearing_temp_c:.9f}",
+                "max_admissible_temp_c="
+                f"{validated.spindle_bearing_thermal_audit.max_admissible_temp_c:.9f}",
+                f"status={validated.spindle_bearing_thermal_audit.bearing_status}",
+                validated.spindle_bearing_thermal_audit.model_limitation,
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

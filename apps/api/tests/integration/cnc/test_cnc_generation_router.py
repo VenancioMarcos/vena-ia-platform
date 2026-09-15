@@ -436,12 +436,24 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 19
+        ) == 20
         assert "[ESFORÇOS NO FUSO DE ESFERAS]" in response.text
         assert "total_axial_thrust_n=" in response.text
         assert "euler_buckling_limit_n=" in response.text
         assert "critical_speed_rpm=" in response.text
         assert "status=BALLSCREW_MECHANICS_COMPLIANT" in response.text
+        assert "[CARGA TÉRMICA NOS ROLAMENTOS DO FUSO]" in response.text
+        assert "load_torque_nm=" in response.text
+        assert "viscous_torque_nm=" in response.text
+        assert "total_heat_dissipated_w=" in response.text
+        assert "estimated_bearing_temp_c=" in response.text
+        assert "max_admissible_temp_c=70.000000000" in response.text
+        assert "status=SPINDLE_BEARING_THERMAL_COMPLIANT" in response.text
+        assert (
+            "ESTIMATIVA ANALÍTICA DE CARGA TÉRMICA EM ROLAMENTOS - NÃO SUBSTITUI "
+            "SENSORES DE TEMPERATURA PT100 OU TERMOGRAFIA FÍSICA DO CABEÇOTE"
+            in response.text
+        )
         assert "[DINÂMICA HARMÔNICA E VELOCIDADE CRÍTICA DO FUSO]" in response.text
         assert "first_critical_rpm=" in response.text
         assert "[PRESSÃO DE CONTATO E MARCAS DE CASTANHA]" in response.text

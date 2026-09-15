@@ -1022,6 +1022,42 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  spindle_bearing_thermal_audit: {
+    schema_version: "vena-ia.cnc-spindle-bearing-thermal-audit/v1",
+    source_guideway_load_audit: {} as MachiningTechnicalReportPayload["guideway_load_audit"],
+    internal_preload_n: 1500,
+    combined_equivalent_load_n: 2516.462,
+    load_friction_factor_f1: 0.0005,
+    viscous_friction_factor_f0: 2,
+    bearing_mean_diameter_mm: 70,
+    lubricant_kinematic_viscosity_mm2_s: 20,
+    operating_rpm: 300,
+    convection_coefficient_w_m2_k: 50,
+    housing_dissipation_area_m2: 0.08,
+    ambient_temperature_c: 20,
+    max_admissible_temp_c: 70,
+    load_torque_nm: 0.088076,
+    viscous_torque_nm: 0.022786,
+    total_friction_torque_nm: 0.110862,
+    total_heat_dissipated_w: 3.482767,
+    steady_state_temperature_rise_c: 0.870692,
+    estimated_bearing_temp_c: 20.870692,
+    bearing_status: "SPINDLE_BEARING_THERMAL_COMPLIANT",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ESTIMATIVA ANALÍTICA DE CARGA TÉRMICA EM ROLAMENTOS - NÃO SUBSTITUI SENSORES DE TEMPERATURA PT100 OU TERMOGRAFIA FÍSICA DO CABEÇOTE",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1039,6 +1075,8 @@ const report: MachiningTechnicalReportPayload = {
 };
 
 report.ballscrew_axial_mechanics_audit.source_guideway_load_audit =
+  report.guideway_load_audit;
+report.spindle_bearing_thermal_audit.source_guideway_load_audit =
   report.guideway_load_audit;
 
 test("renders report metrics, tools, audit evidence, and mandatory governance", () => {
@@ -1615,6 +1653,34 @@ test("renders ballscrew mechanics warning without servo controls", () => {
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE FLAMBAGEM OU VELOCIDADE CRÍTICA DO FUSO/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|acionar fuso|servo motor|controle de servo/i);
+});
+
+test("renders compliant spindle bearing thermal telemetry without cooling controls", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Carga térmica nos rolamentos do fuso/);
+  assert.match(html, /Torque total de atrito/);
+  assert.match(html, /Calor dissipado/);
+  assert.match(html, /Temperatura estimada/);
+  assert.match(html, /Limite térmico do lubrificante/);
+  assert.match(html, /TEMPERATURA DE MANCAIS ESTÁVEL/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE CARGA TÉRMICA EM ROLAMENTOS - NÃO SUBSTITUI SENSORES DE TEMPERATURA PT100 OU TERMOGRAFIA FÍSICA DO CABEÇOTE/);
+  assert.doesNotMatch(html, /<button|acionar refrigeração|controle de refrigeração|circulação de óleo|controle térmico/i);
+});
+
+test("renders spindle bearing overheating warning without cooling controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    spindle_bearing_thermal_audit: {
+      ...report.spindle_bearing_thermal_audit,
+      total_heat_dissipated_w: 240,
+      steady_state_temperature_rise_c: 60,
+      estimated_bearing_temp_c: 80,
+      bearing_status: "SPINDLE_BEARING_OVERHEATING_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE SUPERAQUECIMENTO NOS ROLAMENTOS/);
+  assert.doesNotMatch(html, /<button|acionar refrigeração|controle de refrigeração|circulação de óleo|controle térmico/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {

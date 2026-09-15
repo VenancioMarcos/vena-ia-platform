@@ -1,5 +1,16 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-400 a AUTO-409
+
+O `VTP-AUTO-399-BATCH` foi aprovado. A Rota 32 foi publicada no PR #81, passou
+pelas duas esteiras e foi integrada por squash em `f26f20d`; a branch remota foi
+removida e a main sincronizada. A branch v9.5 implementa a Rota CNC 33: atrito de
+carga e viscoso pelo modelo Palmgren, calor por velocidade angular e temperatura
+estacionária pela dissipação convectiva. Manifesto, laudo TEXT e viewer Web
+preservam revisão humana e todos os bloqueios permanentes. Validação concluída com
+395 testes CNC, 46 Web, Ruff, mypy em 239 fontes, TypeScript, Next lint e diff;
+entrega local sem push.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-390 a AUTO-399
 
 O `VTP-AUTO-389-BATCH` foi aprovado. A Rota 31 foi publicada no PR #80, passou

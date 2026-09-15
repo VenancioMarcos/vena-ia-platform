@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.84
+**Versão:** 2.85
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_SPINDLE_BEARING_THERMAL_LOAD_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou o `VTP-AUTO-399-BATCH`. A Rota 32 foi publicada no PR #81,
+  passou no Frontend CI em 1m17s e no Backend CI em 3m35s e foi integrada por
+  squash em `f26f20d`; a branch remota foi removida e `main=origin/main`. A branch
+  `codex/v9.5-cnc-spindle-bearing-thermal-load-auditor` implementa a Rota 33:
+  decompõe os torques de carga e viscoso pelo modelo Palmgren, converte o torque
+  total em calor e estima a temperatura estacionária pela dissipação convectiva.
+  Contrato, JSON, TEXT e Web recalculam fontes e derivados, alertam acima do limite
+  térmico declarado e preservam todos os bloqueios físicos. Validação: 395 testes
+  CNC, 46 Web, Ruff, mypy em 239 fontes, TypeScript estrito, Next lint e diff;
+  branch local sem push.
 
 - **Handoff CTO:** `CNC_BALLSCREW_AXIAL_THRUST_BUCKLING_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou o `VTP-AUTO-389-BATCH`. A Rota 31 foi publicada no PR #80, teve
