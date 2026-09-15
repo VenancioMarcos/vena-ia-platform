@@ -985,6 +985,43 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  ballscrew_axial_mechanics_audit: {
+    schema_version: "vena-ia.cnc-ballscrew-axial-mechanics-audit/v1",
+    source_guideway_load_audit: {} as MachiningTechnicalReportPayload["guideway_load_audit"],
+    guide_friction_coefficient: 0.003,
+    carriage_mass_kg: 400,
+    gravitational_acceleration_m_s2: 9.80665,
+    carriage_acceleration_m_s2: 1.5,
+    ballscrew_root_diameter_mm: 32,
+    ballscrew_lead_mm_per_rev: 10,
+    ballscrew_length_mm: 1000,
+    young_modulus_mpa: 210000,
+    buckling_mounting_factor: 1,
+    critical_speed_mounting_factor: 1,
+    axial_feed_rate_mm_per_min: 300,
+    area_moment_of_inertia_mm4: 51471.854036,
+    total_axial_thrust_n: 955.854855,
+    euler_buckling_limit_n: 106695.827222,
+    critical_speed_rpm: 320,
+    operating_ballscrew_rpm: 30,
+    load_ratio_percent: 0.895862,
+    speed_ratio_percent: 9.375,
+    ballscrew_status: "BALLSCREW_MECHANICS_COMPLIANT",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ESTIMATIVA ANALÍTICA DE ESFORÇOS NO FUSO DE ESFERAS - NÃO CONSIDERA PRÉ-CARGA DE CASTANHA DUPLA, ERROS DE PASSO OU FOLGA AXIAL POR DESGASTE",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1000,6 +1037,9 @@ const report: MachiningTechnicalReportPayload = {
   },
   limitations: ["No physical validation.", "No machine authority."],
 };
+
+report.ballscrew_axial_mechanics_audit.source_guideway_load_audit =
+  report.guideway_load_audit;
 
 test("renders report metrics, tools, audit evidence, and mandatory governance", () => {
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
@@ -1549,6 +1589,32 @@ test("renders guideway dynamic overload warning without hardware controls", () =
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: SOBRECARGA DINÂMICA NOS GUIAS/);
   assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|acionar guia|atuador|servo/i);
+});
+
+test("renders ballscrew thrust, limits, safe badge, and mandatory note", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Auditoria mecânica do fuso de esferas/);
+  assert.match(html, /955\.855 N/);
+  assert.match(html, /106695\.827 N/);
+  assert.match(html, /30\.000 \/ 320\.000 RPM/);
+  assert.match(html, /0\.90%/);
+  assert.match(html, /FUSO DE ESFERAS EM REGIME SEGURO/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE ESFORÇOS NO FUSO DE ESFERAS - NÃO CONSIDERA PRÉ-CARGA DE CASTANHA DUPLA, ERROS DE PASSO OU FOLGA AXIAL POR DESGASTE/);
+});
+
+test("renders ballscrew mechanics warning without servo controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    ballscrew_axial_mechanics_audit: {
+      ...report.ballscrew_axial_mechanics_audit,
+      operating_ballscrew_rpm: 300,
+      speed_ratio_percent: 93.75,
+      ballscrew_status: "BALLSCREW_CRITICAL_SPEED_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE FLAMBAGEM OU VELOCIDADE CRÍTICA DO FUSO/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|acionar fuso|servo motor|controle de servo/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {

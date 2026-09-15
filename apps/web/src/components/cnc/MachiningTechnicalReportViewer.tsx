@@ -631,6 +631,36 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ESTIMATIVA ANALÍTICA DE CARGA NOS GUIAS LINEARES - NÃO CONSIDERA PRÉ-CARGA INTERNA DOS PATINS, ERROS DE GEOMETRIA DO BARRAMENTO OU DESGASTE DE ESFERAS/ROLETES";
     safety_flags: MachiningReportSafetyFlags;
   };
+  ballscrew_axial_mechanics_audit: {
+    schema_version: "vena-ia.cnc-ballscrew-axial-mechanics-audit/v1";
+    source_guideway_load_audit: MachiningTechnicalReportPayload["guideway_load_audit"];
+    guide_friction_coefficient: number;
+    carriage_mass_kg: number;
+    gravitational_acceleration_m_s2: 9.80665;
+    carriage_acceleration_m_s2: number;
+    ballscrew_root_diameter_mm: number;
+    ballscrew_lead_mm_per_rev: number;
+    ballscrew_length_mm: number;
+    young_modulus_mpa: number;
+    buckling_mounting_factor: number;
+    critical_speed_mounting_factor: number;
+    axial_feed_rate_mm_per_min: number;
+    area_moment_of_inertia_mm4: number;
+    total_axial_thrust_n: number;
+    euler_buckling_limit_n: number;
+    critical_speed_rpm: number;
+    operating_ballscrew_rpm: number;
+    load_ratio_percent: number;
+    speed_ratio_percent: number;
+    ballscrew_status:
+      | "BALLSCREW_AXIAL_BUCKLING_RISK_WARNING"
+      | "BALLSCREW_CRITICAL_SPEED_WARNING"
+      | "BALLSCREW_MECHANICS_COMPLIANT";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ESTIMATIVA ANALÍTICA DE ESFORÇOS NO FUSO DE ESFERAS - NÃO CONSIDERA PRÉ-CARGA DE CASTANHA DUPLA, ERROS DE PASSO OU FOLGA AXIAL POR DESGASTE";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -713,6 +743,8 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       : "ALERTA: PRESSÃO DE FIXAÇÃO INSUFICIENTE";
   const guidewayAudit = report.guideway_load_audit;
   const guidewayCompliant = guidewayAudit.guideway_status === "GUIDEWAY_LOAD_COMPLIANT";
+  const ballscrewAudit = report.ballscrew_axial_mechanics_audit;
+  const ballscrewCompliant = ballscrewAudit.ballscrew_status === "BALLSCREW_MECHANICS_COMPLIANT";
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -1325,6 +1357,27 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         {guidewayAudit.model_limitation}
+      </p>
+    </section>
+
+    <section aria-labelledby="report-ballscrew-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-ballscrew-heading" className="text-lg font-semibold">Auditoria mecânica do fuso de esferas</h2>
+        <span role={ballscrewCompliant ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${ballscrewCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {ballscrewCompliant ? "FUSO DE ESFERAS EM REGIME SEGURO" : "ALERTA: RISCO DE FLAMBAGEM OU VELOCIDADE CRÍTICA DO FUSO"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Empuxo axial total" value={`${ballscrewAudit.total_axial_thrust_n.toFixed(3)} N`} />
+        <Metric label="Limite de flambagem" value={`${ballscrewAudit.euler_buckling_limit_n.toFixed(3)} N`} />
+        <Metric label="Rotação do fuso" value={`${ballscrewAudit.operating_ballscrew_rpm.toFixed(3)} / ${ballscrewAudit.critical_speed_rpm.toFixed(3)} RPM`} />
+        <Metric label="Relação de carga" value={`${ballscrewAudit.load_ratio_percent.toFixed(2)}%`} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">
+        velocidade relativa {ballscrewAudit.speed_ratio_percent.toFixed(2)}% · {ballscrewAudit.ballscrew_status}
+      </p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        {ballscrewAudit.model_limitation}
       </p>
     </section>
 

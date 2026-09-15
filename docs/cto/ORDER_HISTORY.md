@@ -1,5 +1,16 @@
 # Histórico de ordens do CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-390 a AUTO-399
+
+O `VTP-AUTO-389-BATCH` foi aprovado. A Rota 31 foi publicada no PR #80, passou
+pelas duas esteiras e foi integrada por squash em `81b5fad`; a branch remota foi
+removida e a main sincronizada. A branch v9.4 implementa a Rota CNC 32: empuxo
+axial do fuso vinculado a `Ff`/`Fr`, carga gravitacional, atrito e aceleração,
+flambagem de Euler, velocidade crítica e gates conservadores de carga e rotação.
+Manifesto, laudo TEXT e viewer Web preservam revisão humana e todos os bloqueios
+permanentes. Validação concluída com 377 testes CNC, 44 Web, Ruff, mypy em 238
+fontes, TypeScript, Next lint e diff; entrega local sem push.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-380 a AUTO-389
 
 O `VTP-AUTO-379-BATCH` foi aprovado. A Rota 30 foi publicada no PR #79, passou

@@ -23,6 +23,7 @@ from app.modules.cnc.schemas import (
     TurningStock2D,
 )
 from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
+from app.modules.cnc.services.ballscrew_auditor import audit_ballscrew_mechanics
 from app.modules.cnc.services.chip_breaking_auditor import (
     audit_chip_breaking_machinability,
 )
@@ -305,6 +306,16 @@ def test_complete_report_replays_deterministically(controller):
     assert report.guideway_load_audit.max_block_load_n > 0
     assert report.guideway_load_audit.guideway_status == "GUIDEWAY_LOAD_COMPLIANT"
     assert report.guideway_load_audit.physical_use_authorized is False
+    assert report.ballscrew_axial_mechanics_audit.source_guideway_load_audit == (
+        report.guideway_load_audit
+    )
+    assert report.ballscrew_axial_mechanics_audit.total_axial_thrust_n > 0
+    assert report.ballscrew_axial_mechanics_audit.euler_buckling_limit_n > 0
+    assert report.ballscrew_axial_mechanics_audit.critical_speed_rpm == pytest.approx(320)
+    assert report.ballscrew_axial_mechanics_audit.ballscrew_status == (
+        "BALLSCREW_MECHANICS_COMPLIANT"
+    )
+    assert report.ballscrew_axial_mechanics_audit.physical_use_authorized is False
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -607,6 +618,47 @@ def test_report_rejects_guideway_audit_from_another_kienzle_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_ballscrew_audit_from_another_guideway_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    current = report.guideway_load_audit
+    other_guideway = audit_guideway_load(
+        current.source_power_force_audit,
+        feed_force_ratio=current.feed_force_ratio * 0.9,
+        radial_force_ratio=current.radial_force_ratio,
+        lever_arm_x_mm=current.lever_arm_x_mm,
+        lever_arm_y_mm=current.lever_arm_y_mm,
+        lever_arm_z_mm=current.lever_arm_z_mm,
+        block_spacing_x_mm=current.block_spacing_x_mm,
+        rail_spacing_y_mm=current.rail_spacing_y_mm,
+        block_spacing_z_mm=current.block_spacing_z_mm,
+        static_capacity_n=current.static_capacity_n,
+    )
+    current_ballscrew = report.ballscrew_axial_mechanics_audit
+    transplanted = audit_ballscrew_mechanics(
+        other_guideway,
+        guide_friction_coefficient=current_ballscrew.guide_friction_coefficient,
+        carriage_mass_kg=current_ballscrew.carriage_mass_kg,
+        carriage_acceleration_m_s2=current_ballscrew.carriage_acceleration_m_s2,
+        ballscrew_root_diameter_mm=current_ballscrew.ballscrew_root_diameter_mm,
+        ballscrew_lead_mm_per_rev=current_ballscrew.ballscrew_lead_mm_per_rev,
+        ballscrew_length_mm=current_ballscrew.ballscrew_length_mm,
+        young_modulus_mpa=current_ballscrew.young_modulus_mpa,
+        buckling_mounting_factor=current_ballscrew.buckling_mounting_factor,
+        critical_speed_mounting_factor=(
+            current_ballscrew.critical_speed_mounting_factor
+        ),
+        axial_feed_rate_mm_per_min=current_ballscrew.axial_feed_rate_mm_per_min,
+    )
+    body = report.model_dump()
+    body["ballscrew_axial_mechanics_audit"] = transplanted.model_dump()
+    with pytest.raises(
+        ValidationError,
+        match="REPORT_BALLSCREW_MECHANICS_SOURCE_INCONSISTENT",
+    ):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -614,7 +666,7 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 18
+    assert rendered.count(SAFETY_STAMP) == 19
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
@@ -654,6 +706,17 @@ def test_text_export_is_deterministic_and_stamps_every_section():
         "ESTIMATIVA ANALÍTICA DE CARGA NOS GUIAS LINEARES - NÃO CONSIDERA PRÉ-CARGA "
         "INTERNA DOS PATINS, ERROS DE GEOMETRIA DO BARRAMENTO OU DESGASTE DE "
         "ESFERAS/ROLETES" in rendered
+    )
+    assert "[ESFORÇOS NO FUSO DE ESFERAS]" in rendered
+    assert "total_axial_thrust_n=" in rendered
+    assert "euler_buckling_limit_n=" in rendered
+    assert "operating_ballscrew_rpm=" in rendered
+    assert "critical_speed_rpm=320.000000000" in rendered
+    assert "status=BALLSCREW_MECHANICS_COMPLIANT" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE ESFORÇOS NO FUSO DE ESFERAS - NÃO CONSIDERA "
+        "PRÉ-CARGA DE CASTANHA DUPLA, ERROS DE PASSO OU FOLGA AXIAL POR DESGASTE"
+        in rendered
     )
     assert "cutting_force_nominal_n=" in rendered
     assert "power_status=POWER_WITHIN_LIMITS" in rendered

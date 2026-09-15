@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.83
+**Versão:** 2.84
 **Última atualização:** 2026-09-14
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,18 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-14
+
+- **Handoff CTO:** `CNC_BALLSCREW_AXIAL_THRUST_BUCKLING_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou o `VTP-AUTO-389-BATCH`. A Rota 31 foi publicada no PR #80, teve
+  Frontend CI aprovado em 1m18s e Backend CI em 3m42s e foi integrada por squash
+  em `81b5fad`; a branch remota foi removida e `main=origin/main`. A branch
+  `codex/v9.4-cnc-ballscrew-axial-thrust-buckling-auditor` implementa a Rota 32:
+  deriva o empuxo axial total de `Ff`, atrito nas guias e inércia do carro, calcula
+  flambagem de Euler e RPM crítica para o fuso de esferas e aplica gates de 50% da
+  carga crítica e 80% da rotação crítica. Contrato, JSON, TEXT e Web recalculam
+  fontes e derivados, exibem a telemetria e preservam todos os bloqueios físicos.
+  Validação: 377 testes CNC, 44 Web, Ruff, mypy em 238 fontes, TypeScript, Next lint e diff;
+  branch local sem push.
 
 - **Handoff CTO:** `CNC_GUIDEWAY_CUTTING_MOMENT_LOAD_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou o `VTP-AUTO-379-BATCH`. A Rota 30 foi publicada no PR #79, teve
