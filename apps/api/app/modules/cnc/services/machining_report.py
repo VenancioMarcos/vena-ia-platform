@@ -19,6 +19,9 @@ from app.modules.cnc.schemas import (
     ToolpathSimulationRequest,
 )
 from app.modules.cnc.services.ballscrew_auditor import audit_ballscrew_mechanics
+from app.modules.cnc.services.bearing_life_auditor import (
+    audit_spindle_bearing_l10h_life,
+)
 from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
 from app.modules.cnc.services.chip_breaking_auditor import (
     audit_chip_breaking_machinability,
@@ -398,6 +401,16 @@ def compile_machining_report(
         housing_dissipation_area_m2=0.08,
         max_admissible_temp_c=70.0,
     )
+    spindle_bearing_life_audit = audit_spindle_bearing_l10h_life(
+        spindle_bearing_thermal_audit,
+        bearing_type="ANGULAR_CONTACT_BALL",
+        axial_preload_n=1_500.0,
+        radial_load_factor_x=1.0,
+        axial_load_factor_y=1.0,
+        dynamic_capacity_c_n=100_000.0,
+        required_kinematic_viscosity_nu1_mm2_s=12.0,
+        minimum_admissible_l10h_hours=5_000.0,
+    )
     return MachiningTechnicalReportPayload(
         plan_id=record.response.plan_id,
         cad_job_id=record.response.cad_job_id,
@@ -440,6 +453,7 @@ def compile_machining_report(
         guideway_load_audit=guideway_load_audit,
         ballscrew_axial_mechanics_audit=ballscrew_axial_mechanics_audit,
         spindle_bearing_thermal_audit=spindle_bearing_thermal_audit,
+        spindle_bearing_life_audit=spindle_bearing_life_audit,
         limitations=(
             "Source plan has no name; source_plan_name is unavailable.",
             "Timestamp identifies the analytical snapshot, not a machining event.",

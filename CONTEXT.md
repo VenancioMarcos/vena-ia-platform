@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.85
-**Última atualização:** 2026-09-14
+**Versão:** 2.86
+**Última atualização:** 2026-09-15
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -27,7 +27,20 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-### 3.1 Síntese vigente — 2026-09-14
+### 3.1 Síntese vigente — 2026-09-15
+
+- **Handoff CTO:** `CNC_BEARING_L10H_FATIGUE_LIFE_AUDITOR_COMPLETED_LOCAL`.
+  O CTO aprovou o `VTP-AUTO-409-BATCH`. A Rota 33 foi publicada no PR #82,
+  passou no Frontend CI em 1m23s e no Backend CI em 3m03s e foi integrada por
+  squash em `fbae22f`; a branch remota foi removida e `main=origin/main`. A branch
+  `codex/v9.6-cnc-bearing-l10h-fatigue-life-auditor` implementa a Rota 34:
+  deriva `Fr` e `Fa` do snapshot Kienzle/Rota 33, calcula `P=X·Fr+Y·Fa`, aplica os
+  expoentes ISO 281 de 3 ou 10/3 e converte a vida modificada por `aISO` em L10h.
+  A razão `kappa=nu/nu1` usa a viscosidade corrigida pela temperatura Palmgren da
+  Rota 33. Contrato, JSON, TEXT e Web recalculam fontes e derivados, sinalizam vida
+  abaixo de 5.000 h e preservam todos os bloqueios físicos. Validação: 411 testes
+  CNC, 48 Web, Ruff, mypy em 240 fontes, TypeScript estrito, Next lint e diff;
+  branch local sem push.
 
 - **Handoff CTO:** `CNC_SPINDLE_BEARING_THERMAL_LOAD_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou o `VTP-AUTO-399-BATCH`. A Rota 32 foi publicada no PR #81,

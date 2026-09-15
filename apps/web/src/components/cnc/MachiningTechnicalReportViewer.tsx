@@ -689,6 +689,33 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ESTIMATIVA ANALÍTICA DE CARGA TÉRMICA EM ROLAMENTOS - NÃO SUBSTITUI SENSORES DE TEMPERATURA PT100 OU TERMOGRAFIA FÍSICA DO CABEÇOTE";
     safety_flags: MachiningReportSafetyFlags;
   };
+  spindle_bearing_life_audit: {
+    schema_version: "vena-ia.cnc-spindle-bearing-life-audit/v1";
+    source_spindle_bearing_thermal_audit: MachiningTechnicalReportPayload["spindle_bearing_thermal_audit"];
+    bearing_type: "ANGULAR_CONTACT_BALL" | "CYLINDRICAL_ROLLER" | "TAPERED_ROLLER";
+    life_exponent_p: number;
+    axial_preload_n: number;
+    radial_load_n: number;
+    axial_load_n: number;
+    radial_load_factor_x: number;
+    axial_load_factor_y: number;
+    equivalent_dynamic_load_n: number;
+    dynamic_capacity_c_n: number;
+    required_kinematic_viscosity_nu1_mm2_s: number;
+    operating_kinematic_viscosity_nu_mm2_s: number;
+    viscosity_ratio_kappa: number;
+    a_iso_modification_factor: number;
+    basic_l10_million_revs: number;
+    l10_million_revs: number;
+    operating_rpm: number;
+    l10h_hours: number;
+    minimum_admissible_l10h_hours: number;
+    bearing_life_status: "PREMATURE_BEARING_FATIGUE_WARNING" | "BEARING_FATIGUE_LIFE_COMPLIANT";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ESTIMATIVA ANALÍTICA DE VIDA ÚTIL L10h - NÃO CONSIDERA CONTAMINAÇÃO SÓLIDA DO LUBRIFICANTE, DESALINHAMENTO DE MONTAGEM OU CORROSÃO";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -775,6 +802,8 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
   const ballscrewCompliant = ballscrewAudit.ballscrew_status === "BALLSCREW_MECHANICS_COMPLIANT";
   const spindleBearingAudit = report.spindle_bearing_thermal_audit;
   const spindleBearingCompliant = spindleBearingAudit.bearing_status === "SPINDLE_BEARING_THERMAL_COMPLIANT";
+  const bearingLifeAudit = report.spindle_bearing_life_audit;
+  const bearingLifeCompliant = bearingLifeAudit.bearing_life_status === "BEARING_FATIGUE_LIFE_COMPLIANT";
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -1429,6 +1458,27 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         {spindleBearingAudit.model_limitation}
+      </p>
+    </section>
+
+    <section aria-labelledby="report-bearing-life-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-bearing-life-heading" className="text-lg font-semibold">Vida útil L10h dos rolamentos do fuso</h2>
+        <span role={bearingLifeCompliant ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${bearingLifeCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {bearingLifeCompliant ? "VIDA ÚTIL DO MANCAL CONFORME" : "ALERTA: FADIGA PREMATURA DE ROLAMENTO"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Carga dinâmica equivalente" value={`${bearingLifeAudit.equivalent_dynamic_load_n.toFixed(3)} N`} />
+        <Metric label="L10" value={`${bearingLifeAudit.l10_million_revs.toFixed(3)} milhões de revoluções`} />
+        <Metric label="Vida projetada L10h" value={`${bearingLifeAudit.l10h_hours.toFixed(3)} h`} />
+        <Metric label="Razão de viscosidade kappa" value={bearingLifeAudit.viscosity_ratio_kappa.toFixed(3)} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">
+        aISO {bearingLifeAudit.a_iso_modification_factor.toFixed(3)} · C {bearingLifeAudit.dynamic_capacity_c_n.toFixed(3)} N · {bearingLifeAudit.bearing_life_status}
+      </p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        {bearingLifeAudit.model_limitation}
       </p>
     </section>
 

@@ -460,6 +460,24 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "VIDA ÚTIL L10h DOS ROLAMENTOS DO FUSO",
+            (
+                "equivalent_dynamic_load_n="
+                f"{validated.spindle_bearing_life_audit.equivalent_dynamic_load_n:.9f}",
+                "dynamic_capacity_c_n="
+                f"{validated.spindle_bearing_life_audit.dynamic_capacity_c_n:.9f}",
+                "l10_million_revs="
+                f"{validated.spindle_bearing_life_audit.l10_million_revs:.9f}",
+                f"l10h_hours={validated.spindle_bearing_life_audit.l10h_hours:.9f}",
+                "viscosity_ratio_kappa="
+                f"{validated.spindle_bearing_life_audit.viscosity_ratio_kappa:.9f}",
+                "a_iso_modification_factor="
+                f"{validated.spindle_bearing_life_audit.a_iso_modification_factor:.9f}",
+                f"status={validated.spindle_bearing_life_audit.bearing_life_status}",
+                validated.spindle_bearing_life_audit.model_limitation,
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",

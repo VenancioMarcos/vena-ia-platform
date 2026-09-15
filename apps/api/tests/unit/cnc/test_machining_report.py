@@ -24,6 +24,9 @@ from app.modules.cnc.schemas import (
 )
 from app.modules.cnc.services.gcode_formatter import format_gcode_candidate
 from app.modules.cnc.services.ballscrew_auditor import audit_ballscrew_mechanics
+from app.modules.cnc.services.bearing_life_auditor import (
+    audit_spindle_bearing_l10h_life,
+)
 from app.modules.cnc.services.chip_breaking_auditor import (
     audit_chip_breaking_machinability,
 )
@@ -333,6 +336,19 @@ def test_complete_report_replays_deterministically(controller):
     )
     assert report.spindle_bearing_thermal_audit.is_theoretical_model is True
     assert report.spindle_bearing_thermal_audit.physical_use_authorized is False
+    assert (
+        report.spindle_bearing_life_audit.source_spindle_bearing_thermal_audit
+        == report.spindle_bearing_thermal_audit
+    )
+    assert report.spindle_bearing_life_audit.equivalent_dynamic_load_n > 0
+    assert report.spindle_bearing_life_audit.l10_million_revs > 0
+    assert report.spindle_bearing_life_audit.l10h_hours > 5_000
+    assert report.spindle_bearing_life_audit.viscosity_ratio_kappa > 0
+    assert report.spindle_bearing_life_audit.bearing_life_status == (
+        "BEARING_FATIGUE_LIFE_COMPLIANT"
+    )
+    assert report.spindle_bearing_life_audit.is_theoretical_model is True
+    assert report.spindle_bearing_life_audit.physical_use_authorized is False
     assert report.cost_time_audit.total_cycle_time_minutes > 15
     assert report.cost_time_audit.machine_cost_component > 0
     assert report.cost_time_audit.tooling_wear_cost_component > 0
@@ -718,6 +734,48 @@ def test_report_rejects_spindle_bearing_audit_from_another_guideway_snapshot():
         MachiningTechnicalReportPayload.model_validate(body)
 
 
+def test_report_rejects_bearing_life_audit_from_another_thermal_snapshot():
+    record, source = _source()
+    report = compile_machining_report(record, source)
+    thermal = report.spindle_bearing_thermal_audit
+    transplanted_thermal = audit_spindle_bearing_thermal_load(
+        thermal.source_guideway_load_audit,
+        internal_preload_n=thermal.internal_preload_n,
+        load_friction_factor_f1=thermal.load_friction_factor_f1,
+        viscous_friction_factor_f0=thermal.viscous_friction_factor_f0,
+        bearing_mean_diameter_mm=thermal.bearing_mean_diameter_mm,
+        lubricant_kinematic_viscosity_mm2_s=(
+            thermal.lubricant_kinematic_viscosity_mm2_s * 0.9
+        ),
+        operating_rpm=thermal.operating_rpm,
+        convection_coefficient_w_m2_k=thermal.convection_coefficient_w_m2_k,
+        housing_dissipation_area_m2=thermal.housing_dissipation_area_m2,
+        max_admissible_temp_c=thermal.max_admissible_temp_c,
+    )
+    current_life = report.spindle_bearing_life_audit
+    transplanted = audit_spindle_bearing_l10h_life(
+        transplanted_thermal,
+        bearing_type=current_life.bearing_type,
+        axial_preload_n=current_life.axial_preload_n,
+        radial_load_factor_x=current_life.radial_load_factor_x,
+        axial_load_factor_y=current_life.axial_load_factor_y,
+        dynamic_capacity_c_n=current_life.dynamic_capacity_c_n,
+        required_kinematic_viscosity_nu1_mm2_s=(
+            current_life.required_kinematic_viscosity_nu1_mm2_s
+        ),
+        minimum_admissible_l10h_hours=(
+            current_life.minimum_admissible_l10h_hours
+        ),
+    )
+    body = report.model_dump()
+    body["spindle_bearing_life_audit"] = transplanted.model_dump()
+    with pytest.raises(
+        ValidationError,
+        match="REPORT_SPINDLE_BEARING_LIFE_SOURCE_INCONSISTENT",
+    ):
+        MachiningTechnicalReportPayload.model_validate(body)
+
+
 def test_text_export_is_deterministic_and_stamps_every_section():
     record, source = _source()
     report = compile_machining_report(record, source)
@@ -725,10 +783,18 @@ def test_text_export_is_deterministic_and_stamps_every_section():
     rendered = format_machining_report_text(report)
 
     assert rendered == format_machining_report_text(report)
-    assert rendered.count(SAFETY_STAMP) == 20
+    assert rendered.count(SAFETY_STAMP) == 21
     assert "status=PASS" in rendered
     assert "MAX_RADIUS: nominal_mm=" in rendered
     assert "PHYSICAL_USE_AUTHORIZED=FALSE" in rendered
+    assert "VIDA ÚTIL L10h DOS ROLAMENTOS DO FUSO" in rendered
+    assert "l10_million_revs=" in rendered
+    assert "l10h_hours=" in rendered
+    assert (
+        "ESTIMATIVA ANALÍTICA DE VIDA ÚTIL L10h - NÃO CONSIDERA CONTAMINAÇÃO "
+        "SÓLIDA DO LUBRIFICANTE, DESALINHAMENTO DE MONTAGEM OU CORROSÃO"
+        in rendered
+    )
     assert "G9=PENDING_AUTHORITATIVE_REVIEW" in rendered
     assert "NO_HUMAN_REVIEW_BYPASS=TRUE" in rendered
     assert "MACHINE_SEND=false" in rendered
