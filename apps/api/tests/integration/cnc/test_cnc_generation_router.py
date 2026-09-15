@@ -436,7 +436,7 @@ def test_download_report_requires_approved_dimensional_audit_and_owner(
         assert response.headers["content-security-policy"] == "default-src 'none'; sandbox"
         assert response.text.count(
             "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
-        ) == 20
+        ) == 21
         assert "[ESFORÇOS NO FUSO DE ESFERAS]" in response.text
         assert "total_axial_thrust_n=" in response.text
         assert "euler_buckling_limit_n=" in response.text

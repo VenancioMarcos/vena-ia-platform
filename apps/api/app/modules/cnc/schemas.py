@@ -2691,6 +2691,124 @@ class SpindleBearingThermalAuditPayload(_CNCGenerationContract):
         return self
 
 
+class SpindleBearingLifeAuditPayload(_CNCGenerationContract):
+    schema_version: Literal["vena-ia.cnc-spindle-bearing-life-audit/v1"] = (
+        "vena-ia.cnc-spindle-bearing-life-audit/v1"
+    )
+    source_spindle_bearing_thermal_audit: SpindleBearingThermalAuditPayload
+    bearing_type: Literal[
+        "ANGULAR_CONTACT_BALL",
+        "CYLINDRICAL_ROLLER",
+        "TAPERED_ROLLER",
+    ]
+    life_exponent_p: float = Field(gt=0)
+    axial_preload_n: float = Field(gt=0, le=10_000_000)
+    radial_load_n: float = Field(gt=0)
+    axial_load_n: float = Field(gt=0)
+    radial_load_factor_x: float = Field(gt=0, le=10)
+    axial_load_factor_y: float = Field(gt=0, le=10)
+    equivalent_dynamic_load_n: float = Field(gt=0)
+    dynamic_capacity_c_n: float = Field(gt=0, le=1_000_000_000)
+    required_kinematic_viscosity_nu1_mm2_s: float = Field(gt=0, le=100_000)
+    operating_kinematic_viscosity_nu_mm2_s: float = Field(gt=0, le=100_000)
+    viscosity_ratio_kappa: float = Field(gt=0)
+    a_iso_modification_factor: float = Field(gt=0)
+    basic_l10_million_revs: float = Field(gt=0)
+    l10_million_revs: float = Field(gt=0)
+    operating_rpm: float = Field(gt=0, le=100_000)
+    l10h_hours: float = Field(gt=0)
+    minimum_admissible_l10h_hours: float = Field(gt=0, le=1_000_000_000)
+    bearing_life_status: Literal[
+        "PREMATURE_BEARING_FATIGUE_WARNING",
+        "BEARING_FATIGUE_LIFE_COMPLIANT",
+    ]
+    is_theoretical_model: Literal[True] = True
+    physical_use_authorized: Literal[False] = False
+    model_limitation: Literal[
+        "ESTIMATIVA ANALÍTICA DE VIDA ÚTIL L10h - NÃO CONSIDERA CONTAMINAÇÃO SÓLIDA DO LUBRIFICANTE, DESALINHAMENTO DE MONTAGEM OU CORROSÃO"
+    ] = (
+        "ESTIMATIVA ANALÍTICA DE VIDA ÚTIL L10h - NÃO CONSIDERA CONTAMINAÇÃO "
+        "SÓLIDA DO LUBRIFICANTE, DESALINHAMENTO DE MONTAGEM OU CORROSÃO"
+    )
+    safety_flags: GCodeSafetyFlags = Field(default_factory=GCodeSafetyFlags)
+
+    @model_validator(mode="after")
+    def validate_spindle_bearing_life_snapshot(
+        self,
+    ) -> "SpindleBearingLifeAuditPayload":
+        thermal = self.source_spindle_bearing_thermal_audit
+        guideway = thermal.source_guideway_load_audit
+        expected_exponent = (
+            3.0 if self.bearing_type == "ANGULAR_CONTACT_BALL" else 10.0 / 3.0
+        )
+        expected_radial = guideway.radial_cutting_force_n
+        expected_axial = guideway.axial_feed_force_n + self.axial_preload_n
+        expected_equivalent = (
+            self.radial_load_factor_x * expected_radial
+            + self.axial_load_factor_y * expected_axial
+        )
+        temperature_delta = (
+            thermal.estimated_bearing_temp_c - thermal.ambient_temperature_c
+        )
+        expected_operating_viscosity = (
+            thermal.lubricant_kinematic_viscosity_mm2_s
+            * math.exp(-0.025 * temperature_delta)
+        )
+        expected_kappa = (
+            expected_operating_viscosity
+            / self.required_kinematic_viscosity_nu1_mm2_s
+        )
+        if expected_kappa < 0.4:
+            expected_a_iso = 0.2
+        elif expected_kappa < 1.0:
+            expected_a_iso = 0.5
+        elif expected_kappa < 2.0:
+            expected_a_iso = 1.0
+        else:
+            expected_a_iso = 1.2
+        expected_basic_l10 = (
+            self.dynamic_capacity_c_n / expected_equivalent
+        ) ** expected_exponent
+        expected_l10 = expected_a_iso * expected_basic_l10
+        expected_l10h = 1_000_000.0 * expected_l10 / (60.0 * self.operating_rpm)
+        comparisons = (
+            (self.life_exponent_p, expected_exponent, "BEARING_LIFE_EXPONENT_INCONSISTENT"),
+            (self.radial_load_n, expected_radial, "BEARING_LIFE_RADIAL_LOAD_INCONSISTENT"),
+            (self.axial_load_n, expected_axial, "BEARING_LIFE_AXIAL_LOAD_INCONSISTENT"),
+            (
+                self.equivalent_dynamic_load_n,
+                expected_equivalent,
+                "BEARING_LIFE_EQUIVALENT_LOAD_INCONSISTENT",
+            ),
+            (
+                self.operating_kinematic_viscosity_nu_mm2_s,
+                expected_operating_viscosity,
+                "BEARING_LIFE_OPERATING_VISCOSITY_INCONSISTENT",
+            ),
+            (self.viscosity_ratio_kappa, expected_kappa, "BEARING_LIFE_KAPPA_INCONSISTENT"),
+            (self.a_iso_modification_factor, expected_a_iso, "BEARING_LIFE_AISO_INCONSISTENT"),
+            (
+                self.basic_l10_million_revs,
+                expected_basic_l10,
+                "BEARING_LIFE_BASIC_L10_INCONSISTENT",
+            ),
+            (self.l10_million_revs, expected_l10, "BEARING_LIFE_L10_INCONSISTENT"),
+            (self.operating_rpm, thermal.operating_rpm, "BEARING_LIFE_RPM_INCONSISTENT"),
+            (self.l10h_hours, expected_l10h, "BEARING_LIFE_L10H_INCONSISTENT"),
+        )
+        for actual, expected, code in comparisons:
+            if not math.isclose(actual, expected, abs_tol=5e-9, rel_tol=1e-12):
+                raise ValueError(code)
+        expected_status = (
+            "PREMATURE_BEARING_FATIGUE_WARNING"
+            if expected_l10h < self.minimum_admissible_l10h_hours
+            else "BEARING_FATIGUE_LIFE_COMPLIANT"
+        )
+        if self.bearing_life_status != expected_status:
+            raise ValueError("BEARING_LIFE_STATUS_INCONSISTENT")
+        return self
+
+
 class MachiningTechnicalReportPayload(_CNCGenerationContract):
     schema_version: Literal["vena-ia.cnc-machining-report/v1"] = "vena-ia.cnc-machining-report/v1"
     status: Literal["REQUIRES_HUMAN_REVIEW"] = "REQUIRES_HUMAN_REVIEW"
@@ -2733,6 +2851,7 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
     guideway_load_audit: GuidewayLoadAuditPayload
     ballscrew_axial_mechanics_audit: BallscrewAxialMechanicsAuditPayload
     spindle_bearing_thermal_audit: SpindleBearingThermalAuditPayload
+    spindle_bearing_life_audit: SpindleBearingLifeAuditPayload
     coordinate_convention: Literal["LATHE_X_DIAMETER_Z"] = "LATHE_X_DIAMETER_Z"
     governance_stamp: Literal["RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"] = (
         "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO"
@@ -3103,4 +3222,16 @@ class MachiningTechnicalReportPayload(_CNCGenerationContract):
             )
         ):
             raise ValueError("REPORT_SPINDLE_BEARING_SOURCE_INCONSISTENT")
+        bearing_life = self.spindle_bearing_life_audit
+        if (
+            bearing_life.safety_flags != self.safety_flags
+            or bearing_life.source_spindle_bearing_thermal_audit != bearing
+            or not math.isclose(
+                bearing_life.operating_rpm,
+                self.power_force_audit.spindle_rpm_reference,
+                abs_tol=5e-9,
+                rel_tol=1e-12,
+            )
+        ):
+            raise ValueError("REPORT_SPINDLE_BEARING_LIFE_SOURCE_INCONSISTENT")
         return self

@@ -1058,6 +1058,43 @@ const report: MachiningTechnicalReportPayload = {
       executable_output: false,
     },
   },
+  spindle_bearing_life_audit: {
+    schema_version: "vena-ia.cnc-spindle-bearing-life-audit/v1",
+    source_spindle_bearing_thermal_audit: {} as MachiningTechnicalReportPayload["spindle_bearing_thermal_audit"],
+    bearing_type: "ANGULAR_CONTACT_BALL",
+    life_exponent_p: 3,
+    axial_preload_n: 1500,
+    radial_load_n: 500,
+    axial_load_n: 1800,
+    radial_load_factor_x: 1,
+    axial_load_factor_y: 1,
+    equivalent_dynamic_load_n: 2300,
+    dynamic_capacity_c_n: 100000,
+    required_kinematic_viscosity_nu1_mm2_s: 12,
+    operating_kinematic_viscosity_nu_mm2_s: 19.57,
+    viscosity_ratio_kappa: 1.631,
+    a_iso_modification_factor: 1,
+    basic_l10_million_revs: 82190.515,
+    l10_million_revs: 82190.515,
+    operating_rpm: 300,
+    l10h_hours: 4566139.72,
+    minimum_admissible_l10h_hours: 5000,
+    bearing_life_status: "BEARING_FATIGUE_LIFE_COMPLIANT",
+    is_theoretical_model: true,
+    physical_use_authorized: false,
+    model_limitation: "ESTIMATIVA ANALÍTICA DE VIDA ÚTIL L10h - NÃO CONSIDERA CONTAMINAÇÃO SÓLIDA DO LUBRIFICANTE, DESALINHAMENTO DE MONTAGEM OU CORROSÃO",
+    safety_flags: {
+      physical_use_authorized: false,
+      g9: "PENDING_AUTHORITATIVE_REVIEW",
+      no_human_review_bypass: true,
+      machine_send: false,
+      dnc: false,
+      nc_transfer: false,
+      cycle_start: false,
+      emission_status: "CONTROLLER_PROFILE_UNRESOLVED",
+      executable_output: false,
+    },
+  },
   coordinate_convention: "LATHE_X_DIAMETER_Z",
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO",
   safety_flags: {
@@ -1078,6 +1115,8 @@ report.ballscrew_axial_mechanics_audit.source_guideway_load_audit =
   report.guideway_load_audit;
 report.spindle_bearing_thermal_audit.source_guideway_load_audit =
   report.guideway_load_audit;
+report.spindle_bearing_life_audit.source_spindle_bearing_thermal_audit =
+  report.spindle_bearing_thermal_audit;
 
 test("renders report metrics, tools, audit evidence, and mandatory governance", () => {
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
@@ -1681,6 +1720,33 @@ test("renders spindle bearing overheating warning without cooling controls", () 
   const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
   assert.match(html, /role="alert"[^>]*>ALERTA: RISCO DE SUPERAQUECIMENTO NOS ROLAMENTOS/);
   assert.doesNotMatch(html, /<button|acionar refrigeração|controle de refrigeração|circulação de óleo|controle térmico/i);
+});
+
+test("renders compliant spindle bearing L10h telemetry without hardware controls", () => {
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report }));
+  assert.match(html, /Vida útil L10h dos rolamentos do fuso/);
+  assert.match(html, /Carga dinâmica equivalente/);
+  assert.match(html, /82190\.515 milhões de revoluções/);
+  assert.match(html, /4566139\.720 h/);
+  assert.match(html, /Razão de viscosidade kappa/);
+  assert.match(html, /VIDA ÚTIL DO MANCAL CONFORME/);
+  assert.match(html, /ESTIMATIVA ANALÍTICA DE VIDA ÚTIL L10h - NÃO CONSIDERA CONTAMINAÇÃO SÓLIDA DO LUBRIFICANTE, DESALINHAMENTO DE MONTAGEM OU CORROSÃO/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|lubrificar mancais|acionar rolamento/i);
+});
+
+test("renders premature bearing fatigue warning without hardware controls", () => {
+  const warningReport: MachiningTechnicalReportPayload = {
+    ...report,
+    spindle_bearing_life_audit: {
+      ...report.spindle_bearing_life_audit,
+      l10_million_revs: 50,
+      l10h_hours: 2777.778,
+      bearing_life_status: "PREMATURE_BEARING_FATIGUE_WARNING",
+    },
+  };
+  const html = renderToStaticMarkup(createElement(MachiningTechnicalReportViewer, { report: warningReport }));
+  assert.match(html, /role="alert"[^>]*>ALERTA: FADIGA PREMATURA DE ROLAMENTO/);
+  assert.doesNotMatch(html, /<button|cycle start|machine send|enviar à máquina|lubrificar mancais|acionar rolamento/i);
 });
 
 test("renders tool wear geometry telemetry and acceptable badge", () => {

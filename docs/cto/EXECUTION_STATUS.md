@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-15 — CTO-CODEX-AUTO-410 a AUTO-419
+
+`CNC_BEARING_L10H_FATIGUE_LIFE_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-409-BATCH`; o PR #82 passou no Frontend CI em 1m23s e no Backend CI em
+3m03s e foi integrado por squash em `fbae22f`, com branch remota removida e main
+sincronizada. A Rota 34 aplica ISO 281 às cargas Kienzle/Rota 33, calcula a carga
+dinâmica equivalente, L10 básico, razão de viscosidade corrigida pela temperatura,
+fator `aISO`, L10 modificado e L10h contra o mínimo industrial declarado. Contrato,
+JSON, TEXT e Web revalidam fontes, mostram telemetria e warning de fadiga prematura
+sem controles físicos. Validação: 411 testes CNC, 48 Web, Ruff, mypy em 240 fontes,
+TypeScript, Next lint e diff; branch local sem push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-400 a AUTO-409
 
 `CNC_SPINDLE_BEARING_THERMAL_LOAD_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o

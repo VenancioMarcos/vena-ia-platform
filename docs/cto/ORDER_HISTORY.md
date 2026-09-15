@@ -1,5 +1,16 @@
 # Histórico de ordens do CTO
 
+## 2026-09-15 — CTO-CODEX-AUTO-410 a AUTO-419
+
+O `VTP-AUTO-409-BATCH` foi aprovado. A Rota 33 foi publicada no PR #82, passou
+pelas duas esteiras e foi integrada por squash em `fbae22f`; a branch remota foi
+removida e a main sincronizada. A branch v9.6 implementa a Rota CNC 34: carga
+dinâmica equivalente `P=X·Fr+Y·Fa`, vida ISO 281 com expoentes de esferas e rolos,
+correção `aISO` baseada em `kappa` na temperatura da Rota 33 e conversão para L10h.
+Manifesto, laudo TEXT e viewer Web preservam revisão humana e todos os bloqueios
+permanentes. Validação concluída com 411 testes CNC, 48 Web, Ruff, mypy em 240
+fontes, TypeScript, Next lint e diff; entrega local sem push.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-400 a AUTO-409
 
 O `VTP-AUTO-399-BATCH` foi aprovado. A Rota 32 foi publicada no PR #81, passou
