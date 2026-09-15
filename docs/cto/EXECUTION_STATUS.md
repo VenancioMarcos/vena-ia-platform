@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-14 — CTO-CODEX-AUTO-380 a AUTO-389
+
+`CNC_GUIDEWAY_CUTTING_MOMENT_LOAD_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
+`VTP-AUTO-379-BATCH`; o PR #79 passou no Frontend CI em 1m10s e no Backend CI em
+3m42s e foi integrado por squash em `09d5df2`, com branch remota removida e main
+sincronizada. A Rota 31 deriva `Fc`, `Ff` e `Fr` do snapshot Kienzle, calcula os
+momentos `Mx`, `My` e `Mz`, distribui carga direta e reações por quatro patins e
+compara a carga máxima a 50% de `C0`. Contrato, JSON, TEXT e Web revalidam fontes,
+mostram telemetria e warning de sobrecarga sem controles físicos. Validação: 363
+testes CNC, 42 Web, Ruff, mypy em 237 fontes, TypeScript, Next lint e diff; branch
+local sem push ou autoridade física.
+
 ## 2026-09-14 — CTO-CODEX-AUTO-370 a AUTO-379
 
 `CNC_JAW_CLAMPING_PRESSURE_INDENTATION_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o

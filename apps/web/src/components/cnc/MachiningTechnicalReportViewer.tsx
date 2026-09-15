@@ -598,6 +598,39 @@ export interface MachiningTechnicalReportPayload {
     model_limitation: "ESTIMATIVA ANALÍTICA DE PRESSÃO DE FIXAÇÃO - NÃO CONSIDERA SERRILHADOS, RAIOS DE CANTO OU DISTRIBUIÇÃO HERTZIANA NÃO LINEAR NAS CASTANHAS";
     safety_flags: MachiningReportSafetyFlags;
   };
+  guideway_load_audit: {
+    schema_version: "vena-ia.cnc-guideway-load-audit/v1";
+    source_power_force_audit: MachiningTechnicalReportPayload["power_force_audit"];
+    block_count: 4;
+    feed_force_ratio: number;
+    radial_force_ratio: number;
+    tangential_cutting_force_n: number;
+    axial_feed_force_n: number;
+    radial_cutting_force_n: number;
+    lever_arm_x_mm: number;
+    lever_arm_y_mm: number;
+    lever_arm_z_mm: number;
+    block_spacing_x_mm: number;
+    rail_spacing_y_mm: number;
+    block_spacing_z_mm: number;
+    pitching_moment_nm: number;
+    yawing_moment_nm: number;
+    rolling_moment_nm: number;
+    direct_load_per_block_n: number;
+    pitching_reaction_per_block_n: number;
+    yawing_reaction_per_block_n: number;
+    rolling_reaction_per_block_n: number;
+    max_block_load_n: number;
+    static_capacity_n: number;
+    load_ratio_percent: number;
+    guideway_status:
+      | "GUIDEWAY_DYNAMIC_OVERLOAD_WARNING"
+      | "GUIDEWAY_LOAD_COMPLIANT";
+    is_theoretical_model: true;
+    physical_use_authorized: false;
+    model_limitation: "ESTIMATIVA ANALÍTICA DE CARGA NOS GUIAS LINEARES - NÃO CONSIDERA PRÉ-CARGA INTERNA DOS PATINS, ERROS DE GEOMETRIA DO BARRAMENTO OU DESGASTE DE ESFERAS/ROLETES";
+    safety_flags: MachiningReportSafetyFlags;
+  };
   coordinate_convention: "LATHE_X_DIAMETER_Z";
   governance_stamp: "RELATÓRIO PURAMENTE ANALÍTICO - USO FÍSICO NÃO AUTORIZADO";
   safety_flags: MachiningReportSafetyFlags;
@@ -678,6 +711,8 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
     : jawPressureAudit.clamping_pressure_status === "JAW_SURFACE_INDENTATION_RISK_WARNING"
       ? "ALERTA: RISCO DE MARCAS/DEFORMAÇÃO PLÁSTICA"
       : "ALERTA: PRESSÃO DE FIXAÇÃO INSUFICIENTE";
+  const guidewayAudit = report.guideway_load_audit;
+  const guidewayCompliant = guidewayAudit.guideway_status === "GUIDEWAY_LOAD_COMPLIANT";
   const riskPresentation = {
     LOW_RISK: ["RISCO BAIXO", "border-emerald-500 bg-emerald-950 text-emerald-100"],
     MODERATE_RISK: ["RISCO MODERADO", "border-yellow-500 bg-yellow-950 text-yellow-100"],
@@ -1267,6 +1302,29 @@ export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalRep
       </p>
       <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
         {jawPressureAudit.model_limitation}
+      </p>
+    </section>
+
+    <section aria-labelledby="report-guideway-heading" className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="report-guideway-heading" className="text-lg font-semibold">Painel de Carga no Barramento</h2>
+        <span role={guidewayCompliant ? "status" : "alert"} className={`rounded-full border px-3 py-1 text-xs font-bold ${guidewayCompliant ? "border-emerald-500 bg-emerald-950 text-emerald-100" : "border-red-500 bg-red-950 text-red-100"}`}>
+          {guidewayCompliant ? "GUIAS DENTRO DO ENVELOPE ESTÁVEL" : "ALERTA: SOBRECARGA DINÂMICA NOS GUIAS"}
+        </span>
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <Metric label="Momento Mx · rolamento" value={`${guidewayAudit.rolling_moment_nm.toFixed(3)} N·m`} />
+        <Metric label="Momento My · arfagem" value={`${guidewayAudit.pitching_moment_nm.toFixed(3)} N·m`} />
+        <Metric label="Momento Mz · guinada" value={`${guidewayAudit.yawing_moment_nm.toFixed(3)} N·m`} />
+        <Metric label="Carga máxima por patim" value={`${guidewayAudit.max_block_load_n.toFixed(3)} N`} />
+        <Metric label="Capacidade nominal C0" value={`${guidewayAudit.static_capacity_n.toFixed(3)} N`} />
+        <Metric label="Relação de carga" value={`${guidewayAudit.load_ratio_percent.toFixed(2)}%`} />
+      </dl>
+      <p className="font-mono text-xs text-slate-300">
+        Fc={guidewayAudit.tangential_cutting_force_n.toFixed(3)} N · Ff={guidewayAudit.axial_feed_force_n.toFixed(3)} N · Fr={guidewayAudit.radial_cutting_force_n.toFixed(3)} N · {guidewayAudit.guideway_status}
+      </p>
+      <p className="rounded-lg border border-amber-500 bg-amber-950/60 p-3 text-xs font-semibold text-amber-100">
+        {guidewayAudit.model_limitation}
       </p>
     </section>
 

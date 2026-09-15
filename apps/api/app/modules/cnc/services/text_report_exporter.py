@@ -402,6 +402,24 @@ def format_machining_report_text(report: MachiningTechnicalReportPayload) -> str
             ),
         ),
         _section(
+            "CARGA E MOMENTOS NOS GUIAS LINEARES",
+            (
+                "tangential_cutting_force_n="
+                f"{validated.guideway_load_audit.tangential_cutting_force_n:.9f}",
+                f"axial_feed_force_n={validated.guideway_load_audit.axial_feed_force_n:.9f}",
+                "radial_cutting_force_n="
+                f"{validated.guideway_load_audit.radial_cutting_force_n:.9f}",
+                f"pitching_moment_nm={validated.guideway_load_audit.pitching_moment_nm:.9f}",
+                f"yawing_moment_nm={validated.guideway_load_audit.yawing_moment_nm:.9f}",
+                f"rolling_moment_nm={validated.guideway_load_audit.rolling_moment_nm:.9f}",
+                f"max_block_load_n={validated.guideway_load_audit.max_block_load_n:.9f}",
+                f"static_capacity_n={validated.guideway_load_audit.static_capacity_n:.9f}",
+                f"load_ratio_percent={validated.guideway_load_audit.load_ratio_percent:.9f}",
+                f"status={validated.guideway_load_audit.guideway_status}",
+                validated.guideway_load_audit.model_limitation,
+            ),
+        ),
+        _section(
             "GOVERNANÇA",
             (
                 "PHYSICAL_USE_AUTHORIZED=FALSE",
