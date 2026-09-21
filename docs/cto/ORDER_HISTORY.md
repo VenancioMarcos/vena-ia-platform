@@ -1534,3 +1534,13 @@ revisões ficam persistidos e vinculados por hashes; download exige revisão no
 servidor; o viewer técnico foi conectado ao fluxo STEP. Validação local: 1.100
 backend, 122 Web, 10 Playwright, Ruff, mypy em 246 fontes, TypeScript, build e
 diff. Gate Três não iniciado; aguarda parecer do CTO.
+
+## 2026-09-21 — Gate Três — Preparação para Produção (Fase 1)
+
+O proprietário autorizou a transição após parecer `APROVADO COM RESSALVA`. A
+branch do Gate Dois foi publicada no Draft PR #84 e as três esteiras remotas
+passaram. A migração foi comprovada em PostgreSQL 17 descartável com ciclo
+upgrade/downgrade/upgrade. O pacote de prontidão `aa46d3f` adicionou Compose de
+produção, template seguro, gates de configuração e runbook. Domínio, VPS, TLS,
+SMTP, segredos, backup externo, conta de IA e operação permanecem `BLOCKED_REAL`;
+Gate Quatro, merge e deploy não foram iniciados.

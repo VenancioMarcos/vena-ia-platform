@@ -1,7 +1,7 @@
 # Ordem CTO atual
 
-**Missão:** GATE TWO — Public Flow Integration
-**Estado:** GATE_TWO_PUBLIC_FLOW_INTEGRATION_READY_FOR_CTO_REVIEW
+**Missão:** GATE TRÊS — Preparação para Produção (Fase 1)
+**Estado:** GATE_THREE_PHASE_ONE_BLOCKED_REAL
 **Data:** 2026-09-21
 **Branch:** `codex/gate-two-public-flow-integration`
 **Baseline da branch:** `5fa8cc31cdbd111c50925b5ab239534c4649298b`
@@ -9,15 +9,18 @@
 
 ## Estado vigente
 
-O Gate Um foi homologado. O Gate Dois integrou onboarding automático, jornada
-STEP, viewer técnico, revisão humana persistida, download controlado e feedback
-versionado. A validação local aprovou 1.100 testes backend, 122 Web unitários, 10
-Playwright, Ruff, mypy em 246 fontes, TypeScript, build e diff.
+O Gate Dois foi aprovado com ressalva. A branch foi publicada no Draft PR #84;
+Backend CI, Frontend CI e Runtime Policy CI passaram. A migration `a71c9e4d2b80`
+foi validada em PostgreSQL 17 descartável com upgrade, downgrade e novo upgrade.
+O pacote `aa46d3f` adiciona Compose de produção isolado, template sem segredos,
+validações fail-closed, head de runtime alinhada e runbook do Beta 1.
 
 ## Continuidade
 
-Enviar `GATE-TWO-PUBLIC-FLOW-INTEGRATION.md`, solicitar parecer do CTO e aguardar
-a próxima ordem. Não iniciar Gate Três.
+Enviar `GATE-THREE-PHASE-ONE-PRODUCTION-READINESS.md`, solicitar parecer do CTO e
+aguardar a próxima ordem. Não iniciar Gate Quatro nem executar deploy. Domínio,
+VPS, TLS, SMTP, secret manager, backup externo, conta de IA e operação estão
+`BLOCKED_REAL` até decisão do proprietário.
 
 ## Limites permanentes
 

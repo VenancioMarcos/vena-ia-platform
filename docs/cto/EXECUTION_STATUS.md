@@ -1,5 +1,16 @@
 # Estado de execução CTO
 
+## 2026-09-21 — GATE TRÊS — Preparação para Produção (Fase 1)
+
+`GATE_THREE_PHASE_ONE_BLOCKED_REAL`. O CTO aprovou o Gate Dois com ressalva. A
+branch foi publicada no Draft PR #84 e reconciliada com a `main` por merge de
+históricos equivalentes. Backend CI, Frontend CI e Runtime Policy CI passaram no
+HEAD `16c4125`. PostgreSQL 17 descartável comprovou a cadeia completa até
+`a71c9e4d2b80`, downgrade para `e61c4f8a2b90` e novo upgrade até a head. O commit
+`aa46d3f` adiciona configuração candidata de produção, validações fail-closed,
+runtime head atualizada e runbook do Beta 1. Nenhum deploy ou contratação ocorreu;
+itens externos permanecem bloqueados pela decisão do proprietário.
+
 ## 2026-09-15 — CTO-CODEX-AUTO-410 a AUTO-419
 
 `CNC_BEARING_L10H_FATIGUE_LIFE_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o

@@ -1,7 +1,7 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.87
+**Versão:** 2.88
 **Última atualização:** 2026-09-21
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
@@ -28,6 +28,16 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 ## 3. Estado atual do projeto
 
 ### 3.1 Síntese vigente — 2026-09-21
+
+- **Handoff CTO:** `GATE_THREE_PHASE_ONE_BLOCKED_REAL`.
+  O CTO aprovou o Gate Dois com ressalva técnica. A branch foi publicada no Draft
+  PR #84, integrada ao histórico squash da `main` sem mudança funcional e validada
+  com sucesso por Backend CI, Frontend CI e Runtime Policy CI. PostgreSQL 17
+  descartável comprovou `upgrade → downgrade → upgrade` até `a71c9e4d2b80`. O Gate
+  Três Fase 1 adicionou Compose e template de ambiente de produção sem segredos,
+  validações fail-closed, head de runtime atualizada e runbook do Beta 1. Domínio,
+  VPS, TLS, SMTP, secret manager, backup externo, conta de IA e operação continuam
+  `BLOCKED_REAL`, aguardando decisão do proprietário. Nenhum deploy foi executado.
 
 - **Handoff CTO:** `GATE_TWO_PUBLIC_FLOW_INTEGRATION_READY_FOR_CTO_REVIEW`.
   O Gate Um foi homologado e o Gate Dois integrou a jornada pública cadastro →
