@@ -44,6 +44,7 @@ def validate_repository(root: Path) -> list[str]:
     api_docker = _read(root, "apps/api/Dockerfile")
     web_docker = _read(root, "apps/web/Dockerfile")
     compose = _read(root, "docker-compose.yml")
+    production_compose = _read(root, "docker-compose.production.yml")
     backend_ci = _read(root, ".github/workflows/backend-ci.yml")
     frontend_ci = _read(root, ".github/workflows/frontend-ci.yml")
     policy_ci = _read(root, ".github/workflows/runtime-policy-ci.yml")
@@ -57,10 +58,19 @@ def validate_repository(root: Path) -> list[str]:
         "web_base": [("apps/web/Dockerfile", web_docker)],
         "postgres_pgvector": [
             ("docker-compose.yml", compose),
+            ("docker-compose.production.yml", production_compose),
             ("backend-ci.yml", backend_ci),
         ],
-        "redis": [("docker-compose.yml", compose), ("backend-ci.yml", backend_ci)],
-        "minio": [("docker-compose.yml", compose), ("backend-ci.yml", backend_ci)],
+        "redis": [
+            ("docker-compose.yml", compose),
+            ("docker-compose.production.yml", production_compose),
+            ("backend-ci.yml", backend_ci),
+        ],
+        "minio": [
+            ("docker-compose.yml", compose),
+            ("docker-compose.production.yml", production_compose),
+            ("backend-ci.yml", backend_ci),
+        ],
     }
     for name, locations in expected_locations.items():
         reference = images.get(name, "")
@@ -68,14 +78,13 @@ def validate_repository(root: Path) -> list[str]:
             violations.append(f"runtime-policy.json: image {name!r} is not tag+digest pinned")
             continue
         for file_name, content in locations:
-            _require_contains(
-                violations, file_name=file_name, content=content, expected=reference
-            )
+            _require_contains(violations, file_name=file_name, content=content, expected=reference)
 
     controlled_files = {
         "apps/api/Dockerfile": api_docker,
         "apps/web/Dockerfile": web_docker,
         "docker-compose.yml": compose,
+        "docker-compose.production.yml": production_compose,
         "backend-ci.yml": backend_ci,
         "runtime-policy-ci.yml": policy_ci,
     }
@@ -116,13 +125,24 @@ def validate_repository(root: Path) -> list[str]:
         ("apps/api/Dockerfile", api_docker, "USER vena-ia"),
         ("apps/web/Dockerfile", web_docker, "USER node"),
         ("docker-compose.yml", compose, 'command: ["python", "-m", "scripts.worker"]'),
+        (
+            "docker-compose.production.yml",
+            production_compose,
+            'command: ["python", "-m", "scripts.worker"]',
+        ),
+        ("docker-compose.production.yml", production_compose, "127.0.0.1:8000:8000"),
+        ("docker-compose.production.yml", production_compose, "127.0.0.1:3000:3000"),
+        ("docker-compose.production.yml", production_compose, "restart: unless-stopped"),
         ("runtime-policy-ci.yml", policy_ci, "docker build --file apps/api/Dockerfile"),
         ("runtime-policy-ci.yml", policy_ci, "docker build --file apps/web/Dockerfile"),
+        (
+            "runtime-policy-ci.yml",
+            policy_ci,
+            "--file docker-compose.production.yml config --quiet",
+        ),
     ]
     for file_name, content, expected in required_values:
-        _require_contains(
-            violations, file_name=file_name, content=content, expected=expected
-        )
+        _require_contains(violations, file_name=file_name, content=content, expected=expected)
 
     workflow_text = "\n".join((backend_ci, frontend_ci, policy_ci))
     action_refs = re.findall(r"uses:\s*([^\s#]+)", workflow_text)
