@@ -5,6 +5,8 @@ from sqlalchemy import select
 
 from app.core.config import settings
 from app.modules.auth.tokens import InvalidTokenError, create_access_token, decode_access_token
+from app.modules.engineering.models import EngineeringCatalogItem
+from app.modules.organizations.models import Membership, Organization
 from app.modules.users.models import User
 
 PASSWORD = "correct-horse-battery-staple"
@@ -33,6 +35,21 @@ def test_register_hashes_password_and_forces_member_role(client, db_session) -> 
     assert user.password_hash is not None
     assert user.password_hash != PASSWORD
     assert user.password_hash.startswith("pbkdf2_sha256$")
+
+    membership = db_session.scalar(select(Membership).where(Membership.user_id == user.id))
+    assert membership is not None
+    assert membership.role == "OWNER"
+    organization = db_session.get(Organization, membership.organization_id)
+    assert organization is not None
+    catalogs = list(
+        db_session.scalars(
+            select(EngineeringCatalogItem).where(
+                EngineeringCatalogItem.organization_id == organization.id
+            )
+        )
+    )
+    assert {item.kind for item in catalogs} == {"MATERIAL", "MACHINE", "TOOL"}
+    assert all(item.scope_type == "ORGANIZATION_OWNED" for item in catalogs)
 
 
 def test_registration_rejects_client_selected_admin_role(client) -> None:

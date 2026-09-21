@@ -3,6 +3,7 @@ import { expect, test, type Route } from "@playwright/test";
 const projectId = "11111111-1111-4111-8111-111111111111";
 const documentId = "22222222-2222-4222-8222-222222222222";
 const organizationId = "33333333-3333-4333-8333-333333333333";
+const resultId = "44444444-4444-4444-8444-444444444444";
 
 async function json(route: Route, body: unknown, status = 200) {
   const preflight = route.request().method() === "OPTIONS";
@@ -20,12 +21,15 @@ async function json(route: Route, body: unknown, status = 200) {
 }
 
 test("controlled environment keeps G9 pending and downloads only a candidate", async ({ page }) => {
+  const projects: Array<{ id: string; name: string; status: string }> = [];
+  const documents: Array<{ id: string; filename: string; status: string }> = [];
   const gates = Array.from({ length: 10 }, (_, index) => ({
     gate: `G${index}`,
     status: index === 9 ? "PENDING_REVIEW" : "PASS",
     evidence_ref: `evidence-${index}`
   }));
   const result = {
+    result_id: resultId,
     status: "READY_FOR_CONTROLLED_DOWNLOAD",
     classification: "CANDIDATE_FOR_VALIDATION",
     non_production: true,
@@ -109,8 +113,34 @@ test("controlled environment keeps G9 pending and downloads only a candidate", a
   await page.route("**/*", (route) => {
     const url = new URL(route.request().url());
     if (url.origin === "http://127.0.0.1:3100") return route.fallback();
+    if (url.pathname === "/auth/register") return json(route, {
+      id: "55555555-5555-4555-8555-555555555555",
+      name: "Beta Owner",
+      email: "owner@example.test",
+      role: "member"
+    }, 201);
+    if (url.pathname === "/auth/login") return json(route, {
+      access_token: "signed-e2e-token",
+      token_type: "bearer"
+    });
+    if (url.pathname === "/auth/me") return json(route, { name: "Beta Owner" });
+    if (url.pathname === "/projects") {
+      if (route.request().method() === "POST") {
+        const project = { id: projectId, name: "Projeto Beta Público", status: "ACTIVE" };
+        projects.push(project);
+        return json(route, project, 201);
+      }
+      return json(route, projects);
+    }
     if (url.pathname === `/projects/${projectId}`) return json(route, { id: projectId, name: "Projeto E2E", status: "ACTIVE" });
-    if (url.pathname === `/projects/${projectId}/documents`) return json(route, { documents: [{ id: documentId, filename: "fixture.step", status: "UPLOADED" }], total: 1 });
+    if (url.pathname === `/projects/${projectId}/documents`) {
+      if (route.request().method() === "POST") {
+        const document = { id: documentId, filename: "fixture.step", status: "UPLOADED" };
+        documents.push(document);
+        return json(route, document, 201);
+      }
+      return json(route, { documents, total: documents.length });
+    }
     if (url.pathname === `/chat/${projectId}/messages` || url.pathname === "/research/reports") return json(route, []);
     if (url.pathname === "/organizations") return json(route, [{ id: organizationId, name: "Controlled E2E", status: "ACTIVE" }]);
     if (url.pathname === "/engineering/catalogs") return json(route, [
@@ -119,6 +149,23 @@ test("controlled environment keeps G9 pending and downloads only a candidate", a
       { id: "tool-1", kind: "TOOL", code: "TOOL", name: "Tool", data_version: "2026.08", source: "owner" }
     ]);
     if (url.pathname === "/engineering/controlled-environment/runs") return json(route, result);
+    if (url.pathname === `/product-flow/results/${resultId}/review`) return json(route, {
+      id: resultId,
+      result_version: "vena-ia.controlled-environment-result/v1",
+      review_state: "APPROVED_FOR_CONTROLLED_DOWNLOAD",
+      review_note: "Reviewed in the controlled E2E journey.",
+      reviewed_by: "55555555-5555-4555-8555-555555555555",
+      reviewed_at: "2026-09-21T12:00:00Z"
+    });
+    if (url.pathname === `/product-flow/results/${resultId}/feedback`) return json(route, {
+      id: "66666666-6666-4666-8666-666666666666",
+      result_id: resultId,
+      project_id: projectId,
+      result_version: 1,
+      rating: 5,
+      comment: "Fluxo controlado validado no navegador.",
+      created_at: "2026-09-21T12:01:00Z"
+    }, 201);
     if (url.pathname === "/engineering/controlled-environment/download") return route.fulfill({
       status: 200,
       contentType: "text/plain",
@@ -133,7 +180,23 @@ test("controlled environment keeps G9 pending and downloads only a candidate", a
     return json(route, { detail: `Unmocked API path: ${url.pathname}` }, 500);
   });
 
-  await page.goto(`/projects/${projectId}`);
+  await page.goto("/login");
+  await page.getByRole("button", { name: "Criar uma conta" }).click();
+  await page.getByPlaceholder("Nome").fill("Beta Owner");
+  await page.getByPlaceholder("E-mail").fill("owner@example.test");
+  await page.getByPlaceholder("Senha").fill("correct-horse-battery-staple");
+  await page.getByRole("button", { name: "Criar conta" }).click();
+  await expect(page.getByRole("heading", { name: "Novo Projeto" })).toBeVisible();
+  await page.getByPlaceholder("Nome do projeto").fill("Projeto Beta Público");
+  await page.getByRole("button", { name: "Criar projeto" }).click();
+  await page.getByRole("link", { name: "Projeto Beta Público" }).click();
+  await page.getByLabel("Arquivo PDF ou STEP").setInputFiles({
+    name: "fixture.step",
+    mimeType: "application/step",
+    buffer: Buffer.from("ISO-10303-21;\nEND-ISO-10303-21;")
+  });
+  await page.getByRole("button", { name: "Enviar" }).click();
+  await expect(page.getByText("fixture.step").first()).toBeVisible();
   const controlled = page.getByRole("region", { name: /Ambiente de teste controlado/ });
   await controlled.getByLabel("Organização").selectOption(organizationId);
   await controlled.getByLabel("Documento CAD controlado").selectOption(documentId);
@@ -159,11 +222,18 @@ test("controlled environment keeps G9 pending and downloads only a candidate", a
   const downloadButton = page.getByRole("button", { name: /Download controlado/ });
   await expect(downloadButton).toBeDisabled();
   await page.getByLabel(/Confirmo que este arquivo é NON_PRODUCTION/).check();
+  await expect(downloadButton).toBeDisabled();
+  await page.getByLabel("Nota da revisão humana").fill("Reviewed in the controlled E2E journey.");
+  await page.getByRole("button", { name: "Registrar revisão humana" }).click();
+  await expect(page.getByText("Revisão persistida: APPROVED_FOR_CONTROLLED_DOWNLOAD")).toBeVisible();
   await expect(downloadButton).toBeEnabled();
   const downloadPromise = page.waitForEvent("download");
   await downloadButton.click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("fixture.candidate.nc");
+  await page.getByLabel("Comentário opcional").fill("Fluxo controlado validado no navegador.");
+  await page.getByRole("button", { name: "Enviar avaliação" }).click();
+  await expect(page.getByText("Avaliação registrada: 5/5.")).toBeVisible();
   await expect(
     page.getByRole("button", { name: /machine-send|DNC|cycle start|controle direto/i })
   ).toHaveCount(0);

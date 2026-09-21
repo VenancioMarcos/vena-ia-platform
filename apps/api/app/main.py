@@ -39,6 +39,7 @@ from app.modules.jobs.dependencies import build_job_queue
 from app.modules.manufacturing.api.routes import router as manufacturing_router
 from app.modules.organizations.api.routes import router as organizations_router
 from app.modules.projects.api.routes import router as projects_router
+from app.modules.product_flow.api.routes import router as product_flow_router
 from app.modules.research.api.routes import router as research_router
 from app.modules.users.api.routes import router as users_router
 
@@ -166,6 +167,7 @@ def create_app() -> FastAPI:
     app.include_router(users_router)
     app.include_router(auth_router)
     app.include_router(projects_router)
+    app.include_router(product_flow_router)
     app.include_router(files_router)
     app.include_router(chats_router)
     app.include_router(ai_router)

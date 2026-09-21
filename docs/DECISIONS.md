@@ -1689,3 +1689,21 @@ caminho implícito para controlador, DNC, transferência NC ou início de ciclo.
 `v0.3.0-sim-rc1` é uma release candidate local de software e documentação. G9,
 autoridade física, emissão executável e todas as operações de máquina permanecem
 desabilitadas até revisão autoritativa e decisão futura registrada.
+
+---
+
+## DEC-049 — Fluxo público integrado exige revisão persistida antes do download
+
+**Data:** 2026-09-21
+
+**Status:** Aprovada
+
+**Tipo:** Arquitetura / Produto / Segurança
+
+**Documento relacionado:** `docs/adr/ADR-0038-persisted-public-product-flow.md`
+
+O onboarding do Beta 1 cria organização, ownership e catálogos iniciais na mesma
+transação do usuário. O resultado controlado é persistido com vínculos e hashes;
+somente uma revisão humana registrada pelo próprio usuário libera o download do
+candidato íntegro. Feedback é associado ao resultado, projeto e versão. Essa
+revisão não altera G9 e não concede autoridade física ou operacional.

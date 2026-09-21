@@ -13,6 +13,7 @@ from app.modules.cad.dependencies import get_cad_analysis_service
 from app.modules.cad.kernel import OpenCascadeGeometryKernel
 from app.modules.cad.parser import StepAnalysis
 from app.modules.cad.service import CADDocumentAnalysis
+from app.modules.documents.models import Document
 from app.modules.engineering.manufacturing import ManufacturingPlanningService
 from app.modules.engineering.manufacturing_schemas import ManufacturingPlanningRequest
 from app.modules.engineering.level2 import Level2Verifier
@@ -23,6 +24,7 @@ from app.modules.engineering.controlled_environment_schemas import ControlledEnv
 from app.modules.engineering.g9_review import G9ReviewPackageService
 from app.modules.engineering.g9_review_schemas import G9ReviewPackage
 from app.modules.engineering.schemas import AvailabilityValue
+from app.modules.projects.models import Project
 from app.modules.engineering.toolpath import (
     ToolpathCandidateError,
     ToolpathCandidateService,
@@ -672,10 +674,25 @@ def test_manufacturing_route_blocks_cross_organization_resources(
 def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
     client: TestClient,
     make_account,
+    db_session,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     owner = make_account("controlled-environment-owner@vena-ia.dev")
+    project = Project(name="Controlled environment project", owner_id=owner.id)
+    db_session.add(project)
+    db_session.flush()
+    db_session.add(
+        Document(
+            id="document",
+            project_id=project.id,
+            filename="part.step",
+            content_type="application/step",
+            file_size=1,
+            storage_path="test-only/part.step",
+        )
+    )
+    db_session.commit()
     organization_id = client.post(
         "/organizations",
         headers=owner.headers,
@@ -798,11 +815,26 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
         )
         download_payload = {
             "organization_id": organization_id,
+            "result_id": result["result_id"],
             "gcode_candidate": result["gcode_candidate"],
             "blind_validation": result["blind_validation"],
             "digital_thread": result["digital_thread"],
             "download_token": result["download_token"],
         }
+        pre_review_download = client.post(
+            "/engineering/controlled-environment/download",
+            headers=owner.headers,
+            json=download_payload,
+        )
+        review = client.post(
+            f"/product-flow/results/{result['result_id']}/review",
+            headers=owner.headers,
+            json={
+                "acknowledgement": True,
+                "note": "Reviewed for controlled candidate download only.",
+            },
+        )
+        assert review.status_code == 200, review.text
         download = client.post(
             "/engineering/controlled-environment/download",
             headers=owner.headers,
@@ -897,6 +929,7 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
         )
         member_download_payload = {
             "organization_id": organization_id,
+            "result_id": member_result["result_id"],
             "gcode_candidate": member_result["gcode_candidate"],
             "blind_validation": member_result["blind_validation"],
             "digital_thread": member_result["digital_thread"],
@@ -945,13 +978,14 @@ def test_controlled_environment_runs_and_downloads_only_a_review_candidate(
     gates = {gate["gate"]: gate["status"] for gate in result["blind_validation"]["gates"]}
     assert all(gates[f"G{index}"] == "PASS" for index in range(9))
     assert gates["G9"] == "PENDING_REVIEW"
+    assert pre_review_download.status_code == 409
     assert download.status_code == 200, download.text
     assert download.headers["x-vena-ia-physical-use-authorized"] == "false"
-    assert download.headers["x-vena-ia-review-state"] == "REQUIRES_HUMAN_REVIEW"
+    assert download.headers["x-vena-ia-review-state"] == "APPROVED_FOR_CONTROLLED_DOWNLOAD"
     assert download.text.endswith("M30")
     assert transport_forgery.status_code == 200
     assert transport_forgery.headers["x-vena-ia-physical-use-authorized"] == "false"
-    assert transport_forgery.headers["x-vena-ia-review-state"] == "REQUIRES_HUMAN_REVIEW"
+    assert transport_forgery.headers["x-vena-ia-review-state"] == "APPROVED_FOR_CONTROLLED_DOWNLOAD"
     assert body_forgery.status_code == 422
     assert rejected.status_code == 422
     assert altered_candidate_response.status_code == 422

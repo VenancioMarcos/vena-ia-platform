@@ -1525,3 +1525,12 @@ com controles Play/Pause/Scrub e banner permanente de auditoria.
 Três testes novos cobrem payload válido, estado vazio e aviso obrigatório. Gate
 Web: 67 testes, TypeScript e lint aprovados; backend previamente homologado com
 789 Python/9 ignorados, Ruff e mypy. Sem push ou autoridade física.
+
+## 2026-09-21 — GATE TWO — Public Flow Integration
+
+Após homologação do Gate Um, a jornada pública foi integrada do cadastro ao
+feedback. Onboarding cria organização OWNER e catálogos iniciais; resultados e
+revisões ficam persistidos e vinculados por hashes; download exige revisão no
+servidor; o viewer técnico foi conectado ao fluxo STEP. Validação local: 1.100
+backend, 122 Web, 10 Playwright, Ruff, mypy em 246 fontes, TypeScript, build e
+diff. Gate Três não iniciado; aguarda parecer do CTO.

@@ -226,6 +226,7 @@ export type G9ReviewPackage = {
   required_external_artifacts: string[];
 };
 export type ControlledEnvironmentResult = {
+  result_id: string;
   status: "READY_FOR_CONTROLLED_DOWNLOAD";
   classification: "CANDIDATE_FOR_VALIDATION";
   non_production: true;

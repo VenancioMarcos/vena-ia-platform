@@ -78,6 +78,7 @@ from app.modules.engineering.service import EngineeringCatalogService
 from app.modules.engineering.planning import FeaturePlanningBridge
 from app.modules.organizations.repository import OrganizationRepository
 from app.modules.organizations.service import OrganizationAuthorization
+from app.modules.product_flow.service import ProductFlowService
 
 router = APIRouter(prefix="/engineering", tags=["engineering"])
 
@@ -278,11 +279,13 @@ def run_controlled_environment(
         payload.organization_id
     )
     try:
-        return ControlledEnvironmentService(
+        result = ControlledEnvironmentService(
             cad,
             _catalog_service(db, current_user),
             settings.auth_secret_key,
         ).run(payload, current_user.id)
+        record = ProductFlowService(db, current_user).record_result(payload, result)
+        return result.model_copy(update={"result_id": record.id})
     except (DocumentNotFoundError, ProjectNotFoundError, DocumentAccessDeniedError) as exc:
         raise HTTPException(status_code=404, detail="Document not found") from exc
     except InvalidDocumentError as exc:
@@ -315,6 +318,7 @@ def download_controlled_candidate(
     OrganizationAuthorization(OrganizationRepository(db), current_user).require_organization(
         payload.organization_id
     )
+    ProductFlowService(db, current_user).require_download_approval(payload)
     try:
         program = ControlledEnvironmentService(
             cad,
@@ -332,6 +336,6 @@ def download_controlled_candidate(
             "Content-Disposition": f'attachment; filename="{filename}"',
             "X-Vena-IA-Classification": "CANDIDATE_FOR_VALIDATION",
             "X-Vena-IA-Physical-Use-Authorized": "false",
-            "X-Vena-IA-Review-State": "REQUIRES_HUMAN_REVIEW",
+            "X-Vena-IA-Review-State": "APPROVED_FOR_CONTROLLED_DOWNLOAD",
         },
     )

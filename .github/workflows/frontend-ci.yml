@@ -46,6 +46,10 @@ jobs:
         working-directory: apps/web
         run: pnpm run typecheck
 
+      - name: Unit tests
+        working-directory: apps/web
+        run: pnpm run test:unit
+
       - name: Build
         working-directory: apps/web
         run: pnpm run build

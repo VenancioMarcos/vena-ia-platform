@@ -159,6 +159,14 @@ export default function ProjectPage({
       setDocuments((current) => [...current, created]);
       setFile(null);
       formElement.reset();
+      if (/\.(step|stp)$/i.test(created.filename)) {
+        window.requestAnimationFrame(() => {
+          window.document.getElementById("controlled-environment-title")?.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        });
+      }
     } catch (reason) {
       setError(describeError(reason));
     } finally {
@@ -358,7 +366,7 @@ export default function ProjectPage({
                         {jobs[document.id].attempt}/{jobs[document.id].max_attempts}
                       </div>
                     )}
-                    {document.status !== "PROCESSING" && (
+                    {document.status !== "PROCESSING" && !/\.(step|stp)$/i.test(document.filename) && (
                       <button
                         type="button"
                         disabled={busy !== null}
@@ -369,6 +377,11 @@ export default function ProjectPage({
                             ? "Tentar novamente"
                             : "Processar em segundo plano"}
                       </button>
+                    )}
+                    {/\.(step|stp)$/i.test(document.filename) && (
+                      <a href="#controlled-environment-title" className="mt-3 inline-block text-sm text-machine underline">
+                        Processar STEP no fluxo controlado
+                      </a>
                     )}
                     {["QUEUED", "RUNNING", "RETRY_SCHEDULED"].includes(
                       jobs[document.id]?.status ?? "",
