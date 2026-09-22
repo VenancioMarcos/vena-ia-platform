@@ -156,6 +156,16 @@ def test_real_redis_shares_limits_and_revocations() -> None:
         {"auth_redis_prefix": ":invalid"},
         {"auth_redis_timeout_seconds": 0},
         {"app_env": "production", "auth_security_store": "memory"},
+        {"app_env": "production"},
+        {
+            "app_env": "production",
+            "auth_secret_key": "x" * 32,
+            "auth_cookie_secure": True,
+            "database_url": "postgresql+psycopg://vena:secret@postgres/vena",
+            "minio_access_key": "access",
+            "minio_secret_key": "secret",
+            "cors_origins": ["http://beta.example.com"],
+        },
     ],
 )
 def test_invalid_security_store_configuration_is_rejected(
@@ -163,3 +173,18 @@ def test_invalid_security_store_configuration_is_rejected(
 ) -> None:
     with pytest.raises(ValidationError):
         Settings(_env_file=None, **values)
+
+
+def test_production_security_configuration_accepts_explicit_secure_values() -> None:
+    configured = Settings(
+        _env_file=None,
+        app_env="production",
+        auth_secret_key="x" * 32,
+        auth_cookie_secure=True,
+        database_url="postgresql+psycopg://vena:secret@postgres/vena",
+        minio_access_key="access",
+        minio_secret_key="secret",
+        cors_origins=["https://beta.example.com"],
+    )
+
+    assert configured.app_env == "production"

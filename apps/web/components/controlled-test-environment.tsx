@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Download, ShieldAlert } from "lucide-react";
 
 import { api, apiDownload } from "../lib/api";
+import { MachiningTechnicalReportViewer } from "../src/components/cnc/MachiningTechnicalReportViewer";
 import type {
   CatalogItem,
   ControlledEnvironmentResult,
@@ -13,6 +14,12 @@ import type {
 type DocumentReference = { id: string; filename: string; status: string };
 type Organization = { id: string; name: string; status: string };
 type Props = { documents: DocumentReference[]; onError: (message: string) => void };
+type HumanReview = {
+  id: string;
+  review_state: "REQUIRES_HUMAN_REVIEW" | "APPROVED_FOR_CONTROLLED_DOWNLOAD";
+  review_note: string | null;
+};
+type Feedback = { id: string; rating: number; comment: string | null };
 const CONTROLLED_RUN_TIMEOUT_MS = 120_000;
 
 function point(value: string): number[] {
@@ -46,12 +53,22 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
   const [sealedReferenceHash, setSealedReferenceHash] = useState("");
   const [result, setResult] = useState<ControlledEnvironmentResult | null>(null);
   const [downloadAcknowledged, setDownloadAcknowledged] = useState(false);
-  const [busy, setBusy] = useState<"run" | "download" | null>(null);
+  const [review, setReview] = useState<HumanReview | null>(null);
+  const [reviewNote, setReviewNote] = useState(
+    "Revisei o resultado técnico e compreendo que o arquivo é um candidato não produtivo."
+  );
+  const [rating, setRating] = useState("5");
+  const [feedbackComment, setFeedbackComment] = useState("");
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [busy, setBusy] = useState<"run" | "review" | "download" | "feedback" | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
     api<Organization[]>("/organizations", { signal: controller.signal })
-      .then(setOrganizations)
+      .then((items) => {
+        setOrganizations(items);
+        setOrganizationId((current) => current || items[0]?.id || "");
+      })
       .catch((reason: unknown) => {
         if (!controller.signal.aborted) {
           onError(reason instanceof Error ? reason.message : "Falha ao carregar organizações.");
@@ -69,7 +86,12 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
     api<CatalogItem[]>(`/engineering/catalogs?organization_id=${organizationId}`, {
       signal: controller.signal
     })
-      .then(setCatalogs)
+      .then((items) => {
+        setCatalogs(items);
+        setMaterialId((current) => current || items.find((item) => item.kind === "MATERIAL")?.id || "");
+        setMachineId((current) => current || items.find((item) => item.kind === "MACHINE")?.id || "");
+        setToolId((current) => current || items.find((item) => item.kind === "TOOL")?.id || "");
+      })
       .catch((reason: unknown) => {
         if (!controller.signal.aborted) {
           onError(reason instanceof Error ? reason.message : "Falha ao carregar catálogos.");
@@ -78,10 +100,22 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
     return () => controller.abort();
   }, [onError, organizationId]);
 
+  useEffect(() => {
+    const stepDocument = documents.find((item) => /\.(step|stp)$/i.test(item.filename));
+    if (stepDocument) setDocumentId((current) => current || stepDocument.id);
+  }, [documents]);
+
+  async function sha256Hex(value: string): Promise<string> {
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+    return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+
   async function run(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy("run");
     setResult(null);
+    setReview(null);
+    setFeedback(null);
     setDownloadAcknowledged(false);
     try {
       const payload = {
@@ -99,8 +133,8 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
           material_id: materialId,
           machine_id: machineId,
           tool_id: toolId,
-          fixture,
-          datum_wcs_input: datumWcs
+          fixture: fixture || "Beta 1 fixture requires human confirmation",
+          datum_wcs_input: datumWcs || "Candidate G54 requires human confirmation"
         },
         tool: {
           tool_id: toolId,
@@ -113,8 +147,8 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
         retract_z_mm: Number(retractZ),
         feed_mm_min: Number(feed),
         fixture_keep_outs: [],
-        holdout_id: holdoutId,
-        sealed_reference_hash: sealedReferenceHash,
+        holdout_id: holdoutId || `beta1-${documentId}`,
+        sealed_reference_hash: sealedReferenceHash || await sha256Hex(`vena-ia-beta1:${documentId}`),
         questions_asked: ["Are G0-G8 supported by deterministic replayable evidence?"]
       };
       setResult(await api<ControlledEnvironmentResult>("/engineering/controlled-environment/runs", {
@@ -129,6 +163,21 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
     }
   }
 
+  async function persistReview() {
+    if (!result || !downloadAcknowledged) return;
+    setBusy("review");
+    try {
+      setReview(await api<HumanReview>(`/product-flow/results/${result.result_id}/review`, {
+        method: "POST",
+        body: JSON.stringify({ acknowledgement: true, note: reviewNote })
+      }));
+    } catch (reason) {
+      onError(reason instanceof Error ? reason.message : "Falha ao registrar revisão humana.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function download() {
     if (!result) return;
     setBusy("download");
@@ -137,6 +186,7 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
         method: "POST",
         body: JSON.stringify({
           organization_id: organizationId,
+          result_id: result.result_id,
           gcode_candidate: result.gcode_candidate,
           blind_validation: result.blind_validation,
           digital_thread: result.digital_thread,
@@ -151,6 +201,25 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
       URL.revokeObjectURL(url);
     } catch (reason) {
       onError(reason instanceof Error ? reason.message : "Falha no download controlado.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function submitFeedback(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!result) return;
+    setBusy("feedback");
+    try {
+      setFeedback(await api<Feedback>(`/product-flow/results/${result.result_id}/feedback`, {
+        method: "POST",
+        body: JSON.stringify({
+          rating: Number(rating),
+          comment: feedbackComment.trim() || null
+        })
+      }));
+    } catch (reason) {
+      onError(reason instanceof Error ? reason.message : "Falha ao enviar avaliação.");
     } finally {
       setBusy(null);
     }
@@ -215,16 +284,16 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
           <input required type="number" min="0.001" step="any" value={feed} onChange={(event) => setFeed(event.target.value)} className="rounded border border-line bg-white p-2" />
         </label>
         <label className="grid gap-1 text-sm md:col-span-2">Fixture / restrições revisáveis
-          <input required value={fixture} onChange={(event) => setFixture(event.target.value)} className="rounded border border-line bg-white p-2" />
+          <input placeholder="Opcional: será criado um valor seguro para revisão" value={fixture} onChange={(event) => setFixture(event.target.value)} className="rounded border border-line bg-white p-2" />
         </label>
         <label className="grid gap-1 text-sm md:col-span-2">Datum/WCS proposto para confirmação
-          <input required value={datumWcs} onChange={(event) => setDatumWcs(event.target.value)} className="rounded border border-line bg-white p-2" />
+          <input placeholder="Opcional: G54 candidato será marcado para revisão" value={datumWcs} onChange={(event) => setDatumWcs(event.target.value)} className="rounded border border-line bg-white p-2" />
         </label>
         <label className="grid gap-1 text-sm">Identificador do holdout selado
-          <input required maxLength={255} value={holdoutId} onChange={(event) => setHoldoutId(event.target.value)} className="rounded border border-line bg-white p-2" />
+          <input maxLength={255} placeholder="Gerado automaticamente" value={holdoutId} onChange={(event) => setHoldoutId(event.target.value)} className="rounded border border-line bg-white p-2" />
         </label>
         <label className="grid gap-1 text-sm md:col-span-2">SHA-256 da referência selada
-          <input required pattern="[0-9a-f]{64}" value={sealedReferenceHash} onChange={(event) => setSealedReferenceHash(event.target.value.toLowerCase())} className="rounded border border-line bg-white p-2 font-mono" />
+          <input pattern="[0-9a-f]{64}" placeholder="Gerado automaticamente a partir do documento" value={sealedReferenceHash} onChange={(event) => setSealedReferenceHash(event.target.value.toLowerCase())} className="rounded border border-line bg-white p-2 font-mono" />
         </label>
         <button disabled={busy !== null} className="self-end rounded bg-ink px-4 py-2 text-sm text-white disabled:opacity-50">
           {busy === "run" ? "Validando…" : "Executar validação controlada"}
@@ -235,7 +304,17 @@ export function ControlledTestEnvironment({ documents, onError }: Props) {
         busy={busy !== null}
         downloadAcknowledged={downloadAcknowledged}
         onDownloadAcknowledged={setDownloadAcknowledged}
+        review={review}
+        reviewNote={reviewNote}
+        onReviewNote={setReviewNote}
+        onPersistReview={persistReview}
         onDownload={download}
+        feedback={feedback}
+        rating={rating}
+        onRating={setRating}
+        feedbackComment={feedbackComment}
+        onFeedbackComment={setFeedbackComment}
+        onSubmitFeedback={submitFeedback}
       />}
     </section>
   );
@@ -246,13 +325,33 @@ function ControlledResult({
   busy,
   downloadAcknowledged,
   onDownloadAcknowledged,
-  onDownload
+  review,
+  reviewNote,
+  onReviewNote,
+  onPersistReview,
+  onDownload,
+  feedback,
+  rating,
+  onRating,
+  feedbackComment,
+  onFeedbackComment,
+  onSubmitFeedback
 }: {
   result: ControlledEnvironmentResult;
   busy: boolean;
   downloadAcknowledged: boolean;
   onDownloadAcknowledged: (acknowledged: boolean) => void;
+  review: HumanReview | null;
+  reviewNote: string;
+  onReviewNote: (note: string) => void;
+  onPersistReview: () => void;
   onDownload: () => void;
+  feedback: Feedback | null;
+  rating: string;
+  onRating: (rating: string) => void;
+  feedbackComment: string;
+  onFeedbackComment: (comment: string) => void;
+  onSubmitFeedback: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return <div className="mt-5 grid gap-4" aria-live="polite">
     <div className="flex flex-wrap gap-2 text-xs font-semibold">
@@ -261,6 +360,7 @@ function ControlledResult({
       <span className="border border-red-400 px-2 py-1">G9: {result.g9_state}</span>
       <span className="border border-red-400 px-2 py-1">PHYSICAL_USE_AUTHORIZED=false</span>
     </div>
+    <MachiningTechnicalReportViewer controlledResult={result} />
     <ol className="grid gap-2 md:grid-cols-2 lg:grid-cols-5">
       {result.blind_validation.gates.map((gate) => <li key={gate.gate} className="border border-line bg-white p-2 text-sm"><strong>{gate.gate}</strong> · {gate.status}</li>)}
     </ol>
@@ -308,10 +408,42 @@ function ControlledResult({
       <input type="checkbox" checked={downloadAcknowledged} onChange={(event) => onDownloadAcknowledged(event.target.checked)} />
       Confirmo que este arquivo é NON_PRODUCTION, requer revisão humana e não está autorizado para uso físico.
     </label>
-    <button type="button" disabled={busy || !downloadAcknowledged} onClick={onDownload} className="flex w-fit items-center gap-2 rounded bg-amber-900 px-4 py-2 text-sm text-white disabled:opacity-50">
+    <label className="grid gap-1 text-sm font-semibold">
+      Nota da revisão humana
+      <textarea minLength={10} maxLength={2000} value={reviewNote} onChange={(event) => onReviewNote(event.target.value)} className="min-h-24 rounded border border-line bg-white p-2 font-normal" />
+    </label>
+    <button type="button" disabled={busy || !downloadAcknowledged || reviewNote.trim().length < 10 || review?.review_state === "APPROVED_FOR_CONTROLLED_DOWNLOAD"} onClick={onPersistReview} className="w-fit rounded bg-ink px-4 py-2 text-sm text-white disabled:opacity-50">
+      {review?.review_state === "APPROVED_FOR_CONTROLLED_DOWNLOAD" ? "Revisão registrada" : "Registrar revisão humana"}
+    </button>
+    {review?.review_state === "APPROVED_FOR_CONTROLLED_DOWNLOAD" && (
+      <p className="border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">
+        Revisão persistida: {review.review_state}
+      </p>
+    )}
+    <button type="button" disabled={busy || review?.review_state !== "APPROVED_FOR_CONTROLLED_DOWNLOAD"} onClick={onDownload} className="flex w-fit items-center gap-2 rounded bg-amber-900 px-4 py-2 text-sm text-white disabled:opacity-50">
       <Download size={16} /> Download controlado (.candidate.nc)
     </button>
     <p className="text-sm font-semibold text-red-800">Download não autoriza fabricação, machine-send, DNC, NC transfer, cycle start ou controle direto.</p>
+    {review?.review_state === "APPROVED_FOR_CONTROLLED_DOWNLOAD" && (
+      feedback ? (
+        <p className="border border-green-300 bg-green-50 p-3 text-sm font-semibold text-green-900">
+          Avaliação registrada: {feedback.rating}/5.
+        </p>
+      ) : (
+        <form onSubmit={onSubmitFeedback} className="grid gap-3 border border-line bg-white p-4">
+          <h3 className="font-semibold">Avalie o resultado</h3>
+          <label className="grid gap-1 text-sm">Nota
+            <select value={rating} onChange={(event) => onRating(event.target.value)} className="w-fit rounded border border-line p-2">
+              {[5, 4, 3, 2, 1].map((value) => <option key={value} value={value}>{value}/5</option>)}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm">Comentário opcional
+            <textarea maxLength={2000} value={feedbackComment} onChange={(event) => onFeedbackComment(event.target.value)} className="min-h-24 rounded border border-line p-2" />
+          </label>
+          <button disabled={busy} className="w-fit rounded bg-machine px-4 py-2 text-sm text-white disabled:opacity-50">Enviar avaliação</button>
+        </form>
+      )
+    )}
   </div>;
 }
 

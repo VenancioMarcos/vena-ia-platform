@@ -18,6 +18,10 @@ from app.modules.organizations.models import (  # noqa: F401
     Team,
 )
 from app.modules.projects.models import Project  # noqa: F401
+from app.modules.product_flow.models import (  # noqa: F401
+    ControlledResultRecord,
+    ResultFeedback,
+)
 from app.modules.research.models import (  # noqa: F401
     ANOVADataset,
     DOEStudy,

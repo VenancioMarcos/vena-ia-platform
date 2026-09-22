@@ -66,6 +66,9 @@ jobs:
         run: |
           cp .env.example .env
           docker compose config --quiet
+          PRODUCTION_ENV_FILE=.env.production.example docker compose \
+            --env-file .env.production.example \
+            --file docker-compose.production.yml config --quiet
 
       - name: Build pinned API and Web images
         run: |

@@ -1,8 +1,8 @@
 # CONTEXT.md — Contexto Operacional do Projeto Vena_IA Platform
 
 **Status:** Documento Oficial
-**Versão:** 2.86
-**Última atualização:** 2026-09-15
+**Versão:** 2.88
+**Última atualização:** 2026-09-21
 **Documentos relacionados:** `PROJECT.md`, `AGENTS.md`, `.ai/ACP.md`, `docs/PERMANENT_OPERATIONAL_LIMITS.md`
 
 ---
@@ -27,7 +27,26 @@ Missão, visão e objetivos estratégicos completos estão em `PROJECT.md`.
 
 ## 3. Estado atual do projeto
 
-### 3.1 Síntese vigente — 2026-09-15
+### 3.1 Síntese vigente — 2026-09-21
+
+- **Handoff CTO:** `GATE_THREE_PHASE_ONE_BLOCKED_REAL`.
+  O CTO aprovou o Gate Dois com ressalva técnica. A branch foi publicada no Draft
+  PR #84, integrada ao histórico squash da `main` sem mudança funcional e validada
+  com sucesso por Backend CI, Frontend CI e Runtime Policy CI. PostgreSQL 17
+  descartável comprovou `upgrade → downgrade → upgrade` até `a71c9e4d2b80`. O Gate
+  Três Fase 1 adicionou Compose e template de ambiente de produção sem segredos,
+  validações fail-closed, head de runtime atualizada e runbook do Beta 1. Domínio,
+  VPS, TLS, SMTP, secret manager, backup externo, conta de IA e operação continuam
+  `BLOCKED_REAL`, aguardando decisão do proprietário. Nenhum deploy foi executado.
+
+- **Handoff CTO:** `GATE_TWO_PUBLIC_FLOW_INTEGRATION_READY_FOR_CTO_REVIEW`.
+  O Gate Um foi homologado e o Gate Dois integrou a jornada pública cadastro →
+  login → projeto → STEP → processamento controlado → viewer técnico → revisão
+  humana persistida → download → feedback. O onboarding cria organização OWNER e
+  catálogos iniciais; resultados, hashes, revisão e feedback ficam vinculados ao
+  usuário, projeto e versão. Validação: 1.100 testes backend, 122 testes Web, 10
+  cenários Playwright, Ruff, mypy em 246 fontes, TypeScript e build. G9 continua
+  pendente e não há autoridade física, push, merge, release ou deploy.
 
 - **Handoff CTO:** `CNC_BEARING_L10H_FATIGUE_LIFE_AUDITOR_COMPLETED_LOCAL`.
   O CTO aprovou o `VTP-AUTO-409-BATCH`. A Rota 33 foi publicada no PR #82,

@@ -2,7 +2,7 @@
 
 **Contrato:** `vena-ia.runtime-policy/v1`
 **Manifesto executável:** `runtime-policy.json`
-**Data de validação:** 2026-08-05
+**Data de validação:** 2026-09-21
 **Escopo:** v1.6 Package 1 — Runtime and Container Reproducibility
 
 ## Decisão de suporte
@@ -22,8 +22,8 @@ oficiais e exatas. Uma versão apenas iniciar não constitui suporte.
 | PostgreSQL/pgvector | PostgreSQL 17 + pgvector 0.8.1 | PostgreSQL 17 | imagem fixada | imagem fixada | Compose | Integração, migrations e backup/restore reais no Backend CI. |
 | Redis | 7.4.7 | 7.4 | imagem fixada | imagem fixada | Compose | Auth store, fila, recovery e concorrência reais no Backend CI. |
 | MinIO | RELEASE.2025-09-07T16-13-09Z | mesma release | imagem fixada | imagem fixada | Compose | Storage, readiness e backup/restore reais no Backend CI. |
-| Docker Engine/CLI | 29.x recomendado | 24.x | runner GitHub | não aplicável | CLI 29.4.1 auditado | Config validada; daemon local indisponível, builds ficam no Runtime Policy CI. |
-| Docker Compose | Compose v2+ | 2.27 | plugin do runner | não aplicável | 5.1.3 auditado | `docker compose config` obrigatório; não representa runtime real. |
+| Docker Engine/CLI | 29.x recomendado | 24.x | runner GitHub | não aplicável | Engine/CLI 29.4.1 auditado | PostgreSQL 17 descartável validou a cadeia Alembic; imagens API/Web continuam validadas no Runtime Policy CI. |
+| Docker Compose | Compose v2+ | 2.27 | plugin do runner | não aplicável | 5.1.3 auditado | Compose de desenvolvimento e candidato de produção validados; não representa deploy real. |
 
 ## Imagens imutáveis
 

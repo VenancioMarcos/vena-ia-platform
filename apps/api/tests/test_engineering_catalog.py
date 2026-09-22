@@ -60,8 +60,11 @@ def test_versioned_catalog_and_preliminary_selection(client: TestClient, make_ac
         headers=account.headers,
     )
     assert listed.status_code == 200
-    assert [item["code"] for item in listed.json()] == ["AL-6061-T6"]
-    assert listed.json()[0]["schema_version"] == "vena-ia.engineering-catalog/v1"
+    assert {item["code"] for item in listed.json()} == {"AL-6061-T6", "BETA1-STEEL"}
+    assert all(
+        item["schema_version"] == "vena-ia.engineering-catalog/v1"
+        for item in listed.json()
+    )
 
     selected = client.post(
         "/engineering/selections/preliminary",
@@ -424,7 +427,8 @@ def test_member_reads_but_cannot_create_and_revocation_fails_closed(
         f"/engineering/catalogs?organization_id={organization_id}", headers=member.headers
     )
     assert listed.status_code == 200
-    assert [entry["id"] for entry in listed.json()] == [item["id"]]
+    assert item["id"] in {entry["id"] for entry in listed.json()}
+    assert {entry["kind"] for entry in listed.json()} == {"MATERIAL", "MACHINE", "TOOL"}
     governance = client.get(
         f"/engineering/catalogs/{item['id']}/governance", headers=member.headers
     )

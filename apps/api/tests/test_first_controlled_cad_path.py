@@ -192,10 +192,21 @@ def test_real_step_upload_reaches_controlled_candidate_download(
     assert result["physical_use_authorized"] is False
 
     download = client.post(
+        f"/product-flow/results/{result['result_id']}/review",
+        headers=owner.headers,
+        json={
+            "acknowledgement": True,
+            "note": "Reviewed for controlled candidate download only.",
+        },
+    )
+    assert download.status_code == 200, download.text
+
+    download = client.post(
         "/engineering/controlled-environment/download",
         headers=owner.headers,
         json={
             "organization_id": organization_id,
+            "result_id": result["result_id"],
             "gcode_candidate": result["gcode_candidate"],
             "blind_validation": result["blind_validation"],
             "digital_thread": result["digital_thread"],
@@ -205,7 +216,16 @@ def test_real_step_upload_reaches_controlled_candidate_download(
     assert download.status_code == 200, download.text
     assert download.headers["x-vena-ia-classification"] == "CANDIDATE_FOR_VALIDATION"
     assert download.headers["x-vena-ia-physical-use-authorized"] == "false"
-    assert download.headers["x-vena-ia-review-state"] == "REQUIRES_HUMAN_REVIEW"
+    assert download.headers["x-vena-ia-review-state"] == "APPROVED_FOR_CONTROLLED_DOWNLOAD"
     assert download.text == result["gcode_candidate"]["program"]
     assert "M30" in download.text
     assert all(command not in download.text for command in ("M03", "M04", "M06"))
+
+    feedback = client.post(
+        f"/product-flow/results/{result['result_id']}/feedback",
+        headers=owner.headers,
+        json={"rating": 5, "comment": "Controlled Beta result was clear."},
+    )
+    assert feedback.status_code == 201, feedback.text
+    assert feedback.json()["project_id"] == project.json()["id"]
+    assert feedback.json()["result_version"] == result["schema_version"]

@@ -1,5 +1,17 @@
 # Estado de execução CTO
 
+## 2026-09-21 — GATE TRÊS — Preparação para Produção (Fase 1)
+
+`GATE_THREE_PHASE_ONE_BLOCKED_REAL`. O CTO aprovou o Gate Dois com ressalva. A
+branch foi publicada no Draft PR #84 e reconciliada com a `main` por merge de
+históricos equivalentes. No HEAD de prontidão `fb80999`, Backend CI passou em
+3m33s, Frontend CI em 1m31s e Runtime Policy CI em 2m07s. PostgreSQL 17 descartável
+comprovou a cadeia completa até
+`a71c9e4d2b80`, downgrade para `e61c4f8a2b90` e novo upgrade até a head. O commit
+`aa46d3f` adiciona configuração candidata de produção, validações fail-closed,
+runtime head atualizada e runbook do Beta 1. Nenhum deploy ou contratação ocorreu;
+itens externos permanecem bloqueados pela decisão do proprietário.
+
 ## 2026-09-15 — CTO-CODEX-AUTO-410 a AUTO-419
 
 `CNC_BEARING_L10H_FATIGUE_LIFE_AUDITOR_COMPLETED_LOCAL`. O CTO aprovou o
@@ -1702,4 +1714,26 @@ RUNTIME_POLICY=PASS
 RESILIENCE_POLICY=PASS
 DOCKER_COMPOSE_CONFIG=PASS_WITH_LOCAL_DOCKER_CONFIG_ACCESS_WARNING
 NEXT=DRAFT_PR_AND_CTO_REVIEW
+```
+
+## 2026-09-21 — Gate Two — Public Flow Integration
+
+```text
+STATE=GATE_TWO_PUBLIC_FLOW_INTEGRATION_READY_FOR_CTO_REVIEW
+BRANCH=codex/gate-two-public-flow-integration
+BASELINE=5fa8cc31cdbd111c50925b5ab239534c4649298b
+ONBOARDING=DEFAULT_ORGANIZATION_OWNER_AND_THREE_CATALOGS
+PUBLIC_FLOW=SIGNUP_LOGIN_PROJECT_STEP_RESULT_REVIEW_DOWNLOAD_FEEDBACK
+HUMAN_REVIEW=PERSISTED_AND_HASH_BOUND
+G9=PENDING_AUTHORITATIVE_REVIEW
+PHYSICAL_USE_AUTHORIZED=FALSE
+MACHINE_SEND=FALSE
+DNC=FALSE
+NC_TRANSFER=FALSE
+CYCLE_START=FALSE
+EXECUTABLE_OUTPUT=FALSE
+BACKEND=1100_PASS_2_SKIP
+WEB_UNIT=122_PASS
+PLAYWRIGHT=10_PASS
+NEXT=CTO_REVIEW_NO_GATE_THREE
 ```

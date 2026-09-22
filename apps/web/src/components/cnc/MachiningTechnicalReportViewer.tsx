@@ -1,3 +1,5 @@
+import type { ControlledEnvironmentResult } from "../../../lib/engineering-contracts";
+
 export type CNCControllerProfile = "FANUC_0I" | "SIEMENS_840D" | "HAAS" | "SIMULATED_STUB";
 export type TurningOperation = "FACING" | "ROUGH_TURNING" | "FINISHING" | "GROOVING";
 
@@ -722,9 +724,9 @@ export interface MachiningTechnicalReportPayload {
   limitations: readonly string[];
 }
 
-interface MachiningTechnicalReportViewerProps {
-  report: MachiningTechnicalReportPayload;
-}
+type MachiningTechnicalReportViewerProps =
+  | { report: MachiningTechnicalReportPayload; controlledResult?: never }
+  | { report?: never; controlledResult: ControlledEnvironmentResult };
 
 function duration(seconds: number): string {
   const safeSeconds = Math.max(0, Math.round(seconds));
@@ -741,7 +743,33 @@ function Metric({ label, value }: { label: string; value: string }) {
   </div>;
 }
 
-export function MachiningTechnicalReportViewer({ report }: MachiningTechnicalReportViewerProps) {
+export function MachiningTechnicalReportViewer(props: MachiningTechnicalReportViewerProps) {
+  if ("controlledResult" in props && props.controlledResult) {
+    const result = props.controlledResult;
+    return (
+      <section className="rounded-xl border border-cyan-800 bg-slate-950 p-5 text-slate-100">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-lg font-semibold text-cyan-100">Resultado técnico integrado</h3>
+          <span className="rounded border border-amber-500 px-2 py-1 text-xs text-amber-200">
+            {result.classification}
+          </span>
+        </div>
+        <dl className="mt-4 grid gap-3 md:grid-cols-3">
+          <Metric label="Modelo geométrico" value={result.manufacturing_model.status} />
+          <Metric label="Toolpath" value={result.toolpath.status} />
+          <Metric label="Revisão" value={result.review_state} />
+          <Metric label="Digital thread" value={result.digital_thread.status} />
+          <Metric label="Gate G9" value={result.g9_state} />
+          <Metric label="Uso físico" value="NÃO AUTORIZADO" />
+        </dl>
+        <p className="mt-4 text-sm text-slate-300">
+          Visualização técnica para revisão. O resultado permanece NON_PRODUCTION, sem machine-send,
+          DNC, transferência NC, início de ciclo ou saída executável.
+        </p>
+      </section>
+    );
+  }
+  const report = props.report;
   const estimate = report.cycle_time_estimate;
   const proximityWarning = report.chuck_proximity.warning_code === "WARNING_PROXIMITY_CHUCK";
   const dimensionalPass = report.geometry_audit.status === "PASS";

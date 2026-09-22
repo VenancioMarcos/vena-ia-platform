@@ -78,9 +78,7 @@ class Settings(BaseSettings):
     observability_dependency_failure_threshold: int = Field(default=1, ge=1, le=100)
     observability_internal_error_threshold: int = Field(default=1, ge=1, le=100)
 
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     @model_validator(mode="after")
     def reject_production_memory_security_store(self) -> "Settings":
@@ -90,16 +88,31 @@ class Settings(BaseSettings):
             raise ValueError("AI connect timeout cannot exceed the total timeout")
         if self.jobs_retry_max_seconds < self.jobs_retry_base_seconds:
             raise ValueError("Job retry maximum must be at least the base delay")
-        if (
-            self.app_env.lower() in {"production", "prod"}
-            and self.auth_security_store == "memory"
-        ):
+        if self.app_env.lower() in {"production", "prod"} and self.auth_security_store == "memory":
             raise ValueError("AUTH_SECURITY_STORE=memory is forbidden in production")
-        if (
-            self.app_env.lower() in {"production", "prod"}
-            and self.jobs_queue_provider == "memory"
-        ):
+        if self.app_env.lower() in {"production", "prod"} and self.jobs_queue_provider == "memory":
             raise ValueError("JOBS_QUEUE_PROVIDER=memory is forbidden in production")
+        if self.app_env.lower() in {"production", "prod"}:
+            if len(self.auth_secret_key) < 32:
+                raise ValueError(
+                    "AUTH_SECRET_KEY must contain at least 32 characters in production"
+                )
+            if not self.auth_cookie_secure:
+                raise ValueError("AUTH_COOKIE_SECURE=true is required in production")
+            if "change_me" in self.database_url.lower():
+                raise ValueError("DATABASE_URL cannot use the example password in production")
+            if (
+                self.minio_access_key.lower() == "change_me"
+                or self.minio_secret_key.lower() == "change_me"
+            ):
+                raise ValueError("MinIO example credentials are forbidden in production")
+            if not self.cors_origins or any(
+                origin == "*" or not origin.startswith("https://") or "localhost" in origin.lower()
+                for origin in self.cors_origins
+            ):
+                raise ValueError(
+                    "CORS_ORIGINS must contain only explicit HTTPS origins in production"
+                )
         return self
 
 

@@ -39,6 +39,7 @@ class ControlledEnvironmentResult(BaseModel):
         "vena-ia.controlled-test-environment/v1"
     )
     status: Literal["READY_FOR_CONTROLLED_DOWNLOAD"]
+    result_id: str | None = None
     manufacturing_model: ManufacturingGeometryModel
     toolpath: ToolpathCandidate
     gcode_candidate: GCodeCandidate
@@ -64,6 +65,7 @@ class ControlledDownloadRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     organization_id: str = Field(min_length=1, max_length=36)
+    result_id: str = Field(min_length=1, max_length=36)
     gcode_candidate: GCodeCandidate
     blind_validation: ControlledBlindValidationEvidence
     digital_thread: DigitalThreadManifest

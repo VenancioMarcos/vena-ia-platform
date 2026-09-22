@@ -104,7 +104,9 @@ def test_x_user_id_and_cross_organization_do_not_grant_access(client, make_accou
         == 404
     )
     visible = client.get("/organizations", headers=forged_headers).json()
-    assert [item["id"] for item in visible] == [organization_a["id"]]
+    visible_ids = {item["id"] for item in visible}
+    assert organization_a["id"] in visible_ids
+    assert organization_b["id"] not in visible_ids
 
 
 def test_team_scoped_member_is_denied_cross_team(client, make_account):
