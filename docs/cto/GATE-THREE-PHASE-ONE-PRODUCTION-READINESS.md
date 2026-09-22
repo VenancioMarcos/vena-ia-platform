@@ -47,8 +47,9 @@ configuração/runtime.
 
 ## 7. RESULTADOS DOS TESTES
 
-Backend CI: `SUCCESS` em 4m01s. Frontend CI: `SUCCESS` em 1m49s. Runtime Policy CI:
-`SUCCESS` em 1m53s. Alembic: `a71c9e4d2b80 → e61c4f8a2b90 → a71c9e4d2b80`.
+Backend CI: `SUCCESS` em 3m33s. Frontend CI: `SUCCESS` em 1m31s. Runtime Policy CI:
+`SUCCESS` em 2m07s no HEAD `fb80999`. Alembic:
+`a71c9e4d2b80 → e61c4f8a2b90 → a71c9e4d2b80`.
 Testes focados: 13 passed/1 skipped e 3 passed. Compose, Ruff, mypy, policy e diff:
 aprovados.
 
@@ -93,8 +94,8 @@ proxy/TLS seria insegura.
 ## 14. PENDÊNCIAS
 
 Parecer do CTO sobre a Fase 1, decisão do proprietário sobre os oito itens externos,
-CI remota do commit de prontidão, smoke integrado no ambiente escolhido e drill de
-restore antes da admissão de clientes.
+smoke integrado no ambiente escolhido e drill de restore antes da admissão de
+clientes.
 
 ## 15. ALTERAÇÕES EXTERNAS NECESSÁRIAS
 

@@ -4,8 +4,9 @@
 
 `GATE_THREE_PHASE_ONE_BLOCKED_REAL`. O CTO aprovou o Gate Dois com ressalva. A
 branch foi publicada no Draft PR #84 e reconciliada com a `main` por merge de
-históricos equivalentes. Backend CI, Frontend CI e Runtime Policy CI passaram no
-HEAD `16c4125`. PostgreSQL 17 descartável comprovou a cadeia completa até
+históricos equivalentes. No HEAD de prontidão `fb80999`, Backend CI passou em
+3m33s, Frontend CI em 1m31s e Runtime Policy CI em 2m07s. PostgreSQL 17 descartável
+comprovou a cadeia completa até
 `a71c9e4d2b80`, downgrade para `e61c4f8a2b90` e novo upgrade até a head. O commit
 `aa46d3f` adiciona configuração candidata de produção, validações fail-closed,
 runtime head atualizada e runbook do Beta 1. Nenhum deploy ou contratação ocorreu;
